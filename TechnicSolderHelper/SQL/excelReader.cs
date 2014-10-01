@@ -13,7 +13,7 @@ namespace TechnicSolderHelper.SQL
 {
     class excelReader
     {
-        private static String permissionsheet = "https://iyypxa.bn1303.livefilestore.com/y2mNa7-h9CYCWE8e8f3JoCT4Hbm5ovFGTilWpyf4r6dyUl1TdWDHvCVwPix1Wohp_wfAlZTwRqi2M68RenjLQMB5fIWfV44R9eG2x5x--RS6lf5JKTMYLI2ONEXKddfjOKv/Mod%20Permissions.xlsx?download&psid=1";
+        private static String permissionsheet = "https://onedrive.live.com/download.aspx?resid=96628E67B4C51B81!161&ithint=file%2cxlsx&app=Excel&authkey=!APQ4QtFrBqa1HwM";
         private static String permissionsheetFile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\permissions.xlsx";
 
         public static void addFTBPermissions()
@@ -50,8 +50,13 @@ namespace TechnicSolderHelper.SQL
             List<String> shortNames = new List<string>();
             for (int modIdCount = 1; modIdCount <= ModIDRange.Rows.Count; modIdCount++)
             {
-                modIDs.Add((String)(ModIDRange.Cells[modIdCount, 1] as Excel.Range).Value2);
-                shortNames.Add((String)(ModIDRange.Cells[modIdCount, 2] as Excel.Range).Value2);
+                String tmpid = (String)(ModIDRange.Cells[modIdCount, 1] as Excel.Range).Value2;
+                String tmpshortName = (String)(ModIDRange.Cells[modIdCount, 2] as Excel.Range).Value2;
+                if (!(String.IsNullOrWhiteSpace(tmpid)) && !(String.IsNullOrWhiteSpace(tmpshortName)))
+                {
+                    modIDs.Add(tmpid);
+                    shortNames.Add(tmpshortName);
+                }
             }
 
             List<excelPermSheet> perms = new List<excelPermSheet>();
@@ -132,47 +137,18 @@ namespace TechnicSolderHelper.SQL
                         Private = PermissionLevel.Unknown;
                         break;
                 }
-                //List<String> modID = new List<string>();
 
                 for (int i = 0; i < modIDs.Count; i++)
 			    {
                     if (shortNames[i].Equals(shortName))
 	                {
-                        //modID.Add((String)(ModIDRange.Cells[modIdCount, 1] as Excel.Range).Value2);
                         String modID = modIDs[i];
                         sqlhelper.addFTBModPerm(Name, Author, modID, Public.ToString(), Private.ToString());
 	                }
 			    }
 
-                
-                /*for (int modIdCount = 1; modIdCount <= ModIDRange.Rows.Count; modIdCount++)
-			    {
-                    String tmp = (String)(ModIDRange.Cells[modIdCount, 2] as Excel.Range).Value2;
-                    if (tmp.Equals(shortName))
-	                {
-                        //modID.Add((String)(ModIDRange.Cells[modIdCount, 1] as Excel.Range).Value2);
-                        String modID = (String)(ModIDRange.Cells[modIdCount, 1] as Excel.Range).Value2;
-                        sqlhelper.addFTBModPerm(Name, Author, modID, Public.ToString(), Private.ToString());
-	                }
-			    }*/
-
-                /*perms.Add(new excelPermSheet()
-                {
-                    Author = Author,
-                    ModName = Name,
-                    PrivatePerm = Private,
-                    PublicPerm = Public,
-                    ModID = modID
-                });*/
                 rCnt++;
             }
-            /*foreach (excelPermSheet mod in perms)
-            {
-                for (int i = 0; i < mod.ModID.Count; i++)
-                {
-                    sqlhelper.addFTBModPerm(mod.ModName, mod.Author, mod.ModID[i], mod.PublicPerm.ToString(), mod.PrivatePerm.ToString());
-                }
-            }*/
 
 
             xlWorkBook.Close();

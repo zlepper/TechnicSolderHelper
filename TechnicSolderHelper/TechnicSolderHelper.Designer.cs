@@ -41,6 +41,8 @@
             this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
             this.CreateFTBPack = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ProgressLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -168,11 +170,31 @@
             this.CreateFTBPack.UseVisualStyleBackColor = true;
             this.CreateFTBPack.CheckedChanged += new System.EventHandler(this.CreateFTBPack_CheckedChanged);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(510, 124);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(80, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Currently doing:";
+            // 
+            // ProgressLabel
+            // 
+            this.ProgressLabel.AutoSize = true;
+            this.ProgressLabel.Location = new System.Drawing.Point(510, 142);
+            this.ProgressLabel.Name = "ProgressLabel";
+            this.ProgressLabel.Size = new System.Drawing.Size(52, 13);
+            this.ProgressLabel.TabIndex = 8;
+            this.ProgressLabel.Text = "Waiting...";
+            // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(641, 272);
+            this.Controls.Add(this.ProgressLabel);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.CreateFTBPack);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.IncludeConfigZip);
@@ -207,5 +229,7 @@
         private System.Windows.Forms.CheckBox IncludeConfigZip;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.CheckBox CreateFTBPack;
+        private System.Windows.Forms.Label label3;
+        public System.Windows.Forms.Label ProgressLabel;
     }
 }
