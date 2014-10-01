@@ -366,6 +366,45 @@ namespace TechnicSolderHelper.SQL
             
         }
 
+        public mcmod getModInfo(String MD5Value)
+        {
+            mcmod mod = new mcmod();
+            String sql = String.Format("SELECT * FROM {0} WHERE MD5 = '{1}';", this.TableName, MD5Value);
+            //Debug.WriteLine(sql);
+            SQLiteCommand command = new SQLiteCommand(sql, db);
+            SQLiteDataReader reader;
+            try
+            {
+                db.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Debug.WriteLine("Found info!");
+                    mod.name = reader["ModName"].ToString();
+                    mod.mcversion = reader["MinecraftVersion"].ToString();
+                    mod.modid = reader["ModID"].ToString();
+                    mod.version = reader["ModVersion"].ToString();
+                    Debug.WriteLine(mod.version);
+                    Debug.WriteLine(mod.mcversion);
+                    db.Close();
+                    return mod;
+                }
+                Debug.WriteLine("Didn't find info!");
+                throw new Exception();
+            }
+            catch (Exception)
+            {
+                //Debug.WriteLine(e.Message);
+                //Debug.WriteLine(e.InnerException);
+                //Debug.WriteLine(e.StackTrace);
+                throw new Exception();
+            }
+            finally
+            {
+                db.Close();
+            }
+        }
+
         public static String calculateMD5(string file)
         {
             using (var md5 = MD5.Create())

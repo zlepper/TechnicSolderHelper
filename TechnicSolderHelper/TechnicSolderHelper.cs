@@ -1,23 +1,23 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections;
-using System.Diagnostics;
-using System.IO;
 using Newtonsoft.Json;
-using System.Reflection;
-using System.Net;
 using Newtonsoft.Json.Serialization;
 using TechnicSolderHelper.SQL;
-using System.Text.RegularExpressions;
-using System.Configuration;
 
 namespace TechnicSolderHelper
 {
@@ -85,13 +85,12 @@ namespace TechnicSolderHelper
             
             Directory.CreateDirectory(OutputDirectory);
 
+            // The start of the output html file for Technic Solder.
             String htmlfile = "<!DOCTYPE html> \n <html> <head>"+ Environment.NewLine +
                          "<title>Mods</title>"+ Environment.NewLine+
 	                     "<meta charset=\"utf-8\" />" + Environment.NewLine+
                          "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js\"></script>"+ Environment.NewLine +
                          "<script src=\"http://cloud.zlepper.dk/technicsolderhelper.js\"></script>"+ Environment.NewLine +
-                         //"<script src=\"http://rasmus.phpwizard.dk/jquery.min.js\"></script>" + Environment.NewLine +
-                         //"<script src=\"http://rasmus.phpwizard.dk/technicsolderhelper.js\"></script>" + Environment.NewLine +
                          "</head>" + Environment.NewLine + "<body><table border='1'><tr><th>Modname</th><th>Modslug</th><th>Version</th></tr>" + Environment.NewLine;
             if (File.Exists(path))
             {
@@ -123,8 +122,8 @@ namespace TechnicSolderHelper
             foreach (String file in files)
             {
                 String FileName = file.Replace(DirectoryWithFiles, "");
-                if (!ModsSQLhelper.IsFileInDatabase(SQLhelper.calculateMD5(file)))
-                {
+                //if (!ModsSQLhelper.IsFileInDatabase(SQLhelper.calculateMD5(file)))
+                //{
                     //Check for mcmod.info
                     Directory.CreateDirectory(OutputDirectory);
                     String Arguments = "e " + "-y -o\"" + OutputDirectory + "\" \"" + file + "\" mcmod.info litemod.json";
@@ -146,6 +145,7 @@ namespace TechnicSolderHelper
                     }
                     if (File.Exists(mcmodfile))
                     {
+                        // Skip bspkrsCore, as it will autodownload
                         if (file.Contains("bspkrsCore"))
                         {
                             //Debug.WriteLine("skipping file: " + file);
@@ -153,123 +153,129 @@ namespace TechnicSolderHelper
                         else
                         {
                             //If exist, then read info and make zip file
+                            String json = "";
                             using (StreamReader r = new StreamReader(mcmodfile))
                             {
-                                String json = r.ReadToEnd();
+                                json = r.ReadToEnd();
                                 //modlist modlistversion;
+                            }
+                            try
+                            {
                                 try
+                                {
+                                    mcmod2 modinfo2 = JsonConvert.DeserializeObject<mcmod2>(json);
+                                        
+                                    mcmod mod = new mcmod();
+
+                                    if (modinfo2.modListVersion == 2)
+                                    {
+                                        //Debug.WriteLine("Is version 2");
+                                        mod.mcversion = modinfo2.modList[0].mcversion.ToString();
+                                        mod.modid = modinfo2.modList[0].modid.ToString();
+                                        mod.name = modinfo2.modList[0].name.ToString();
+                                        mod.version = modinfo2.modList[0].version.ToString();
+                                        requireUserInfo(mod, file);
+                                    }
+                                    else
+                                    {
+                                        //Debug.WriteLine("Deffenetly not version 2");
+                                        throw new JsonSerializationException();
+                                    }
+                                }
+                                catch (Newtonsoft.Json.JsonSerializationException)
                                 {
                                     try
                                     {
-                                        mcmod2 modinfo2 = JsonConvert.DeserializeObject<mcmod2>(json);
-                                        
                                         mcmod mod = new mcmod();
-
-                                        if (modinfo2.modListVersion == 2)
+                                        //Debug.WriteLine("Maybe version 1?");
+                                        List<mcmod> modinfo = null;
+                                        try
                                         {
-                                            //Debug.WriteLine("Is version 2");
-                                            mod.mcversion = modinfo2.modList[0].mcversion.ToString();
-                                            mod.modid = modinfo2.modList[0].modid.ToString();
-                                            mod.name = modinfo2.modList[0].name.ToString();
-                                            mod.version = modinfo2.modList[0].version.ToString();
+                                            modinfo = JsonConvert.DeserializeObject<List<mcmod>>(json);
+                                            //Debug.WriteLine("Version 1");
+                                        }
+                                        catch (Exception)
+                                        {
+                                            //Debug.WriteLine(e.Message);
+                                            //Debug.WriteLine(e.InnerException);
+                                        }
+
+                                        mod = modinfo[0];
+
+                                        if (file.ToLower().Contains("mekanism"))
+                                        {
+                                            //Debug.WriteLine("Found mekanism");
+                                            mod = ModHelper.GoodVersioning(FileName);
                                             requireUserInfo(mod, file);
                                         }
                                         else
                                         {
-                                            //Debug.WriteLine("Deffenetly not version 2");
-                                            throw new JsonSerializationException();
-                                        }
-                                    }
-                                    catch (Newtonsoft.Json.JsonSerializationException)
-                                    {
-                                        try
-                                        {
-                                            mcmod mod = new mcmod();
-                                            //Debug.WriteLine("Maybe version 1?");
-                                            List<mcmod> modinfo = null;
-                                            try
+                                            if (mod.modid.ToLower().StartsWith("mystcraft"))
                                             {
-                                                modinfo = JsonConvert.DeserializeObject<List<mcmod>>(json);
-                                                //Debug.WriteLine("Version 1");
-                                            }
-                                            catch (Exception)
-                                            {
-                                                //Debug.WriteLine(e.Message);
-                                                //Debug.WriteLine(e.InnerException);
-                                            }
-
-                                            mod = modinfo[0];
-
-                                            if (file.ToLower().Contains("mekanism"))
-                                            {
-                                                //Debug.WriteLine("Found mekanism");
                                                 mod = ModHelper.GoodVersioning(FileName);
                                                 requireUserInfo(mod, file);
                                             }
                                             else
                                             {
-                                                if (mod.modid.ToLower().StartsWith("mystcraft"))
+
+                                                if (isFullyInformed(mod))
                                                 {
-                                                    mod = ModHelper.GoodVersioning(FileName);
-                                                    requireUserInfo(mod, file);
+                                                    CreateTechnicModZip(mod, file);
                                                 }
                                                 else
                                                 {
-
-                                                    if (isFullyInformed(mod))
-                                                    {
-                                                        CreateTechnicModZip(mod, file);
-                                                    }
-                                                    else
-                                                    {
-                                                        requireUserInfo(mod, file);
-                                                    }
+                                                    requireUserInfo(mod, file);
                                                 }
                                             }
                                         }
-                                        catch (Newtonsoft.Json.JsonSerializationException)
+                                    }
+                                    catch (Exception)
+                                    {
+                                        //Debug.WriteLine("Maybe litemod?");
+                                        litemod liteloadermod = JsonConvert.DeserializeObject<litemod>(json);
+                                        //Debug.WriteLine("litemod.");
+
+                                        //Convert into mcmod
+                                        mcmod mod = new mcmod();
+                                        mod.mcversion = liteloadermod.mcversion;
+                                        mod.modid = liteloadermod.name.ToLower().Replace(" ", "");
+                                        mod.name = liteloadermod.name;
+                                        //mod.version = liteloadermod.version + "-" + liteloadermod.revision;
+
+                                        if (String.IsNullOrEmpty(liteloadermod.version) || String.IsNullOrEmpty(liteloadermod.revision))
                                         {
-                                            //Debug.WriteLine("Maybe litemod?");
-                                            litemod liteloadermod = JsonConvert.DeserializeObject<litemod>(json);
-                                            //Debug.WriteLine("litemod.");
-
-                                            //Convert into mcmod
-                                            mcmod mod = new mcmod();
-                                            mod.mcversion = liteloadermod.mcversion;
-                                            mod.modid = liteloadermod.name.ToLower().Replace(" ", "");
-                                            mod.name = liteloadermod.name;
-                                            //mod.version = liteloadermod.version + "-" + liteloadermod.revision;
-
-                                            if (String.IsNullOrEmpty(liteloadermod.version) || String.IsNullOrEmpty(liteloadermod.revision))
+                                            if (!(String.IsNullOrEmpty(liteloadermod.version)))
                                             {
-                                                if (!(String.IsNullOrEmpty(liteloadermod.version)))
-                                                {
-                                                    mod.version = liteloadermod.version;
-                                                }
-                                                else
-                                                {
-                                                    if (!(String.IsNullOrEmpty(liteloadermod.revision)))
-                                                    {
-                                                        mod.version = liteloadermod.revision;
-                                                    }
-                                                }
+                                                mod.version = liteloadermod.version;
                                             }
                                             else
                                             {
-                                                mod.version = liteloadermod.version + "-" + liteloadermod.revision;
+                                                if (!(String.IsNullOrEmpty(liteloadermod.revision)))
+                                                {
+                                                    mod.version = liteloadermod.revision;
+                                                }
                                             }
-
-                                            requireUserInfo(mod, file);
-                                            
                                         }
+                                        else
+                                        {
+                                            mod.version = liteloadermod.version + "-" + liteloadermod.revision;
+                                        }
+
+                                        requireUserInfo(mod, file);
+                                            
                                     }
+                                }
                                     
-                                }
-                                catch (Exception)
-                                {
-                                    requireUserInfo(file);
-                                }
                             }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(e.Message);
+                                Debug.WriteLine(e.InnerException);
+                                Debug.WriteLine(e.Source);
+                                Debug.WriteLine(e.StackTrace);
+                                requireUserInfo(file);
+                            }
+                            
                         }
                         File.Delete(mcmodfile);
                     }
@@ -329,11 +335,7 @@ namespace TechnicSolderHelper
                             requireUserInfo(file);
                         }
                     }
-                }
-                else
-                {
-                    //Debug.WriteLine(FileName + " is already in the database. skipping..");
-                }
+                //}
 
 
 
@@ -455,6 +457,15 @@ namespace TechnicSolderHelper
 
             mcmod mod = new mcmod();
 
+            try
+            {
+                mod = ModsSQLhelper.getModInfo(SQLhelper.calculateMD5(File));
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("File is not in the database");
+            }
+
             String FileName = File.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
             //Debug.WriteLine(FileName);
             if (currentData.name != null)
@@ -474,13 +485,17 @@ namespace TechnicSolderHelper
             }
             else
             {
-                //Debug.WriteLine("What is the mod name of: " + FileName);
-                String a = "Mod name of " + FileName + Environment.NewLine + "Go bug the mod author to include an mcmod.info file!";
-                mod.name = Prompt.ShowDialog(a, "Mod Name");
-                if (mod.name.Equals(""))
+                if (mod.name == null)
                 {
-                    return;
+                    //Debug.WriteLine("What is the mod name of: " + FileName);
+                    String a = "Mod name of " + FileName + Environment.NewLine + "Go bug the mod author to include an mcmod.info file!";
+                    mod.name = Prompt.ShowDialog(a, "Mod Name");
+                    if (mod.name.Equals(""))
+                    {
+                        return;
+                    }
                 }
+                
             }
 
             if (currentData.version != null)
@@ -489,10 +504,14 @@ namespace TechnicSolderHelper
             }
             else
             {
-                //Debug.WriteLine("What is the mod version of: " + FileName);
-                String a = String.Format("Mod version of {0}" + Environment.NewLine + "Go bug the mod author to include an mcmod.info file!", FileName);
-                mod.version = Prompt.ShowDialog(a, "Mod Version");
-                mod.version = mod.version.Replace(" ", "+").ToLower();
+                if (mod.version == null)
+                {
+                    //Debug.WriteLine("What is the mod version of: " + FileName);
+                    String a = String.Format("Mod version of {0}" + Environment.NewLine + "Go bug the mod author to include an mcmod.info file!", FileName);
+                    mod.version = Prompt.ShowDialog(a, "Mod Version");
+                    mod.version = mod.version.Replace(" ", "+").ToLower();
+                }
+                
             }
 
             if (currentData.mcversion != null)
@@ -501,16 +520,19 @@ namespace TechnicSolderHelper
             }
             else
             {
-                if (CurrentMCVersion == null)
+                if (mod.mcversion == null)
                 {
-                    //Debug.WriteLine("What is the Minecraft version of: " + FileName);
-                    String a = String.Format("Minecraft Version of {0}" + Environment.NewLine + "Go bug the mod author to include an mcmod.info file!", FileName);
-                    mod.mcversion = Prompt.ShowDialog(a, "Minecraft Version");
-                    CurrentMCVersion = mod.mcversion;
-                }
-                else
-                {
-                    mod.mcversion = CurrentMCVersion;
+                    if (CurrentMCVersion == null)
+                    {
+                        //Debug.WriteLine("What is the Minecraft version of: " + FileName);
+                        String a = String.Format("Minecraft Version of {0}" + Environment.NewLine + "Go bug the mod author to include an mcmod.info file!", FileName);
+                        mod.mcversion = Prompt.ShowDialog(a, "Minecraft Version");
+                        CurrentMCVersion = mod.mcversion;
+                    }
+                    else
+                    {
+                        mod.mcversion = CurrentMCVersion;
+                    }
                 }
             } 
 
@@ -532,51 +554,58 @@ namespace TechnicSolderHelper
             CreateTechnicModZip(mod, File);
         }
 
-        public void requireUserInfo(String FileName)
+        public void requireUserInfo(String file)
         {
             mcmod mod = new mcmod();
             mod.mcversion = null;
             mod.modid = null;
             mod.name = null;
             mod.version = null;
-            requireUserInfo(mod, FileName);
+
+            requireUserInfo(mod, file);
         }
 
         public void CreateTechnicModZip(mcmod mod, String modfile)
         {
+            if (!ModsSQLhelper.IsFileInDatabase(SQLhelper.calculateMD5(modfile)))
+            {
+                String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
+                String modDir = OutputDirectory + "\\" + mod.modid.ToLower().Replace("|", "") + "\\mods";
+                Directory.CreateDirectory(modDir);
 
-            String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
-            String modDir = OutputDirectory + "\\" + mod.modid.ToLower().Replace("|", "") + "\\mods";
-            Directory.CreateDirectory(modDir);
-
-            String tempModFile = modDir + "\\" + FileName;
-            //Debug.WriteLine("Copying " + modfile + " to " + tempModFile);
-            File.Copy(modfile, tempModFile, true);
-
-
-            String modArchive = OutputDirectory + "\\" + mod.modid.ToLower() + "\\" + mod.modid.ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
-            startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" "/* + ">> C:\\Users\\Rasmus\\Desktop\\error.txt"*/;
-            process.StartInfo = startInfo;
-            process.Start();
-            process.WaitForExit();
+                String tempModFile = modDir + "\\" + FileName;
+                //Debug.WriteLine("Copying " + modfile + " to " + tempModFile);
+                File.Copy(modfile, tempModFile, true);
 
 
-            Directory.Delete(modDir, true);
+                String modArchive = OutputDirectory + "\\" + mod.modid.ToLower() + "\\" + mod.modid.ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
+                startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" "/* + ">> C:\\Users\\Rasmus\\Desktop\\error.txt"*/;
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
 
-            //Save mod to database
-            String modMD5 = SQLhelper.calculateMD5(modfile);
-            ModsSQLhelper.addDoneMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5);
 
-            // Add mod info to a html file
-            String AddedMod = "<tr>";
-            File.AppendAllText(path, AddedMod);
-            AddedMod = "<td>" + mod.name.Replace("|", "") + "</td>";
-            File.AppendAllText(path, AddedMod);
-            AddedMod = "<td>" + mod.modid.ToLower().Replace("|", "") + "</td>";
-            File.AppendAllText(path, AddedMod);
-            AddedMod = "<td>" + mod.mcversion + "-" + mod.version + "</td>";
-            File.AppendAllText(path, AddedMod.ToLower());
-            File.AppendAllText(path, "</tr>" + Environment.NewLine);
+                Directory.Delete(modDir, true);
+
+                //Save mod to database
+                String modMD5 = SQLhelper.calculateMD5(modfile);
+                ModsSQLhelper.addDoneMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5);
+
+                // Add mod info to a html file
+                String AddedMod = "<tr>";
+                File.AppendAllText(path, AddedMod);
+                AddedMod = "<td>" + mod.name.Replace("|", "") + "</td>";
+                File.AppendAllText(path, AddedMod);
+                AddedMod = "<td>" + mod.modid.ToLower().Replace("|", "") + "</td>";
+                File.AppendAllText(path, AddedMod);
+                AddedMod = "<td>" + mod.mcversion + "-" + mod.version + "</td>";
+                File.AppendAllText(path, AddedMod.ToLower());
+                File.AppendAllText(path, "</tr>" + Environment.NewLine);
+            }
+            else
+            {
+                Debug.WriteLine(mod.name + " is already in the database. skipping..");
+            }
 
         }
 
