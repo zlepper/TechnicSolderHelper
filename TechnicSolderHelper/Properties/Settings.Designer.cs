@@ -72,14 +72,63 @@ namespace TechnicSolderHelper.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(LocalDB)\\v11.0;AttachDbFilename=|DataDirectory|\\SQL\\SolderHelper.mdf" +
-            ";Integrated Security=True")]
-        public string SolderHelperConnectionString {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CreateTechnicSolderFiles {
             get {
-                return ((string)(this["SolderHelperConnectionString"]));
+                return ((bool)(this["CreateTechnicSolderFiles"]));
+            }
+            set {
+                this["CreateTechnicSolderFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CreateTechnicConfigZip {
+            get {
+                return ((bool)(this["CreateTechnicConfigZip"]));
+            }
+            set {
+                this["CreateTechnicConfigZip"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CreateSolderPack {
+            get {
+                return ((bool)(this["CreateSolderPack"]));
+            }
+            set {
+                this["CreateSolderPack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CreateFTBPack {
+            get {
+                return ((bool)(this["CreateFTBPack"]));
+            }
+            set {
+                this["CreateFTBPack"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CreatePrivateFTBPack {
+            get {
+                return ((bool)(this["CreatePrivateFTBPack"]));
+            }
+            set {
+                this["CreatePrivateFTBPack"] = value;
             }
         }
     }

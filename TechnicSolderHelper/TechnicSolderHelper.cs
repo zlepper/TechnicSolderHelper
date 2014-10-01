@@ -19,17 +19,19 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TechnicSolderHelper.SQL;
 
+
 namespace TechnicSolderHelper
 {
     public partial class SolderHelper : Form
     {
+        #region Application Wide Variables
+
         public static String DirectoryWithFiles;
         public static String OutputDirectory;
         public SQLhelper ModsSQLhelper = new SQLhelper("mod");
         public SQLhelper FTBPermsSQLhelper = new SQLhelper("ftbperms");
         public SQLhelper OwnPermsSQLhelper = new SQLhelper("ownperms");
         public static String SevenZipLocation = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\TechnicSolderHelper\7za.exe";
-        //public static String SevenZipLocation = "7za.exe";
         public static Process process = new System.Diagnostics.Process();
         public static ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
         public static ManualResetEvent mre = new ManualResetEvent(false);
@@ -37,18 +39,46 @@ namespace TechnicSolderHelper
         public static String path;
         public static String CurrentMCVersion;
 
+        #endregion
+
         public SolderHelper()
         { 
             UserName = Environment.UserName;
             InitializeComponent();
-            Debug.WriteLine(Properties.Settings.Default.FirstRun);
             if (Properties.Settings.Default.FirstRun)
             {
                 Properties.Settings.Default.InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft\mods";
                 Properties.Settings.Default.FirstRun = false;
                 Properties.Settings.Default.Save();
             }
-            InputFolder.Text = Properties.Settings.Default.InputDirectory.ToString(); //Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft\mods" //InputFolder.Text.Replace("Users\\User", "Users\\"+Environment.UserName);
+            InputFolder.Text = Properties.Settings.Default.InputDirectory.ToString();
+            CreateTechnicPack.Checked = Properties.Settings.Default.CreateTechnicSolderFiles;
+            CreateFTBPack.Checked = Properties.Settings.Default.CreateFTBPack;
+            #region Reload radio buttons
+            if (Properties.Settings.Default.CreateSolderPack)
+            {
+                ZipPack.Checked = false;
+                SolderPack.Checked = true;
+            }
+            else
+            {
+                SolderPack.Checked = false;
+                ZipPack.Checked = true;
+            }
+
+            if (Properties.Settings.Default.CreatePrivateFTBPack)
+            {
+                PublicFTBPack.Checked = false;
+                PrivateFTBPack.Checked = true;
+            }
+            else
+            {
+                PrivateFTBPack.Checked = false;
+                PublicFTBPack.Checked = true;
+            }
+
+            #endregion
+
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.FileName = SevenZipLocation;
         }
@@ -67,9 +97,6 @@ namespace TechnicSolderHelper
                 wb.DownloadFile(SevenWeb, SevenZipLocation);
             }
             
-
-            
-
             DirectoryWithFiles = InputFolder.Text;
             OutputDirectory = OutputFolder.Text;
             Properties.Settings.Default.InputDirectory = InputFolder.Text;
@@ -369,6 +396,8 @@ namespace TechnicSolderHelper
             }
         }
 
+        #region Technic Pack Function
+
         /// <summary>
         /// Checks if the mod is on the list of mods which has custom support.
         /// </summary>
@@ -607,13 +636,17 @@ namespace TechnicSolderHelper
 
         }
 
+        #endregion
+
+        #region Interface buttons
+
         private void InputDirectoryBrowse_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog1.SelectedPath = InputFolder.Text;
-            DialogResult result = folderBrowserDialog1.ShowDialog();
+            FolderBrowser.SelectedPath = InputFolder.Text;
+            DialogResult result = FolderBrowser.ShowDialog();
             if (result == DialogResult.OK)
             {
-                InputFolder.Text = folderBrowserDialog1.SelectedPath;
+                InputFolder.Text = FolderBrowser.SelectedPath;
                 Properties.Settings.Default.InputDirectory = InputFolder.Text;
                 //Debug.WriteLine("Set InputDirectory to: " + Properties.Settings.Default.InputDirectory);
                 Properties.Settings.Default.Save();
@@ -623,11 +656,11 @@ namespace TechnicSolderHelper
 
         private void OutputDirectoryBrowse_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog1.SelectedPath = OutputFolder.Text;
-            DialogResult result = folderBrowserDialog1.ShowDialog();
+            FolderBrowser.SelectedPath = OutputFolder.Text;
+            DialogResult result = FolderBrowser.ShowDialog();
             if (result == DialogResult.OK)
             {
-                OutputFolder.Text = folderBrowserDialog1.SelectedPath;
+                OutputFolder.Text = FolderBrowser.SelectedPath;
                 Properties.Settings.Default.OutputDirectory = OutputFolder.Text;
                 //Debug.WriteLine("Set OutputDirectory to: " + Properties.Settings.Default.OutputDirectory);
                 Properties.Settings.Default.Save();
@@ -663,12 +696,62 @@ namespace TechnicSolderHelper
             excelReader.addFTBPermissions();
         }
 
+        #endregion
+
+        #region Feed The Beast Packs
+
         private void CreateFTBPack_CheckedChanged(object sender, EventArgs e)
         {
+            Properties.Settings.Default.CreateFTBPack = CreateFTBPack.Checked;
+            Properties.Settings.Default.Save();
 
+            if (CreateFTBPack.Checked)
+            {
+                DistributionLevel.Show();
+            }
+            else
+            {
+                DistributionLevel.Hide();
+            }
         }
 
-       
+        private void PrivateFTBPack_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.CreatePrivateFTBPack = PrivateFTBPack.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        #endregion
+
+        #region Technic Packs
+
+        private void CreateTechnicPack_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.CreateTechnicSolderFiles = CreateTechnicPack.Checked;
+            Properties.Settings.Default.Save();
+            if (CreateTechnicPack.Checked)
+            {
+                SolderPackType.Show();
+            }
+            else
+            {
+                SolderPackType.Hide();
+            }
+        }
+
+        private void IncludeConfigZip_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.CreateTechnicConfigZip = IncludeConfigZip.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void SolderPack_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.CreateSolderPack = SolderPack.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        #endregion
     }
 
 }
