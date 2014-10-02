@@ -732,10 +732,14 @@ namespace TechnicSolderHelper
             if (CreateTechnicPack.Checked)
             {
                 SolderPackType.Show();
+                DistributionLevel.Location = new Point(DistributionLevel.Location.X, DistributionLevel.Location.Y + SolderPackType.Height);
+                CreateFTBPack.Location = new Point(CreateFTBPack.Location.X, CreateFTBPack.Location.Y + SolderPackType.Height);
             }
             else
             {
                 SolderPackType.Hide();
+                DistributionLevel.Location = new Point(DistributionLevel.Location.X, DistributionLevel.Location.Y - SolderPackType.Height);
+                CreateFTBPack.Location = new Point(CreateFTBPack.Location.X, CreateFTBPack.Location.Y - SolderPackType.Height);
             }
         }
 

@@ -48,8 +48,8 @@
             this.SolderPack = new System.Windows.Forms.RadioButton();
             this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
             this.DistributionLevel = new System.Windows.Forms.GroupBox();
-            this.PrivateFTBPack = new System.Windows.Forms.RadioButton();
             this.PublicFTBPack = new System.Windows.Forms.RadioButton();
+            this.PrivateFTBPack = new System.Windows.Forms.RadioButton();
             this.SolderPackType.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.SuspendLayout();
@@ -255,11 +255,22 @@
             this.DistributionLevel.Controls.Add(this.PrivateFTBPack);
             this.DistributionLevel.Location = new System.Drawing.Point(16, 266);
             this.DistributionLevel.Name = "DistributionLevel";
-            this.DistributionLevel.Size = new System.Drawing.Size(146, 84);
+            this.DistributionLevel.Size = new System.Drawing.Size(146, 70);
             this.DistributionLevel.TabIndex = 11;
             this.DistributionLevel.TabStop = false;
-            this.DistributionLevel.Visible = Properties.Settings.Default.CreateFTBPack;
             this.DistributionLevel.Text = "Distribution Level";
+            this.DistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateFTBPack;
+            // 
+            // PublicFTBPack
+            // 
+            this.PublicFTBPack.AutoSize = true;
+            this.PublicFTBPack.Location = new System.Drawing.Point(18, 44);
+            this.PublicFTBPack.Name = "PublicFTBPack";
+            this.PublicFTBPack.Size = new System.Drawing.Size(105, 17);
+            this.PublicFTBPack.TabIndex = 1;
+            this.PublicFTBPack.TabStop = true;
+            this.PublicFTBPack.Text = "Public FTB Pack";
+            this.PublicFTBPack.UseVisualStyleBackColor = true;
             // 
             // PrivateFTBPack
             // 
@@ -272,17 +283,6 @@
             this.PrivateFTBPack.Text = "Private FTB Pack";
             this.PrivateFTBPack.UseVisualStyleBackColor = true;
             this.PrivateFTBPack.CheckedChanged += new System.EventHandler(this.PrivateFTBPack_CheckedChanged);
-            // 
-            // PublicFTBPack
-            // 
-            this.PublicFTBPack.AutoSize = true;
-            this.PublicFTBPack.Location = new System.Drawing.Point(18, 44);
-            this.PublicFTBPack.Name = "PublicFTBPack";
-            this.PublicFTBPack.Size = new System.Drawing.Size(105, 17);
-            this.PublicFTBPack.TabIndex = 1;
-            this.PublicFTBPack.TabStop = true;
-            this.PublicFTBPack.Text = "Public FTB Pack";
-            this.PublicFTBPack.UseVisualStyleBackColor = true;
             // 
             // SolderHelper
             // 
