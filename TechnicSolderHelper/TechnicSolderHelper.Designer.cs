@@ -44,14 +44,19 @@
             this.OutputFolder = new System.Windows.Forms.TextBox();
             this.InputFolder = new System.Windows.Forms.TextBox();
             this.SolderPackType = new System.Windows.Forms.GroupBox();
+            this.CheckPermissions = new System.Windows.Forms.CheckBox();
             this.ZipPack = new System.Windows.Forms.RadioButton();
             this.SolderPack = new System.Windows.Forms.RadioButton();
             this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
             this.DistributionLevel = new System.Windows.Forms.GroupBox();
             this.PublicFTBPack = new System.Windows.Forms.RadioButton();
             this.PrivateFTBPack = new System.Windows.Forms.RadioButton();
+            this.TechnicDistributionLevel = new System.Windows.Forms.GroupBox();
+            this.TechnicPublicPermissions = new System.Windows.Forms.RadioButton();
+            this.TechnicPrivatePermissions = new System.Windows.Forms.RadioButton();
             this.SolderPackType.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
+            this.TechnicDistributionLevel.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -143,7 +148,7 @@
             // CreateFTBPack
             // 
             this.CreateFTBPack.AutoSize = true;
-            this.CreateFTBPack.Location = new System.Drawing.Point(11, 243);
+            this.CreateFTBPack.Location = new System.Drawing.Point(11, 253);
             this.CreateFTBPack.Name = "CreateFTBPack";
             this.CreateFTBPack.Size = new System.Drawing.Size(108, 17);
             this.CreateFTBPack.TabIndex = 7;
@@ -166,7 +171,7 @@
             this.ProgressLabel.Location = new System.Drawing.Point(467, 142);
             this.ProgressLabel.Name = "ProgressLabel";
             this.ProgressLabel.Size = new System.Drawing.Size(52, 13);
-            this.ProgressLabel.TabIndex = 8;
+            this.ProgressLabel.TabIndex = 0;
             this.ProgressLabel.Text = "Waiting...";
             // 
             // CreateTechnicPack
@@ -203,16 +208,29 @@
             // 
             // SolderPackType
             // 
+            this.SolderPackType.Controls.Add(this.CheckPermissions);
             this.SolderPackType.Controls.Add(this.ZipPack);
             this.SolderPackType.Controls.Add(this.SolderPack);
             this.SolderPackType.Controls.Add(this.IncludeConfigZip);
             this.SolderPackType.Location = new System.Drawing.Point(14, 127);
             this.SolderPackType.Name = "SolderPackType";
-            this.SolderPackType.Size = new System.Drawing.Size(148, 100);
+            this.SolderPackType.Size = new System.Drawing.Size(148, 115);
             this.SolderPackType.TabIndex = 10;
             this.SolderPackType.TabStop = false;
             this.SolderPackType.Text = "Pack Type";
             this.SolderPackType.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicSolderFiles;
+            // 
+            // CheckPermissions
+            // 
+            this.CheckPermissions.AutoSize = true;
+            this.CheckPermissions.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
+            this.CheckPermissions.Location = new System.Drawing.Point(20, 88);
+            this.CheckPermissions.Name = "CheckPermissions";
+            this.CheckPermissions.Size = new System.Drawing.Size(114, 17);
+            this.CheckPermissions.TabIndex = 6;
+            this.CheckPermissions.Text = "Check permissions";
+            this.CheckPermissions.UseVisualStyleBackColor = true;
+            this.CheckPermissions.CheckedChanged += new System.EventHandler(this.CheckPermissions_CheckedChanged);
             // 
             // ZipPack
             // 
@@ -253,7 +271,7 @@
             // 
             this.DistributionLevel.Controls.Add(this.PublicFTBPack);
             this.DistributionLevel.Controls.Add(this.PrivateFTBPack);
-            this.DistributionLevel.Location = new System.Drawing.Point(16, 266);
+            this.DistributionLevel.Location = new System.Drawing.Point(16, 276);
             this.DistributionLevel.Name = "DistributionLevel";
             this.DistributionLevel.Size = new System.Drawing.Size(146, 70);
             this.DistributionLevel.TabIndex = 11;
@@ -284,11 +302,47 @@
             this.PrivateFTBPack.UseVisualStyleBackColor = true;
             this.PrivateFTBPack.CheckedChanged += new System.EventHandler(this.PrivateFTBPack_CheckedChanged);
             // 
+            // TechnicDistributionLevel
+            // 
+            this.TechnicDistributionLevel.Controls.Add(this.TechnicPublicPermissions);
+            this.TechnicDistributionLevel.Controls.Add(this.TechnicPrivatePermissions);
+            this.TechnicDistributionLevel.Location = new System.Drawing.Point(168, 169);
+            this.TechnicDistributionLevel.Name = "TechnicDistributionLevel";
+            this.TechnicDistributionLevel.Size = new System.Drawing.Size(136, 73);
+            this.TechnicDistributionLevel.TabIndex = 7;
+            this.TechnicDistributionLevel.TabStop = false;
+            this.TechnicDistributionLevel.Text = "Permissions Level";
+            this.TechnicDistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
+            // 
+            // TechnicPublicPermissions
+            // 
+            this.TechnicPublicPermissions.AutoSize = true;
+            this.TechnicPublicPermissions.Location = new System.Drawing.Point(7, 43);
+            this.TechnicPublicPermissions.Name = "TechnicPublicPermissions";
+            this.TechnicPublicPermissions.Size = new System.Drawing.Size(82, 17);
+            this.TechnicPublicPermissions.TabIndex = 1;
+            this.TechnicPublicPermissions.TabStop = true;
+            this.TechnicPublicPermissions.Text = "Public Pack";
+            this.TechnicPublicPermissions.UseVisualStyleBackColor = true;
+            // 
+            // TechnicPrivatePermissions
+            // 
+            this.TechnicPrivatePermissions.AutoSize = true;
+            this.TechnicPrivatePermissions.Location = new System.Drawing.Point(7, 20);
+            this.TechnicPrivatePermissions.Name = "TechnicPrivatePermissions";
+            this.TechnicPrivatePermissions.Size = new System.Drawing.Size(86, 17);
+            this.TechnicPrivatePermissions.TabIndex = 0;
+            this.TechnicPrivatePermissions.TabStop = true;
+            this.TechnicPrivatePermissions.Text = "Private Pack";
+            this.TechnicPrivatePermissions.UseVisualStyleBackColor = true;
+            this.TechnicPrivatePermissions.CheckedChanged += new System.EventHandler(this.TechnicPrivatePermissions_CheckedChanged);
+            // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(641, 464);
+            this.Controls.Add(this.TechnicDistributionLevel);
             this.Controls.Add(this.DistributionLevel);
             this.Controls.Add(this.SolderPackType);
             this.Controls.Add(this.CreateTechnicPack);
@@ -311,6 +365,8 @@
             this.SolderPackType.PerformLayout();
             this.DistributionLevel.ResumeLayout(false);
             this.DistributionLevel.PerformLayout();
+            this.TechnicDistributionLevel.ResumeLayout(false);
+            this.TechnicDistributionLevel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -340,5 +396,9 @@
         private System.Windows.Forms.GroupBox DistributionLevel;
         private System.Windows.Forms.RadioButton PublicFTBPack;
         private System.Windows.Forms.RadioButton PrivateFTBPack;
+        private System.Windows.Forms.CheckBox CheckPermissions;
+        private System.Windows.Forms.GroupBox TechnicDistributionLevel;
+        private System.Windows.Forms.RadioButton TechnicPublicPermissions;
+        private System.Windows.Forms.RadioButton TechnicPrivatePermissions;
     }
 }

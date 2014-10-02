@@ -64,6 +64,8 @@ namespace TechnicSolderHelper.SQL
             int rCnt = 2;
             while (!(String.IsNullOrWhiteSpace((string)(CurtainRange.Cells[rCnt, 1] as Excel.Range).Value2)))
             {
+                
+
                 Debug.WriteLine(rCnt);
                 String Name = (string)(CurtainRange.Cells[rCnt, 1] as Excel.Range).Value2;
                 String Author = (string)(CurtainRange.Cells[rCnt, 2] as Excel.Range).Value2;

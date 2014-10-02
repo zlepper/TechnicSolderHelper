@@ -49,7 +49,7 @@ namespace TechnicSolderHelper.SQL
                 {
                     if (this.TableName.ToLower().Equals("ownperms".ToLower()))
                     {
-                        sql = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModAuthor` TEXT NOT NULL, `ModID` TEXT NOT NULL, `PermLink` TEXT NOT NULL, PRIMARY KEY(ID));", this.TableName);
+                        sql = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL, `PermLink` TEXT NOT NULL, PRIMARY KEY(ID));", this.TableName);
                     }
                 }
             }
@@ -84,13 +84,13 @@ namespace TechnicSolderHelper.SQL
                 }
                 db.Close();
             }
-            catch (System.Data.SQLite.SQLiteException)
+            catch (System.Data.SQLite.SQLiteException e)
             {
-                //Debug.WriteLine(e.Message);
-                //Debug.WriteLine(e.InnerException);
-                //Debug.WriteLine(e.ErrorCode);
-                //Debug.WriteLine(e.StackTrace);
-                throw new System.Data.SQLite.SQLiteException();
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.InnerException);
+                Debug.WriteLine(e.ErrorCode);
+                Debug.WriteLine(e.StackTrace);
+                throw e;
             }
             finally
             {
@@ -113,7 +113,8 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID = '{1}';", this.TableName, ModID);
-            SQLiteDataReader reader;
+            Debug.WriteLine(sql);
+            SQLiteDataReader reader = null;
             try
             {
                 db.Open();
@@ -122,27 +123,34 @@ namespace TechnicSolderHelper.SQL
 
                 while (reader.Read())
                 {
+                    Debug.WriteLine(db.State.ToString());
                     if (isPublic)
                     {
                         switch (reader["PublicPerm"].ToString())
                         {
                             case "Open":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Open;
                             case "Closed":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Closed;
                             case "FTB":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.FTB;
                             case "Notify":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Notify;
                             case "Request":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Request;
                             default:
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Unknown;
                         }
                     }
@@ -152,36 +160,47 @@ namespace TechnicSolderHelper.SQL
                         {
                             case "Open":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Open;
                             case "Closed":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Closed;
                             case "FTB":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.FTB;
                             case "Notify":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Notify;
                             case "Request":
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Request;
                             default:
                                 reader.Close();
+                                db.Close();
                                 return PermissionLevel.Unknown;
                         }
                     }
                 }
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.Message);
             }
             finally
             {
+                reader.Close();
                 db.Close();
+                Debug.WriteLine(db.State.ToString());
             }
 
+            reader.Close();
+            db.Close();
+            db.Dispose();
             return PermissionLevel.Unknown;
         }
 
@@ -196,36 +215,45 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT PermLink FROM {0} WHERE ModID = '{1}';", this.TableName, ModID);
+            Debug.WriteLine(sql);
 
             try
             {
-                SQLiteCommand command = new SQLiteCommand(sql, db);
                 db.Open();
+                SQLiteCommand command = new SQLiteCommand(sql, db);
                 SQLiteDataReader reader = command.ExecuteReader();
+                ownPermissions p = new ownPermissions();
 
                 while (reader.Read())
                 {
+                    Debug.WriteLine(reader["PermLink"].ToString());
                     if (String.IsNullOrWhiteSpace(reader["PermLink"].ToString()))
                     {
-                        ownPermissions p = new ownPermissions();
                         p.hasPermission = false;
                         p.Link = null;
                         reader.Close();
-                        return p;
+                        db.Close();
+                        break;
                     }
                     else
                     {
-                        ownPermissions p = new ownPermissions();
                         p.hasPermission = true;
                         p.Link = reader["PermLink"].ToString();
                         reader.Close();
-                        return p;
+                        db.Close();
+                        break;
                     }
                 }
+                Debug.WriteLine("Nothing found");
+                reader.Close();
+                db.Close();
+                return p;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //Debug.WriteLine(e.Message);
+                db.Close();
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.Source);
             }
             finally
             {
@@ -235,6 +263,7 @@ namespace TechnicSolderHelper.SQL
             ownPermissions pe = new ownPermissions();
             pe.hasPermission = false;
             pe.Link = null;
+            db.Close();
             return pe;
         }
 
@@ -258,16 +287,16 @@ namespace TechnicSolderHelper.SQL
             executeDatabaseQuery(sql);
         }
 
-        public void addOwnModPerm(String ModName, String ModAuthor, String ModID, String PermissionLink)
+        public void addOwnModPerm(String ModName, String ModID, String PermissionLink)
         {
             ModName = ModName.Replace("'", "`");
-            ModAuthor = ModAuthor.Replace("'", "`");
             ModID = ModID.Replace("'", "`");
+            Debug.WriteLine(db.State.ToString());
 
-            String sql = String.Format("INSERT INTO {0}(ModName, ModAuthor, ModID, PermLink) VALUES ({1},{2},{3},{4});", this.TableName, ModName, ModAuthor, ModID, PermissionLink);
-            //Debug.WriteLine(sql);
+            String sql = String.Format("INSERT INTO {0}(ModName, ModID, PermLink) VALUES ('{1}','{2}','{3}');", this.TableName, ModName, ModID, PermissionLink);
+            Debug.WriteLine(sql);
 
-            executeDatabaseQuery(sql);
+            executeDatabaseQuery(sql, true);
         }
 
         /// <summary>
@@ -332,15 +361,20 @@ namespace TechnicSolderHelper.SQL
                         //Debug.WriteLine(reader["MD5"].ToString() + " == ");
                         //Debug.WriteLine(MD5Value);
                         reader.Close();
+                        db.Close();
                         return true;
                     }
                     else
                     {
                         //Debug.WriteLine(reader["MD5"].ToString() + " != ");
                         //Debug.WriteLine(MD5Value);
+                        reader.Close();
+                        db.Close();
                         return false;
                     }
                 }
+                reader.Close();
+                db.Close();
                 return false;
             }
             catch (System.NullReferenceException)
@@ -348,6 +382,7 @@ namespace TechnicSolderHelper.SQL
                 //Debug.WriteLine(e.Message);
                 //Debug.WriteLine(e.InnerException);
                 //Debug.WriteLine(e.StackTrace);
+                db.Close();
                 return false;
             }
             catch (Exception)
@@ -355,6 +390,7 @@ namespace TechnicSolderHelper.SQL
                 //Debug.WriteLine(e.Message);
                 //Debug.WriteLine(e.InnerException);
                 //Debug.WriteLine(e.StackTrace);
+                db.Close();
                 return false;
             }
             finally
@@ -393,6 +429,7 @@ namespace TechnicSolderHelper.SQL
                 //Debug.WriteLine(e.Message);
                 //Debug.WriteLine(e.InnerException);
                 //Debug.WriteLine(e.StackTrace);
+                db.Close();
                 throw new Exception();
             }
             finally

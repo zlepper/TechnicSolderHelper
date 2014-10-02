@@ -131,5 +131,29 @@ namespace TechnicSolderHelper.Properties {
                 this["CreatePrivateFTBPack"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CheckTecnicPermissions {
+            get {
+                return ((bool)(this["CheckTecnicPermissions"]));
+            }
+            set {
+                this["CheckTecnicPermissions"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TecnicPrivatePermissionsLevel {
+            get {
+                return ((bool)(this["TecnicPrivatePermissionsLevel"]));
+            }
+            set {
+                this["TecnicPrivatePermissionsLevel"] = value;
+            }
+        }
     }
 }

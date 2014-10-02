@@ -54,7 +54,7 @@ namespace TechnicSolderHelper
             InputFolder.Text = Properties.Settings.Default.InputDirectory.ToString();
             CreateTechnicPack.Checked = Properties.Settings.Default.CreateTechnicSolderFiles;
             CreateFTBPack.Checked = Properties.Settings.Default.CreateFTBPack;
-            #region Reload radio buttons
+            #region Reload Interface
             if (Properties.Settings.Default.CreateSolderPack)
             {
                 ZipPack.Checked = false;
@@ -75,6 +75,16 @@ namespace TechnicSolderHelper
             {
                 PrivateFTBPack.Checked = false;
                 PublicFTBPack.Checked = true;
+            }
+            if (Properties.Settings.Default.TecnicPrivatePermissionsLevel)
+            {
+                TechnicPublicPermissions.Checked = false;
+                TechnicPrivatePermissions.Checked = true;
+            }
+            else
+            {
+                TechnicPrivatePermissions.Checked = false;
+                TechnicPublicPermissions.Checked = true;
             }
 
             #endregion
@@ -594,6 +604,153 @@ namespace TechnicSolderHelper
 
         public void CreateTechnicModZip(mcmod mod, String modfile)
         {
+            try
+            {
+                #region Permissions checking
+                PermissionLevel PermLevel = FTBPermsSQLhelper.doFTBHavePermission(mod.modid, TechnicPublicPermissions.Checked);
+                String ov = "";
+                switch (PermLevel)
+                {
+                    case PermissionLevel.Open:
+                        Debug.WriteLine("Open Permissions");
+                        break;
+                    case PermissionLevel.Notify:
+                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        {
+                            ov = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            while (true)
+                            {
+                                if (String.IsNullOrWhiteSpace(ov))
+                                {
+                                    return;
+                                }
+                                else
+                                {
+                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    {
+                                        if (ov.ToLower().Contains("imgur"))
+                                        {
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            break;
+                                        }
+                                    }
+                                    ov = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                }
+                            }
+                        }
+                        break;
+                    case PermissionLevel.FTB:
+                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        {
+                            ov = Prompt.ShowDialog("Currently only FTB has permissions to distribute " + mod.name + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            while (true)
+                            {
+                                if (String.IsNullOrWhiteSpace(ov))
+                                {
+                                    return;
+                                }
+                                else
+                                {
+                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    {
+                                        if (ov.ToLower().Contains("imgur"))
+                                        {
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            break;
+                                        }
+                                    }
+                                    ov = Prompt.ShowDialog("Currently only FTB has permissions to distribute " + mod.name + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                }
+                            }
+                        }
+                        break;
+                    case PermissionLevel.Request:
+                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        {
+                            ov = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            while (true)
+                            {
+                                if (String.IsNullOrWhiteSpace(ov))
+                                {
+                                    return;
+                                }
+                                else
+                                {
+                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    {
+                                        if (ov.ToLower().Contains("imgur"))
+                                        {
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            break;
+                                        }
+                                    }
+                                    ov = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                }
+                            }
+                        }
+                        break;
+                    case PermissionLevel.Closed:
+                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        {
+                            ov = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            while (true)
+                            {
+                                if (String.IsNullOrWhiteSpace(ov))
+                                {
+                                    return;
+                                }
+                                else
+                                {
+                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    {
+                                        if (ov.ToLower().Contains("imgur"))
+                                        {
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            break;
+                                        }
+                                    }
+                                    ov = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                }
+                            }
+                        }
+                        break;
+                    case PermissionLevel.Unknown:
+                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        {
+                            ov = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            while (true)
+                            {
+                                if (String.IsNullOrWhiteSpace(ov))
+                                {
+                                    return;
+                                }
+                                else
+                                {
+                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    {
+                                        if (ov.ToLower().Contains("imgur"))
+                                        {
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            break;
+                                        }
+                                    }
+                                    ov = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        Debug.WriteLine("WELLP, something went wrong!!");
+                        break;
+                }
+                #endregion
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+            }
+
             if (!ModsSQLhelper.IsFileInDatabase(SQLhelper.calculateMD5(modfile)))
             {
                 String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
@@ -734,12 +891,21 @@ namespace TechnicSolderHelper
                 SolderPackType.Show();
                 DistributionLevel.Location = new Point(DistributionLevel.Location.X, DistributionLevel.Location.Y + SolderPackType.Height);
                 CreateFTBPack.Location = new Point(CreateFTBPack.Location.X, CreateFTBPack.Location.Y + SolderPackType.Height);
+                if (CheckPermissions.Checked)
+                {
+                    TechnicDistributionLevel.Show();
+                }
+                else
+                {
+                    TechnicDistributionLevel.Hide();
+                }
             }
             else
             {
                 SolderPackType.Hide();
                 DistributionLevel.Location = new Point(DistributionLevel.Location.X, DistributionLevel.Location.Y - SolderPackType.Height);
                 CreateFTBPack.Location = new Point(CreateFTBPack.Location.X, CreateFTBPack.Location.Y - SolderPackType.Height);
+                TechnicDistributionLevel.Hide();
             }
         }
 
@@ -755,7 +921,30 @@ namespace TechnicSolderHelper
             Properties.Settings.Default.Save();
         }
 
+        private void CheckPermissions_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.CheckTecnicPermissions = CheckPermissions.Checked;
+            Properties.Settings.Default.Save();
+
+            if (CheckPermissions.Checked)
+            {
+                TechnicDistributionLevel.Show();
+            }
+            else
+            {
+                TechnicDistributionLevel.Hide();
+            }
+        }
+
         #endregion
+
+        private void TechnicPrivatePermissions_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TecnicPrivatePermissionsLevel = TechnicPrivatePermissions.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        
     }
 
 }
