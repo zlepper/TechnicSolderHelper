@@ -28,9 +28,9 @@ namespace TechnicSolderHelper
 
         public static String DirectoryWithFiles;
         public static String OutputDirectory;
-        public SQLhelper ModsSQLhelper = new SQLhelper("mod");
-        public SQLhelper FTBPermsSQLhelper = new SQLhelper("ftbperms");
-        public SQLhelper OwnPermsSQLhelper = new SQLhelper("ownperms");
+        public ModListSQLHelper ModsSQLhelper = new ModListSQLHelper();
+        public FTBPermissionsSQLHelper FTBPermsSQLhelper = new FTBPermissionsSQLHelper();
+        public OwnPermissionsSQLHelper OwnPermsSQLhelper = new OwnPermissionsSQLHelper();
         public static String SevenZipLocation = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\TechnicSolderHelper\7za.exe";
         public static Process process = new System.Diagnostics.Process();
         public static ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -496,7 +496,7 @@ namespace TechnicSolderHelper
 
             try
             {
-                mod = ModsSQLhelper.getModInfo(SQLhelper.calculateMD5(File));
+                mod = ModsSQLhelper.getModInfo(SQLHelper.calculateMD5(File));
             }
             catch (Exception)
             {
@@ -751,7 +751,7 @@ namespace TechnicSolderHelper
                 Debug.WriteLine(e.StackTrace);
             }
 
-            if (!ModsSQLhelper.IsFileInDatabase(SQLhelper.calculateMD5(modfile)))
+            if (!ModsSQLhelper.IsFileInDatabase(SQLHelper.calculateMD5(modfile)))
             {
                 String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
                 String modDir = OutputDirectory + "\\" + mod.modid.ToLower().Replace("|", "") + "\\mods";
@@ -772,8 +772,8 @@ namespace TechnicSolderHelper
                 Directory.Delete(modDir, true);
 
                 //Save mod to database
-                String modMD5 = SQLhelper.calculateMD5(modfile);
-                ModsSQLhelper.addDoneMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5);
+                String modMD5 = SQLHelper.calculateMD5(modfile);
+                ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5);
 
                 // Add mod info to a html file
                 String AddedMod = "<tr>";
@@ -832,8 +832,7 @@ namespace TechnicSolderHelper
 
         public void button2_Click(object sender, EventArgs e)
         {
-            ModsSQLhelper.DropTable();
-            ModsSQLhelper = new SQLhelper("Mod");
+            ModsSQLhelper.resetTable();
         }
 
         private void InputFolder_TextChanged(object sender, EventArgs e)

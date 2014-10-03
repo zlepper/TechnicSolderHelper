@@ -18,9 +18,8 @@ namespace TechnicSolderHelper.SQL
 
         public static void addFTBPermissions()
         {
-            SQLhelper sqlhelper = new SQLhelper("ftbperms");
-            sqlhelper.DropTable();
-            sqlhelper = new SQLhelper("ftbperms");
+            FTBPermissionsSQLHelper sqlhelper = new FTBPermissionsSQLHelper();
+            sqlhelper.resetTable();
 
             if (File.Exists(permissionsheetFile)) 
             {
