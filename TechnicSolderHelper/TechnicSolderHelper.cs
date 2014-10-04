@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TechnicSolderHelper.SQL;
+using TechnicSolderHelper.forge;
 
 
 namespace TechnicSolderHelper
@@ -31,6 +32,7 @@ namespace TechnicSolderHelper
         public ModListSQLHelper ModsSQLhelper = new ModListSQLHelper();
         public FTBPermissionsSQLHelper FTBPermsSQLhelper = new FTBPermissionsSQLHelper();
         public OwnPermissionsSQLHelper OwnPermsSQLhelper = new OwnPermissionsSQLHelper();
+        public ForgeSQLHelper forgesqlhelper = new ForgeSQLHelper();
         public static String SevenZipLocation = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\TechnicSolderHelper\7za.exe";
         public static Process process = new System.Diagnostics.Process();
         public static ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -38,6 +40,7 @@ namespace TechnicSolderHelper
         public static String UserName;
         public static String path;
         public static String CurrentMCVersion;
+        public static String ModpackVersion, ModpackName, ModpackArchive;
 
         #endregion
 
@@ -54,6 +57,21 @@ namespace TechnicSolderHelper
             InputFolder.Text = Properties.Settings.Default.InputDirectory.ToString();
             CreateTechnicPack.Checked = Properties.Settings.Default.CreateTechnicSolderFiles;
             CreateFTBPack.Checked = Properties.Settings.Default.CreateFTBPack;
+            #region Find MC versions
+
+            MCversion.Items.Clear();
+
+            forgesqlhelper.FindAllForgeVersion();
+            List<String> mcversions = forgesqlhelper.getMCVersions();
+            foreach (String mcversion in mcversions)
+            {
+                Debug.WriteLine("Adding mcversion: " + mcversion);
+                MCversion.Items.Add(mcversion);
+            }
+            Debug.WriteLine("Done adding versions");
+
+            #endregion
+
             #region Reload Interface
             if (Properties.Settings.Default.CreateSolderPack)
             {
@@ -95,6 +113,7 @@ namespace TechnicSolderHelper
 
         public void Start()
         {
+            ModpackVersion = null;
             //Download 7zip dependancy
             if (!(Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\TechnicSolderHelper")))
             {
@@ -123,17 +142,17 @@ namespace TechnicSolderHelper
             Directory.CreateDirectory(OutputDirectory);
 
             // The start of the output html file for Technic Solder.
-            String htmlfile = "<!DOCTYPE html> \n <html> <head>"+ Environment.NewLine +
-                         "<title>Mods</title>"+ Environment.NewLine+
-	                     "<meta charset=\"utf-8\" />" + Environment.NewLine+
-                         "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js\"></script>"+ Environment.NewLine +
-                         "<script src=\"http://cloud.zlepper.dk/technicsolderhelper.js\"></script>"+ Environment.NewLine +
-                         "</head>" + Environment.NewLine + "<body><table border='1'><tr><th>Modname</th><th>Modslug</th><th>Version</th></tr>" + Environment.NewLine;
-            if (File.Exists(path))
+            if (SolderPack.Checked)
             {
-                File.Delete(path);
+                String htmlfile = "<!DOCTYPE html> \n <html> <head>" + Environment.NewLine +
+                         "<title>Mods</title>" + Environment.NewLine +
+                         "<meta charset=\"utf-8\" />" + Environment.NewLine +
+                         "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js\"></script>" + Environment.NewLine +
+                         "<script src=\"http://cloud.zlepper.dk/technicsolderhelper.js\"></script>" + Environment.NewLine +
+                         "</head>" + Environment.NewLine + "<body><table border='1'><tr><th>Modname</th><th>Modslug</th><th>Version</th></tr>" + Environment.NewLine;
+                File.WriteAllText(path, htmlfile);
             }
-            File.AppendAllText(path, htmlfile);
+            
 
             // Create array with all the mod locations
             List<String> files = new List<String>();
@@ -160,7 +179,7 @@ namespace TechnicSolderHelper
             {
                 String FileName = file.Replace(DirectoryWithFiles, "");
                 ProgressLabel.Text = FileName;
-                //if (!ModsSQLhelper.IsFileInDatabase(SQLhelper.calculateMD5(file)))
+                //if (!ModsSQLhelper.IsFileInSolder(SQLhelper.calculateMD5(file)))
                 //{
                     //Check for mcmod.info
                     Directory.CreateDirectory(OutputDirectory);
@@ -267,8 +286,9 @@ namespace TechnicSolderHelper
                                             }
                                         }
                                     }
-                                    catch (Exception)
+                                    catch (Exception e)
                                     {
+                                        Debug.WriteLine(e.Message);
                                         //Debug.WriteLine("Maybe litemod?");
                                         litemod liteloadermod = JsonConvert.DeserializeObject<litemod>(json);
                                         //Debug.WriteLine("litemod.");
@@ -369,41 +389,40 @@ namespace TechnicSolderHelper
                             requireUserInfo(file);
                         }
                     }
-                //}
-
-
-
             }
 
             if (IncludeConfigZip.Checked)
             {
                 createConfigZip();
             }
-            File.AppendAllText(path, "</table><p>List autogenerated by TechnicSolderHelper &copy; 2014 - Rasmus Hansen</p></body></html>");
-            ProgressLabel.Text = "Waiting...";
-            MessageBox.Show("Done");
-            try
+            if (SolderPack.Checked)
             {
-                Process.Start("chrome.exe", path);
-            }
-            catch (Exception)
-            {
+                File.AppendAllText(path, "</table><p>List autogenerated by TechnicSolderHelper &copy; 2014 - Rasmus Hansen</p></body></html>");
                 try
                 {
-                    Process.Start("iexplore", path);
+                    Process.Start("chrome.exe", path);
                 }
                 catch (Exception)
                 {
                     try
                     {
-                        Process.Start("firefox.exe", path);
+                        Process.Start("iexplore", path);
                     }
                     catch (Exception)
                     {
-                        Process.Start(path);
+                        try
+                        {
+                            Process.Start("firefox.exe", path);
+                        }
+                        catch (Exception)
+                        {
+                            Process.Start(path);
+                        }
                     }
                 }
             }
+            ProgressLabel.Text = "Waiting...";
+            
         }
 
         #region Technic Pack Function
@@ -474,18 +493,33 @@ namespace TechnicSolderHelper
 
         public void createConfigZip()
         {
-            String InputDirectory = InputFolder.Text;
-            InputDirectory = InputDirectory.Replace("\\mods", "");
-            OutputDirectory = OutputFolder.Text;
-            String ConfigFileName = Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config File Name");
-            if (!(ConfigFileName.EndsWith(".zip")))
-	        {
-                ConfigFileName = ConfigFileName + ".zip";
+            if (SolderPack.Checked)
+            {
+                String InputDirectory = InputFolder.Text;
+                InputDirectory = InputDirectory.Replace("\\mods", "");
+                OutputDirectory = OutputFolder.Text;
+                String ConfigFileName = Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config FileInfo Name");
+                if (!(ConfigFileName.EndsWith(".zip")))
+                {
+                    ConfigFileName = ConfigFileName + ".zip";
+                }
+                startInfo.Arguments = "a -y \"" + OutputDirectory + "\\" + ConfigFileName + "\" \"" + InputDirectory + "\\config" + "\"";
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
             }
-            startInfo.Arguments = "a -y \"" + OutputDirectory + "\\" + ConfigFileName + "\" \"" + InputDirectory + "\\config" + "\"";
-            process.StartInfo = startInfo;
-            process.Start();
-            process.WaitForExit();
+            else
+            {
+                String InputDirectory = InputFolder.Text;
+                InputDirectory = InputDirectory.Replace("\\mods", "\\config");
+                
+                startInfo.Arguments = "a -y \"" + ModpackArchive + "\" \"" + InputDirectory + "\"";
+                Debug.WriteLine(startInfo.Arguments);
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
+            }
+            
 
         }
 
@@ -500,7 +534,7 @@ namespace TechnicSolderHelper
             }
             catch (Exception)
             {
-                Debug.WriteLine("File is not in the database");
+                Debug.WriteLine("FileInfo is not in the database");
             }
 
             String FileName = File.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
@@ -745,45 +779,79 @@ namespace TechnicSolderHelper
                 }
                 #endregion
             }
-            if (!ModsSQLhelper.IsFileInDatabase(SQLHelper.calculateMD5(modfile)))
+            String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
+            String modMD5 = SQLHelper.calculateMD5(modfile);
+            if (SolderPack.Checked)
             {
-                String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
-                String modDir = OutputDirectory + "\\" + mod.modid.ToLower().Replace("|", "") + "\\mods";
-                Directory.CreateDirectory(modDir);
+                if (!ModsSQLhelper.IsFileInSolder(modfile))
+                {
+                    //String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
+                    String modDir = OutputDirectory + "\\" + mod.modid.ToLower().Replace("|", "") + "\\mods";
+                    Directory.CreateDirectory(modDir);
 
-                String tempModFile = modDir + "\\" + FileName;
-                //Debug.WriteLine("Copying " + modfile + " to " + tempModFile);
-                File.Copy(modfile, tempModFile, true);
-
-
-                String modArchive = OutputDirectory + "\\" + mod.modid.ToLower() + "\\" + mod.modid.ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
-                startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" "/* + ">> C:\\Users\\Rasmus\\Desktop\\error.txt"*/;
-                process.StartInfo = startInfo;
-                process.Start();
-                process.WaitForExit();
+                    String tempModFile = modDir + "\\" + FileName;
+                    //Debug.WriteLine("Copying " + modfile + " to " + tempModFile);
+                    File.Copy(modfile, tempModFile, true);
 
 
-                Directory.Delete(modDir, true);
+                    String modArchive = OutputDirectory + "\\" + mod.modid.ToLower() + "\\" + mod.modid.ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
+                    startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" "/* + ">> C:\\Users\\Rasmus\\Desktop\\error.txt"*/;
+                    process.StartInfo = startInfo;
+                    process.Start();
+                    process.WaitForExit();
 
-                //Save mod to database
-                String modMD5 = SQLHelper.calculateMD5(modfile);
-                ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5);
+                    Directory.Delete(modDir, true);
 
-                // Add mod info to a html file
-                String AddedMod = "<tr>";
-                File.AppendAllText(path, AddedMod);
-                AddedMod = "<td>" + mod.name.Replace("|", "") + "</td>";
-                File.AppendAllText(path, AddedMod);
-                AddedMod = "<td>" + mod.modid.ToLower().Replace("|", "") + "</td>";
-                File.AppendAllText(path, AddedMod);
-                AddedMod = "<td>" + mod.mcversion + "-" + mod.version + "</td>";
-                File.AppendAllText(path, AddedMod.ToLower());
-                File.AppendAllText(path, "</tr>" + Environment.NewLine);
+                    //Save mod to database
+                    //String modMD5 = SQLHelper.calculateMD5(modfile);
+                    ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, true);
+
+                    // Add mod info to a html file
+                    String AddedMod = "<tr>";
+                    File.AppendAllText(path, AddedMod);
+                    AddedMod = "<td>" + mod.name.Replace("|", "") + "</td>";
+                    File.AppendAllText(path, AddedMod);
+                    AddedMod = "<td>" + mod.modid.ToLower().Replace("|", "") + "</td>";
+                    File.AppendAllText(path, AddedMod);
+                    AddedMod = "<td>" + mod.mcversion + "-" + mod.version + "</td>";
+                    File.AppendAllText(path, AddedMod.ToLower());
+                    File.AppendAllText(path, "</tr>" + Environment.NewLine);
+                }
+                else
+                {
+                    Debug.WriteLine(mod.name + " is already in the database. skipping..");
+                }
             }
             else
             {
-                Debug.WriteLine(mod.name + " is already in the database. skipping..");
+                ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, false);
+                //Debug.WriteLine("Creating big zip file");
+                while (String.IsNullOrWhiteSpace(ModpackName))
+	            {
+                    ModpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
+	            }
+                while (String.IsNullOrWhiteSpace(ModpackVersion))
+                {
+                    ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
+                }
+
+                String tempDirectory = String.Format("{0}\\tmp", OutputDirectory);
+                String tempModDirectory = String.Format("{0}\\mods", tempDirectory);
+                Directory.CreateDirectory(tempModDirectory);
+                String tempFile = String.Format("{0}\\{1}", tempModDirectory, FileName);
+                File.Copy(modfile, tempFile, true);
+
+                ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
+                startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", ModpackArchive, tempModDirectory);
+                //Debug.WriteLine(startInfo.Arguments);
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
+                Directory.Delete(tempDirectory, true);
+
+                //Directory.Delete(tempDirectory, true);
             }
+            
 
         }
 
@@ -799,7 +867,6 @@ namespace TechnicSolderHelper
             {
                 InputFolder.Text = FolderBrowser.SelectedPath;
                 Properties.Settings.Default.InputDirectory = InputFolder.Text;
-                //Debug.WriteLine("Set InputDirectory to: " + Properties.Settings.Default.InputDirectory);
                 Properties.Settings.Default.Save();
             }
 
@@ -813,7 +880,6 @@ namespace TechnicSolderHelper
             {
                 OutputFolder.Text = FolderBrowser.SelectedPath;
                 Properties.Settings.Default.OutputDirectory = OutputFolder.Text;
-                //Debug.WriteLine("Set OutputDirectory to: " + Properties.Settings.Default.OutputDirectory);
                 Properties.Settings.Default.Save();
             }
             
@@ -929,12 +995,30 @@ namespace TechnicSolderHelper
             }
         }
 
-        #endregion
-
         private void TechnicPrivatePermissions_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.TecnicPrivatePermissionsLevel = TechnicPrivatePermissions.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        #endregion
+
+        private void UploadToFTPServer_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.UploadToFTPServer = UploadToFTPServer.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void MCversion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ForgeBuild.Items.Clear();
+            String selectedMcversion = MCversion.SelectedItem.ToString();
+            List<String> ForgeVersions = forgesqlhelper.getForgeVersions(selectedMcversion);
+
+            foreach (String build in ForgeVersions)
+            {
+                ForgeBuild.Items.Add(build);
+            }
         }
 
         

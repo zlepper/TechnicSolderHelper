@@ -155,5 +155,17 @@ namespace TechnicSolderHelper.Properties {
                 this["TecnicPrivatePermissionsLevel"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UploadToFTPServer {
+            get {
+                return ((bool)(this["UploadToFTPServer"]));
+            }
+            set {
+                this["UploadToFTPServer"] = value;
+            }
+        }
     }
 }

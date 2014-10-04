@@ -10,7 +10,7 @@ namespace TechnicSolderHelper.SQL
 {
     public class FTBPermissionsSQLHelper : SQLHelper
     {
-        private readonly String CreateTableString;
+        protected readonly String CreateTableString;
         public FTBPermissionsSQLHelper() : base("FTBPermssions", "ftbperms")
         {
             CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModAuthor` TEXT NOT NULL, `ModID` TEXT NOT NULL, `PublicPerm` TEXT NOT NULL, `PrivatePerm` TEXT NOT NULL, PRIMARY KEY(ID));", this.TableName);

@@ -10,11 +10,11 @@ namespace TechnicSolderHelper.SQL
 {
     public class ModListSQLHelper : SQLHelper
     {
-        private readonly String CreateTableString;
+        protected readonly String CreateTableString;
         public ModListSQLHelper()
             : base("ModList", "modlist")
         {
-            CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS '{0}'('ID' INTEGER, 'ModName' TEXT, 'ModID' TEXT, 'ModVersion' TEXT, 'MinecraftVersion' TEXT, 'FileName' TEXT, 'FileVersion' TEXT, 'MD5' TEXT, PRIMARY KEY(ID));", this.TableName);
+            CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS '{0}'('ID' INTEGER, 'ModName' TEXT, 'ModID' TEXT, 'ModVersion' TEXT, 'MinecraftVersion' TEXT, 'FileName' TEXT, 'FileVersion' TEXT, 'MD5' TEXT UNIQUE, 'OnSolder' NUMERIC, PRIMARY KEY(ID));", this.TableName);
             executeDatabaseQuery(CreateTableString);
         }
 
@@ -38,24 +38,31 @@ namespace TechnicSolderHelper.SQL
         /// </param>
         /// <param name="MD5value">
         /// The MD5 value of the file</param>
-        public void addMod(String ModName, String modID, String ModVersion, String MinecraftVersion, String FileName, String MD5value)
+        public void addMod(String ModName, String modID, String ModVersion, String MinecraftVersion, String FileName, String MD5value, Boolean OnSolder)
         {
-
             ModName = ModName.Replace("'", "`");
             ModVersion = ModVersion.Replace("'", "`");
             modID = modID.Replace("'", "`");
             MinecraftVersion = MinecraftVersion.Replace("'", "`");
             FileName = FileName.Replace("'", "`");
             String FileVersion = MinecraftVersion + "-" + ModVersion;
-
-
-            String sql = String.Format("INSERT INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}');",
-                this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
+            String sql = "";
+            if (OnSolder)
+            {
+                sql = String.Format("INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '1');",
+                           this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
+            }
+            else
+            {
+                sql = String.Format("INSERT OR ABORT INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');",
+                           this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
+            }
+            
             //Debug.WriteLine(sql);
             executeDatabaseQuery(sql);
         }
 
-        public Boolean IsFileInDatabase(String MD5Value)
+        public Boolean IsFileInSolder(String MD5Value)
         {
             String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", this.TableName, MD5Value);
             using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
@@ -69,7 +76,8 @@ namespace TechnicSolderHelper.SQL
                         {
                             if (reader["MD5"].ToString().Equals(MD5Value))
                             {
-                                return true;
+                                if (reader["OnSolder"].ToString().Equals(1)) { return true; }
+                                return false;
                             }
                             else
                             {
