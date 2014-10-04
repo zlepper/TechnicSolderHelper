@@ -604,7 +604,7 @@ namespace TechnicSolderHelper
 
         public void CreateTechnicModZip(mcmod mod, String modfile)
         {
-            try
+            if (CheckPermissions.Checked)
             {
                 #region Permissions checking
                 PermissionLevel PermLevel = FTBPermsSQLhelper.doFTBHavePermission(mod.modid, TechnicPublicPermissions.Checked);
@@ -745,12 +745,6 @@ namespace TechnicSolderHelper
                 }
                 #endregion
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
-            }
-
             if (!ModsSQLhelper.IsFileInDatabase(SQLHelper.calculateMD5(modfile)))
             {
                 String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
