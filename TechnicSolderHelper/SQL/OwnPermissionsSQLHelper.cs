@@ -29,54 +29,45 @@ namespace TechnicSolderHelper.SQL
             String sql = String.Format("SELECT PermLink FROM {0} WHERE ModID = '{1}';", this.TableName, ModID);
             Debug.WriteLine(sql);
 
+            Boolean didLoopRun = false;
+            ownPermissions p = new ownPermissions();
             try
             {
-                db.Open();
                 SQLiteCommand command = new SQLiteCommand(sql, db);
+                db.Open();
                 SQLiteDataReader reader = command.ExecuteReader();
-                ownPermissions p = new ownPermissions();
-
                 while (reader.Read())
                 {
-                    Debug.WriteLine(reader["PermLink"].ToString());
-                    if (String.IsNullOrWhiteSpace(reader["PermLink"].ToString()))
-                    {
-                        p.hasPermission = false;
-                        p.Link = null;
-                        reader.Close();
-                        db.Close();
-                        break;
-                    }
-                    else
-                    {
-                        p.hasPermission = true;
-                        p.Link = reader["PermLink"].ToString();
-                        reader.Close();
-                        db.Close();
-                        break;
-                    }
+                    didLoopRun = true;
+                    p.hasPermission = true;
+                    p.Link = reader["PermLink"].ToString();
                 }
-                Debug.WriteLine("Nothing found");
                 reader.Close();
-                db.Close();
-                return p;
+                
             }
             catch (Exception e)
             {
-                db.Close();
+                Debug.WriteLine("Something went wrong");
                 Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.Source);
+                throw;
             }
             finally
             {
                 db.Close();
+                Debug.WriteLine("Closed Database");
             }
 
-            ownPermissions pe = new ownPermissions();
-            pe.hasPermission = false;
-            pe.Link = null;
-            db.Close();
-            return pe;
+            if (didLoopRun)
+            {
+                Debug.WriteLine("Return ran");
+                return p;
+            }
+            else
+            {
+                Debug.WriteLine("Return not ran");
+                p.hasPermission = false;
+                return p;
+            }
         }
 
         public void addOwnModPerm(String ModName, String ModID, String PermissionLink)
@@ -89,6 +80,7 @@ namespace TechnicSolderHelper.SQL
             Debug.WriteLine(sql);
 
             executeDatabaseQuery(sql);
+            Debug.WriteLine("EXECUTEd");
         }
 
         public override void resetTable()

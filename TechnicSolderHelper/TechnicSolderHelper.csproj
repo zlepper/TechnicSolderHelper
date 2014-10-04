@@ -202,7 +202,6 @@
     <Compile Include="SQL\FTBPermissionsSQLHelper.cs" />
     <Compile Include="SQL\ModListSQLHelper.cs" />
     <Compile Include="SQL\OwnPermissionsSQLHelper.cs" />
-    <Compile Include="SQL\OLD\SQLhelper.cs" />
     <Compile Include="SQL\SQLHelper.cs" />
     <Compile Include="TechnicSolderHelper.cs">
       <SubType>Form</SubType>

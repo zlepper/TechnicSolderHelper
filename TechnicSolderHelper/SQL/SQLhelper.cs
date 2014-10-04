@@ -52,26 +52,38 @@ namespace TechnicSolderHelper.SQL
 
         protected void executeDatabaseQuery(String sql, Boolean Async)
         {
+            Debug.WriteLine("Database state is: " + db.State.ToString());
+            Debug.WriteLine(sql);
             try
             {
                 SQLiteCommand command = new SQLiteCommand(sql, db);
                 db.Open();
+                Debug.WriteLine("Database state is now: " + db.State.ToString());
                 if (Async)
                 {
                     command.ExecuteNonQueryAsync();
                 }
                 else
                 {
-                    command.ExecuteNonQuery();
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception)
+                    {
+                        Debug.WriteLine("BUS");
+                        throw;
+                    }
                 }
                 db.Close();
+                Debug.WriteLine("Database state is now: " + db.State.ToString());
             }
             catch (System.Data.SQLite.SQLiteException e)
             {
+                
                 Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.InnerException);
-                Debug.WriteLine(e.ErrorCode);
                 Debug.WriteLine(e.StackTrace);
+                Debug.WriteLine(db.DataSource.ToString());
                 throw e;
             }
             finally

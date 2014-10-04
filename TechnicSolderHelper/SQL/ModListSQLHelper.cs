@@ -61,6 +61,7 @@ namespace TechnicSolderHelper.SQL
             //Debug.WriteLine(sql);
             SQLiteCommand command = new SQLiteCommand(sql, db);
             SQLiteDataReader reader;
+            bool isindatabase = false;
             try
             {
                 db.Open();
@@ -72,36 +73,30 @@ namespace TechnicSolderHelper.SQL
                     {
                         //Debug.WriteLine(reader["MD5"].ToString() + " == ");
                         //Debug.WriteLine(MD5Value);
-                        reader.Close();
-                        db.Close();
-                        return true;
+                        isindatabase = true;
                     }
                     else
                     {
                         //Debug.WriteLine(reader["MD5"].ToString() + " != ");
                         //Debug.WriteLine(MD5Value);
-                        reader.Close();
-                        db.Close();
-                        return false;
+                        isindatabase = false;
                     }
                 }
                 reader.Close();
+            }
+            catch (System.NullReferenceException e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.InnerException);
+                Debug.WriteLine(e.StackTrace);
                 db.Close();
                 return false;
             }
-            catch (System.NullReferenceException)
+            catch (Exception e)
             {
-                //Debug.WriteLine(e.Message);
-                //Debug.WriteLine(e.InnerException);
-                //Debug.WriteLine(e.StackTrace);
-                db.Close();
-                return false;
-            }
-            catch (Exception)
-            {
-                //Debug.WriteLine(e.Message);
-                //Debug.WriteLine(e.InnerException);
-                //Debug.WriteLine(e.StackTrace);
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.InnerException);
+                Debug.WriteLine(e.StackTrace);
                 db.Close();
                 return false;
             }
@@ -109,6 +104,8 @@ namespace TechnicSolderHelper.SQL
             {
                 db.Close();
             }
+            Debug.WriteLine("Returning");
+            return isindatabase;
 
 
 
