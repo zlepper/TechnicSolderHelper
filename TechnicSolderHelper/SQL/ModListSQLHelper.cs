@@ -57,94 +57,59 @@ namespace TechnicSolderHelper.SQL
 
         public Boolean IsFileInDatabase(String MD5Value)
         {
-            String sql = String.Format("SELECT * FROM {0} WHERE MD5 = '{1}';", this.TableName, MD5Value);
-            //Debug.WriteLine(sql);
-            SQLiteCommand command = new SQLiteCommand(sql, db);
-            SQLiteDataReader reader;
-            bool isindatabase = false;
-            try
+            String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", this.TableName, MD5Value);
+            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
             {
                 db.Open();
-                reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                 {
-                    //Debug.WriteLine(reader["MD5"].ToString());
-                    if (reader["MD5"].ToString().Equals(MD5Value))
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        //Debug.WriteLine(reader["MD5"].ToString() + " == ");
-                        //Debug.WriteLine(MD5Value);
-                        isindatabase = true;
-                    }
-                    else
-                    {
-                        //Debug.WriteLine(reader["MD5"].ToString() + " != ");
-                        //Debug.WriteLine(MD5Value);
-                        isindatabase = false;
+                        while (reader.Read())
+                        {
+                            if (reader["MD5"].ToString().Equals(MD5Value))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
                     }
                 }
-                reader.Close();
             }
-            catch (System.NullReferenceException e)
-            {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.InnerException);
-                Debug.WriteLine(e.StackTrace);
-                db.Close();
-                return false;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.InnerException);
-                Debug.WriteLine(e.StackTrace);
-                db.Close();
-                return false;
-            }
-            finally
-            {
-                db.Close();
-            }
-            Debug.WriteLine("Returning");
-            return isindatabase;
 
-
+            return false;
 
         }
 
         public mcmod getModInfo(String MD5Value)
         {
             mcmod mod = new mcmod();
-            String sql = String.Format("SELECT * FROM {0} WHERE MD5 = '{1}';", this.TableName, MD5Value);
+            String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", this.TableName, MD5Value);
             //Debug.WriteLine(sql);
-            SQLiteCommand command = new SQLiteCommand(sql, db);
-            SQLiteDataReader reader;
-            try
+
+            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
             {
                 db.Open();
-                reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                 {
-                    mod.name = reader["ModName"].ToString();
-                    mod.mcversion = reader["MinecraftVersion"].ToString();
-                    mod.modid = reader["ModID"].ToString();
-                    mod.version = reader["ModVersion"].ToString();
-                    db.Close();
-                    return mod;
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            mod.name = reader["ModName"].ToString();
+                            mod.mcversion = reader["MinecraftVersion"].ToString();
+                            mod.modid = reader["ModID"].ToString();
+                            mod.version = reader["ModVersion"].ToString();
+                        }
+                        return mod;
+                    }
                 }
-                throw new Exception();
             }
-            catch (Exception)
-            {
-                //Debug.WriteLine(e.Message);
-                //Debug.WriteLine(e.InnerException);
-                //Debug.WriteLine(e.StackTrace);
-                db.Close();
-                throw new Exception();
-            }
-            finally
-            {
-                db.Close();
-            }
+            return mod;
+            
         }
 
         public override void resetTable()

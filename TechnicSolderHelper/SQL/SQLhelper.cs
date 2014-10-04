@@ -31,14 +31,13 @@ namespace TechnicSolderHelper.SQL
                 //Debug.WriteLine(e.InnerException);
             }
 
-            this.db = this.db = new SQLiteConnection("Data Source=" + this.databaseName + ";Version=3;");
+            this.ConnectionString = "Data Source=" + this.databaseName + ";Version=3;";
             this.TableName = TableName;
-            this.db.DefaultTimeout = 2000;
         }
 
         protected readonly String databaseName;
-        protected readonly SQLiteConnection db;
         protected readonly String TableName;
+        protected readonly String ConnectionString;
 
         protected void executeDatabaseQuery(String sql)
         {
@@ -52,43 +51,20 @@ namespace TechnicSolderHelper.SQL
 
         protected void executeDatabaseQuery(String sql, Boolean Async)
         {
-            Debug.WriteLine("Database state is: " + db.State.ToString());
-            Debug.WriteLine(sql);
-            try
+            using (SQLiteConnection db = new SQLiteConnection(ConnectionString)) 
             {
-                SQLiteCommand command = new SQLiteCommand(sql, db);
                 db.Open();
-                Debug.WriteLine("Database state is now: " + db.State.ToString());
-                if (Async)
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                 {
-                    command.ExecuteNonQueryAsync();
-                }
-                else
-                {
-                    try
+                    if (Async)
                     {
-                        command.ExecuteNonQuery();
+                        cmd.ExecuteNonQueryAsync();
                     }
-                    catch (Exception)
+                    else
                     {
-                        Debug.WriteLine("BUS");
-                        throw;
+                        cmd.ExecuteNonQuery();
                     }
                 }
-                db.Close();
-                Debug.WriteLine("Database state is now: " + db.State.ToString());
-            }
-            catch (System.Data.SQLite.SQLiteException e)
-            {
-                
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
-                Debug.WriteLine(db.DataSource.ToString());
-                throw e;
-            }
-            finally
-            {
-                db.Close();
             }
         }
 

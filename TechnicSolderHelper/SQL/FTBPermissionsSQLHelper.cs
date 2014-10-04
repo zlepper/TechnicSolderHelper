@@ -31,61 +31,47 @@ namespace TechnicSolderHelper.SQL
         {
             ModID = ModID.Replace("'", "`");
 
-            String sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID = '{1}';", this.TableName, ModID);
+            String sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
             Debug.WriteLine(sql);
-            SQLiteDataReader reader = null;
-            try
+
+            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
             {
                 db.Open();
-                SQLiteCommand command = new SQLiteCommand(sql, db);
-                reader = command.ExecuteReader();
-
-                String level = "";
-                while (reader.Read())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                 {
-                    if (isPublic)
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        level = reader["PublicPerm"].ToString();
-                    }
-                    else
-                    {
-                        level = reader["PrivatePerm"].ToString();
+                        String level = "";
+                        while (reader.Read())
+                        {
+                            if (isPublic)
+                            {
+                                level = reader["PublicPerm"].ToString();
+                            }
+                            else
+                            {
+                                level = reader["PrivatePerm"].ToString();
+                            }
+                        }
+                        
+                        switch (level.ToLower())
+                        {
+                            case "open":
+                                return PermissionLevel.Open;
+                            case "closed":
+                                return PermissionLevel.Closed;
+                            case "ftb":
+                                return PermissionLevel.FTB;
+                            case "notify":
+                                return PermissionLevel.Notify;
+                            case "request":
+                                return PermissionLevel.Request;
+                            default:
+                                return PermissionLevel.Unknown;
+                        }
                     }
                 }
-                reader.Close();
-                db.Close();
-                Debug.WriteLine(level);
-                switch (level)
-                {
-                    case "Open":
-                        return PermissionLevel.Open;
-                    case "Closed":
-                        return PermissionLevel.Closed;
-                    case "FTB":
-                        return PermissionLevel.FTB;
-                    case "Notify":
-                        return PermissionLevel.Notify;
-                    case "Request":
-                        return PermissionLevel.Request;
-                    default:
-                        return PermissionLevel.Unknown;
-                }
-
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-            finally
-            {
-                reader.Close();
-                db.Close();
-                Debug.WriteLine(db.State.ToString());
-            }
-
-            reader.Close();
-            db.Close();
-            db.Dispose();
             return PermissionLevel.Unknown;
         }
 

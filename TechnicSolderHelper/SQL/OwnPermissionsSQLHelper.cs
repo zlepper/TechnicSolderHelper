@@ -26,45 +26,35 @@ namespace TechnicSolderHelper.SQL
         {
             ModID = ModID.Replace("'", "`");
 
-            String sql = String.Format("SELECT PermLink FROM {0} WHERE ModID = '{1}';", this.TableName, ModID);
+            String sql = String.Format("SELECT PermLink FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
             Debug.WriteLine(sql);
 
-            Boolean didLoopRun = false;
+            bool didLoopRun = false;
             ownPermissions p = new ownPermissions();
-            try
+            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
             {
-                SQLiteCommand command = new SQLiteCommand(sql, db);
                 db.Open();
-                SQLiteDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                 {
-                    didLoopRun = true;
-                    p.hasPermission = true;
-                    p.Link = reader["PermLink"].ToString();
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            didLoopRun = true;
+                            p.hasPermission = true;
+                            p.Link = reader["PermLink"].ToString();
+                            break;
+                        }
+                    }
                 }
-                reader.Close();
-                
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Something went wrong");
-                Debug.WriteLine(e.Message);
-                throw;
-            }
-            finally
-            {
-                db.Close();
-                Debug.WriteLine("Closed Database");
             }
 
             if (didLoopRun)
             {
-                Debug.WriteLine("Return ran");
                 return p;
             }
             else
             {
-                Debug.WriteLine("Return not ran");
                 p.hasPermission = false;
                 return p;
             }
@@ -74,7 +64,6 @@ namespace TechnicSolderHelper.SQL
         {
             ModName = ModName.Replace("'", "`");
             ModID = ModID.Replace("'", "`");
-            Debug.WriteLine(db.State.ToString());
 
             String sql = String.Format("INSERT INTO {0}(ModName, ModID, PermLink) VALUES ('{1}','{2}','{3}');", this.TableName, ModName, ModID, PermissionLink);
             Debug.WriteLine(sql);
