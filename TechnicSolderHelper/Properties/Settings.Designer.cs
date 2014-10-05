@@ -86,7 +86,7 @@ namespace TechnicSolderHelper.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool CreateTechnicConfigZip {
             get {
                 return ((bool)(this["CreateTechnicConfigZip"]));
@@ -165,6 +165,18 @@ namespace TechnicSolderHelper.Properties {
             }
             set {
                 this["UploadToFTPServer"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IncludeForgeVersion {
+            get {
+                return ((bool)(this["IncludeForgeVersion"]));
+            }
+            set {
+                this["IncludeForgeVersion"] = value;
             }
         }
     }

@@ -72,7 +72,6 @@ namespace TechnicSolderHelper.SQL
                     }
                 }
             }
-            return PermissionLevel.Unknown;
         }
 
         /// <summary>

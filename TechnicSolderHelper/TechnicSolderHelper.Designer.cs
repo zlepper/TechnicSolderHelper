@@ -56,13 +56,14 @@
             this.TechnicPublicPermissions = new System.Windows.Forms.RadioButton();
             this.TechnicPrivatePermissions = new System.Windows.Forms.RadioButton();
             this.UploadToFTPServer = new System.Windows.Forms.CheckBox();
-            this.ForgeVersion = new System.Windows.Forms.GroupBox();
             this.MCversion = new System.Windows.Forms.ListBox();
             this.ForgeBuild = new System.Windows.Forms.ListBox();
+            this.GetForgeVersions = new System.Windows.Forms.Button();
+            this.labelmcversion = new System.Windows.Forms.Label();
+            this.labelforgeversion = new System.Windows.Forms.Label();
             this.SolderPackType.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
-            this.ForgeVersion.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -231,12 +232,14 @@
             // IncludeForgeVersion
             // 
             this.IncludeForgeVersion.AutoSize = true;
+            this.IncludeForgeVersion.Checked = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             this.IncludeForgeVersion.Location = new System.Drawing.Point(20, 65);
             this.IncludeForgeVersion.Name = "IncludeForgeVersion";
             this.IncludeForgeVersion.Size = new System.Drawing.Size(109, 17);
             this.IncludeForgeVersion.TabIndex = 13;
             this.IncludeForgeVersion.Text = "Include Forge Zip";
             this.IncludeForgeVersion.UseVisualStyleBackColor = true;
+            this.IncludeForgeVersion.CheckedChanged += new System.EventHandler(this.IncludeForgeVersion_CheckedChanged);
             // 
             // CheckPermissions
             // 
@@ -277,6 +280,7 @@
             // 
             this.IncludeConfigZip.AutoSize = true;
             this.IncludeConfigZip.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicConfigZip;
+            this.IncludeConfigZip.CheckState = System.Windows.Forms.CheckState.Checked;
             this.IncludeConfigZip.Location = new System.Drawing.Point(20, 88);
             this.IncludeConfigZip.Name = "IncludeConfigZip";
             this.IncludeConfigZip.Size = new System.Drawing.Size(108, 17);
@@ -367,40 +371,65 @@
             this.UploadToFTPServer.UseVisualStyleBackColor = true;
             this.UploadToFTPServer.CheckedChanged += new System.EventHandler(this.UploadToFTPServer_CheckedChanged);
             // 
-            // ForgeVersion
-            // 
-            this.ForgeVersion.Controls.Add(this.MCversion);
-            this.ForgeVersion.Controls.Add(this.ForgeBuild);
-            this.ForgeVersion.Location = new System.Drawing.Point(168, 127);
-            this.ForgeVersion.Name = "ForgeVersion";
-            this.ForgeVersion.Size = new System.Drawing.Size(135, 74);
-            this.ForgeVersion.TabIndex = 13;
-            this.ForgeVersion.TabStop = false;
-            this.ForgeVersion.Text = "Forge Version";
-            // 
             // MCversion
             // 
             this.MCversion.FormattingEnabled = true;
-            this.MCversion.Location = new System.Drawing.Point(6, 19);
+            this.MCversion.Location = new System.Drawing.Point(250, 127);
             this.MCversion.Name = "MCversion";
-            this.MCversion.Size = new System.Drawing.Size(123, 17);
+            this.MCversion.Size = new System.Drawing.Size(123, 30);
             this.MCversion.TabIndex = 1;
+            this.MCversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             this.MCversion.SelectedIndexChanged += new System.EventHandler(this.MCversion_SelectedIndexChanged);
             // 
             // ForgeBuild
             // 
             this.ForgeBuild.FormattingEnabled = true;
-            this.ForgeBuild.Location = new System.Drawing.Point(6, 46);
+            this.ForgeBuild.Location = new System.Drawing.Point(250, 169);
             this.ForgeBuild.Name = "ForgeBuild";
-            this.ForgeBuild.Size = new System.Drawing.Size(123, 17);
+            this.ForgeBuild.Size = new System.Drawing.Size(123, 30);
             this.ForgeBuild.TabIndex = 0;
+            this.ForgeBuild.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
+            // 
+            // GetForgeVersions
+            // 
+            this.GetForgeVersions.Location = new System.Drawing.Point(510, 343);
+            this.GetForgeVersions.Name = "GetForgeVersions";
+            this.GetForgeVersions.Size = new System.Drawing.Size(119, 27);
+            this.GetForgeVersions.TabIndex = 14;
+            this.GetForgeVersions.Text = "Get Forge versions";
+            this.GetForgeVersions.UseVisualStyleBackColor = true;
+            this.GetForgeVersions.Click += new System.EventHandler(this.GetForgeVersions_Click);
+            // 
+            // labelmcversion
+            // 
+            this.labelmcversion.AutoSize = true;
+            this.labelmcversion.Location = new System.Drawing.Point(172, 127);
+            this.labelmcversion.Name = "labelmcversion";
+            this.labelmcversion.Size = new System.Drawing.Size(57, 13);
+            this.labelmcversion.TabIndex = 15;
+            this.labelmcversion.Text = "MCversion";
+            this.labelmcversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
+            // 
+            // labelforgeversion
+            // 
+            this.labelforgeversion.AutoSize = true;
+            this.labelforgeversion.Location = new System.Drawing.Point(172, 169);
+            this.labelforgeversion.Name = "labelforgeversion";
+            this.labelforgeversion.Size = new System.Drawing.Size(72, 13);
+            this.labelforgeversion.TabIndex = 16;
+            this.labelforgeversion.Text = "Forge Version";
+            this.labelforgeversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(641, 464);
-            this.Controls.Add(this.ForgeVersion);
+            this.Controls.Add(this.labelforgeversion);
+            this.Controls.Add(this.labelmcversion);
+            this.Controls.Add(this.ForgeBuild);
+            this.Controls.Add(this.MCversion);
+            this.Controls.Add(this.GetForgeVersions);
             this.Controls.Add(this.UploadToFTPServer);
             this.Controls.Add(this.TechnicDistributionLevel);
             this.Controls.Add(this.DistributionLevel);
@@ -427,7 +456,6 @@
             this.DistributionLevel.PerformLayout();
             this.TechnicDistributionLevel.ResumeLayout(false);
             this.TechnicDistributionLevel.PerformLayout();
-            this.ForgeVersion.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -463,8 +491,10 @@
         private System.Windows.Forms.RadioButton TechnicPrivatePermissions;
         private System.Windows.Forms.CheckBox UploadToFTPServer;
         private System.Windows.Forms.CheckBox IncludeForgeVersion;
-        private System.Windows.Forms.GroupBox ForgeVersion;
         private System.Windows.Forms.ListBox MCversion;
         private System.Windows.Forms.ListBox ForgeBuild;
+        private System.Windows.Forms.Button GetForgeVersions;
+        private System.Windows.Forms.Label labelmcversion;
+        private System.Windows.Forms.Label labelforgeversion;
     }
 }

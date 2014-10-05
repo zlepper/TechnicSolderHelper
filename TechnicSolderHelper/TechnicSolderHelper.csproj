@@ -190,7 +190,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="forge.cs" />
+    <Compile Include="forge\forge.cs" />
+    <Compile Include="forge\forgemaven.cs" />
     <Compile Include="mod.cs" />
     <Compile Include="PermLevel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

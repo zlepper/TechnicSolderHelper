@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace TechnicSolderHelper.SQL
 {
@@ -54,16 +55,17 @@ namespace TechnicSolderHelper.SQL
             }
             else
             {
-                sql = String.Format("INSERT OR ABORT INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');",
+                sql = String.Format("INSERT OR IGNORE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');",
                            this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
             }
             
-            //Debug.WriteLine(sql);
+            Debug.WriteLine(sql);
             executeDatabaseQuery(sql);
         }
 
-        public Boolean IsFileInSolder(String MD5Value)
+        public Boolean IsFileInSolder(String FilePath)
         {
+            String MD5Value = SQLHelper.calculateMD5(FilePath);
             String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", this.TableName, MD5Value);
             using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
             {
@@ -76,7 +78,11 @@ namespace TechnicSolderHelper.SQL
                         {
                             if (reader["MD5"].ToString().Equals(MD5Value))
                             {
-                                if (reader["OnSolder"].ToString().Equals(1)) { return true; }
+                                Debug.WriteLine(reader["OnSolder"].ToString());
+                                if (reader["OnSolder"].ToString().Equals("1"))
+                                {
+                                    return true;
+                                }
                                 return false;
                             }
                             else
@@ -116,7 +122,6 @@ namespace TechnicSolderHelper.SQL
                     }
                 }
             }
-            return mod;
             
         }
 

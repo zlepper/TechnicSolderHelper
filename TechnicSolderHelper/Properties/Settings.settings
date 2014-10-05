@@ -18,7 +18,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="CreateTechnicConfigZip" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="CreateSolderPack" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -36,6 +36,9 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="UploadToFTPServer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="IncludeForgeVersion" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

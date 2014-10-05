@@ -60,6 +60,8 @@ namespace TechnicSolderHelper.forge
 
 
 
+
+
     public class ForgeSQLHelper : SQL.SQLHelper
     {
 
@@ -67,13 +69,16 @@ namespace TechnicSolderHelper.forge
         public ForgeSQLHelper()
             : base("Forge", "forge")
         {
-            CreateTableString = "CREATE TABLE IF NOT EXISTS 'forge' ('build' INTEGER UNIQUE, 'mcversion' TEXT, 'version' TEXT UNIQUE, 'downloadurl' TEXT, PRIMARY KEY(build));";
+            CreateTableString = "CREATE TABLE IF NOT EXISTS 'forge' ('totalversion' TEXT,'build' INTEGER UNIQUE, 'mcversion' TEXT, 'version' TEXT, 'downloadurl' TEXT, 'type' TEXT, PRIMARY KEY(totalversion));";
             executeDatabaseQuery(CreateTableString);
         }
 
-        public void addVersion(String build, String mcversion, String version, String downloadURL)
+        public void addVersion(String build, String mcversion, String version, String type, String downloadURL)
         {
-            String sql = String.Format("INSERT OR REPLACE INTO {0}('build', 'mcversion', 'version', 'downloadurl') VALUES('{1}','{2}','{3}','{4}');", this.TableName, build, mcversion, version, downloadURL);
+            String totalversion = mcversion + "-" + version + "-" + build + "-" + type;
+
+            String sql = String.Format("INSERT OR REPLACE INTO {0}('totalversion', 'build', 'mcversion', 'version', 'downloadurl', 'type') VALUES('{1}','{2}','{3}','{4}', '{5}','{6}');", this.TableName, totalversion, build, mcversion, version, downloadURL, type);
+            //Debug.WriteLine(sql);
             executeDatabaseQuery(sql);
         }
 
@@ -121,6 +126,32 @@ namespace TechnicSolderHelper.forge
             }
         }
 
+        public Number getForgeInfo(String forgebuild)
+        {
+            String sql = String.Format("SELECT * FROM {0} WHERE build LIKE '{1}';", this.TableName, forgebuild);
+            Debug.WriteLine(sql);
+            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+            {
+                db.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                {
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Number build = new Number();
+                            build.build = int.Parse(reader["build"].ToString());
+                            build.mcversion = reader["mcversion"].ToString();
+                            build.version = reader["version"].ToString();
+                            build.downloadurl = reader["downloadurl"].ToString();
+                            return build;
+                        }
+                    }
+                }
+            }
+            return new Number();
+        }
+
         public void FindAllForgeVersion()
         {
             WebClient wb = new WebClient();
@@ -129,7 +160,7 @@ namespace TechnicSolderHelper.forge
             wb.DownloadFile(forgejsonweb, jsonfile);
             Debug.WriteLine("Downloaded json file");
             String json = "";
-            using (StreamReader r = new StreamReader(jsonfile))
+            /*using (StreamReader r = new StreamReader(jsonfile))
             {
                 json = r.ReadToEnd();
             }
@@ -141,22 +172,71 @@ namespace TechnicSolderHelper.forge
             foreach (Build build in unjsoned.builds)
             {
                 Debug.WriteLine(build.build.ToString());
-                /*String version = build.version;
-                String b = build.build.ToString();
-                String mcversion = build.files[0].mcver;
-                String downloadURL = build.files[]*/
                 for (int i = 0; i < build.files.Count; i++)
                 {
-                    if (build.files[i].buildtype.Equals("universal") || build.files[i].buildtype.Equals("client"))
+                    bool isFirst = true;
+                    if ((build.files[i].buildtype.Equals("universal") && isFirst) || (build.files[i].buildtype.Equals("client") && isFirst))
                     {
+                        isFirst = false;
                         String jobversion = build.files[i].jobver;
                         String buildnum = build.files[i].buildnum;
                         String mcversion = build.files[i].mcver;
                         String downloadURL = build.files[i].url;
-                        this.addVersion(buildnum, mcversion, jobversion, downloadURL);
+                        String buildtype = build.files[i].buildtype;
+                        this.addVersion(buildnum, mcversion, jobversion, buildtype, downloadURL);
                     }
                 }
+            }*/
+
+            forgejsonweb = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/json";
+            wb.DownloadFile(forgejsonweb, jsonfile);
+            json = "";
+            using (StreamReader r = new StreamReader(jsonfile))
+            {
+                json = r.ReadToEnd();
             }
+            Debug.WriteLine("readjson");
+            forgemaven mavenunjsonend = JsonConvert.DeserializeObject<forgemaven>(json);
+            int concurrentgone = 0;
+            int i = 1;
+            while (concurrentgone <= 100) {
+                if (mavenunjsonend.number.ContainsKey(i))
+                {
+                    Debug.WriteLine(mavenunjsonend.number[i].build.ToString());
+                    String jobversion = mavenunjsonend.number[i].jobver;
+                    String mcversion = mavenunjsonend.number[i].mcversion;
+                    String build = mavenunjsonend.number[i].build.ToString();
+                    String version = mavenunjsonend.number[i].version;
+                    String downloadURL = mavenunjsonend.webpath + "/" + mcversion + "-" + version + "/forge-" + mcversion + "-" + version + "-";
+                    if (i < 183)
+                    {
+                        downloadURL += "client.";
+                    }
+                    else
+                    {
+                        downloadURL += "universal.";
+                    }
+                    if (i < 752)
+                    {
+                        downloadURL += "zip";
+
+                    }
+                    else
+                    {
+                        downloadURL += "jar";
+                    }
+                    Debug.WriteLine(downloadURL);
+                    this.addVersion(build, mcversion, version, "universal", downloadURL);
+                    concurrentgone = 0;
+                }
+                else
+                {
+                    concurrentgone += 1;
+                }
+                i++;
+                
+            }
+            
         }
 
     }
