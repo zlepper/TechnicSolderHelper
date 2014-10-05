@@ -67,6 +67,8 @@ namespace TechnicSolderHelper
                 Debug.WriteLine("Done adding versions");
 
                 #endregion
+                excelReader.addFTBPermissions();
+
             }
             InputFolder.Text = Properties.Settings.Default.InputDirectory.ToString();
             CreateTechnicPack.Checked = Properties.Settings.Default.CreateTechnicSolderFiles;
