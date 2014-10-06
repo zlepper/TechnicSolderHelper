@@ -221,11 +221,6 @@ namespace TechnicSolderHelper
                 }
                 if (File.Exists(mcmodfile))
                 {
-                    // Skip bspkrsCore, as it will autodownload
-                    if (file.Contains("bspkrsCore"))
-                    {
-                        //Debug.WriteLine("skipping file: " + file);
-                    }
                     else
                     {
                         //If exist, then read info and make zip file
