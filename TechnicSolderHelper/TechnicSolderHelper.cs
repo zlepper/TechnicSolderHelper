@@ -202,7 +202,7 @@ namespace TechnicSolderHelper
                 ProgressLabel.Text = FileName;
                 //Check for mcmod.info
                 Directory.CreateDirectory(OutputDirectory);
-                String Arguments = "e " + "-y -o\"" + OutputDirectory + "\" \"" + file + "\" mcmod.info litemod.json";
+                String Arguments = "e " + "-y -o\"" + OutputDirectory + "\" \"" + file + "\" *.info litemod.json";
                 //Debug.WriteLine(Arguments);
                 startInfo.Arguments = Arguments;
 
@@ -210,7 +210,9 @@ namespace TechnicSolderHelper
                 process.Start();
                 process.WaitForExit();
                 String mcmodfile = OutputDirectory + @"\mcmod.info";
+                List<String> allmcmodfile = new List<String>();
                 String litemodfile = OutputDirectory + @"\litemod.json";
+                String backupfile = OutputDirectory + @"\backup.json";
                 if (File.Exists(litemodfile))
                 {
                     if (File.Exists(mcmodfile))
@@ -218,6 +220,26 @@ namespace TechnicSolderHelper
                         File.Delete(mcmodfile);
                     }
                     File.Move(litemodfile, mcmodfile);
+                }
+                foreach (String mcmodfiles in Directory.GetFiles(OutputDirectory, "*.info"))
+                {
+                    if (mcmodfiles.Contains("dependencies"))
+                    {
+                        File.Delete(mcmodfiles);
+                    }
+                    else
+                    {
+                        if (mcmodfiles.Equals(mcmodfile))
+                        {
+                            File.Move(mcmodfiles, mcmodfile);
+                        }
+                        else
+                        {
+                            File.Delete(mcmodfile);
+                            File.Move(mcmodfiles, mcmodfile);
+
+                        }
+                    }
                 }
                 if (File.Exists(mcmodfile))
                 {
@@ -546,14 +568,33 @@ namespace TechnicSolderHelper
                 InputDirectory = InputDirectory.Replace("\\mods", "");
                 OutputDirectory = OutputFolder.Text;
                 String ConfigFileName = Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config FileInfo Name");
-                if (!(ConfigFileName.EndsWith(".zip")))
+                if (ConfigFileName.EndsWith(".zip"))
                 {
-                    ConfigFileName = ConfigFileName + ".zip";
+                    ConfigFileName = ConfigFileName.Replace(".zip", "");
                 }
-                startInfo.Arguments = "a -y \"" + OutputDirectory + "\\" + ConfigFileName + "\" \"" + InputDirectory + "\\config" + "\"";
+                String ConfigVersion = Prompt.ShowDialog("What is the config version?", "Config Version");
+                String ConfigFileZipName = ConfigFileName + "-" + ConfigVersion;
+                if (!(ConfigFileZipName.EndsWith(".zip")))
+                {
+                    ConfigFileZipName = ConfigFileName + ".zip";
+                }
+                startInfo.Arguments = "a -y \"" + OutputDirectory + "\\" + ConfigFileName + "\\" + ConfigFileZipName + "\" \"" + InputDirectory + "\\config" + "\"";
                 process.StartInfo = startInfo;
                 process.Start();
+
+                String AddedMod = "<tr>";
+                File.AppendAllText(path, AddedMod);
+                AddedMod = "<td>" + ConfigFileName + "</td>";
+                File.AppendAllText(path, AddedMod);
+                AddedMod = "<td>" + ConfigFileName + "</td>";
+                File.AppendAllText(path, AddedMod);
+                AddedMod = "<td>" + ConfigVersion + "</td>";
+                File.AppendAllText(path, AddedMod.ToLower());
+                File.AppendAllText(path, "</tr>" + Environment.NewLine);
+
                 process.WaitForExit();
+
+
             }
             else
             {
@@ -845,9 +886,6 @@ namespace TechnicSolderHelper
                     startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" "/* + ">> C:\\Users\\Rasmus\\Desktop\\error.txt"*/;
                     process.StartInfo = startInfo;
                     process.Start();
-                    process.WaitForExit();
-
-                    Directory.Delete(modDir, true);
 
                     //Save mod to database
                     //String modMD5 = SQLHelper.calculateMD5(modfile);
@@ -863,6 +901,12 @@ namespace TechnicSolderHelper
                     AddedMod = "<td>" + mod.mcversion + "-" + mod.version + "</td>";
                     File.AppendAllText(path, AddedMod.ToLower());
                     File.AppendAllText(path, "</tr>" + Environment.NewLine);
+
+                    process.WaitForExit();
+
+                    Directory.Delete(modDir, true);
+
+                    
                 }
                 else
                 {
