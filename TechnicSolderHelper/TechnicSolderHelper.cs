@@ -221,8 +221,7 @@ namespace TechnicSolderHelper
                 }
                 if (File.Exists(mcmodfile))
                 {
-                    else
-                    {
+                                       {
                         //If exist, then read info and make zip file
                         String json = "";
                         using (StreamReader r = new StreamReader(mcmodfile))
