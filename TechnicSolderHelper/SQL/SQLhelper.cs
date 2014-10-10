@@ -15,23 +15,29 @@ namespace TechnicSolderHelper.SQL
         public SQLHelper(String databaseName, String TableName) 
         {
             databaseName += ".sqlite";
-
+			//databaseName = "C:\\" + databaseName;
             this.databaseName = databaseName;
-
+			Debug.WriteLine (this.databaseName);
             try
             {
-                if (!File.Exists(databaseName))
-                {
-                    SQLiteConnection.CreateFile(databaseName);
-                }
+				throw new Exception();
+                SQLiteConnection.CreateFile(this.databaseName);
             }
             catch (Exception)
             {
                 //Debug.WriteLine(e.Message);
                 //Debug.WriteLine(e.InnerException);
+				try {
+					File.Create(this.databaseName);
+				} catch (Exception ex) {
+					Debug.WriteLine ("Database already existing");
+				}
             }
-
-            this.ConnectionString = "Data Source=" + this.databaseName + ";Version=3;";
+			SQLiteConnectionStringBuilder c = new SQLiteConnectionStringBuilder ();
+			c.DataSource = this.databaseName;
+			c.Version = 3;
+            //this.ConnectionString = "Data Source=" + this.databaseName + ";Version=3;";
+			this.ConnectionString = c.ConnectionString;
             this.TableName = TableName;
         }
 
@@ -51,7 +57,9 @@ namespace TechnicSolderHelper.SQL
 
         protected void executeDatabaseQuery(String sql, Boolean Async)
         {
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString)) 
+			Debug.WriteLine (this.ConnectionString);
+			try{
+            using (SQLiteConnection db = new SQLiteConnection(this.ConnectionString)) 
             {
                 db.Open();
                 using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
@@ -66,6 +74,10 @@ namespace TechnicSolderHelper.SQL
                     }
                 }
             }
+			}catch(Exception e) {
+				Debug.WriteLine (e.Message);
+				Debug.WriteLine (e.StackTrace);
+			}
         }
 
         public virtual void resetTable()

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Windows.Forms;
 using System.IO;
-using Excel = Microsoft.Office.Interop.Excel;
+using Excel;
+//using Excel = Microsoft.Office.Interop.Excel;
 using System.Diagnostics;
+using System.Data;
 
 namespace TechnicSolderHelper.SQL
 {
@@ -28,7 +30,13 @@ namespace TechnicSolderHelper.SQL
             WebClient wb = new WebClient();
             wb.DownloadFile(permissionsheet, permissionsheetFile);
 
-            Excel.Application xlApp;
+
+			FileStream stream = File.Open (permissionsheetFile, FileMode.Open, FileAccess.Read);
+			IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader (stream);
+			DataSet result = excelReader.AsDataSet ();
+			String tmp = result.Tables.ToString ();
+			MessageBox.Show (tmp);
+            /*Excel.Application xlApp;
             Excel.Workbook xlWorkBook;
             Excel.Worksheet CurtainWorksheet, ModIDWorksheet;
             Excel.Range CurtainRange, ModIDRange;
@@ -159,7 +167,8 @@ namespace TechnicSolderHelper.SQL
             releaseObject(ModIDWorksheet);
             releaseObject(xlWorkBook);
             releaseObject(xlApp);
-
+			*/
+			excelReader.Close ();
             MessageBox.Show("DONE!!!");
 
         }
