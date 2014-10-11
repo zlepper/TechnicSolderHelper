@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using Mono.Data.Sqlite;
 using Newtonsoft.Json;
 using System.Net;
 using System.IO;
@@ -86,70 +87,108 @@ namespace TechnicSolderHelper.forge
         {
             String sql = String.Format("SELECT DISTINCT mcversion FROM {0} ORDER BY mcversion ASC;", this.TableName);
             List<String> mcversion = new List<string>();
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            mcversion.Add(reader["mcversion"].ToString());
-                        }
+			if (isUnix ()) {
+				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
+					db.Open ();
+					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
+						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								mcversion.Add (reader ["mcversion"].ToString ());
+							}
 
-                        return mcversion;
-                    }
-                }
-            }
+							return mcversion;
+						}
+					}
+				}
+			} else {
+				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
+					db.Open ();
+					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
+						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								mcversion.Add (reader ["mcversion"].ToString ());
+							}
+
+							return mcversion;
+						}
+					}
+				}
+			}
         }
 
         public List<String> getForgeVersions(String mcversion)
         {
             String sql = String.Format("SELECT DISTINCT build FROM {0} WHERE mcversion LIKE '{1}' ORDER BY mcversion ASC;", this.TableName, mcversion);
             List<String> forgeVersions = new List<string>();
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            forgeVersions.Add(reader["build"].ToString());
-                        }
+			if (isUnix ()) {
+				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
+					db.Open ();
+					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
+						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								forgeVersions.Add (reader ["build"].ToString ());
+							}
 
-                        return forgeVersions;
-                    }
-                }
-            }
+							return forgeVersions;
+						}
+					}
+				}
+			} else {
+				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
+					db.Open ();
+					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
+						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								forgeVersions.Add (reader ["build"].ToString ());
+							}
+
+							return forgeVersions;
+						}
+					}
+				}
+			}
         }
 
         public Number getForgeInfo(String forgebuild)
         {
             String sql = String.Format("SELECT * FROM {0} WHERE build LIKE '{1}';", this.TableName, forgebuild);
             Debug.WriteLine(sql);
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Number build = new Number();
-                            build.build = int.Parse(reader["build"].ToString());
-                            build.mcversion = reader["mcversion"].ToString();
-                            build.version = reader["version"].ToString();
-                            build.downloadurl = reader["downloadurl"].ToString();
-                            return build;
-                        }
-                    }
-                }
-            }
-            return new Number();
+			if (isUnix ()) {
+				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
+					db.Open ();
+					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
+						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								Number build = new Number ();
+								build.build = int.Parse (reader ["build"].ToString ());
+								build.mcversion = reader ["mcversion"].ToString ();
+								build.version = reader ["version"].ToString ();
+								build.downloadurl = reader ["downloadurl"].ToString ();
+								return build;
+							}
+						}
+					}
+				}
+				return new Number ();
+			} else {
+				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
+					db.Open ();
+					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
+						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								Number build = new Number ();
+								build.build = int.Parse (reader ["build"].ToString ());
+								build.mcversion = reader ["mcversion"].ToString ();
+								build.version = reader ["version"].ToString ();
+								build.downloadurl = reader ["downloadurl"].ToString ();
+								return build;
+							}
+						}
+					}
+				}
+				return new Number ();
+			}
+
         }
 
         public void FindAllForgeVersion()

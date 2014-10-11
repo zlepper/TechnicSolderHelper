@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using Mono.Data.Sqlite;
 using System.Diagnostics;
 
 namespace TechnicSolderHelper.SQL
@@ -33,45 +34,69 @@ namespace TechnicSolderHelper.SQL
 
             String sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
             Debug.WriteLine(sql);
+			if (isUnix ()) {
+				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
+					db.Open ();
+					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
+						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
+							String level = "";
+							while (reader.Read ()) {
+								if (isPublic) {
+									level = reader ["PublicPerm"].ToString ();
+								} else {
+									level = reader ["PrivatePerm"].ToString ();
+								}
+							}
 
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        String level = "";
-                        while (reader.Read())
-                        {
-                            if (isPublic)
-                            {
-                                level = reader["PublicPerm"].ToString();
-                            }
-                            else
-                            {
-                                level = reader["PrivatePerm"].ToString();
-                            }
-                        }
+							switch (level.ToLower ()) {
+							case "open":
+								return PermissionLevel.Open;
+							case "closed":
+								return PermissionLevel.Closed;
+							case "ftb":
+								return PermissionLevel.FTB;
+							case "notify":
+								return PermissionLevel.Notify;
+							case "request":
+								return PermissionLevel.Request;
+							default:
+								return PermissionLevel.Unknown;
+							}
+						}
+					}
+				}
+			} else {
+				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
+					db.Open ();
+					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
+						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
+							String level = "";
+							while (reader.Read ()) {
+								if (isPublic) {
+									level = reader ["PublicPerm"].ToString ();
+								} else {
+									level = reader ["PrivatePerm"].ToString ();
+								}
+							}
                         
-                        switch (level.ToLower())
-                        {
-                            case "open":
-                                return PermissionLevel.Open;
-                            case "closed":
-                                return PermissionLevel.Closed;
-                            case "ftb":
-                                return PermissionLevel.FTB;
-                            case "notify":
-                                return PermissionLevel.Notify;
-                            case "request":
-                                return PermissionLevel.Request;
-                            default:
-                                return PermissionLevel.Unknown;
-                        }
-                    }
-                }
-            }
+							switch (level.ToLower ()) {
+							case "open":
+								return PermissionLevel.Open;
+							case "closed":
+								return PermissionLevel.Closed;
+							case "ftb":
+								return PermissionLevel.FTB;
+							case "notify":
+								return PermissionLevel.Notify;
+							case "request":
+								return PermissionLevel.Request;
+							default:
+								return PermissionLevel.Unknown;
+							}
+						}
+					}
+				}
+			}
         }
 
         /// <summary>

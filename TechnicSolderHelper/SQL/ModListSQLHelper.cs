@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using Mono.Data.Sqlite;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
@@ -67,32 +68,45 @@ namespace TechnicSolderHelper.SQL
         {
             String MD5Value = SQLHelper.calculateMD5(FilePath);
             String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", this.TableName, MD5Value);
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            if (reader["MD5"].ToString().Equals(MD5Value))
-                            {
-                                Debug.WriteLine(reader["OnSolder"].ToString());
-                                if (reader["OnSolder"].ToString().Equals("1"))
-                                {
-                                    return true;
-                                }
-                                return false;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
+			if (isUnix ()) {
+				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
+					db.Open ();
+					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
+						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								if (reader ["MD5"].ToString ().Equals (MD5Value)) {
+									Debug.WriteLine (reader ["OnSolder"].ToString ());
+									if (reader ["OnSolder"].ToString ().Equals ("1")) {
+										return true;
+									}
+									return false;
+								} else {
+									return false;
+								}
+							}
+						}
+					}
+				}
+			} else {
+				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
+					db.Open ();
+					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
+						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								if (reader ["MD5"].ToString ().Equals (MD5Value)) {
+									Debug.WriteLine (reader ["OnSolder"].ToString ());
+									if (reader ["OnSolder"].ToString ().Equals ("1")) {
+										return true;
+									}
+									return false;
+								} else {
+									return false;
+								}
+							}
+						}
+					}
+				}
+			}
 
             return false;
 
@@ -103,25 +117,37 @@ namespace TechnicSolderHelper.SQL
             mcmod mod = new mcmod();
             String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", this.TableName, MD5Value);
             //Debug.WriteLine(sql);
-
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            mod.name = reader["ModName"].ToString();
-                            mod.mcversion = reader["MinecraftVersion"].ToString();
-                            mod.modid = reader["ModID"].ToString();
-                            mod.version = reader["ModVersion"].ToString();
-                        }
-                        return mod;
-                    }
-                }
-            }
+			if (isUnix ()) {
+				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
+					db.Open ();
+					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
+						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								mod.name = reader ["ModName"].ToString ();
+								mod.mcversion = reader ["MinecraftVersion"].ToString ();
+								mod.modid = reader ["ModID"].ToString ();
+								mod.version = reader ["ModVersion"].ToString ();
+							}
+							return mod;
+						}
+					}
+				}
+			} else {
+				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
+					db.Open ();
+					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
+						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								mod.name = reader ["ModName"].ToString ();
+								mod.mcversion = reader ["MinecraftVersion"].ToString ();
+								mod.modid = reader ["ModID"].ToString ();
+								mod.version = reader ["ModVersion"].ToString ();
+							}
+							return mod;
+						}
+					}
+				}
+			}
             
         }
 

@@ -202,7 +202,7 @@
             this.OutputFolder.Name = "OutputFolder";
             this.OutputFolder.Size = new System.Drawing.Size(432, 20);
             this.OutputFolder.TabIndex = 0;
-            this.OutputFolder.Text = "C:\\SolderHelper";
+			this.OutputFolder.Text = "";
             this.OutputFolder.TextChanged += new System.EventHandler(this.OutputFolder_TextChanged);
             // 
             // InputFolder

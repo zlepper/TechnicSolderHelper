@@ -51,9 +51,10 @@ namespace TechnicSolderHelper
             if (Properties.Settings.Default.FirstRun)
             {
                 Properties.Settings.Default.InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft\mods";
+				Properties.Settings.Default.OutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\SolderHelper";
                 Properties.Settings.Default.FirstRun = false;
                 Properties.Settings.Default.Save();
-                #region Find MC versions
+                /*#region Find MC versions
 
                 MCversion.Items.Clear();
 
@@ -66,11 +67,12 @@ namespace TechnicSolderHelper
                 }
                 Debug.WriteLine("Done adding versions");
 
-                #endregion
+                #endregion*/
                 excelReader.addFTBPermissions();
 
             }
             InputFolder.Text = Properties.Settings.Default.InputDirectory.ToString();
+			OutputFolder.Text = Properties.Settings.Default.OutputDirectory.ToString ();
             CreateTechnicPack.Checked = Properties.Settings.Default.CreateTechnicSolderFiles;
             CreateFTBPack.Checked = Properties.Settings.Default.CreateFTBPack;
             

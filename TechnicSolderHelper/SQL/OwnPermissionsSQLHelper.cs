@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using Mono.Data.Sqlite;
 using System.Diagnostics;
 
 namespace TechnicSolderHelper.SQL
@@ -31,23 +32,35 @@ namespace TechnicSolderHelper.SQL
 
             bool didLoopRun = false;
             ownPermissions p = new ownPermissions();
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            didLoopRun = true;
-                            p.hasPermission = true;
-                            p.Link = reader["PermLink"].ToString();
-                            break;
-                        }
-                    }
-                }
-            }
+			if (isUnix ()) {
+				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
+					db.Open ();
+					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
+						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								didLoopRun = true;
+								p.hasPermission = true;
+								p.Link = reader ["PermLink"].ToString ();
+								break;
+							}
+						}
+					}
+				}
+			} else {
+				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
+					db.Open ();
+					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
+						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
+							while (reader.Read ()) {
+								didLoopRun = true;
+								p.hasPermission = true;
+								p.Link = reader ["PermLink"].ToString ();
+								break;
+							}
+						}
+					}
+				}
+			}
 
             if (didLoopRun)
             {
