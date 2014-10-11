@@ -20,6 +20,9 @@ namespace TechnicSolderHelper.SQL
 
         public static void addFTBPermissions()
         {
+			if (globalfunctions.isUnix ()) {
+				permissionsheetFile.Replace ("\\", "/");
+			}
             FTBPermissionsSQLHelper sqlhelper = new FTBPermissionsSQLHelper();
             sqlhelper.resetTable();
 

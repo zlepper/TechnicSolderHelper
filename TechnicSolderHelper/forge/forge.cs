@@ -196,37 +196,13 @@ namespace TechnicSolderHelper.forge
             WebClient wb = new WebClient();
             String forgejsonweb = "http://files.minecraftforge.net/minecraftforge/json";
             String jsonfile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\forge.json";
+			if (globalfunctions.isUnix ()) {
+				jsonfile.Replace ("\\", "/");
+			}
             wb.DownloadFile(forgejsonweb, jsonfile);
             Debug.WriteLine("Downloaded json file");
             String json = "";
-            /*using (StreamReader r = new StreamReader(jsonfile))
-            {
-                json = r.ReadToEnd();
-            }
-            Debug.WriteLine("readjson");
-
-            Forge unjsoned = JsonConvert.DeserializeObject<Forge>(json);
-            Debug.WriteLine("Unjsoned");
-
-            foreach (Build build in unjsoned.builds)
-            {
-                Debug.WriteLine(build.build.ToString());
-                for (int i = 0; i < build.files.Count; i++)
-                {
-                    bool isFirst = true;
-                    if ((build.files[i].buildtype.Equals("universal") && isFirst) || (build.files[i].buildtype.Equals("client") && isFirst))
-                    {
-                        isFirst = false;
-                        String jobversion = build.files[i].jobver;
-                        String buildnum = build.files[i].buildnum;
-                        String mcversion = build.files[i].mcver;
-                        String downloadURL = build.files[i].url;
-                        String buildtype = build.files[i].buildtype;
-                        this.addVersion(buildnum, mcversion, jobversion, buildtype, downloadURL);
-                    }
-                }
-            }*/
-
+            
             forgejsonweb = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/json";
             wb.DownloadFile(forgejsonweb, jsonfile);
             json = "";

@@ -30,6 +30,9 @@ namespace TechnicSolderHelper
             catch (Exception e)
             {
                 String errorLocation = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\errorFromTechnicSolderHelper.txt";
+				if (globalfunctions.isUnix ()) {
+					errorLocation.Replace ("\\", "/");
+				}
                 if (File.Exists(errorLocation))
                 {
                     File.Delete(errorLocation);

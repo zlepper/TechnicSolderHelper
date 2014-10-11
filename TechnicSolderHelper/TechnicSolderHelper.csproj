@@ -225,6 +225,7 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="SQL\SQLhelper.cs" />
+    <Compile Include="globalfunctions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
