@@ -15,16 +15,20 @@ namespace TechnicSolderHelper.SQL
     {
         public SQLHelper(String databaseName, String TableName) 
         {
-			Debug.WriteLine (isUnix());
             databaseName += ".db";
 			//databaseName = "C:\\" + databaseName;
+			if (globalfunctions.isUnix ()) {
+				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/" + databaseName;
+			} else {
+				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "\\" + databaseName;
+			}
             this.databaseName = databaseName;
-			Debug.WriteLine (this.databaseName);
+			//Debug.WriteLine (this.databaseName);
 			try {
 				if (isUnix()) {
 					SqliteConnection.CreateFile(this.databaseName);
 				} else {
-                SQLiteConnection.CreateFile(this.databaseName);
+                	SQLiteConnection.CreateFile(this.databaseName);
 				}
             }
             catch (Exception)
@@ -67,7 +71,7 @@ namespace TechnicSolderHelper.SQL
 
         protected void executeDatabaseQuery(String sql, Boolean Async)
         {
-			Debug.WriteLine (this.ConnectionString);
+			//Debug.WriteLine (this.ConnectionString);
 			if (isUnix()) {
 				try{
 					using (SqliteConnection db = new SqliteConnection(this.ConnectionString)) 
