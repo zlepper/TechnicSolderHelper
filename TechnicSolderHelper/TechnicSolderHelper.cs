@@ -340,7 +340,7 @@ namespace TechnicSolderHelper
 				String Arguments = "";
 				if (globalfunctions.isUnix ()) {
 					startInfo.FileName = "unzip";
-					Arguments = "\"" + file + "\" \"*.info\" \"*.json\" -d \"" + OutputDirectory + "\"";
+					Arguments = "-o \"" + file + "\" \"*.info\" \"*.json\" -d \"" + OutputDirectory + "\"";
 					Debug.WriteLine (Arguments);
 				} else {
 					Arguments = "e " + "-y -o\"" + OutputDirectory + "\" \"" + file + "\" *.info litemod.json";
@@ -451,7 +451,9 @@ namespace TechnicSolderHelper
                                         }
                                         else
                                         {
-
+                                            if(mod.modid.Contains("|")) {
+                                            mod.modid = mod.modid.Replace("|", "");
+                                            }
                                             if (isFullyInformed(mod))
                                             {
                                                 CreateTechnicModZip(mod, file);
