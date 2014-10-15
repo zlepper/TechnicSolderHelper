@@ -16,7 +16,7 @@ namespace TechnicSolderHelper.SQL
     class excelReader
     {
         private static String permissionsheet = "https://onedrive.live.com/download.aspx?resid=96628E67B4C51B81!161&ithint=file%2cxlsx&app=Excel&authkey=!APQ4QtFrBqa1HwM";
-        private static String permissionsheetFile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\permissions.xlsx";
+        private static String permissionsheetFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\SolderHelper\permissions.xlsx";
 
         public static void addFTBPermissions()
         {

@@ -1,0 +1,9 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=SolderHelper
+Exec=sh technicsolderhelper
+Terminal=false
+
+Categories=Utility;
