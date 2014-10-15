@@ -234,10 +234,33 @@ namespace TechnicSolderHelper
 
         public void Start()
         {
+            if (globalfunctions.isUnix())
+            {
+                Environment.CurrentDirectory = "/";
+            }
+            else
+            {
+                Environment.CurrentDirectory = "C:\\";
+            }
 			if (!Directory.Exists (InputFolder.Text)) {
 				MessageBox.Show ("Input directory does not exist!");
 				return;
 			}
+            if (checkBox1.Checked)
+            {
+                if (Directory.Exists(OutputDirectory))
+                {
+                    try
+                    {
+                        Directory.Delete(OutputDirectory, true);
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Unable to clear solderDirectory." + Environment.NewLine + "Please restart the process when the directory is no longer in use.");
+                        return;
+                    }
+                }
+            }
             
             ModpackVersion = null;
             //Download 7zip dependancy
@@ -268,13 +291,7 @@ namespace TechnicSolderHelper
 			if (globalfunctions.isUnix ()) {
 				path = path.Replace ("\\", "/");
 			}
-            if (checkBox1.Checked)
-            {
-                if (Directory.Exists(OutputDirectory))
-                {
-                    Directory.Delete(OutputDirectory, true);
-                }
-            }
+            
             
             Directory.CreateDirectory(OutputDirectory);
 			Environment.CurrentDirectory = OutputDirectory;
