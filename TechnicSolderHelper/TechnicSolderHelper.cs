@@ -452,7 +452,7 @@ namespace TechnicSolderHelper
                                         else
                                         {
                                             if(mod.modid.Contains("|")) {
-                                            mod.modid = mod.modid.Replace("|", "");
+                                                mod.modid = mod.modid.Remove(mod.modid.LastIndexOf("|"));
                                             }
                                             if (isFullyInformed(mod))
                                             {
