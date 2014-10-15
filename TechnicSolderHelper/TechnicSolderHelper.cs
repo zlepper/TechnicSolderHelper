@@ -1111,7 +1111,16 @@ namespace TechnicSolderHelper
 					tempFile = tempFile.Replace ("\\", "/");
 				}
                 tempFile = tempFile.Replace("\\\\", "\\");
-                String tempFileDirectory = tempFile.Remove(tempFile.LastIndexOf("\\"));
+                int index = 0;
+                if (globalfunctions.isUnix())
+                {
+                    index = tempFile.LastIndexOf("/");
+                }
+                else
+                {
+                    index = tempFile.LastIndexOf("\\");
+                }
+                String tempFileDirectory = tempFile.Remove(index);
                 if (globalfunctions.isUnix())
                 {
                     tempFileDirectory = tempFileDirectory.Replace("\\", "/");
@@ -1124,8 +1133,17 @@ namespace TechnicSolderHelper
 				if (globalfunctions.isUnix ()) {
 					ModpackArchive.Replace ("\\", "/");
 				}
-                startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", ModpackArchive, tempModDirectory);
+                if (globalfunctions.isUnix())
+                {
+                    Environment.CurrentDirectory = tempDirectory;
+                    startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", ModpackArchive, "mods");
+                }
+                else
+                {
+                    startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", ModpackArchive, tempModDirectory);
+                }
 				if (globalfunctions.isUnix ()) {
+                    startInfo.FileName = "zip";
 					startInfo.Arguments = startInfo.Arguments.Replace ("\\", "/");
 				}
                 process.StartInfo = startInfo;
