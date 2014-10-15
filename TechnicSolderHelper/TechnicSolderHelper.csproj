@@ -226,6 +226,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="SQL\SQLhelper.cs" />
     <Compile Include="globalfunctions.cs" />
+    <Compile Include="confighandler\confighandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -296,4 +297,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="confighandler\" />
+  </ItemGroup>
 </Project>

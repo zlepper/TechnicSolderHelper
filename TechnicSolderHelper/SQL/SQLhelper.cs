@@ -18,17 +18,21 @@ namespace TechnicSolderHelper.SQL
             databaseName += ".db";
 			//databaseName = "C:\\" + databaseName;
 			if (globalfunctions.isUnix ()) {
-				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/" + databaseName;
+				Directory.CreateDirectory(Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/SolderHelper");
+				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/SolderHelper/" + databaseName;
 			} else {
-				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "\\" + databaseName;
+				Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "\\SolderHelper");
+				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "\\SolderHelper\\" + databaseName;
 			}
             this.databaseName = databaseName;
-			//Debug.WriteLine (this.databaseName);
+			Debug.WriteLine (this.databaseName);
 			try {
-				if (isUnix()) {
-					SqliteConnection.CreateFile(this.databaseName);
-				} else {
-                	SQLiteConnection.CreateFile(this.databaseName);
+				if (!File.Exists(this.databaseName)) {
+					if (isUnix()) {
+						SqliteConnection.CreateFile(this.databaseName);
+					} else {
+	                	SQLiteConnection.CreateFile(this.databaseName);
+					}
 				}
             }
             catch (Exception)

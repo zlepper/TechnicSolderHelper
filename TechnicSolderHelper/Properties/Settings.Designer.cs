@@ -147,7 +147,7 @@ namespace TechnicSolderHelper.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool TecnicPrivatePermissionsLevel {
+        public bool TechnicPrivatePermissionsLevel {
             get {
                 return ((bool)(this["TecnicPrivatePermissionsLevel"]));
             }

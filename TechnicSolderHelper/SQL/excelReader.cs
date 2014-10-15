@@ -97,7 +97,7 @@ namespace TechnicSolderHelper.SQL
 			}
             
 			excelReader.Close ();
-            MessageBox.Show("DONE!!!");
+            //MessageBox.Show("DONE!!!");
         }
     }
 

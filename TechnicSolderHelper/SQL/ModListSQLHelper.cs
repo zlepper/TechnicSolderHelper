@@ -74,6 +74,8 @@ namespace TechnicSolderHelper.SQL
 					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
 						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
 							while (reader.Read ()) {
+								Debug.WriteLine (reader ["MD5"]);
+								Debug.WriteLine (MD5Value);
 								if (reader ["MD5"].ToString ().Equals (MD5Value)) {
 									Debug.WriteLine (reader ["OnSolder"].ToString ());
 									if (reader ["OnSolder"].ToString ().Equals ("1")) {
