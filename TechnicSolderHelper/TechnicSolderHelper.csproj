@@ -32,7 +32,7 @@
     <PublisherName>Rasmus Hansen</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationRevision>8</ApplicationRevision>
     <ApplicationVersion>1.0.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -104,7 +104,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>3896A1C6D7FFE47D16910A1D6DA92FD372551E48</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>BB4329E8602B8E21AAA92E980690679A12C501CB</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>TechnicSolderHelper_TemporaryKey.pfx</ManifestKeyFile>
@@ -237,6 +237,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="TechnicSolderHelper_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="output\jquery.min.js">
@@ -300,4 +301,5 @@
   <ItemGroup>
     <Folder Include="confighandler\" />
   </ItemGroup>
+</Project>
 </Project>
