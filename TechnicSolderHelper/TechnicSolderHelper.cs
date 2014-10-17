@@ -1091,7 +1091,23 @@ namespace TechnicSolderHelper
 					if (globalfunctions.isUnix ()) {
 						tempModFile = tempModFile.Replace ("\\", "/");
 					}
-                    //Debug.WriteLine("Copying " + modfile + " to " + tempModFile);
+                    tempModFile = tempModFile.Replace("\\\\", "\\"); 
+                    int index = 0;
+                    if (globalfunctions.isUnix())
+                    {
+                        index = tempModFile.LastIndexOf("/");
+                    }
+                    else
+                    {
+                        index = tempModFile.LastIndexOf("\\");
+                    }
+                    String tempFileDirectory = tempModFile.Remove(index);
+                    if (globalfunctions.isUnix())
+                    {
+                        tempFileDirectory = tempFileDirectory.Replace("\\", "/");
+                    }
+                    Debug.WriteLine(tempFileDirectory);
+                    Directory.CreateDirectory(tempFileDirectory);
                     File.Copy(modfile, tempModFile, true);
 
                     String modArchive = OutputDirectory + "\\" + mod.modid.ToLower() + "\\" + mod.modid.ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
