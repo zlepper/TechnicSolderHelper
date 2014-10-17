@@ -155,7 +155,7 @@
             // CreateFTBPack
             // 
             this.CreateFTBPack.AutoSize = true;
-            this.CreateFTBPack.Enabled = false;
+            this.CreateFTBPack.Enabled = true;
             this.CreateFTBPack.Location = new System.Drawing.Point(14, 300);
             this.CreateFTBPack.Name = "CreateFTBPack";
             this.CreateFTBPack.Size = new System.Drawing.Size(108, 17);
