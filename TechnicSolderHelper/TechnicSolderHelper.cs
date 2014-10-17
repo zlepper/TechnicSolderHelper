@@ -38,6 +38,7 @@ namespace TechnicSolderHelper
         public static ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
         public static String UserName, path, CurrentMCVersion, ModpackVersion, ModpackName, ModpackArchive;
 		public static ConfigHandler confighandler = new ConfigHandler();
+        public static String modlistTextFile = "";
 
         #endregion
 
@@ -234,6 +235,8 @@ namespace TechnicSolderHelper
 
         public void Start()
         {
+            DirectoryWithFiles = InputFolder.Text;
+            OutputDirectory = OutputFolder.Text;
             if (globalfunctions.isUnix())
             {
                 Environment.CurrentDirectory = "/";
@@ -248,6 +251,7 @@ namespace TechnicSolderHelper
 			}
             if (checkBox1.Checked)
             {
+                Debug.WriteLine("Erasing!!!");
                 if (Directory.Exists(OutputDirectory))
                 {
                     try
@@ -275,9 +279,7 @@ namespace TechnicSolderHelper
                 System.Uri SevenWeb = new Uri("http://cloud.zlepper.dk/7za.exe");
                 wb.DownloadFile(SevenWeb, SevenZipLocation);
             }
-            
-            DirectoryWithFiles = InputFolder.Text;
-            OutputDirectory = OutputFolder.Text;
+
 			if (globalfunctions.isUnix ()) {
 				confighandler.setConfig ("InputDirectory", InputFolder.Text);
 				confighandler.setConfig ("OutputDirectory", OutputFolder.Text);
@@ -296,6 +298,15 @@ namespace TechnicSolderHelper
             Directory.CreateDirectory(OutputDirectory);
 			Environment.CurrentDirectory = OutputDirectory;
 			Debug.WriteLine (Environment.CurrentDirectory);
+            if(globalfunctions.isUnix()) {
+                modlistTextFile = OutputDirectory + "/modlist.txt";
+            } else {
+                modlistTextFile = OutputDirectory + "\\modlist.txt";
+            }
+            if (File.Exists(modlistTextFile))
+            {
+                File.Delete(modlistTextFile);
+            }
 
             // The start of the output html file for Technic Solder.
             if (SolderPack.Checked)
@@ -623,9 +634,27 @@ namespace TechnicSolderHelper
                 process.WaitForExit();
                 Directory.Delete(tmpdir, true);
 			}
-            if (Directory.Exists(OutputDirectory + "/assets"))
+            if (globalfunctions.isUnix())
             {
-                Directory.Delete(OutputDirectory + "/assets", true);
+                if (Directory.Exists(OutputDirectory + "/assets"))
+                {
+                    Directory.Delete(OutputDirectory + "/assets", true);
+                }
+                if (Directory.Exists(OutputDirectory + "/example"))
+                {
+                    Directory.Delete(OutputDirectory + "/example", true);
+                }
+            }
+            else
+            {
+                if (Directory.Exists(OutputDirectory + "\\assets"))
+                {
+                    Directory.Delete(OutputDirectory + "\\assets", true);
+                }
+                if (Directory.Exists(OutputDirectory + "\\example"))
+                {
+                    Directory.Delete(OutputDirectory + "\\example", true);
+                }
             }
             if (SolderPack.Checked)
             {
@@ -1170,7 +1199,8 @@ namespace TechnicSolderHelper
                 process.WaitForExit();
                 Directory.Delete(tempDirectory, true);
             }
-            
+
+            File.AppendAllText(modlistTextFile, mod.name + Environment.NewLine);
 
         }
 
