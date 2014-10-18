@@ -57,14 +57,17 @@ namespace TechnicSolderHelper.SQL
 			int rCnt = 1;
 			while (!(String.IsNullOrWhiteSpace(Curtain.Rows[rCnt]["column1"].ToString())))
 			{
-
-
 				Debug.WriteLine(rCnt);
-					String Name = Curtain.Rows[rCnt]["column1"].ToString();
-					String Author = Curtain.Rows[rCnt]["column2"].ToString();
-					String Public = Curtain.Rows[rCnt]["column4"].ToString();
-					String Private = Curtain.Rows[rCnt]["column5"].ToString();
-					String shortName = Curtain.Rows[rCnt]["column3"].ToString();
+				String Name = Curtain.Rows[rCnt]["column1"].ToString();
+				String Author = Curtain.Rows[rCnt]["column2"].ToString();
+				String Public = Curtain.Rows[rCnt]["column4"].ToString();
+				String Private = Curtain.Rows[rCnt]["column5"].ToString();
+				String shortName = Curtain.Rows[rCnt]["column3"].ToString();
+                String modLink = Curtain.Rows[rCnt]["column6"].ToString();
+                String permLink = Curtain.Rows[rCnt]["column7"].ToString();
+                String CustPrivate = Curtain.Rows[rCnt]["column8"].ToString();
+                String CustFTB = Curtain.Rows[rCnt]["column9"].ToString();
+                Debug.WriteLine(CustFTB);
 
 				if (Name.Contains("(") && Name.Contains(")"))
 				{
@@ -89,7 +92,7 @@ namespace TechnicSolderHelper.SQL
 					if (shortNames[i].Equals(shortName))
 					{
 						String modID = modIDs[i];
-						sqlhelper.addFTBModPerm(Name, Author, modID, Public, Private);
+                        sqlhelper.addFTBModPerm(Name, Author, modID, Public, Private, modLink, permLink, CustPrivate, CustFTB);
 					}
 				}
 

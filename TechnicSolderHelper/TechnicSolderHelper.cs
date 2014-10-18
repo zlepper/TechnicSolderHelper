@@ -36,9 +36,9 @@ namespace TechnicSolderHelper
         public static String SevenZipLocation = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\TechnicSolderHelper\7za.exe";
         public static Process process = new System.Diagnostics.Process();
         public static ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-        public static String UserName, path, CurrentMCVersion, ModpackVersion, ModpackName, ModpackArchive;
+        public static String UserName, path, CurrentMCVersion, ModpackVersion, ModpackName, ModpackArchive, FTBModpackArchive;
 		public static ConfigHandler confighandler = new ConfigHandler();
-        public static String modlistTextFile = "";
+        public static String modlistTextFile = "", technicPermissionList = "", FTBPermissionList = "", FTBOwnPermissionList = "";
 
         #endregion
 
@@ -87,6 +87,7 @@ namespace TechnicSolderHelper
                 excelReader.addFTBPermissions();
 
             }
+            #region Reload Interface
 			if (globalfunctions.isUnix ()) {
 				try {
 				InputFolder.Text = confighandler.getConfig ("InputDirectory");
@@ -128,7 +129,6 @@ namespace TechnicSolderHelper
 			}
             
 
-            #region Reload Interface
 			Boolean CSP = true, CPFP = true, TPP = true, IFV = false, ICZ = true, CP = false;
 			if(globalfunctions.isUnix()) {
 				try {
@@ -233,119 +233,233 @@ namespace TechnicSolderHelper
 			}
         }
 
+        public void createFTBPermissionInfo(String modname, String modid, String modauthor, String linkToPermission) {
+            String output = String.Format("{0}({1}) by {2} {3}Permission: {4} {3}{3}", modname, modid, modauthor, Environment.NewLine, linkToPermission, Environment.NewLine);
+            Debug.WriteLine(output);
+            File.AppendAllText(FTBPermissionList, output);
+        }
+
+        public void createOwnPermissionInfo(String modname, String modid, String modauthor, String linkToPermission, String modLink) {
+            String output = String.Format("{0}({1}) by {2} {3}Permission: {4} {3}Link to mod: {5}{3}{3}", modname, modid, modauthor, Environment.NewLine, linkToPermission, modLink);
+            Debug.WriteLine(output);
+            File.AppendAllText(FTBOwnPermissionList, output);
+        }
+
+        private string getAuthors(mcmod mod)
+        {
+            string authorString = "";
+            bool isFirst = true;
+            if (mod.authors != null && mod.authors.Count != 0)
+            {
+                foreach (string author in mod.authors)
+                {
+                    if (isFirst)
+                    {
+                        authorString = author;
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        authorString += ", " + author;
+                    }
+                }
+            }
+            else
+            {
+                if (mod.authorList != null && mod.authorList.Count != 0)
+                {
+                    foreach (string author in mod.authorList)
+                    {
+                        if (isFirst)
+                        {
+                            authorString = author;
+                            isFirst = false;
+                        }
+                        else
+                        {
+                            authorString += ", " + author;
+                        }
+                    }
+                }
+                else
+                {
+                    authorString = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+
+                    if (String.IsNullOrWhiteSpace(authorString))
+                    {
+                        authorString = OwnPermsSQLhelper.getAuthor(mod.modid);
+                        if (String.IsNullOrWhiteSpace(authorString))
+                        {
+                            authorString = Prompt.ShowDialog("Who is the author of " + mod.name + "?" + Environment.NewLine + "If you leave this empty the author list in the output will also be empty.", "Mod Author");
+                            OwnPermsSQLhelper.addAuthor(mod.modid, authorString);
+                        }
+                    }
+                }
+            }
+            return authorString;
+        }
+
         public void CreateFTBPackZip(mcmod mod, string modfile)
         {
-            if (false)
+            if (true)
             {
                 #region Permissions checking
                 PermissionLevel PermLevel = FTBPermsSQLhelper.doFTBHavePermission(mod.modid, PublicFTBPack.Checked);
-                String ov = "";
+                String overwritelink = "";
+                ownPermissions op;
                 switch (PermLevel)
                 {
                     case PermissionLevel.Open:
                         Debug.WriteLine("Open Permissions");
                         break;
                     case PermissionLevel.Notify:
-                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                        if (!op.hasPermission)
                         {
-                            ov = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                             while (true)
                             {
-                                if (String.IsNullOrWhiteSpace(ov))
+                                if (overwritelink.ToLower().Equals("skip".ToLower()))
                                 {
                                     return;
                                 }
                                 else
                                 {
-                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
                                     {
-                                        if (ov.ToLower().Contains("imgur"))
+                                        if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
+                                            //Get Author
+                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                                            createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
                                             break;
                                         }
                                     }
-                                    ov = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                    overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                                 }
                             }
+                        } else {
+                            //Get Author
+                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                            createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);                            
                         }
                         break;
                     case PermissionLevel.FTB:
                         Debug.WriteLine("FTB Permissions");
                         break;
                     case PermissionLevel.Request:
-                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                        if (!op.hasPermission)
                         {
-                            ov = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                             while (true)
                             {
-                                if (String.IsNullOrWhiteSpace(ov))
+                                if (overwritelink.ToLower().Equals("skip".ToLower()))
                                 {
                                     return;
                                 }
                                 else
                                 {
-                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
                                     {
-                                        if (ov.ToLower().Contains("imgur"))
+                                        if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
+                                            //Get Author
+                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                                            createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
                                             break;
                                         }
                                     }
-                                    ov = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                    overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                                 }
                             }
+                        } else {
+                            //Get Author
+                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                            createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);                            
                         }
                         break;
                     case PermissionLevel.Closed:
-                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                        if (!op.hasPermission)
                         {
-                            ov = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                             while (true)
                             {
-                                if (String.IsNullOrWhiteSpace(ov))
+                                if (overwritelink.ToLower().Equals("skip".ToLower()))
                                 {
                                     return;
                                 }
                                 else
                                 {
-                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
                                     {
-                                        if (ov.ToLower().Contains("imgur"))
+                                        if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
+                                            //Get Author
+                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                                            createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
                                             break;
                                         }
                                     }
-                                    ov = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                    overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                                 }
                             }
+                        } else {
+                            //Get Author
+                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                            createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);                            
                         }
                         break;
                     case PermissionLevel.Unknown:
-                        if (!OwnPermsSQLhelper.doUserHavePermission(mod.modid).hasPermission)
+                        String modLink = "";
+                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                        if (!op.hasPermission)
                         {
-                            ov = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                             while (true)
                             {
-                                if (String.IsNullOrWhiteSpace(ov))
+                                if (overwritelink.ToLower().Equals("skip".ToLower()))
                                 {
                                     return;
                                 }
                                 else
                                 {
-                                    if (Uri.IsWellFormedUriString(ov, UriKind.Absolute))
+                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
                                     {
-                                        if (ov.ToLower().Contains("imgur"))
+                                        if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, ov);
                                             break;
                                         }
                                     }
-                                    ov = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Leave this line empty to skip the mod.", mod.name);
+                                    overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
                                 }
                             }
+                            while (true) {
+                                if (modLink.ToLower().Equals("skip".ToLower()))
+                                {
+                                    return;
+                                }
+                                else
+                                {
+                                    if (Uri.IsWellFormedUriString(modLink, UriKind.Absolute))
+                                    {
+                                        OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, modLink);
+                                        break;
+
+                                    }
+                                    modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name);
+                                }
+                            }
+                            String a = getAuthors(mod);
+                            createOwnPermissionInfo(mod.name, mod.modid, a, overwritelink, modLink);
+
+                        } else {
+                            String a = getAuthors(mod);
+                            createOwnPermissionInfo(mod.name, mod.modid, a, op.PermissionLink, op.ModLink);
                         }
                         break;
                     default:
@@ -361,13 +475,26 @@ namespace TechnicSolderHelper
 
             ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, false);
             //Debug.WriteLine("Creating big zip file");
-            while (String.IsNullOrWhiteSpace(ModpackName))
+            if (String.IsNullOrWhiteSpace(FTBModpackArchive))
             {
-                ModpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
-            }
-            while (String.IsNullOrWhiteSpace(ModpackVersion))
-            {
-                ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
+                while (String.IsNullOrWhiteSpace(ModpackName))
+                {
+                    ModpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
+                }
+                while (String.IsNullOrWhiteSpace(ModpackVersion))
+                {
+                    ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
+                }
+                if (String.IsNullOrWhiteSpace(ModpackArchive))
+                {
+                    ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
+                }
+                if (globalfunctions.isUnix())
+                {
+                    ModpackArchive = ModpackArchive.Replace("\\", "/");
+                }
+                FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
+
             }
 
             //String tempDirectory = String.Format("{0}\\minecraft\\tmp", OutputDirectory);
@@ -400,19 +527,16 @@ namespace TechnicSolderHelper
             File.Copy(modfile, tempFile, true);
             Debug.WriteLine("Copying " + modfile + " to " + tempFile);
 
-            ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
+            //ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
             if (globalfunctions.isUnix ()) {
-                ModpackArchive.Replace ("\\", "/");
-            }
-            if (globalfunctions.isUnix())
-            {
+                FTBModpackArchive = FTBModpackArchive.Replace ("\\", "/");
                 Environment.CurrentDirectory = OutputDirectory;
-                startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", ModpackArchive, "minecraft");
+                startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", FTBModpackArchive, "minecraft");
                 Debug.WriteLine(startInfo.Arguments);
             }
             else
             {
-                startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", ModpackArchive, tempModDirectory);
+                startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", FTBModpackArchive, tempModDirectory);
             }
             if (globalfunctions.isUnix ()) {
                 startInfo.FileName = "zip";
@@ -423,14 +547,19 @@ namespace TechnicSolderHelper
             process.WaitForExit();
             Directory.Delete(tempModDirectory, true);
 
-
-            File.AppendAllText(modlistTextFile, mod.name + Environment.NewLine);
+            if (!mod.hasBeenWritenToModlist)
+            {
+                File.AppendAllText(modlistTextFile, mod.name + Environment.NewLine);
+                mod.hasBeenWritenToModlist = true;
+            }
         }
 
         public void Start()
         {
             DirectoryWithFiles = InputFolder.Text;
             OutputDirectory = OutputFolder.Text;
+            FTBOwnPermissionList = Path.Combine(OutputDirectory, "Own Permission List.txt");
+            FTBPermissionList = Path.Combine(OutputDirectory, "FTB Permission List.txt");
             if (globalfunctions.isUnix())
             {
                 Environment.CurrentDirectory = "/";
@@ -656,9 +785,6 @@ namespace TechnicSolderHelper
                                     }
                                     else
                                     {
-                                        if(mod.modid.Contains("|")) {
-                                            mod.modid = mod.modid.Remove(mod.modid.LastIndexOf("|"));
-                                        }
                                         if (isFullyInformed(mod))
                                         {
                                             if (CreateTechnicPack.Checked) {
@@ -683,8 +809,9 @@ namespace TechnicSolderHelper
                                 //Convert into mcmod
                                 mcmod mod = new mcmod();
                                 mod.mcversion = liteloadermod.mcversion;
-                                mod.modid = liteloadermod.name.ToLower().Replace(" ", "");
+                                mod.modid = liteloadermod.name.Replace(" ", "");
                                 mod.name = liteloadermod.name;
+                                mod.authors = liteloadermod.author;
 
                                 if (String.IsNullOrEmpty(liteloadermod.version) || String.IsNullOrEmpty(liteloadermod.revision))
                                 {
@@ -776,10 +903,47 @@ namespace TechnicSolderHelper
                 }
             }
 
-            if (IncludeConfigZip.Checked)
+            if (CreateTechnicPack.Checked && IncludeConfigZip.Checked)
             {
                 createConfigZip();
             }
+
+            //FTB pack configs
+            if (CreateFTBPack.Checked)
+            {
+                String tmpConfigDirectory = Path.Combine(OutputDirectory, Path.Combine("minecraft", "config"));
+                Debug.WriteLine(tmpConfigDirectory);
+                Directory.CreateDirectory(tmpConfigDirectory);
+
+                String sourceConfigDirectory = InputFolder.Text;
+                if (globalfunctions.isUnix())
+                {
+                    sourceConfigDirectory = sourceConfigDirectory.Replace("/mods", "/config");
+                }
+                else
+                {
+                    sourceConfigDirectory = sourceConfigDirectory.Replace("\\mods", "\\config");
+                }
+                DirectoryCopy(sourceConfigDirectory, tmpConfigDirectory, true);
+                
+                Environment.CurrentDirectory = OutputDirectory;
+                if (globalfunctions.isUnix())
+                {
+                    startInfo.FileName = "zip";
+                    startInfo.Arguments = String.Format("-r \"{0}\" \"minecraft\"", FTBModpackArchive);
+                }
+                else
+                {
+                    startInfo.Arguments = "a -y \"" + FTBModpackArchive + "\" \"minecraft\"";
+                }
+
+                Debug.WriteLine(startInfo.Arguments.ToString());
+                process.StartInfo = startInfo;
+                process.Start();
+                process.WaitForExit();
+                Directory.Delete(Path.Combine(OutputDirectory, "minecraft"), true);
+            }
+
             if (IncludeForgeVersion.Checked)
             {
                 string selectedBuild = ForgeBuild.SelectedItem.ToString();
@@ -962,15 +1126,11 @@ namespace TechnicSolderHelper
 				}
                 OutputDirectory = OutputFolder.Text;
                 String ConfigFileName = Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config FileInfo Name");
-                if (ConfigFileName.EndsWith(".zip"))
-                {
-                    ConfigFileName = ConfigFileName.Replace(".zip", "");
-                }
                 String ConfigVersion = Prompt.ShowDialog("What is the config version?", "Config Version");
                 String ConfigFileZipName = ConfigFileName + "-" + ConfigVersion;
                 if (!(ConfigFileZipName.EndsWith(".zip")))
                 {
-                    ConfigFileZipName = ConfigFileName + ".zip";
+                    ConfigFileZipName = ConfigFileZipName + ".zip";
                 }
 				if (globalfunctions.isUnix ()) {
 					startInfo.FileName = "zip";
@@ -980,7 +1140,7 @@ namespace TechnicSolderHelper
 				} else {
 					startInfo.Arguments = "a -y \"" + OutputDirectory + "\\" + ConfigFileName + "\\" + ConfigFileZipName + "\" \"" + InputDirectory + "\\config" + "\"";
 				}
-				startInfo.Arguments = startInfo.Arguments.Replace ("\\", "/");
+				startInfo.Arguments = startInfo.Arguments;
                 process.StartInfo = startInfo;
                 process.Start();
 
@@ -1000,13 +1160,27 @@ namespace TechnicSolderHelper
             }
             else
             {
-                String InputDirectory = InputFolder.Text;
-                InputDirectory = InputDirectory.Replace("\\mods", "\\config");
-				if (globalfunctions.isUnix ()) {
-					InputDirectory.Replace ("\\", "/");
-				}
-                
-                startInfo.Arguments = "a -y \"" + ModpackArchive + "\" \"" + InputDirectory + "\"";
+                if (globalfunctions.isUnix())
+                {
+                    String tmpConfigDirectory = Path.Combine(OutputDirectory, "config");
+                    Debug.WriteLine(tmpConfigDirectory);
+                    Directory.CreateDirectory(tmpConfigDirectory);
+
+                    String sourceConfigDirectory = InputFolder.Text;
+                    sourceConfigDirectory = sourceConfigDirectory.Replace("/mods", "/config");
+                    
+                    DirectoryCopy(sourceConfigDirectory, tmpConfigDirectory, true);
+
+                    Environment.CurrentDirectory = OutputDirectory;
+                    startInfo.FileName = "zip";
+                    startInfo.Arguments = String.Format("-r \"{0}\" \"config\"", ModpackArchive).Replace("\\", "/");
+                }
+                else
+                {
+                    String InputDirectory = InputFolder.Text;
+                    InputDirectory = InputDirectory.Replace("\\mods", "\\config");
+                    startInfo.Arguments = "a -y \"" + ModpackArchive + "\" \"" + InputDirectory + "\"";
+                }
                 Debug.WriteLine(startInfo.Arguments);
                 process.StartInfo = startInfo;
                 process.Start();
@@ -1014,6 +1188,42 @@ namespace TechnicSolderHelper
             }
             
 
+        }
+
+        public void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            if (!dir.Exists)
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // If the destination directory doesn't exist, create it. 
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
+
+            // Get the files in the directory and copy them to the new location.
+            System.IO.FileInfo[] files = dir.GetFiles();
+            foreach (System.IO.FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location. 
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                }
+            }
         }
 
         public void requireUserInfo(mcmod currentData, String File)
@@ -1104,16 +1314,11 @@ namespace TechnicSolderHelper
             
             if (currentData.modid != null)
             {
-                mod.modid = currentData.modid.ToLower();
+                mod.modid = currentData.modid;
             }
             else
             {
                 mod.modid = mod.name.Replace(" ", "").ToLower();
-            }
-
-            if (mod.modid.Contains('|'))
-            {
-                mod.modid = mod.modid.Substring(0, mod.modid.IndexOf('|'));
             }
 
             if (CreateTechnicPack.Checked) {
@@ -1285,7 +1490,7 @@ namespace TechnicSolderHelper
             {
                 if (!ModsSQLhelper.IsFileInSolder(modfile))
                 {
-                    String modDir = OutputDirectory + "\\" + mod.modid.ToLower().Replace("|", "") + "\\mods";
+                    String modDir = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "\\mods";
 					if (globalfunctions.isUnix ()) {
 						modDir = modDir.Replace ("\\", "/");
 					}
@@ -1314,9 +1519,9 @@ namespace TechnicSolderHelper
                     Directory.CreateDirectory(tempFileDirectory);
                     File.Copy(modfile, tempModFile, true);
 
-                    String modArchive = OutputDirectory + "\\" + mod.modid.ToLower() + "\\" + mod.modid.ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
+                    String modArchive = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
 					if (globalfunctions.isUnix ()) {
-						Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid.ToLower().Replace("|", "");
+                        Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid.Remove(mod.modid.LastIndexOf("|"));
 						modDir = "mods";
 						modArchive.Replace ("\\", "/");
 						startInfo.FileName = "zip";
@@ -1337,7 +1542,7 @@ namespace TechnicSolderHelper
                     File.AppendAllText(path, AddedMod);
                     AddedMod = "<td>" + mod.name.Replace("|", "") + "</td>";
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td>" + mod.modid.ToLower().Replace("|", "") + "</td>";
+                    AddedMod = "<td>" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "</td>";
                     File.AppendAllText(path, AddedMod);
                     AddedMod = "<td>" + mod.mcversion + "-" + mod.version + "</td>";
                     File.AppendAllText(path, AddedMod.ToLower());
@@ -1420,7 +1625,11 @@ namespace TechnicSolderHelper
                 Directory.Delete(tempDirectory, true);
             }
 
-            File.AppendAllText(modlistTextFile, mod.name + Environment.NewLine);
+            if (!mod.hasBeenWritenToModlist)
+            {
+                File.AppendAllText(modlistTextFile, mod.name + Environment.NewLine);
+                mod.hasBeenWritenToModlist = true;
+            }
 
         }
 

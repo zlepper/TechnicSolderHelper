@@ -17,6 +17,9 @@ namespace TechnicSolderHelper
         public string url { get; set; }
         public string credits { get; set; }
         public string description { get; set; }
+        public Boolean hasBeenWritenToModlist { get; set; }
+        public List<string> authorList { get; set; }
+        public List<string> authors { get; set; }
 
     }
 
@@ -40,7 +43,8 @@ namespace TechnicSolderHelper
     public class ownPermissions
     {
         public Boolean hasPermission { get; set; }
-        public String Link { get; set; }
+        public String PermissionLink { get; set; }
+        public String ModLink { get; set; }
     }
 
     public class ModHelper
