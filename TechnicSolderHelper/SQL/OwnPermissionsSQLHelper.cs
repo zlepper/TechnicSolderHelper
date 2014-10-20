@@ -13,7 +13,7 @@ namespace TechnicSolderHelper.SQL
     {
         protected readonly String CreateTableString;
         public OwnPermissionsSQLHelper() : base("OwnPermissions", "ownperm") {
-            CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT NOT NULL, `PermLink` TEXT NOT NULL, `ModLink` TEXT, PRIMARY KEY(ID));", this.TableName);
+            CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, PRIMARY KEY(ID));", this.TableName);
             executeDatabaseQuery(CreateTableString);
         }
 
@@ -124,7 +124,7 @@ namespace TechnicSolderHelper.SQL
         public void addAuthor(String ModID, String AuthorName) {
             ModID = ModID.Replace("'", "`");
 
-            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModID, ModAuthor) VALUES ('{1}','{2}');", this.TableName, ModID, AuthorName);
+            String sql = String.Format("UPDATE OR REPLACE {0} SET ModAuthor = '{2}' WHERE ModID LIKE '{1}';", this.TableName, ModID, AuthorName);
             Debug.WriteLine(sql);
 
             executeDatabaseQuery(sql);

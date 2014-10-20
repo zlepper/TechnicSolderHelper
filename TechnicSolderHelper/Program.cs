@@ -11,8 +11,6 @@ using System.Reflection;
 using System.Net;
 using System.Windows.Forms;
 
-
-
 namespace TechnicSolderHelper
 {
     

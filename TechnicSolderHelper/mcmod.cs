@@ -18,6 +18,7 @@ namespace TechnicSolderHelper
         public string credits { get; set; }
         public string description { get; set; }
         public Boolean hasBeenWritenToModlist { get; set; }
+        public Boolean isSkipping { get; set; }
         public List<string> authorList { get; set; }
         public List<string> authors { get; set; }
 

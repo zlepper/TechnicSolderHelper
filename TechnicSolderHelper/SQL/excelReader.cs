@@ -67,13 +67,11 @@ namespace TechnicSolderHelper.SQL
                 String permLink = Curtain.Rows[rCnt]["column7"].ToString();
                 String CustPrivate = Curtain.Rows[rCnt]["column8"].ToString();
                 String CustFTB = Curtain.Rows[rCnt]["column9"].ToString();
-                Debug.WriteLine(CustFTB);
 
 				if (Name.Contains("(") && Name.Contains(")"))
 				{
 					int parentesisStartIndex = Name.IndexOf("(");
 					int parentesisEndIndex = Name.IndexOf(")");
-
 
 					String toBeRemoved = "";
 					for (int i = parentesisStartIndex; i < parentesisEndIndex; i++)
@@ -102,14 +100,5 @@ namespace TechnicSolderHelper.SQL
 			excelReader.Close ();
             //MessageBox.Show("DONE!!!");
         }
-    }
-
-    class excelPermSheet
-    {
-        public String ModName { get; set; }
-        public String Author { get; set; }
-        public List<String> ModID { get; set; }
-        public PermissionLevel PublicPerm { get; set; }
-        public PermissionLevel PrivatePerm { get; set; }
     }
 }
