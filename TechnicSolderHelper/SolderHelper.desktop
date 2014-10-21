@@ -1,9 +1,20 @@
-
 [Desktop Entry]
-Encoding=UTF-8
-Type=Application
-Name=SolderHelper
-Exec=sh technicsolderhelper
-Terminal=false
-
 Categories=Utility;
+Comment[en_GB]=
+Comment=
+Encoding=UTF-8
+Exec=sh technicsolderhelper
+GenericName[en_GB]=
+GenericName=
+MimeType=
+Name[en_GB]=SolderHelper
+Name=SolderHelper
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

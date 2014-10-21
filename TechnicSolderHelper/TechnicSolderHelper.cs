@@ -126,8 +126,7 @@ namespace TechnicSolderHelper
 				OutputFolder.Text = Properties.Settings.Default.OutputDirectory.ToString ();
 				CreateTechnicPack.Checked = Properties.Settings.Default.CreateTechnicSolderFiles;
 				CreateFTBPack.Checked = Properties.Settings.Default.CreateFTBPack;
-			}
-            
+            }
 
 			Boolean CSP = true, CPFP = true, TPP = true, IFV = false, ICZ = true, CP = false;
 			if(globalfunctions.isUnix()) {
@@ -204,6 +203,11 @@ namespace TechnicSolderHelper
 			IncludeForgeVersion.Checked = IFV;
 			IncludeConfigZip.Checked = ICZ;
 			CheckPermissions.Checked = CP;
+            if (CP && CreateTechnicPack.Checked) {
+                TechnicDistributionLevel.Visible = true;
+            } else {
+                TechnicDistributionLevel.Visible = false;
+            }
 
             if (SolderPack.Checked)
             {
