@@ -36,7 +36,7 @@ namespace TechnicSolderHelper
 
     public class modlist
     {
-        
+
         public int modListVersion { get; set; }
         public List<String> modList { get; set; }
     }
@@ -83,7 +83,7 @@ namespace TechnicSolderHelper
 
         public static mcmod CoFHLib(String fileName)
         {
-			fileName = fileName.Replace (".jar", "").Replace ("\\", "").ToLower ().Replace ("/", "");
+            fileName = fileName.Replace(".jar", "").Replace("\\", "").ToLower().Replace("/", "");
             mcmod mod = new mcmod();
             mod.name = "CoFHLib";
 
@@ -136,7 +136,7 @@ namespace TechnicSolderHelper
 
         public static mcmod GoodVersioning(String fileName)
         {
-			fileName = fileName.Replace (".jar", "").Replace (".zip", "").Replace ("\\", "").Replace ("/", "");
+            fileName = fileName.Replace(".jar", "").Replace(".zip", "").Replace("\\", "").Replace("/", "");
             mcmod mod = new mcmod();
 
             //Figure out modname
@@ -174,7 +174,7 @@ namespace TechnicSolderHelper
             fileName = fileName.Replace(mcversion + "-", "");
             mod.version = fileName;
 
-            
+
             return mod;
         }
 
@@ -188,13 +188,15 @@ namespace TechnicSolderHelper
                 if (!(FileName[i].Equals('-')))
                 {
                     name = name + FileName[i];
-                }else{
+                }
+                else
+                {
                     break;
                 }
             }
             mod.name = name;
 
-			FileName = FileName.Replace (name, "").Replace ("Beta", "").Replace ("-", "").Replace (".jar", "").Replace ("/", "");
+            FileName = FileName.Replace(name, "").Replace("Beta", "").Replace("-", "").Replace(".jar", "").Replace("/", "");
             mod.version = FileName;
 
             return mod;

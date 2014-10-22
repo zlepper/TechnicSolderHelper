@@ -13,44 +13,55 @@ namespace TechnicSolderHelper.SQL
 {
     public abstract class SQLHelper
     {
-        public SQLHelper(String databaseName, String TableName) 
+        public SQLHelper(String databaseName, String TableName)
         {
             databaseName += ".db";
-			//databaseName = "C:\\" + databaseName;
-			if (globalfunctions.isUnix ()) {
-				Directory.CreateDirectory(Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/SolderHelper");
-				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/SolderHelper/" + databaseName;
-			} else {
-				Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "\\SolderHelper");
-				databaseName = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "\\SolderHelper\\" + databaseName;
-			}
+            //databaseName = "C:\\" + databaseName;
+            if (globalfunctions.isUnix())
+            {
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/SolderHelper");
+                databaseName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/SolderHelper/" + databaseName;
+            }
+            else
+            {
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SolderHelper");
+                databaseName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SolderHelper\\" + databaseName;
+            }
             this.databaseName = databaseName;
-			Debug.WriteLine (this.databaseName);
-			try {
-				if (!File.Exists(this.databaseName)) {
-					if (isUnix()) {
-						SqliteConnection.CreateFile(this.databaseName);
-					} else {
-	                	SQLiteConnection.CreateFile(this.databaseName);
-					}
-				}
+            Debug.WriteLine(this.databaseName);
+            try
+            {
+                if (!File.Exists(this.databaseName))
+                {
+                    if (isUnix())
+                    {
+                        SqliteConnection.CreateFile(this.databaseName);
+                    }
+                    else
+                    {
+                        SQLiteConnection.CreateFile(this.databaseName);
+                    }
+                }
             }
             catch (Exception)
             {
                 //Debug.WriteLine(e.Message);
                 //Debug.WriteLine(e.InnerException);
-				Debug.WriteLine ("Database already existing");
+                Debug.WriteLine("Database already existing");
             }
-			if (isUnix()) {
-				SqliteConnectionStringBuilder c = new SqliteConnectionStringBuilder ();
-				c.DataSource = this.databaseName;
-				this.ConnectionString = c.ConnectionString;
-			} else {
-				SQLiteConnectionStringBuilder c = new SQLiteConnectionStringBuilder ();
-				c.DataSource = this.databaseName;
-				this.ConnectionString = c.ConnectionString;
-			}
-			//c.Version = 3;
+            if (isUnix())
+            {
+                SqliteConnectionStringBuilder c = new SqliteConnectionStringBuilder();
+                c.DataSource = this.databaseName;
+                this.ConnectionString = c.ConnectionString;
+            }
+            else
+            {
+                SQLiteConnectionStringBuilder c = new SQLiteConnectionStringBuilder();
+                c.DataSource = this.databaseName;
+                this.ConnectionString = c.ConnectionString;
+            }
+            //c.Version = 3;
             //this.ConnectionString = "Data Source=" + this.databaseName + ";Version=3;";
             this.TableName = TableName;
         }
@@ -59,9 +70,10 @@ namespace TechnicSolderHelper.SQL
         protected readonly String TableName;
         protected readonly String ConnectionString;
 
-		public Boolean isUnix() {
-			return Environment.OSVersion.ToString ().ToLower ().Contains ("unix");
-		}
+        public Boolean isUnix()
+        {
+            return Environment.OSVersion.ToString().ToLower().Contains("unix");
+        }
 
         protected void executeDatabaseQuery(String sql)
         {
@@ -75,50 +87,59 @@ namespace TechnicSolderHelper.SQL
 
         protected void executeDatabaseQuery(String sql, Boolean Async)
         {
-			//Debug.WriteLine (this.ConnectionString);
-			if (isUnix()) {
-				try{
-					using (SqliteConnection db = new SqliteConnection(this.ConnectionString)) 
-					{
-						db.Open();
-						using (SqliteCommand cmd = new SqliteCommand(sql, db))
-						{
-							if (Async)
-							{
-								cmd.ExecuteNonQueryAsync();
-							}
-							else
-							{
-								cmd.ExecuteNonQuery();
-							}
-						}
-					}
-				}catch(Exception e) {
-					Debug.WriteLine (e.Message);
-					Debug.WriteLine (e.StackTrace);
-				}
-			} else {
-				try{
-	            using (SQLiteConnection db = new SQLiteConnection(this.ConnectionString)) 
-	            {
-	                db.Open();
-	                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-	                {
-	                    if (Async)
-	                    {
-	                        cmd.ExecuteNonQueryAsync();
-	                    }
-	                    else
-	                    {
-	                        cmd.ExecuteNonQuery();
-	                    }
-	                }
-	            }
-				}catch(Exception e) {
-					Debug.WriteLine (e.Message);
-					Debug.WriteLine (e.StackTrace);
-				}
-			}
+            //Debug.WriteLine (this.ConnectionString);
+            if (isUnix())
+            {
+                try
+                {
+                    using (SqliteConnection db = new SqliteConnection(this.ConnectionString))
+                    {
+                        db.Open();
+                        using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                        {
+                            if (Async)
+                            {
+                                cmd.ExecuteNonQueryAsync();
+                            }
+                            else
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.StackTrace);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (SQLiteConnection db = new SQLiteConnection(this.ConnectionString))
+                    {
+                        db.Open();
+                        using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                        {
+                            if (Async)
+                            {
+                                cmd.ExecuteNonQueryAsync();
+                            }
+                            else
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.StackTrace);
+                }
+            }
         }
 
         public virtual void resetTable()

@@ -33,7 +33,7 @@ namespace TechnicSolderHelper
             skip.Click += (sender, e) =>
             {
                 textBox.Text = "skip";
-                    prompt.Close();
+                prompt.Close();
             };
             prompt.Controls.Add(skip);
             if (showSkip)
@@ -44,7 +44,8 @@ namespace TechnicSolderHelper
             return textBox.Text;
         }
 
-        public static string ShowDialog(string text, string caption) {
+        public static string ShowDialog(string text, string caption)
+        {
             return ShowDialog(text, caption, false);
         }
 

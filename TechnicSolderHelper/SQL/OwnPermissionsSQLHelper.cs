@@ -12,7 +12,9 @@ namespace TechnicSolderHelper.SQL
     public class OwnPermissionsSQLHelper : SQLHelper
     {
         protected readonly String CreateTableString;
-        public OwnPermissionsSQLHelper() : base("OwnPermissions", "ownperm") {
+        public OwnPermissionsSQLHelper()
+            : base("OwnPermissions", "ownperm")
+        {
             CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, PRIMARY KEY(ID));", this.TableName);
             executeDatabaseQuery(CreateTableString);
         }
@@ -32,37 +34,48 @@ namespace TechnicSolderHelper.SQL
 
             bool didLoopRun = false;
             ownPermissions p = new ownPermissions();
-			if (isUnix ()) {
-				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
-					db.Open ();
-					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
-						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
-							while (reader.Read ()) {
-								didLoopRun = true;
-								p.hasPermission = true;
-								p.PermissionLink = reader ["PermLink"].ToString ();
+            if (isUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                didLoopRun = true;
+                                p.hasPermission = true;
+                                p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
-								break;
-							}
-						}
-					}
-				}
-			} else {
-				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
-					db.Open ();
-					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
-						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
-							while (reader.Read ()) {
-								didLoopRun = true;
-								p.hasPermission = true;
-                                p.PermissionLink = reader ["PermLink"].ToString ();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                didLoopRun = true;
+                                p.hasPermission = true;
+                                p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
-								break;
-							}
-						}
-					}
-				}
-			}
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
             if (didLoopRun)
             {
@@ -75,29 +88,41 @@ namespace TechnicSolderHelper.SQL
             }
         }
 
-        public String getAuthor(String ModID) {
+        public String getAuthor(String ModID)
+        {
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT ModAuthor FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
             Debug.WriteLine(sql);
 
-            if (isUnix ()) {
-                using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
-                    db.Open ();
-                    using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
-                        using (SqliteDataReader reader = cmd.ExecuteReader ()) {
-                            while (reader.Read ()) {
+            if (isUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
                                 return reader["ModAuthor"].ToString();
                             }
                         }
                     }
                 }
-            } else {
-                using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
-                    db.Open ();
-                    using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
-                        using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
-                            while (reader.Read ()) {
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
                                 return reader["ModAuthor"].ToString();
                             }
                         }
@@ -107,7 +132,8 @@ namespace TechnicSolderHelper.SQL
             return "";
         }
 
-        public void addOwnModPerm(String ModName, String ModID, String PermissionLink) {
+        public void addOwnModPerm(String ModName, String ModID, String PermissionLink)
+        {
             addOwnModPerm(ModName, ModID, PermissionLink, "");
         }
         public void addOwnModPerm(String ModName, String ModID, String PermissionLink, String modLink)
@@ -121,7 +147,8 @@ namespace TechnicSolderHelper.SQL
             executeDatabaseQuery(sql);
         }
 
-        public void addAuthor(String ModID, String AuthorName) {
+        public void addAuthor(String ModID, String AuthorName)
+        {
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("UPDATE OR REPLACE {0} SET ModAuthor = '{2}' WHERE ModID LIKE '{1}';", this.TableName, ModID, AuthorName);

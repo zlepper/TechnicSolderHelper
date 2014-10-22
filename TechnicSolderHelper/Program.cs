@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace TechnicSolderHelper
 {
-    
+
     class Program
     {
         [STAThread]
@@ -28,9 +28,10 @@ namespace TechnicSolderHelper
             catch (Exception e)
             {
                 String errorLocation = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\errorFromTechnicSolderHelper.txt";
-				if (globalfunctions.isUnix ()) {
-					errorLocation.Replace ("\\", "/");
-				}
+                if (globalfunctions.isUnix())
+                {
+                    errorLocation.Replace("\\", "/");
+                }
                 if (File.Exists(errorLocation))
                 {
                     File.Delete(errorLocation);
@@ -45,9 +46,9 @@ namespace TechnicSolderHelper
                 MessageBox.Show("An unknown error occured. Please check the error log on you desktop." + Environment.NewLine + "It should have opened by itself.");
                 return;
             }
-            
+
         }
-        
+
     }
 
 }

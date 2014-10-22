@@ -12,7 +12,8 @@ namespace TechnicSolderHelper.SQL
     public class FTBPermissionsSQLHelper : SQLHelper
     {
         protected readonly String CreateTableString;
-        public FTBPermissionsSQLHelper() : base("FTBPermssions", "ftbperms")
+        public FTBPermissionsSQLHelper()
+            : base("FTBPermssions", "ftbperms")
         {
             CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModAuthor` TEXT NOT NULL, `ModID` TEXT NOT NULL, `PublicPerm` TEXT NOT NULL, `PrivatePerm` TEXT NOT NULL, `ModLink` TEXT, `PermLink` TEXT, `CustPrivate` TEXT, `CustFTB` TEXT, PRIMARY KEY(ID));", this.TableName);
             executeDatabaseQuery(CreateTableString);
@@ -34,69 +35,88 @@ namespace TechnicSolderHelper.SQL
 
             String sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID.ToLower());
             Debug.WriteLine(sql);
-			if (isUnix ()) {
-				using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
-					db.Open ();
-					using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
-						using (SqliteDataReader reader = cmd.ExecuteReader ()) {
-							String level = "";
-							while (reader.Read ()) {
-								if (isPublic) {
-									level = reader ["PublicPerm"].ToString ();
-								} else {
-									level = reader ["PrivatePerm"].ToString ();
-								}
-							}
+            if (isUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            String level = "";
+                            while (reader.Read())
+                            {
+                                if (isPublic)
+                                {
+                                    level = reader["PublicPerm"].ToString();
+                                }
+                                else
+                                {
+                                    level = reader["PrivatePerm"].ToString();
+                                }
+                            }
 
-							switch (level.ToLower ()) {
-							case "open":
-								return PermissionLevel.Open;
-							case "closed":
-								return PermissionLevel.Closed;
-							case "ftb":
-								return PermissionLevel.FTB;
-							case "notify":
-								return PermissionLevel.Notify;
-							case "request":
-								return PermissionLevel.Request;
-							default:
-								return PermissionLevel.Unknown;
-							}
-						}
-					}
-				}
-			} else {
-				using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
-					db.Open ();
-					using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
-						using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
-							String level = "";
-							while (reader.Read ()) {
-								if (isPublic) {
-									level = reader ["PublicPerm"].ToString ();
-								} else {
-									level = reader ["PrivatePerm"].ToString ();
-								}
-							}
-                        
-							switch (level.ToLower ()) {
-							case "open":
-								return PermissionLevel.Open;
-							case "closed":
-								return PermissionLevel.Closed;
-							case "ftb":
-								return PermissionLevel.FTB;
-							case "notify":
-								return PermissionLevel.Notify;
-							case "request":
-								return PermissionLevel.Request;
-							default:
-								return PermissionLevel.Unknown;
-							}
-						}
-					}
-				}
-			}
+                            switch (level.ToLower())
+                            {
+                                case "open":
+                                    return PermissionLevel.Open;
+                                case "closed":
+                                    return PermissionLevel.Closed;
+                                case "ftb":
+                                    return PermissionLevel.FTB;
+                                case "notify":
+                                    return PermissionLevel.Notify;
+                                case "request":
+                                    return PermissionLevel.Request;
+                                default:
+                                    return PermissionLevel.Unknown;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            String level = "";
+                            while (reader.Read())
+                            {
+                                if (isPublic)
+                                {
+                                    level = reader["PublicPerm"].ToString();
+                                }
+                                else
+                                {
+                                    level = reader["PrivatePerm"].ToString();
+                                }
+                            }
+
+                            switch (level.ToLower())
+                            {
+                                case "open":
+                                    return PermissionLevel.Open;
+                                case "closed":
+                                    return PermissionLevel.Closed;
+                                case "ftb":
+                                    return PermissionLevel.FTB;
+                                case "notify":
+                                    return PermissionLevel.Notify;
+                                case "request":
+                                    return PermissionLevel.Request;
+                                default:
+                                    return PermissionLevel.Unknown;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public enum PermissionType
@@ -104,29 +124,41 @@ namespace TechnicSolderHelper.SQL
             PermLink, CustPrivate, CustFTB, ModLink, ModAuthor
         }
 
-        public String getInfo(String ModID, PermissionType permType) {
+        public String getInfo(String ModID, PermissionType permType)
+        {
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT ModAuthor, ModLink, PermLink, CustPrivate, CustFTB FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID.ToLower());
             Debug.WriteLine(sql);
 
-            if (isUnix ()) {
-                using (SqliteConnection db = new SqliteConnection (ConnectionString)) {
-                    db.Open ();
-                    using (SqliteCommand cmd = new SqliteCommand (sql, db)) {
-                        using (SqliteDataReader reader = cmd.ExecuteReader ()) {
-                            while (reader.Read ()) {
+            if (isUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
                                 return reader[permType.ToString()].ToString();
                             }
                         }
                     }
                 }
-            } else {
-                using (SQLiteConnection db = new SQLiteConnection (ConnectionString)) {
-                    db.Open ();
-                    using (SQLiteCommand cmd = new SQLiteCommand (sql, db)) {
-                        using (SQLiteDataReader reader = cmd.ExecuteReader ()) {
-                            while (reader.Read ()) {
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
                                 return reader[permType.ToString()].ToString();
                             }
                         }
