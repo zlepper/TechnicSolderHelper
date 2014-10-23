@@ -615,7 +615,8 @@ namespace TechnicSolderHelper
             }
             else
             {
-                startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", FTBModpackArchive, tempModDirectory);
+                Environment.CurrentDirectory = OutputDirectory;
+                startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", FTBModpackArchive, "minecraft");
             }
             if (globalfunctions.isUnix())
             {
@@ -811,13 +812,15 @@ namespace TechnicSolderHelper
                 {
                     foreach (String mcmodfiles in Directory.GetFiles(OutputDirectory, "*.info"))
                     {
-                        if (mcmodfiles.Contains("dependencies"))
+                        Debug.WriteLine(mcmodfiles);
+                        if (mcmodfiles.ToLower().Contains("dependancies") || mcmodfiles.ToLower().Contains("dependencies"))
                         {
+                            Debug.WriteLine("Found dependancy file");
                             File.Delete(mcmodfiles);
                         }
                         else
                         {
-                            if (mcmodfiles.Equals(mcmodfile))
+                            if (!File.Exists(mcmodfile))
                             {
                                 File.Move(mcmodfiles, mcmodfile);
                             }
@@ -825,7 +828,6 @@ namespace TechnicSolderHelper
                             {
                                 File.Delete(mcmodfile);
                                 File.Move(mcmodfiles, mcmodfile);
-
                             }
                         }
                     }
@@ -1163,7 +1165,14 @@ namespace TechnicSolderHelper
                         }
                         catch (Exception)
                         {
-                            Process.Start(path);
+                            try
+                            {
+                                Process.Start("firefox", path);
+                            }
+                            catch (Exception)
+                            {
+                                Process.Start(path);
+                            }
                         }
                     }
                 }
