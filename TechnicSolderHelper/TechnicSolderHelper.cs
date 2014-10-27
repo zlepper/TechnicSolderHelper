@@ -39,6 +39,7 @@ namespace TechnicSolderHelper
         public static String UserName, path, CurrentMCVersion, ModpackVersion, ModpackName, ModpackArchive, FTBModpackArchive;
         public static ConfigHandler confighandler = new ConfigHandler();
         public static String modlistTextFile = "", technicPermissionList = "", FTBPermissionList = "", FTBOwnPermissionList = "";
+        public static short totalMods = 0, currentMod = 0;
 
         #endregion
 
@@ -756,19 +757,22 @@ namespace TechnicSolderHelper
             foreach (String file in Directory.GetFiles(DirectoryWithFiles, "*.zip", SearchOption.AllDirectories))
             {
                 files.Add(file);
+                totalMods++;
                 //Debug.WriteLine(file);
             }
             foreach (String file in Directory.GetFiles(DirectoryWithFiles, "*.jar", SearchOption.AllDirectories))
             {
                 files.Add(file);
+                totalMods++;
                 //Debug.WriteLine(file);
             }
             foreach (String file in Directory.GetFiles(DirectoryWithFiles, "*.litemod", SearchOption.AllDirectories))
             {
                 files.Add(file);
+                totalMods++;
                 //Debug.WriteLine(file);
             }
-
+            Debug.WriteLine(totalMods);
             //Check if files have already been added
             foreach (String file in files)
             {
