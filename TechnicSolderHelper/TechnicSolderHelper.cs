@@ -797,13 +797,8 @@ namespace TechnicSolderHelper
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
-                String mcmodfile = OutputDirectory + @"\mcmod.info";
-                String litemodfile = OutputDirectory + @"\litemod.json";
-                if (globalfunctions.isUnix())
-                {
-                    litemodfile = litemodfile.Replace("\\", "/");
-                    mcmodfile = mcmodfile.Replace("\\", "");
-                }
+                String mcmodfile = Path.Combine(OutputDirectory, "mcmod.info");//OutputDirectory + @"\mcmod.info";
+                String litemodfile = Path.Combine(OutputDirectory, "litemod.json");//OutputDirectory + @"\litemod.json";
                 if (File.Exists(litemodfile))
                 {
                     if (File.Exists(mcmodfile))
@@ -814,25 +809,26 @@ namespace TechnicSolderHelper
                 }
                 if (!File.Exists(mcmodfile))
                 {
-                    foreach (String mcmodfiles in Directory.GetFiles(OutputDirectory, "*.info"))
+                    foreach (String modinfofile in Directory.GetFiles(OutputDirectory, "*.info"))
                     {
-                        Debug.WriteLine(mcmodfiles);
-                        if (mcmodfiles.ToLower().Contains("dependancies") || mcmodfiles.ToLower().Contains("dependencies"))
+                        Debug.WriteLine(modinfofile);
+                        if (modinfofile.ToLower().Contains("dependancies") || modinfofile.ToLower().Contains("dependencies"))
                         {
                             Debug.WriteLine("Found dependancy file");
-                            File.Delete(mcmodfiles);
+                            File.Delete(modinfofile);
                         }
                         else
                         {
                             if (!File.Exists(mcmodfile))
                             {
-                                File.Move(mcmodfiles, mcmodfile);
+                                File.Move(modinfofile, mcmodfile);
                             }
                             else
                             {
                                 File.Delete(mcmodfile);
-                                File.Move(mcmodfiles, mcmodfile);
+                                File.Move(modinfofile, mcmodfile);
                             }
+                            Debug.WriteLine(modinfofile);
                         }
                     }
                 }
@@ -868,23 +864,17 @@ namespace TechnicSolderHelper
                                 throw new JsonSerializationException();
                             }
                         }
-                        catch (Newtonsoft.Json.JsonSerializationException)
+                        catch (Newtonsoft.Json.JsonSerializationException ef)
                         {
+                            Debug.Write("");
                             try
                             {
                                 mcmod mod = new mcmod();
                                 //Debug.WriteLine("Maybe version 1?");
                                 List<mcmod> modinfo = null;
-                                try
-                                {
-                                    modinfo = JsonConvert.DeserializeObject<List<mcmod>>(json);
-                                    //Debug.WriteLine("Version 1");
-                                }
-                                catch (Exception)
-                                {
-                                    //Debug.WriteLine(e.Message);
-                                    //Debug.WriteLine(e.InnerException);
-                                }
+
+                                modinfo = JsonConvert.DeserializeObject<List<mcmod>>(json);
+                                //Debug.WriteLine("Version 1");
 
                                 mod = modinfo[0];
 
@@ -921,9 +911,11 @@ namespace TechnicSolderHelper
                                     }
                                 }
                             }
-                            catch (Exception e)
+                            catch (Newtonsoft.Json.JsonSerializationException e)
                             {
-                                Debug.WriteLine(e.Message);
+                                Debug.WriteLineIf(e.InnerException != null, e.InnerException);
+                                Debug.WriteLineIf(e.StackTrace != null,e.StackTrace);
+                                Debug.WriteLineIf(e.Message != null,e.Message);
                                 litemod liteloadermod = JsonConvert.DeserializeObject<litemod>(json);
 
                                 //Convert into mcmod
@@ -959,10 +951,12 @@ namespace TechnicSolderHelper
                         }
 
                     }
-                    catch (Exception)
+                    catch (Newtonsoft.Json.JsonSerializationException e)
                     {
+                        Debug.WriteLine(e.Message);
                         requireUserInfo(file);
                     }
+                    Debug.WriteLine("");
                     File.Delete(mcmodfile);
                 }
                 else
@@ -1210,7 +1204,8 @@ namespace TechnicSolderHelper
                                      "PiP",
                                      "Waila",
                                      "Reaikas mods hereyadaytaad",
-                                     "INpureProject"};
+                                     "INpureProject",
+                "ejml-"};
             for (int i = 0; i < wierdMods.Length; i++)
             {
                 if (modFileName.ToLower().Contains(wierdMods[i].ToLower()))
@@ -1721,11 +1716,11 @@ namespace TechnicSolderHelper
                     String modDir = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modDir = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "\\mods";
+                        modDir = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "\\mods";
                     }
                     else
                     {
-                        modDir = OutputDirectory + "\\" + mod.modid + "\\mods";
+                        modDir = OutputDirectory + "\\" + mod.modid.Replace(".", string.Empty).ToLower() + "\\mods";
                     }
                     if (globalfunctions.isUnix())
                     {
@@ -1760,21 +1755,21 @@ namespace TechnicSolderHelper
                     String modArchive = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modArchive = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
+                        modArchive = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
                     }
                     else
                     {
-                        modArchive = OutputDirectory + "\\" + mod.modid + "\\" + mod.modid + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
+                        modArchive = OutputDirectory + "\\" + mod.modid.Replace(".", string.Empty).ToLower() + "\\" + mod.modid.Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
                     }
                     if (globalfunctions.isUnix())
                     {
                         if (mod.modid.Contains("|"))
                         {
-                            Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid.Remove(mod.modid.LastIndexOf("|"));
+                            Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower();
                         }
                         else
                         {
-                            Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid;
+                            Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid.Replace(".", string.Empty).ToLower();
                         }
                         modDir = "mods";
                         modArchive.Replace("\\", "/");
@@ -1796,19 +1791,20 @@ namespace TechnicSolderHelper
                     // Add mod info to a html file
                     String AddedMod = "<tr>";
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td>" + mod.name.Replace("|", "") + "</td>";
+                    AddedMod = "<td class=\"containsInfo\">" + mod.name.Replace("|", "") + "</td>";
                     File.AppendAllText(path, AddedMod);
                     if (mod.modid.Contains("|"))
                     {
-                        AddedMod = "<td>" + mod.modid.Remove(mod.modid.LastIndexOf("|")) + "</td>";
+                        AddedMod = "<td class=\"containsInfo\">" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", String.Empty).ToLower() + "</td>";
                     }
                     else
                     {
-                        AddedMod = "<td>" + mod.modid + "</td>";
+                        AddedMod = "<td class=\"containsInfo\">" + mod.modid.Replace(".", string.Empty).ToLower() + "</td>";
                     }
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td>" + mod.mcversion + "-" + mod.version + "</td>";
-                    File.AppendAllText(path, AddedMod.ToLower());
+                    AddedMod = "<td class=\"containsInfo\">" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + "</td>";
+                    File.AppendAllText(path, AddedMod);
+                    File.AppendAllText(path, "<td><button type=\"button\">Hide</button></td>");
                     File.AppendAllText(path, "</tr>" + Environment.NewLine);
 
                     process.WaitForExit();

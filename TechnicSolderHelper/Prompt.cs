@@ -60,7 +60,7 @@ namespace TechnicSolderHelper
         }
 
         public static String modsLeftString(short totalmods, short modsLeft) {
-            return String.Format("{0} of {1} mods total", modsLeft.ToString(), totalmods.ToString())
+            return String.Format("{0} of {1} mods total", modsLeft.ToString(), totalmods.ToString());
         }
     }
 }
