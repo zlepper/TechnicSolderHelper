@@ -207,6 +207,20 @@ Global
 		$28.NamingStyle = PascalCase
 		$28.IncludeInstanceMembers = True
 		$28.IncludeStaticEntities = True
+		$0.TextStylePolicy = $30
+		$30.inheritsSet = VisualStudio
+		$30.inheritsScope = text/plain
+		$30.scope = text/plain
+		$0.TextStylePolicy = $31
+		$31.inheritsSet = null
+		$31.scope = application/xml
+		$0.XmlFormattingPolicy = $32
+		$32.inheritsSet = Mono
+		$32.inheritsScope = application/xml
+		$32.scope = application/xml
+		$0.TextStylePolicy = $33
+		$33.inheritsSet = null
+		$33.scope = application/x-desktop
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 2

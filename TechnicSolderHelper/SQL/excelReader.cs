@@ -52,6 +52,7 @@ namespace TechnicSolderHelper.SQL
                 {
                     modIDs.Add(tmpid);
                     shortNames.Add(tmpshortName);
+                    sqlhelper.addFTBModPerm(tmpid, tmpshortName);
                 }
             }
 
@@ -92,7 +93,7 @@ namespace TechnicSolderHelper.SQL
                     if (shortNames[i].Equals(shortName))
                     {
                         String modID = modIDs[i];
-                        sqlhelper.addFTBModPerm(Name, Author, modID, Public, Private, modLink, permLink, CustPrivate, CustFTB);
+                        sqlhelper.addFTBModPerm(Name, Author, modID, Public, Private, modLink, permLink, CustPrivate, CustFTB, shortName);
                     }
                 }
 

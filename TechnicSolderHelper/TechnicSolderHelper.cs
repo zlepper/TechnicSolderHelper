@@ -341,7 +341,7 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    authorString = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                    authorString = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
 
                     if (String.IsNullOrWhiteSpace(authorString))
                     {
@@ -382,7 +382,7 @@ namespace TechnicSolderHelper
                         op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
                         if (!op.hasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                            overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -398,19 +398,27 @@ namespace TechnicSolderHelper
                                         {
                                             OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
                                             //Get Author
-                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
                                             createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
                                             break;
                                         }
+                                        else
+                                        {
+                                            MessageBox.Show("Not an imgur link");
+                                        }
                                     }
-                                    overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                                    else
+                                    {
+                                        MessageBox.Show("Invalid url");
+                                    }
+                                    overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                                 }
                             }
                         }
                         else
                         {
                             //Get Author
-                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
                             createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
                         }
                         break;
@@ -421,7 +429,7 @@ namespace TechnicSolderHelper
                         op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
                         if (!op.hasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                            overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -437,19 +445,27 @@ namespace TechnicSolderHelper
                                         {
                                             OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
                                             //Get Author
-                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
                                             createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
                                             break;
                                         }
+                                        else
+                                        {
+                                            MessageBox.Show("Not an imgur link");
+                                        }
                                     }
-                                    overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                                    else
+                                    {
+                                        MessageBox.Show("Invalid url");
+                                    }
+                                    overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                                 }
                             }
                         }
                         else
                         {
                             //Get Author
-                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
                             createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
                         }
                         break;
@@ -457,7 +473,7 @@ namespace TechnicSolderHelper
                         op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
                         if (!op.hasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                            overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -473,19 +489,27 @@ namespace TechnicSolderHelper
                                         {
                                             OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
                                             //Get Author
-                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
                                             createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
                                             break;
                                         }
+                                        else
+                                        {
+                                            MessageBox.Show("Not an imgur link");
+                                        }
                                     }
-                                    overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                                    else
+                                    {
+                                        MessageBox.Show("Invalid url");
+                                    }
+                                    overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                                 }
                             }
                         }
                         else
                         {
                             //Get Author
-                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModAuthor);
+                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
                             createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
                         }
                         break;
@@ -494,7 +518,7 @@ namespace TechnicSolderHelper
                         op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
                         if (!op.hasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -510,8 +534,16 @@ namespace TechnicSolderHelper
                                         {
                                             break;
                                         }
+                                        else
+                                        {
+                                            MessageBox.Show("Not an imgur link");
+                                        }
                                     }
-                                    overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                                    else
+                                    {
+                                        MessageBox.Show("Invalid url");
+                                    }
+                                    overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                                 }
                             }
                             while (true)
@@ -529,7 +561,11 @@ namespace TechnicSolderHelper
                                         break;
 
                                     }
-                                    modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true);
+                                    else
+                                    {
+                                        MessageBox.Show("Invalid url");
+                                    }
+                                    modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                                 }
                             }
                             String a = getAuthors(mod);
@@ -574,7 +610,7 @@ namespace TechnicSolderHelper
 
             }
 
-            //String tempDirectory = String.Format("{0}\\minecraft\\tmp", OutputDirectory);
+
             String tempModDirectory = String.Format("{0}\\minecraft\\mods", OutputDirectory);
             if (globalfunctions.isUnix())
             {
@@ -741,11 +777,11 @@ namespace TechnicSolderHelper
             if (SolderPack.Checked)
             {
                 String htmlfile = "<!DOCTYPE html> \n <html> <head>" + Environment.NewLine +
-                         "<title>Mods</title>" + Environment.NewLine +
-                         "<meta charset=\"utf-8\" />" + Environment.NewLine +
-                         "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js\"></script>" + Environment.NewLine +
-                         "<script src=\"http://cloud.zlepper.dk/technicsolderhelper.js\"></script>" + Environment.NewLine +
-                         "</head>" + Environment.NewLine + "<body><table border='1'><tr><th>Modname</th><th>Modslug</th><th>Version</th></tr>" + Environment.NewLine;
+                                  "<title>Mods</title>" + Environment.NewLine +
+                                  "<meta charset=\"utf-8\" />" + Environment.NewLine +
+                                  "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js\"></script>" + Environment.NewLine +
+                                  "<script src=\"http://cloud.zlepper.dk/technicsolderhelper.js\"></script>" + Environment.NewLine +
+                                  "</head>" + Environment.NewLine + "<body><table border='1'><tr><th>Modname</th><th>Modslug</th><th>Version</th></tr>" + Environment.NewLine;
                 File.WriteAllText(path, htmlfile);
             }
 
@@ -846,7 +882,16 @@ namespace TechnicSolderHelper
                     {
                         try
                         {
-                            mcmod2 modinfo2 = JsonConvert.DeserializeObject<mcmod2>(json);
+                            mcmod2 modinfo2 = null;
+                            try
+                            {
+                                modinfo2 = JsonConvert.DeserializeObject<mcmod2>(json);
+                            }
+                            catch (Newtonsoft.Json.JsonReaderException)
+                            {
+                                MessageBox.Show("Something is wrong with the Json in " + FileName);
+                                throw new JsonSerializationException("Invalid Json in file" + FileName);
+                            }
 
                             mcmod mod = new mcmod();
 
@@ -864,7 +909,7 @@ namespace TechnicSolderHelper
                                 throw new JsonSerializationException();
                             }
                         }
-                        catch (Newtonsoft.Json.JsonSerializationException ef)
+                        catch (Newtonsoft.Json.JsonSerializationException)
                         {
                             Debug.Write("");
                             try
@@ -872,10 +917,16 @@ namespace TechnicSolderHelper
                                 mcmod mod = new mcmod();
                                 //Debug.WriteLine("Maybe version 1?");
                                 List<mcmod> modinfo = null;
-
-                                modinfo = JsonConvert.DeserializeObject<List<mcmod>>(json);
-                                //Debug.WriteLine("Version 1");
-
+                                try
+                                {
+                                    modinfo = JsonConvert.DeserializeObject<List<mcmod>>(json);
+                                    //Debug.WriteLine("Version 1");
+                                }
+                                catch (Newtonsoft.Json.JsonReaderException)
+                                {
+                                    MessageBox.Show("Something is wrong with the Json in " + FileName);
+                                    throw new JsonSerializationException("Invalid Json in file" + FileName);
+                                }
                                 mod = modinfo[0];
 
                                 if (file.ToLower().Contains("mekanism"))
@@ -914,10 +965,19 @@ namespace TechnicSolderHelper
                             catch (Newtonsoft.Json.JsonSerializationException e)
                             {
                                 Debug.WriteLineIf(e.InnerException != null, e.InnerException);
-                                Debug.WriteLineIf(e.StackTrace != null,e.StackTrace);
-                                Debug.WriteLineIf(e.Message != null,e.Message);
-                                litemod liteloadermod = JsonConvert.DeserializeObject<litemod>(json);
+                                Debug.WriteLineIf(e.StackTrace != null, e.StackTrace);
+                                Debug.WriteLineIf(e.Message != null, e.Message);
+                                litemod liteloadermod = null;
 
+                                try
+                                {
+                                    liteloadermod = JsonConvert.DeserializeObject<litemod>(json);
+                                }
+                                catch (Newtonsoft.Json.JsonReaderException)
+                                {
+                                    MessageBox.Show("Something is wrong with the Json in " + FileName);
+                                    throw new JsonSerializationException("Invalid Json in file" + FileName);
+                                }
                                 //Convert into mcmod
                                 mcmod mod = new mcmod();
                                 mod.mcversion = liteloadermod.mcversion;
@@ -963,58 +1023,74 @@ namespace TechnicSolderHelper
                 {
                     String fileName = file.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
                     fileName = file.Replace(DirectoryWithFiles, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("\\", "").Trim();
-                    int fixNr = IsWierdMod(fileName);
-                    if (fixNr != 0)
+
+                    //Check the FTB permission sheet for info before doing anything else
+                    String shortname = FTBPermsSQLhelper.getShortName(SQLHelper.calculateMD5(file));
+                    if (shortname.Equals(""))
                     {
-                        mcmod mod;
-                        switch (fixNr)
+                        int fixNr = IsWierdMod(fileName);
+                        if (fixNr != 0)
                         {
+                            mcmod mod;
+                            switch (fixNr)
+                            {
                             //Not enough items
-                            case 1:
-                                mod = ModHelper.NotEnoughItems(fileName);
-                                requireUserInfo(mod, file);
-                                break;
+                                case 1:
+                                    mod = ModHelper.NotEnoughItems(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
                             //CoFHLib
-                            case 5:
-                                mod = ModHelper.CoFHLib(fileName);
-                                requireUserInfo(mod, file);
-                                break;
+                                case 5:
+                                    mod = ModHelper.CoFHLib(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
                             //Code chicken core
-                            case 6:
-                                mod = ModHelper.CodeChickenCore(fileName);
-                                requireUserInfo(mod, file);
-                                break;
+                                case 6:
+                                    mod = ModHelper.CodeChickenCore(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
                             //Liteloader
-                            case 7:
-                                mod = ModHelper.Liteloader(fileName);
-                                requireUserInfo(mod, file);
-                                break;
-                            case 9:
-                                mod = ModHelper.GoodVersioning(fileName);
-                                requireUserInfo(mod, file);
-                                break;
-                            case 10:
-                            case 11:
-                                mod = ModHelper.iChunMod(fileName);
-                                requireUserInfo(mod, file);
-                                break;
-                            case 12:
-                                mod = ModHelper.waila(fileName);
-                                requireUserInfo(mod, file);
-                                break;
-                            case 13:
-                                mod = ModHelper.ReikasMods(fileName);
-                                requireUserInfo(mod, file);
-                                break;
-                            case 0:
-                            default:
-                                break;
+                                case 7:
+                                    mod = ModHelper.Liteloader(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
+                                case 9:
+                                    mod = ModHelper.GoodVersioning(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
+                                case 10:
+                                case 11:
+                                    mod = ModHelper.iChunMod(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
+                                case 12:
+                                    mod = ModHelper.waila(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
+                                case 13:
+                                    mod = ModHelper.ReikasMods(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
+                                case 0:
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            requireUserInfo(file);
                         }
                     }
                     else
                     {
-                        requireUserInfo(file);
+                        //if
+                        //mcmod mod = new mcmod();
+
                     }
+
+
+
+
                 }
             }
 
@@ -1191,21 +1267,23 @@ namespace TechnicSolderHelper
         /// <returns>Returns the number of the method to call, if no match is found, returns zero</returns>
         private static int IsWierdMod(String modFileName)
         {
-            String[] wierdMods = {"NotEnoughItems", 
-                                     "CarpentersBlocksCachedResources", 
-                                     "CodeChickenLib", 
-                                     "ForgeMultipart", 
-                                     "CoFHLib", 
-                                     "CodeChickenCore", 
-                                     "liteloader",
-                                     "bspkrsCore-IsNowNeeded",
-                                     "Morpheus",
-                                     "Morph", 
-                                     "PiP",
-                                     "Waila",
-                                     "Reaikas mods hereyadaytaad",
-                                     "INpureProject",
-                "ejml-"};
+            String[] wierdMods =
+                {"NotEnoughItems", 
+                    "CarpentersBlocksCachedResources", 
+                    "CodeChickenLib", 
+                    "ForgeMultipart", 
+                    "CoFHLib", 
+                    "CodeChickenCore", 
+                    "liteloader",
+                    "bspkrsCore-IsNowNeeded",
+                    "Morpheus",
+                    "Morph", 
+                    "PiP",
+                    "Waila",
+                    "Reaikas mods hereyadaytaad",
+                    "INpureProject",
+                    "ejml-"
+                };
             for (int i = 0; i < wierdMods.Length; i++)
             {
                 if (modFileName.ToLower().Contains(wierdMods[i].ToLower()))
@@ -1488,7 +1566,7 @@ namespace TechnicSolderHelper
 
         public void createTechnicPermissionInfo(mcmod mod, PermissionLevel pl, String customPermissionText)
         {
-            String modlink = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModLink);
+            String modlink = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink);
             while (String.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
             {
                 modlink = Prompt.ShowDialog("What is the link to " + mod.name + "?", "Mod link");
@@ -1549,7 +1627,7 @@ namespace TechnicSolderHelper
                                         {
                                             OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
                                             customPermissionText = "Proof of notitification: " + overwritelink;
-                                            createTechnicPermissionInfo(mod, PermLevel, customPermissionText, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModLink));
+                                            createTechnicPermissionInfo(mod, PermLevel, customPermissionText, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }
@@ -1581,7 +1659,7 @@ namespace TechnicSolderHelper
                                     {
                                         if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModLink));
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }
@@ -1611,7 +1689,7 @@ namespace TechnicSolderHelper
                                     {
                                         if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModLink));
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }
@@ -1641,7 +1719,7 @@ namespace TechnicSolderHelper
                                     {
                                         if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.PermissionType.ModLink));
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }

@@ -11,7 +11,7 @@ namespace TechnicSolderHelper
     {
 
 
-        public static string ShowDialog(string text, string caption, Boolean showSkip,  String extraText)
+        public static string ShowDialog(string text, string caption, Boolean showSkip,  String extraText, String err)
         {
             Form prompt = new Form();
             prompt.Width = 500;
@@ -51,12 +51,12 @@ namespace TechnicSolderHelper
 
         public static string ShowDialog(string text, string caption)
         {
-            return ShowDialog(text, caption, false, null);
+            return ShowDialog(text, caption, false, null, null);
         }
 
         public static string ShowDialog(string text, string caption, Boolean showSkip)
         {
-            return ShowDialog(text, caption, true, null);
+            return ShowDialog(text, caption, true, null, null);
         }
 
         public static String modsLeftString(short totalmods, short modsLeft) {
