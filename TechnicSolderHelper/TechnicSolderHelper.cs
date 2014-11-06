@@ -341,7 +341,7 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    authorString = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
+                    authorString = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
 
                     if (String.IsNullOrWhiteSpace(authorString))
                     {
@@ -366,226 +366,233 @@ namespace TechnicSolderHelper
             String FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
             FileName = modfile.Replace(DirectoryWithFiles, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Trim();
             String modMD5 = SQLHelper.calculateMD5(modfile);
-            ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, false);
-            if (true)
+            if (!mod.isIgnore)
             {
-                #region Permissions checking
-                PermissionLevel PermLevel = FTBPermsSQLhelper.doFTBHavePermission(mod.modid, PublicFTBPack.Checked);
-                String overwritelink = "";
-                ownPermissions op;
-                switch (PermLevel)
+                if (!mod.useShortName)
                 {
-                    case PermissionLevel.Open:
-                        Debug.WriteLine("Open Permissions");
-                        break;
-                    case PermissionLevel.Notify:
-                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
-                        if (!op.hasPermission)
-                        {
-                            overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                            while (true)
-                            {
-                                if (overwritelink.ToLower().Equals("skip".ToLower()))
-                                {
-                                    mod.isSkipping = true;
-                                    return;
-                                }
-                                else
-                                {
-                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
-                                    {
-                                        if (overwritelink.ToLower().Contains("imgur"))
-                                        {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
-                                            //Get Author
-                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
-                                            createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Not an imgur link");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show("Invalid url");
-                                    }
-                                    overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Get Author
-                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
-                            createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
-                        }
-                        break;
-                    case PermissionLevel.FTB:
-                        Debug.WriteLine("FTB Permissions");
-                        break;
-                    case PermissionLevel.Request:
-                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
-                        if (!op.hasPermission)
-                        {
-                            overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                            while (true)
-                            {
-                                if (overwritelink.ToLower().Equals("skip".ToLower()))
-                                {
-                                    mod.isSkipping = true;
-                                    return;
-                                }
-                                else
-                                {
-                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
-                                    {
-                                        if (overwritelink.ToLower().Contains("imgur"))
-                                        {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
-                                            //Get Author
-                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
-                                            createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Not an imgur link");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show("Invalid url");
-                                    }
-                                    overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Get Author
-                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
-                            createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
-                        }
-                        break;
-                    case PermissionLevel.Closed:
-                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
-                        if (!op.hasPermission)
-                        {
-                            overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                            while (true)
-                            {
-                                if (overwritelink.ToLower().Equals("skip".ToLower()))
-                                {
-                                    mod.isSkipping = true;
-                                    return;
-                                }
-                                else
-                                {
-                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
-                                    {
-                                        if (overwritelink.ToLower().Contains("imgur"))
-                                        {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
-                                            //Get Author
-                                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
-                                            createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Not an imgur link");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show("Invalid url");
-                                    }
-                                    overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Get Author
-                            String a = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
-                            createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
-                        }
-                        break;
-                    case PermissionLevel.Unknown:
-                        String modLink = "";
-                        op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
-                        if (!op.hasPermission)
-                        {
-                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                            while (true)
-                            {
-                                if (overwritelink.ToLower().Equals("skip".ToLower()))
-                                {
-                                    mod.isSkipping = true;
-                                    return;
-                                }
-                                else
-                                {
-                                    if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
-                                    {
-                                        if (overwritelink.ToLower().Contains("imgur"))
-                                        {
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            MessageBox.Show("Not an imgur link");
-                                        }
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show("Invalid url");
-                                    }
-                                    overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                                }
-                            }
-                            while (true)
-                            {
-                                if (modLink.ToLower().Equals("skip".ToLower()))
-                                {
-                                    mod.isSkipping = true;
-                                    return;
-                                }
-                                else
-                                {
-                                    if (Uri.IsWellFormedUriString(modLink, UriKind.Absolute))
-                                    {
-                                        OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, modLink);
-                                        break;
-
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show("Invalid url");
-                                    }
-                                    modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
-                                }
-                            }
-                            String a = getAuthors(mod);
-                            createOwnPermissionInfo(mod.name, mod.modid, a, overwritelink, modLink);
-
-                        }
-                        else
-                        {
-                            String a = getAuthors(mod);
-                            createOwnPermissionInfo(mod.name, mod.modid, a, op.PermissionLink, op.ModLink);
-                        }
-                        break;
-                    default:
-                        Debug.WriteLine("WELLP, something went wrong!!");
-                        break;
+                    ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, false);
                 }
-                #endregion
+                if (true)
+                {
+                    #region Permissions checking
+                    PermissionLevel PermLevel = FTBPermsSQLhelper.doFTBHavePermission(mod.modid, PublicFTBPack.Checked, mod.useShortName);
+
+                    Debug.WriteLine(PermLevel.ToString());
+                    String overwritelink = "";
+                    ownPermissions op;
+                    switch (PermLevel)
+                    {
+                        case PermissionLevel.Open:
+                            Debug.WriteLine("Open Permissions");
+                            break;
+                        case PermissionLevel.Notify:
+                            op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                            if (!op.hasPermission)
+                            {
+                                overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                while (true)
+                                {
+                                    if (overwritelink.ToLower().Equals("skip".ToLower()))
+                                    {
+                                        mod.isSkipping = true;
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
+                                        {
+                                            if (overwritelink.ToLower().Contains("imgur"))
+                                            {
+                                                OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
+                                                //Get Author
+                                                String a = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
+                                                createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Not an imgur link");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("Invalid url");
+                                        }
+                                        overwritelink = Prompt.ShowDialog(mod.name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //Get Author
+                                String a = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
+                                createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
+                            }
+                            break;
+                        case PermissionLevel.FTB:
+                            Debug.WriteLine("FTB Permissions");
+                            break;
+                        case PermissionLevel.Request:
+                            op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                            if (!op.hasPermission)
+                            {
+                                overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                while (true)
+                                {
+                                    if (overwritelink.ToLower().Equals("skip".ToLower()))
+                                    {
+                                        mod.isSkipping = true;
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
+                                        {
+                                            if (overwritelink.ToLower().Contains("imgur"))
+                                            {
+                                                OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
+                                                //Get Author
+                                                String a = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
+                                                createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Not an imgur link");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("Invalid url");
+                                        }
+                                        overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //Get Author
+                                String a = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
+                                createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
+                            }
+                            break;
+                        case PermissionLevel.Closed:
+                            op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                            if (!op.hasPermission)
+                            {
+                                overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                while (true)
+                                {
+                                    if (overwritelink.ToLower().Equals("skip".ToLower()))
+                                    {
+                                        mod.isSkipping = true;
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
+                                        {
+                                            if (overwritelink.ToLower().Contains("imgur"))
+                                            {
+                                                OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
+                                                //Get Author
+                                                String a = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
+                                                createFTBPermissionInfo(mod.name, mod.modid, a, overwritelink);
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Not an imgur link");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("Invalid url");
+                                        }
+                                        overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //Get Author
+                                String a = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModAuthor);
+                                createFTBPermissionInfo(mod.name, mod.modid, a, op.PermissionLink);
+                            }
+                            break;
+                        case PermissionLevel.Unknown:
+                            String modLink = "";
+                            op = OwnPermsSQLhelper.doUserHavePermission(mod.modid);
+                            if (!op.hasPermission)
+                            {
+                                overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                while (true)
+                                {
+                                    if (overwritelink.ToLower().Equals("skip".ToLower()))
+                                    {
+                                        mod.isSkipping = true;
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        if (Uri.IsWellFormedUriString(overwritelink, UriKind.Absolute))
+                                        {
+                                            if (overwritelink.ToLower().Contains("imgur"))
+                                            {
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                MessageBox.Show("Not an imgur link");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("Invalid url");
+                                        }
+                                        overwritelink = Prompt.ShowDialog("Permissions for " + mod.name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                    }
+                                }
+                                while (true)
+                                {
+                                    if (modLink.ToLower().Equals("skip".ToLower()))
+                                    {
+                                        mod.isSkipping = true;
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        if (Uri.IsWellFormedUriString(modLink, UriKind.Absolute))
+                                        {
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, modLink);
+                                            break;
+
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("Invalid url");
+                                        }
+                                        modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
+                                    }
+                                }
+                                String a = getAuthors(mod);
+                                createOwnPermissionInfo(mod.name, mod.modid, a, overwritelink, modLink);
+
+                            }
+                            else
+                            {
+                                String a = getAuthors(mod);
+                                createOwnPermissionInfo(mod.name, mod.modid, a, op.PermissionLink, op.ModLink);
+                            }
+                            break;
+                        default:
+                            Debug.WriteLine("WELLP, something went wrong!!");
+                            break;
+                    }
+                    #endregion
+                }
             }
 
-            ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, false);
             //Debug.WriteLine("Creating big zip file");
             if (String.IsNullOrWhiteSpace(FTBModpackArchive))
             {
@@ -1022,53 +1029,25 @@ namespace TechnicSolderHelper
                 else
                 {
                     String fileName = file.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
-                    fileName = file.Replace(DirectoryWithFiles, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("\\", "").Trim();
+                    fileName = file.Replace(DirectoryWithFiles, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Trim();
 
                     //Check the FTB permission sheet for info before doing anything else
                     String shortname = FTBPermsSQLhelper.getShortName(SQLHelper.calculateMD5(file));
                     if (String.IsNullOrWhiteSpace(shortname))
                     {
                         int fixNr = IsWierdMod(fileName);
-                        if (fixNr != 0)
+                        if (fixNr != Int32.MaxValue)
                         {
                             mcmod mod;
                             switch (fixNr)
                             {
-                            //Not enough items
+                            //Reikas Pattern
                                 case 1:
-                                    mod = ModHelper.NotEnoughItems(fileName);
-                                    requireUserInfo(mod, file);
-                                    break;
-                            //CoFHLib
-                                case 5:
-                                    mod = ModHelper.CoFHLib(fileName);
-                                    requireUserInfo(mod, file);
-                                    break;
-                            //Code chicken core
-                                case 6:
-                                    mod = ModHelper.CodeChickenCore(fileName);
-                                    requireUserInfo(mod, file);
-                                    break;
-                            //Liteloader
-                                case 7:
-                                    mod = ModHelper.Liteloader(fileName);
-                                    requireUserInfo(mod, file);
-                                    break;
-                                case 9:
-                                    mod = ModHelper.GoodVersioning(fileName);
-                                    requireUserInfo(mod, file);
-                                    break;
-                                case 10:
-                                case 11:
-                                    mod = ModHelper.iChunMod(fileName);
-                                    requireUserInfo(mod, file);
-                                    break;
-                                case 12:
-                                    mod = ModHelper.waila(fileName);
-                                    requireUserInfo(mod, file);
-                                    break;
-                                case 13:
                                     mod = ModHelper.ReikasMods(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
+                                case 2:
+                                    mod = ModHelper.wailaPattern(fileName);
                                     requireUserInfo(mod, file);
                                     break;
                                 case 0:
@@ -1085,6 +1064,35 @@ namespace TechnicSolderHelper
                     {
 
                         mcmod mod = new mcmod();
+                        if (shortname.Equals("ignore"))
+                        {
+                            mod.isIgnore = true;
+                        }
+                        else
+                        {
+                            mod.isIgnore = false;
+                            mod.useShortName = true;
+                            mod.modid = shortname;
+                            mod.name = FTBPermsSQLhelper.getInfoFromModID(shortname, FTBPermissionsSQLHelper.InfoType.ModName);
+                            mod.authors = new List<string>();
+                            mod.authors.Add(FTBPermsSQLhelper.getInfoFromModID(shortname, FTBPermissionsSQLHelper.InfoType.ModAuthor));
+                            mod.authorList = mod.authors;
+                            mod.privatePerms = FTBPermsSQLhelper.doFTBHavePermission(shortname, false, true);
+                            mod.publicPerms = FTBPermsSQLhelper.doFTBHavePermission(shortname, true, true);
+                        }
+
+                        if (CreateFTBPack.Checked && !CreateTechnicPack.Checked)
+                        {
+                            CreateFTBPackZip(mod, file);
+                        }
+                        else
+                        {
+                            if (CreateFTBPack.Checked || CreateTechnicPack.Checked)
+                            {
+                                requireUserInfo(mod, file);
+                            }
+                        }
+
 
                     }
 
@@ -1267,38 +1275,35 @@ namespace TechnicSolderHelper
         /// <returns>Returns the number of the method to call, if no match is found, returns zero</returns>
         private static int IsWierdMod(String modFileName)
         {
-            String[] wierdMods =
-                {"NotEnoughItems", 
-                    "CarpentersBlocksCachedResources", 
+            Debug.WriteLine(modFileName);
+            String[] skipMods =
+                {"CarpentersBlocksCachedResources", 
                     "CodeChickenLib", 
                     "ForgeMultipart", 
-                    "CoFHLib", 
-                    "CodeChickenCore", 
-                    "liteloader",
-                    "bspkrsCore-IsNowNeeded",
-                    "Morpheus",
-                    "Morph", 
-                    "PiP",
-                    "Waila",
-                    "Reaikas mods hereyadaytaad",
-                    "INpureProject",
                     "ejml-"
                 };
-            for (int i = 0; i < wierdMods.Length; i++)
+            for (int i = 0; i < skipMods.Length; i++)
             {
-                if (modFileName.ToLower().Contains(wierdMods[i].ToLower()))
+                if (modFileName.ToLower().Contains(skipMods[i].ToLower()))
                 {
-                    //Return the number we are on, plus 1 to make sure we call the right function
+                    Debug.WriteLine("Found something");
+                    //Return zero to indicate a mod that needs to be skipped
+                    return 0;
+                }
+            }
+            String[] ModPatterns =
+                {@"[a-z]+ 1.[0-9].[0-9]* V[0-9]*[a-z]*",
+                    @"[a-z]+-[0-9.]+_[0-9.]+"
+                };
+            for (int i = 0; i < ModPatterns.Length; i++)
+            {
+                if (Regex.IsMatch(modFileName, ModPatterns[i], RegexOptions.IgnoreCase))
+                {
                     return i + 1;
                 }
             }
-            String ReikasModsPattern = @"[a-z]+ 1.[0-9].[0-9]* V[0-9]*[a-z]*";
 
-            if (Regex.IsMatch(modFileName, ReikasModsPattern, RegexOptions.IgnoreCase))
-            {
-                return 13;
-            }
-            return 0;
+            return Int32.MaxValue;
         }
 
         /// <summary>
@@ -1447,7 +1452,7 @@ namespace TechnicSolderHelper
         {
 
             mcmod mod = new mcmod();
-
+            mod.useShortName = false;
             try
             {
                 mod = ModsSQLhelper.getModInfo(SQLHelper.calculateMD5(File));
@@ -1566,7 +1571,7 @@ namespace TechnicSolderHelper
 
         public void createTechnicPermissionInfo(mcmod mod, PermissionLevel pl, String customPermissionText)
         {
-            String modlink = FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink);
+            String modlink = FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink);
             while (String.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
             {
                 modlink = Prompt.ShowDialog("What is the link to " + mod.name + "?", "Mod link");
@@ -1596,7 +1601,7 @@ namespace TechnicSolderHelper
             ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, false);
             if (CheckPermissions.Checked)
             {
-                PermissionLevel PermLevel = FTBPermsSQLhelper.doFTBHavePermission(mod.modid, PublicFTBPack.Checked);
+                PermissionLevel PermLevel = FTBPermsSQLhelper.doFTBHavePermission(mod.modid, PublicFTBPack.Checked, mod.useShortName);
                 String overwritelink = "";
                 String modLink = "";
                 ownPermissions op;
@@ -1627,7 +1632,7 @@ namespace TechnicSolderHelper
                                         {
                                             OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink);
                                             customPermissionText = "Proof of notitification: " + overwritelink;
-                                            createTechnicPermissionInfo(mod, PermLevel, customPermissionText, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
+                                            createTechnicPermissionInfo(mod, PermLevel, customPermissionText, FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }
@@ -1659,7 +1664,7 @@ namespace TechnicSolderHelper
                                     {
                                         if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }
@@ -1689,7 +1694,7 @@ namespace TechnicSolderHelper
                                     {
                                         if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }
@@ -1719,7 +1724,7 @@ namespace TechnicSolderHelper
                                     {
                                         if (overwritelink.ToLower().Contains("imgur"))
                                         {
-                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfo(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
+                                            OwnPermsSQLhelper.addOwnModPerm(mod.name, mod.modid, overwritelink, FTBPermsSQLhelper.getInfoFromModID(mod.modid, FTBPermissionsSQLHelper.InfoType.ModLink));
                                             break;
                                         }
                                     }

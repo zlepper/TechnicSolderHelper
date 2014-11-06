@@ -30,11 +30,19 @@ namespace TechnicSolderHelper.SQL
         /// If true, Checks for public distribution permissions.</param>
         /// <returns>Return the level of distribution.
         /// If no level found, return PermissionLevel.Unknown</returns>
-        public PermissionLevel doFTBHavePermission(String ModID, Boolean isPublic)
+        public PermissionLevel doFTBHavePermission(String toCheck, Boolean isPublic, Boolean checkShortName)
         {
-            ModID = ModID.Replace("'", "`");
+            toCheck = toCheck.Replace("'", "`");
 
-            String sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID.ToLower());
+            String sql = "";
+            if (checkShortName)
+            {
+                sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ShortName LIKE '{1}';", this.TableName, toCheck.ToLower());
+            }
+            else
+            {
+                sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID LIKE '{1}';", this.TableName, toCheck.ToLower());
+            }
             Debug.WriteLine(sql);
             if (isUnix())
             {
@@ -128,14 +136,15 @@ namespace TechnicSolderHelper.SQL
             ModLink,
             ModAuthor,
             ShortName,
-            ModID
+            ModID,
+            ModName
         }
 
-        public String getInfo(String ModID, InfoType permType)
+        public String getInfoFromModID(String ModID, InfoType infoType)
         {
             ModID = ModID.Replace("'", "`");
 
-            String sql = String.Format("SELECT {2} FROM {0} WHERE ShortName LIKE '{1}';", this.TableName, ModID.ToLower(), permType.ToString());
+            String sql = String.Format("SELECT {2} FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID.ToLower(), infoType.ToString());
             Debug.WriteLine(sql);
 
             if (isUnix())
@@ -149,7 +158,7 @@ namespace TechnicSolderHelper.SQL
                         {
                             while (reader.Read())
                             {
-                                return reader[permType.ToString()].ToString();
+                                return reader[infoType.ToString()].ToString();
                             }
                         }
                     }
@@ -166,7 +175,51 @@ namespace TechnicSolderHelper.SQL
                         {
                             while (reader.Read())
                             {
-                                return reader[permType.ToString()].ToString();
+                                return reader[infoType.ToString()].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            return "";
+        }
+
+        public String getInfoFromShortName(String ShortName, InfoType infoType)
+        {
+            ShortName = ShortName.Replace("'", "`");
+
+            String sql = String.Format("SELECT {2} FROM {0} WHERE ShortName LIKE '{1}';", this.TableName, ShortName.ToLower(), infoType.ToString());
+            Debug.WriteLine(sql);
+
+            if (isUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                return reader[infoType.ToString()].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                return reader[infoType.ToString()].ToString();
                             }
                         }
                     }
