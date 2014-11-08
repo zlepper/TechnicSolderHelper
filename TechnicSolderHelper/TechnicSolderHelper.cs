@@ -66,6 +66,11 @@ namespace TechnicSolderHelper
             }
             if (firstRun)
             {
+
+                messageToUser m = new messageToUser();
+                Thread startingThread = new Thread(new ThreadStart(m.firstTimeRun));
+                startingThread.Start();
+
                 if (globalfunctions.isUnix())
                 {
                     confighandler.setConfig("InputDirectory", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods");

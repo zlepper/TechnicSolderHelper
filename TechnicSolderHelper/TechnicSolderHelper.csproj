@@ -194,6 +194,7 @@
     <Compile Include="confighandler\confighandler.cs" />
     <Compile Include="SQL\forge\forge.cs" />
     <Compile Include="SQL\forge\forgemaven.cs" />
+    <Compile Include="messageToUser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
