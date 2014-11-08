@@ -815,6 +815,12 @@ namespace TechnicSolderHelper
                 totalMods++;
                 //Debug.WriteLine(file);
             }
+            foreach (String file in Directory.GetFiles(DirectoryWithFiles, "*.disabled", SearchOption.AllDirectories))
+            {
+                files.Add(file);
+                totalMods++;
+                //Debug.WriteLine(file);
+            }
             Debug.WriteLine(totalMods);
             //Check if files have already been added
             foreach (String file in files)
@@ -1462,8 +1468,8 @@ namespace TechnicSolderHelper
                 Debug.WriteLine("FileInfo is not in the database");
             }
 
-            String FileName = File.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Replace(".jar", "").Replace(".zip", "").Trim();
-            FileName = File.Replace(DirectoryWithFiles, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Replace(".jar", "").Replace(".zip", "").Trim();
+            String FileName = File.Replace(DirectoryWithFiles, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Replace(".jar", "").Replace(".zip", "").Replace(".litemod", "").Replace(".disabled", "").Trim();
+            FileName = File.Replace(DirectoryWithFiles, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Replace(".jar", "").Replace(".zip", "").Replace(".litemod", "").Replace(".disabled", "").Trim();
             //Debug.WriteLine(FileName);
             if (currentData.name != null)
             {

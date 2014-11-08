@@ -12,6 +12,7 @@ namespace TechnicSolderHelper.SQL
     public class OwnPermissionsSQLHelper : SQLHelper
     {
         protected readonly String CreateTableString;
+
         public OwnPermissionsSQLHelper()
             : base("OwnPermissions", "ownperm")
         {
@@ -136,6 +137,7 @@ namespace TechnicSolderHelper.SQL
         {
             addOwnModPerm(ModName, ModID, PermissionLink, "");
         }
+
         public void addOwnModPerm(String ModName, String ModID, String PermissionLink, String modLink)
         {
             ModName = ModName.Replace("'", "`");
@@ -151,7 +153,7 @@ namespace TechnicSolderHelper.SQL
         {
             ModID = ModID.Replace("'", "`");
 
-            String sql = String.Format("UPDATE OR REPLACE {0} SET ModAuthor = '{2}' WHERE ModID LIKE '{1}';", this.TableName, ModID, AuthorName);
+            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModAuthor, ModID)values('{2}','{1}');", this.TableName, ModID, AuthorName);
             Debug.WriteLine(sql);
 
             executeDatabaseQuery(sql);
