@@ -61,9 +61,17 @@
             this.GetForgeVersions = new System.Windows.Forms.Button();
             this.labelmcversion = new System.Windows.Forms.Label();
             this.labelforgeversion = new System.Windows.Forms.Label();
+            this.missingInfoAction = new System.Windows.Forms.GroupBox();
+            this.missingInfoActionOnTheRun = new System.Windows.Forms.RadioButton();
+            this.missingInfoActionCreateList = new System.Windows.Forms.RadioButton();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ModpackNameInput = new System.Windows.Forms.ComboBox();
+            this.ModpackVersionInput = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.SolderPackType.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
+            this.missingInfoAction.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -155,7 +163,6 @@
             // CreateFTBPack
             // 
             this.CreateFTBPack.AutoSize = true;
-            this.CreateFTBPack.Enabled = true;
             this.CreateFTBPack.Location = new System.Drawing.Point(14, 300);
             this.CreateFTBPack.Name = "CreateFTBPack";
             this.CreateFTBPack.Size = new System.Drawing.Size(108, 17);
@@ -202,7 +209,6 @@
             this.OutputFolder.Name = "OutputFolder";
             this.OutputFolder.Size = new System.Drawing.Size(432, 20);
             this.OutputFolder.TabIndex = 0;
-			this.OutputFolder.Text = "";
             this.OutputFolder.TextChanged += new System.EventHandler(this.OutputFolder_TextChanged);
             // 
             // InputFolder
@@ -420,11 +426,82 @@
             this.labelforgeversion.Text = "Forge Version";
             this.labelforgeversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             // 
+            // missingInfoAction
+            // 
+            this.missingInfoAction.Controls.Add(this.missingInfoActionCreateList);
+            this.missingInfoAction.Controls.Add(this.missingInfoActionOnTheRun);
+            this.missingInfoAction.Location = new System.Drawing.Point(510, 186);
+            this.missingInfoAction.Name = "missingInfoAction";
+            this.missingInfoAction.Size = new System.Drawing.Size(110, 69);
+            this.missingInfoAction.TabIndex = 0;
+            this.missingInfoAction.TabStop = false;
+            this.missingInfoAction.Text = "Missing Info";
+            // 
+            // missingInfoActionOnTheRun
+            // 
+            this.missingInfoActionOnTheRun.AutoSize = true;
+            this.missingInfoActionOnTheRun.Checked = true;
+            this.missingInfoActionOnTheRun.Location = new System.Drawing.Point(7, 20);
+            this.missingInfoActionOnTheRun.Name = "missingInfoActionOnTheRun";
+            this.missingInfoActionOnTheRun.Size = new System.Drawing.Size(96, 17);
+            this.missingInfoActionOnTheRun.TabIndex = 0;
+            this.missingInfoActionOnTheRun.TabStop = true;
+            this.missingInfoActionOnTheRun.Text = "Ask as needed";
+            this.missingInfoActionOnTheRun.UseVisualStyleBackColor = true;
+            // 
+            // missingInfoActionCreateList
+            // 
+            this.missingInfoActionCreateList.AutoSize = true;
+            this.missingInfoActionCreateList.Location = new System.Drawing.Point(7, 44);
+            this.missingInfoActionCreateList.Name = "missingInfoActionCreateList";
+            this.missingInfoActionCreateList.Size = new System.Drawing.Size(75, 17);
+            this.missingInfoActionCreateList.TabIndex = 1;
+            this.missingInfoActionCreateList.Text = "Create List";
+            this.missingInfoActionCreateList.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(507, 258);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 13);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Modpack Name";
+            // 
+            // ModpackNameInput
+            // 
+            this.ModpackNameInput.FormattingEnabled = true;
+            this.ModpackNameInput.Location = new System.Drawing.Point(507, 274);
+            this.ModpackNameInput.Name = "ModpackNameInput";
+            this.ModpackNameInput.Size = new System.Drawing.Size(121, 21);
+            this.ModpackNameInput.TabIndex = 18;
+            // 
+            // ModpackVersionInput
+            // 
+            this.ModpackVersionInput.Location = new System.Drawing.Point(507, 317);
+            this.ModpackVersionInput.Name = "ModpackVersionInput";
+            this.ModpackVersionInput.Size = new System.Drawing.Size(122, 20);
+            this.ModpackVersionInput.TabIndex = 19;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(507, 302);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(89, 13);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "Modpack version";
+            // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(641, 464);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.ModpackVersionInput);
+            this.Controls.Add(this.ModpackNameInput);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.missingInfoAction);
             this.Controls.Add(this.labelforgeversion);
             this.Controls.Add(this.labelmcversion);
             this.Controls.Add(this.ForgeBuild);
@@ -456,6 +533,8 @@
             this.DistributionLevel.PerformLayout();
             this.TechnicDistributionLevel.ResumeLayout(false);
             this.TechnicDistributionLevel.PerformLayout();
+            this.missingInfoAction.ResumeLayout(false);
+            this.missingInfoAction.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -496,5 +575,12 @@
         private System.Windows.Forms.Button GetForgeVersions;
         private System.Windows.Forms.Label labelmcversion;
         private System.Windows.Forms.Label labelforgeversion;
+        private System.Windows.Forms.GroupBox missingInfoAction;
+        private System.Windows.Forms.RadioButton missingInfoActionCreateList;
+        private System.Windows.Forms.RadioButton missingInfoActionOnTheRun;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox ModpackNameInput;
+        private System.Windows.Forms.TextBox ModpackVersionInput;
+        private System.Windows.Forms.Label label5;
     }
 }

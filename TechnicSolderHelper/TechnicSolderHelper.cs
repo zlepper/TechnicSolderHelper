@@ -691,6 +691,7 @@ namespace TechnicSolderHelper
             FTBOwnPermissionList = Path.Combine(OutputDirectory, "Own Permission List.txt");
             FTBPermissionList = Path.Combine(OutputDirectory, "FTB Permission List.txt");
             technicPermissionList = Path.Combine(OutputDirectory, "Technic Permission List.txt");
+
             if (globalfunctions.isUnix())
             {
                 Environment.CurrentDirectory = "/";
@@ -733,6 +734,9 @@ namespace TechnicSolderHelper
             {
                 File.Delete(technicPermissionList);
             }
+
+            ModpackName = ModpackNameInput.Text;
+            ModpackVersion = ModpackVersionInput.Text;
 
             ModpackVersion = null;
             //Download 7zip dependancy
