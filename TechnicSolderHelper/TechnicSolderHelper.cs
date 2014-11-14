@@ -33,6 +33,7 @@ namespace TechnicSolderHelper
         public FTBPermissionsSQLHelper FTBPermsSQLhelper = new FTBPermissionsSQLHelper();
         public OwnPermissionsSQLHelper OwnPermsSQLhelper = new OwnPermissionsSQLHelper();
         public ForgeSQLHelper forgesqlhelper = new ForgeSQLHelper();
+        public liteloaderSQLHelper liteloadersqlhelper = new liteloaderSQLHelper();
         public static String SevenZipLocation = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\TechnicSolderHelper\7za.exe";
         public static Process process = new System.Diagnostics.Process();
         public static ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -561,6 +562,7 @@ namespace TechnicSolderHelper
                                 }
                                 while (true)
                                 {
+                                    modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true).Replace(" ", "");
                                     if (modLink.ToLower().Equals("skip".ToLower()))
                                     {
                                         mod.isSkipping = true;
@@ -835,6 +837,10 @@ namespace TechnicSolderHelper
             //Check if files have already been added
             foreach (String file in files)
             {
+                if (IsWierdMod(file) == 0)
+                {
+                    continue;
+                }
                 String FileName = file.Replace(DirectoryWithFiles, "");
                 ProgressLabel.Text = FileName;
                 //Check for mcmod.info
@@ -1064,6 +1070,15 @@ namespace TechnicSolderHelper
                                     break;
                                 case 2:
                                     mod = ModHelper.wailaPattern(fileName);
+                                    requireUserInfo(mod, file);
+                                    break;
+                                case 3:
+                                    liteloaderversion llversion = liteloadersqlhelper.getInfo(SQLHelper.calculateMD5(file));
+                                    mod = new mcmod();
+                                    mod.mcversion = llversion.mcversion;
+                                    mod.name = "Liteloader";
+                                    mod.modid = llversion.tweakClass;
+                                    mod.version = llversion.version.Substring(llversion.version.LastIndexOf("_") + 1);
                                     requireUserInfo(mod, file);
                                     break;
                                 case 0:
@@ -1309,7 +1324,8 @@ namespace TechnicSolderHelper
             }
             String[] ModPatterns =
                 {@"[a-z]+ 1.[0-9].[0-9]* V[0-9]*[a-z]*",
-                    @"[a-z]+-[0-9.]+_[0-9.]+"
+                    @"[a-z]+-[0-9.]+_[0-9.]+",
+                    @"liteloader"
                 };
             for (int i = 0; i < ModPatterns.Length; i++)
             {
@@ -2320,7 +2336,34 @@ namespace TechnicSolderHelper
 
         private void getliteloaderversions_Click(object sender, EventArgs e)
         {
+            String liteloaderjsonfile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            liteloaderjsonfile = Path.Combine(liteloaderjsonfile, "liteloader.json");
+            WebClient wb = new WebClient();
+            System.Uri webfile = new Uri("http://dl.liteloader.com/versions/versions.json");
+            wb.DownloadFile(webfile, liteloaderjsonfile);
 
+            String json = "";
+            using (StreamReader r = new StreamReader(liteloaderjsonfile))
+            {
+                json = r.ReadToEnd();
+            }
+            liteloader liteloader = JsonConvert.DeserializeObject<liteloader>(json);
+            Debug.WriteLine("DONE");
+
+            foreach (KeyValuePair<String, versions> item in liteloader.versions)
+            {
+                //Debug.WriteLine(item.Value.artefacts["com.mumfrey:liteloader"].Count);
+                foreach (versionclass it in item.Value.artefacts["com.mumfrey:liteloader"].Values)
+                {
+                    /*Debug.WriteLine("");
+                    Debug.WriteLine(it.file);
+                    Debug.WriteLine(it.version);
+                    Debug.WriteLine(it.md5);
+                    Debug.WriteLine(item.Key);*/
+                    liteloadersqlhelper.addVersion(it.file, it.version, it.md5, item.Key, it.tweakClass);
+                }
+
+            }
         }
     }
 }
