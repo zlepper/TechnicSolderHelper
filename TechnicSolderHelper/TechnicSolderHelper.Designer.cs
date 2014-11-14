@@ -62,12 +62,13 @@
             this.labelmcversion = new System.Windows.Forms.Label();
             this.labelforgeversion = new System.Windows.Forms.Label();
             this.missingInfoAction = new System.Windows.Forms.GroupBox();
-            this.missingInfoActionOnTheRun = new System.Windows.Forms.RadioButton();
             this.missingInfoActionCreateList = new System.Windows.Forms.RadioButton();
+            this.missingInfoActionOnTheRun = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
             this.ModpackNameInput = new System.Windows.Forms.ComboBox();
             this.ModpackVersionInput = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.getliteloaderversions = new System.Windows.Forms.Button();
             this.SolderPackType.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
@@ -437,6 +438,16 @@
             this.missingInfoAction.TabStop = false;
             this.missingInfoAction.Text = "Missing Info";
             // 
+            // missingInfoActionCreateList
+            // 
+            this.missingInfoActionCreateList.AutoSize = true;
+            this.missingInfoActionCreateList.Location = new System.Drawing.Point(7, 44);
+            this.missingInfoActionCreateList.Name = "missingInfoActionCreateList";
+            this.missingInfoActionCreateList.Size = new System.Drawing.Size(75, 17);
+            this.missingInfoActionCreateList.TabIndex = 1;
+            this.missingInfoActionCreateList.Text = "Create List";
+            this.missingInfoActionCreateList.UseVisualStyleBackColor = true;
+            // 
             // missingInfoActionOnTheRun
             // 
             this.missingInfoActionOnTheRun.AutoSize = true;
@@ -448,16 +459,6 @@
             this.missingInfoActionOnTheRun.TabStop = true;
             this.missingInfoActionOnTheRun.Text = "Ask as needed";
             this.missingInfoActionOnTheRun.UseVisualStyleBackColor = true;
-            // 
-            // missingInfoActionCreateList
-            // 
-            this.missingInfoActionCreateList.AutoSize = true;
-            this.missingInfoActionCreateList.Location = new System.Drawing.Point(7, 44);
-            this.missingInfoActionCreateList.Name = "missingInfoActionCreateList";
-            this.missingInfoActionCreateList.Size = new System.Drawing.Size(75, 17);
-            this.missingInfoActionCreateList.TabIndex = 1;
-            this.missingInfoActionCreateList.Text = "Create List";
-            this.missingInfoActionCreateList.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -492,11 +493,22 @@
             this.label5.TabIndex = 20;
             this.label5.Text = "Modpack version";
             // 
+            // getliteloaderversions
+            // 
+            this.getliteloaderversions.Location = new System.Drawing.Point(429, 400);
+            this.getliteloaderversions.Name = "getliteloaderversions";
+            this.getliteloaderversions.Size = new System.Drawing.Size(75, 52);
+            this.getliteloaderversions.TabIndex = 21;
+            this.getliteloaderversions.Text = "Get liteloader versions";
+            this.getliteloaderversions.UseVisualStyleBackColor = true;
+            this.getliteloaderversions.Click += new System.EventHandler(this.getliteloaderversions_Click);
+            // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(641, 464);
+            this.Controls.Add(this.getliteloaderversions);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.ModpackVersionInput);
             this.Controls.Add(this.ModpackNameInput);
@@ -582,5 +594,6 @@
         private System.Windows.Forms.ComboBox ModpackNameInput;
         private System.Windows.Forms.TextBox ModpackVersionInput;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button getliteloaderversions;
     }
 }
