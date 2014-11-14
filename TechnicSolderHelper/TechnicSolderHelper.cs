@@ -354,11 +354,12 @@ namespace TechnicSolderHelper
                         if (String.IsNullOrWhiteSpace(authorString))
                         {
                             authorString = Prompt.ShowDialog("Who is the author of " + mod.name + "?" + Environment.NewLine + "If you leave this empty the author list in the output will also be empty.", "Mod Author");
-                            OwnPermsSQLhelper.addAuthor(mod.modid, authorString);
+
                         }
                     }
                 }
             }
+            OwnPermsSQLhelper.addAuthor(mod.modid, authorString);
             return authorString;
         }
 

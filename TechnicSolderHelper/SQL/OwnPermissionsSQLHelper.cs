@@ -153,7 +153,7 @@ namespace TechnicSolderHelper.SQL
         {
             ModID = ModID.Replace("'", "`");
 
-            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModAuthor, ModID)values('{2}','{1}');", this.TableName, ModID, AuthorName);
+            String sql = String.Format("UPDATE {0} SET ModAuthor = '{2}' WHERE ModID LIKE '{1}';", this.TableName, ModID, AuthorName);
             Debug.WriteLine(sql);
 
             executeDatabaseQuery(sql);

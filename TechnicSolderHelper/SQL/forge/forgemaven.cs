@@ -8,25 +8,31 @@ namespace TechnicSolderHelper.forge
 {
     public class forgemaven
     {
-        //public int adfly { get; set; }
-        //public string artifact { get; set; }
-        //public List<List<String>> branches { get; set; }
         public string homepage { get; set; }
-        //public List<List<String>> mcversion { get; set; }
+
         public string name { get; set; }
+
         public Dictionary<int, Number> number { get; set; }
+
         public string webpath { get; set; }
     }
 
     public class Number
     {
         public string branch { get; set; }
+
         public int build { get; set; }
+
         public List<List<String>> files { get; set; }
+
         public string jobver { get; set; }
+
         public string mcversion { get; set; }
+
         public string modified { get; set; }
+
         public string version { get; set; }
+
         public string downloadurl { get; set; }
     }
 
