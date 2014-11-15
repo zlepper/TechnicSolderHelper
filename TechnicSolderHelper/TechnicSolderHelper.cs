@@ -41,6 +41,8 @@ namespace TechnicSolderHelper
         public static ConfigHandler confighandler = new ConfigHandler();
         public static String modlistTextFile = "", technicPermissionList = "", FTBPermissionList = "", FTBOwnPermissionList = "";
         public static short totalMods = 0, currentMod = 0;
+        public static String modpacksJsonFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "modpacks.json");
+        public static modpacks modpacks = new modpacks();
 
         #endregion
 
@@ -282,6 +284,14 @@ namespace TechnicSolderHelper
             }
             Debug.WriteLine("Done adding versions");
 
+            if (!CreateTechnicPack.Checked)
+            {
+                MCversion.Hide();
+                ForgeBuild.Hide();
+                labelmcversion.Hide();
+                labelforgeversion.Hide();
+            }
+
             #endregion
 
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -292,6 +302,20 @@ namespace TechnicSolderHelper
             else
             {
                 startInfo.FileName = SevenZipLocation;
+            }
+
+            if (File.Exists(modpacksJsonFile))
+            {
+                String modpackJson = "";
+                using (StreamReader reader = new StreamReader(modpacksJsonFile))
+                {
+                    modpackJson = reader.ReadToEnd();
+                }
+                modpacks = JsonConvert.DeserializeObject<modpacks>(modpackJson);
+                foreach (String item in modpacks.modpack.Keys)
+                {
+                    ModpackNameInput.Items.Add(item);
+                }
             }
         }
 
@@ -725,6 +749,20 @@ namespace TechnicSolderHelper
                 }
             }
 
+            if (CreateTechnicPack.Checked && IncludeForgeVersion.Checked)
+            {
+                if (MCversion.SelectedItem == null)
+                {
+                    MessageBox.Show("You have choosen to include Minecraft Forge, but you haven't selected a Minecraft Version.");
+                    return;
+                }
+                if (ForgeBuild.SelectedItem == null)
+                {
+                    MessageBox.Show("You have choosen to include Minecraft Forge, but you haven't selected a Forge build to include.");
+                    return;
+                }
+            }
+
             if (File.Exists(FTBOwnPermissionList))
             {
                 File.Delete(FTBOwnPermissionList);
@@ -739,9 +777,32 @@ namespace TechnicSolderHelper
             }
 
             ModpackName = ModpackNameInput.Text;
+            ModpackVersion = null;
             ModpackVersion = ModpackVersionInput.Text;
 
-            ModpackVersion = null;
+            if (!String.IsNullOrWhiteSpace(ModpackName))
+            {
+                modpacks = new modpacks();
+                if (!ModpackNameInput.Items.Contains(ModpackName))
+                {
+                    ModpackNameInput.Items.Add(ModpackName);
+                }
+                foreach (String item in ModpackNameInput.Items)
+                {
+                    if (modpacks.modpack == null)
+                    {
+                        modpacks.modpack = new Dictionary<string, List<string>>();
+                    }
+                    if (!modpacks.modpack.ContainsKey(item))
+                    {
+                        modpacks.modpack.Add(item, null);
+                    }
+                }
+                String tmpJson = JsonConvert.SerializeObject(modpacks, Formatting.Indented);
+                File.WriteAllText(modpacksJsonFile, tmpJson);
+            }
+
+
             //Download 7zip dependancy
             if (!globalfunctions.isUnix())
             {
@@ -800,7 +861,7 @@ namespace TechnicSolderHelper
                                   "<meta charset=\"utf-8\" />" + Environment.NewLine +
                                   "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js\"></script>" + Environment.NewLine +
                                   "<script src=\"http://cloud.zlepper.dk/technicsolderhelper.js\"></script>" + Environment.NewLine +
-                                  "<style type=\"text/css\" rel=\"stylesheet\" href=\"http://cloud.zlepper.dk/technicsolderhelper.css\"></style>" +
+                                  "<link type=\"text/css\" rel=\"stylesheet\" href=\"http://cloud.zlepper.dk/technicsolderhelper.css\"></style>" +
                                   "</head>" + Environment.NewLine + "<body><table border='1'><tr><th>Modname</th><th>Modslug</th><th>Version</th></tr>" + Environment.NewLine;
                 File.WriteAllText(path, htmlfile);
             }
@@ -1175,7 +1236,7 @@ namespace TechnicSolderHelper
                 Directory.Delete(Path.Combine(OutputDirectory, "minecraft"), true);
             }
 
-            if (IncludeForgeVersion.Checked)
+            if (CreateTechnicPack.Checked && IncludeForgeVersion.Checked)
             {
                 string selectedBuild = ForgeBuild.SelectedItem.ToString();
                 Debug.WriteLine(selectedBuild);
@@ -1218,11 +1279,11 @@ namespace TechnicSolderHelper
                     }
                     String AddedMod = "<tr>";
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input class=\"containsInfo\" value=\"Minecraft Forge\"></input></td>";
+                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"Minecraft Forge\"></input></td>";
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input class=\"containsInfo\" value=\"forge\"></input></td>";
+                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"forge\"></input></td>";
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input class=\"containsInfo\" value=\"" + forgeinfo.version + "\"></input></td>";
+                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + forgeinfo.version + "\"></input></td>";
                     File.AppendAllText(path, AddedMod.ToLower());
                     File.AppendAllText(path, "<td><button class=\"Hide\" type=\"button\">Hide</button></td>");
                     File.AppendAllText(path, "</tr>" + Environment.NewLine);
@@ -1378,8 +1439,24 @@ namespace TechnicSolderHelper
                     InputDirectory = InputDirectory.Replace("/mods", "").Replace("\\", "/");
                 }
                 OutputDirectory = OutputFolder.Text;
-                String ConfigFileName = Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config FileInfo Name");
-                String ConfigVersion = Prompt.ShowDialog("What is the config version?", "Config Version");
+                String ConfigFileName = "";
+                if (ModpackName == null)
+                {
+                    ConfigFileName = Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config FileInfo Name");
+                }
+                else
+                {
+                    ConfigFileName = ModpackName + "-configs";
+                }
+                String ConfigVersion = "";
+                if (ModpackVersion == null)
+                {
+                    ConfigVersion = Prompt.ShowDialog("What is the config version?", "Config Version");
+                }
+                else
+                {
+                    ConfigVersion = ModpackVersion;  
+                }
                 String ConfigFileZipName = ConfigFileName + "-" + ConfigVersion;
                 if (!(ConfigFileZipName.EndsWith(".zip")))
                 {
@@ -1402,11 +1479,11 @@ namespace TechnicSolderHelper
 
                 String AddedMod = "<tr>";
                 File.AppendAllText(path, AddedMod);
-                AddedMod = "<td><input class=\"containsInfo\" value=\"" + ConfigFileName + "\"></input></td>";
+                AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + ConfigFileName + "\"></input></td>";
                 File.AppendAllText(path, AddedMod);
-                AddedMod = "<td><input class=\"containsInfo\" value=\"" + ConfigFileName + "\"></input></td>";
+                AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + ConfigFileName + "\"></input></td>";
                 File.AppendAllText(path, AddedMod);
-                AddedMod = "<td><input class=\"containsInfo\" value=\"" + ConfigVersion + "\"></input></td>";
+                AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + ConfigVersion + "\"></input></td>";
                 File.AppendAllText(path, AddedMod.ToLower());
                 File.AppendAllText(path, "<td><button class=\"Hide\" type=\"button\">Hide</button></td>");
                 File.AppendAllText(path, "</tr>" + Environment.NewLine);
@@ -1909,18 +1986,18 @@ namespace TechnicSolderHelper
                     // Add mod info to a html file
                     String AddedMod = "<tr>";
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input class=\"containsInfo\" value=\"" + mod.name.Replace("|", "") + "\"></input></td>";
+                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.name.Replace("|", "") + "\"></input></td>";
                     File.AppendAllText(path, AddedMod);
                     if (mod.modid.Contains("|"))
                     {
-                        AddedMod = "<td><input class=\"containsInfo\" value=\"" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", String.Empty).ToLower() + "\"></input></td>";
+                        AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", String.Empty).ToLower() + "\"></input></td>";
                     }
                     else
                     {
-                        AddedMod = "<td><input class=\"containsInfo\" value=\"" + mod.modid.Replace(".", string.Empty).ToLower() + "\"></input></td>";
+                        AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.modid.Replace(".", string.Empty).ToLower() + "\"></input></td>";
                     }
                     File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input class=\"containsInfo\" value=\"" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + "\"></input></td>";
+                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + "\"></input></td>";
                     File.AppendAllText(path, AddedMod);
                     File.AppendAllText(path, "<td><button class=\"Hide\" type=\"button\">Hide</button></td>");
                     File.AppendAllText(path, "</tr>" + Environment.NewLine);

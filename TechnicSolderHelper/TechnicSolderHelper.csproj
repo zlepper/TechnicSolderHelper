@@ -196,6 +196,7 @@
     <Compile Include="SQL\forge\forgemaven.cs" />
     <Compile Include="messageToUser.cs" />
     <Compile Include="SQL\forge\liteloader.cs" />
+    <Compile Include="modpacks.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
