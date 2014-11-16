@@ -11,7 +11,7 @@ namespace TechnicSolderHelper
     {
 
 
-        public static string ShowDialog(string text, string caption, Boolean showSkip,  String extraText, String err)
+        public static string ShowDialog(string text, string caption, Boolean showSkip,  String extraText)
         {
             Form prompt = new Form();
             prompt.Width = 500;
@@ -21,7 +21,7 @@ namespace TechnicSolderHelper
             Label textLabel = new Label() { Left = 50, Top = 20, Text = text, Width = 350, Height = 80 };
             if (extraText != null)
             {
-                Label extraLabel = new Label { Left = 20, Top = 110, Text = extraText };
+                Label extraLabel = new Label { Left = 20, Top = 110, Text = extraText, Width = 200 };
                 prompt.Controls.Add(extraLabel);
             }
             TextBox textBox = new TextBox() { Left = 50, Top = 80, Width = 400 };
@@ -51,16 +51,16 @@ namespace TechnicSolderHelper
 
         public static string ShowDialog(string text, string caption)
         {
-            return ShowDialog(text, caption, false, null, null);
+            return ShowDialog(text, caption, false, null);
         }
 
         public static string ShowDialog(string text, string caption, Boolean showSkip)
         {
-            return ShowDialog(text, caption, true, null, null);
+            return ShowDialog(text, caption, true, null);
         }
 
-        public static String modsLeftString(short totalmods, short modsLeft) {
-            return String.Format("{0} of {1} mods total", modsLeft.ToString(), totalmods.ToString());
+        public static String modsLeftString(short totalmods, short currentMod) {
+            return String.Format("You are at mod {0} of {1} mods total", currentMod.ToString(), totalmods.ToString());
         }
     }
 }
