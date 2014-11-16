@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Reflection;
 using System.Net;
 using System.Windows.Forms;
@@ -27,16 +26,12 @@ namespace TechnicSolderHelper
             }
             catch (Exception e)
             {
-                String errorLocation = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\errorFromTechnicSolderHelper.txt";
-                if (globalfunctions.isUnix())
-                {
-                    errorLocation.Replace("\\", "/");
-                }
+                String errorLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "errorFromTechnicSolderHelper.txt");
                 if (File.Exists(errorLocation))
                 {
                     File.Delete(errorLocation);
                 }
-                File.AppendAllText(errorLocation, e.Message);
+                File.AppendAllText(errorLocation, e.Message + Environment.NewLine);
                 File.AppendAllText(errorLocation, e.StackTrace);
                 if (e.InnerException != null)
                 {

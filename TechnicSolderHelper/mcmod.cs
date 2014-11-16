@@ -182,14 +182,7 @@ namespace TechnicSolderHelper
         }
     }
 
-    public class mcmod2
-    {
-        public int modListVersion { get; set; }
-
-        public List<ModList> modList { get; set; }
-    }
-
-    public class ModList
+    public class Modlist
     {
         public string modid { get; set; }
 
@@ -205,7 +198,7 @@ namespace TechnicSolderHelper
 
         public string updateUrl { get; set; }
 
-        public List<string> authorList { get; set; }
+        public List<string> authors { get; set; }
 
         public string credits { get; set; }
 
@@ -222,5 +215,12 @@ namespace TechnicSolderHelper
         public List<object> dependants { get; set; }
 
         public string useDependencyInformation { get; set; }
+    }
+
+    public class mcmod2
+    {
+        public int modinfoversion { get; set; }
+
+        public List<Modlist> modlist { get; set; }
     }
 }

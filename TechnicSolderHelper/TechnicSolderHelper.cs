@@ -986,13 +986,13 @@ namespace TechnicSolderHelper
 
                             mcmod mod = new mcmod();
 
-                            if (modinfo2.modListVersion == 2)
+                            if (modinfo2.modinfoversion == 2)
                             {
                                 //Debug.WriteLine("Is version 2");
-                                mod.mcversion = modinfo2.modList[0].mcversion.ToString();
-                                mod.modid = modinfo2.modList[0].modid.ToString();
-                                mod.name = modinfo2.modList[0].name.ToString();
-                                mod.version = modinfo2.modList[0].version.ToString();
+                                mod.mcversion = modinfo2.modlist[0].mcversion.ToString();
+                                mod.modid = modinfo2.modlist[0].modid.ToString();
+                                mod.name = modinfo2.modlist[0].name.ToString();
+                                mod.version = modinfo2.modlist[0].version.ToString();
                                 requireUserInfo(mod, file);
                             }
                             else
