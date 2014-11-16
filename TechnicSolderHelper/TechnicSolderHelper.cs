@@ -1224,159 +1224,144 @@ namespace TechnicSolderHelper
 					dirName = dir.Substring(dir.LastIndexOf("\\") + 1);
 				}
 				//Debug.WriteLine("");
-				bool beenHere = false;
-				foreach (String item in doneDirectories)
+				
+				DialogResult confirmInclude = MessageBox.Show("Do you want to include " + dirName + "?",
+						                            "Additional folder found", MessageBoxButtons.YesNo);
+				if (confirmInclude == DialogResult.Yes)
 				{
-					if (item.ToLower().StartsWith(dirName.ToLower()))
+					Environment.CurrentDirectory = levelOverInputDirectory;
+					if (CreateTechnicPack.Checked)
 					{
-						beenHere = true;
-						break;
-					}
-				}
-				if (!beenHere)
-				{
-					DialogResult confirmInclude = MessageBox.Show("Do you want to include " + dirName + "?",
-						                              "Additional folder found", MessageBoxButtons.YesNo);
-					if (confirmInclude == DialogResult.Yes)
-					{
-						Environment.CurrentDirectory = levelOverInputDirectory;
-						if (CreateTechnicPack.Checked)
+						//Create Technic Pack
+						if (SolderPack.Checked)
 						{
-							//Create Technic Pack
-							if (SolderPack.Checked)
+							List<String> md5values = new List<string>();
+							List<String> oldmd5values = new List<string>();
+							Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "unarchievedFiles"));
+							String md5valuesFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "unarchievedFiles", dirName + ".txt");
+							if (File.Exists(md5valuesFile))
 							{
-								List<String> md5values = new List<string>();
-								List<String> oldmd5values = new List<string>();
-								Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "unarchievedFiles"));
-								String md5valuesFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "unarchievedFiles", dirName + ".txt");
-								if (File.Exists(md5valuesFile))
+								using (StreamReader reader = new StreamReader(md5valuesFile))
 								{
-									using (StreamReader reader = new StreamReader(md5valuesFile))
+									while (true)
 									{
-										while (true)
+										String tmp = reader.ReadLine();
+										if (String.IsNullOrWhiteSpace(tmp))
 										{
-											String tmp = reader.ReadLine();
-											if (String.IsNullOrWhiteSpace(tmp))
-											{
-												break;
-											}
-											else
-											{
-												oldmd5values.Add(tmp);
-											}
+											break;
+										}
+										else
+										{
+											oldmd5values.Add(tmp);
 										}
 									}
 								}
-								foreach (String f in Directory.GetFiles (dir, "*.*", SearchOption.AllDirectories))
-								{
-									md5values.Add(SQLHelper.calculateMD5(f));
-								}
+							}
 
-
-								bool same = true;
-								foreach (String md5value in md5values)
+							bool same = true;
+                            foreach (String f in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+							{
+								if (!oldmd5values.Contains(SQLHelper.calculateMD5(f)))
 								{
-									if (!oldmd5values.Contains(md5value))
-									{
-										same = false;
-										break;
-									}
+									same = false;
+									break;
 								}
-								if (same)
-								{
-									continue;
-								}
-								else
-								{
-
-									//So we need to include this folder
-									Environment.CurrentDirectory = levelOverInputDirectory;
-									String outputfile = Path.Combine(OutputDirectory, dirName, dirName + ".zip");
-									Directory.CreateDirectory(Path.Combine(OutputDirectory, dirName));
-									if (globalfunctions.isUnix())
-									{
-										startInfo.FileName = "zip";
-										startInfo.Arguments = String.Format("-r \"{0}\" mods/{1}*", outputfile, dirName);
-									}
-									else
-									{
-										startInfo.FileName = SevenZipLocation;
-										startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}*\"", outputfile, dirName);
-									}
-									Debug.WriteLine(Environment.CurrentDirectory);
-									Debug.WriteLine(startInfo.Arguments);
-									Debug.WriteLine(startInfo.ToString());
-									process.StartInfo = startInfo;
-									process.Start();
-									doneDirectories.Add(dirName);
-									process.WaitForExit();
-
-								}
-								if (File.Exists(md5valuesFile))
-								{
-									File.Delete(md5valuesFile);
-								}
-								foreach (String md5value in md5values)
-								{
-									File.AppendAllText(md5valuesFile, md5value + Environment.NewLine);
-								}
+							}
+							if (same)
+							{
+								continue;
 							}
 							else
 							{
+
+								//So we need to include this folder
+								Environment.CurrentDirectory = levelOverInputDirectory;
+								String outputfile = Path.Combine(OutputDirectory, dirName, dirName + ".zip");
+								Directory.CreateDirectory(Path.Combine(OutputDirectory, dirName));
 								if (globalfunctions.isUnix())
 								{
 									startInfo.FileName = "zip";
-									startInfo.Arguments = String.Format("-r \"{0}\" \"./mods/{1}*\"", ModpackArchive, dirName);
+									startInfo.Arguments = String.Format("-r \"{0}\" mods/{1}*", outputfile, dirName);
 								}
 								else
 								{
 									startInfo.FileName = SevenZipLocation;
-									startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}*\"", ModpackArchive, dirName);
+									startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}*\"", outputfile, dirName);
 								}
+								Debug.WriteLine(Environment.CurrentDirectory);
+								Debug.WriteLine(startInfo.Arguments);
+								Debug.WriteLine(startInfo.ToString());
 								process.StartInfo = startInfo;
 								process.Start();
 								doneDirectories.Add(dirName);
 								process.WaitForExit();
+
 							}
-						} 
-						if (CreateFTBPack.Checked)
+							if (File.Exists(md5valuesFile))
+							{
+								File.Delete(md5valuesFile);
+							}
+							foreach (String md5value in md5values)
+							{
+								File.AppendAllText(md5valuesFile, md5value + Environment.NewLine);
+							}
+						}
+						else
 						{
-							// Create FTB Pack
-
-							String tmpDir = Path.Combine(OutputDirectory, "minecraft", "mods");
-							Directory.CreateDirectory(tmpDir);
-							if (globalfunctions.isUnix())
-							{
-								startInfo.FileName = "cp";
-								startInfo.Arguments = String.Format("-r \"./mods/{0}*\" \"{1}\"", dirName, tmpDir);
-							}
-							else
-							{
-								startInfo.FileName = "for";
-								startInfo.Arguments = String.Format("/d %a in (\"mods\\{0}*\") do robocopy \"%a\" \"{1}\" /s", dirName, tmpDir);
-							}
-							process.StartInfo = startInfo;
-							process.Start();
-							process.WaitForExit();
-
-							Environment.CurrentDirectory = OutputDirectory;
 							if (globalfunctions.isUnix())
 							{
 								startInfo.FileName = "zip";
-								startInfo.Arguments = String.Format("-r \"{0}\" \"./mods/{1}*\"", FTBModpackArchive, dirName);
+								startInfo.Arguments = String.Format("-r \"{0}\" \"./mods/{1}*\"", ModpackArchive, dirName);
 							}
 							else
 							{
 								startInfo.FileName = SevenZipLocation;
-								startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}*\"", FTBModpackArchive, dirName);
+								startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}*\"", ModpackArchive, dirName);
 							}
 							process.StartInfo = startInfo;
 							process.Start();
 							doneDirectories.Add(dirName);
 							process.WaitForExit();
 						}
+					} 
+					if (CreateFTBPack.Checked)
+					{
+						// Create FTB Pack
+
+						String tmpDir = Path.Combine(OutputDirectory, "minecraft", "mods");
+						Directory.CreateDirectory(tmpDir);
+						if (globalfunctions.isUnix())
+						{
+							startInfo.FileName = "cp";
+							startInfo.Arguments = String.Format("-r \"./mods/{0}*\" \"{1}\"", dirName, tmpDir);
+						}
+						else
+						{
+							startInfo.FileName = "for";
+							startInfo.Arguments = String.Format("/d %a in (\"mods\\{0}*\") do robocopy \"%a\" \"{1}\" /s", dirName, tmpDir);
+						}
+						process.StartInfo = startInfo;
+						process.Start();
+						process.WaitForExit();
+
+						Environment.CurrentDirectory = OutputDirectory;
+						if (globalfunctions.isUnix())
+						{
+							startInfo.FileName = "zip";
+							startInfo.Arguments = String.Format("-r \"{0}\" \"./mods/{1}*\"", FTBModpackArchive, dirName);
+						}
+						else
+						{
+							startInfo.FileName = SevenZipLocation;
+							startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}*\"", FTBModpackArchive, dirName);
+						}
+						process.StartInfo = startInfo;
+						process.Start();
+						doneDirectories.Add(dirName);
+						process.WaitForExit();
 					}
 				}
+				
 			}
 
 
