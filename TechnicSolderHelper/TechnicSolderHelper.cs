@@ -43,6 +43,7 @@ namespace TechnicSolderHelper
         public static short totalMods = 0, currentMod = 0;
         public static String modpacksJsonFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "modpacks.json");
         public static modpacks modpacks = new modpacks();
+        public Dictionary<String, CheckBox> additionalDirectories = new Dictionary<string, CheckBox>();
 
         #endregion
 
@@ -73,7 +74,7 @@ namespace TechnicSolderHelper
                 messageToUser m = new messageToUser();
                 Thread startingThread = new Thread(new ThreadStart(m.firstTimeRun));
                 startingThread.Start();
-
+                getliteloaderversions_Click(null, null);
                 if (globalfunctions.isUnix())
                 {
                     confighandler.setConfig("InputDirectory", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods");
@@ -608,7 +609,7 @@ namespace TechnicSolderHelper
                                         {
                                             MessageBox.Show("Invalid url");
                                         }
-                                        modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true,Prompt.modsLeftString(totalMods, currentMod)).Replace(" ", "");
+                                        modLink = Prompt.ShowDialog("Please provide a link to " + mod.name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.name, true, Prompt.modsLeftString(totalMods, currentMod)).Replace(" ", "");
                                     }
                                 }
                                 String a = getAuthors(mod);
@@ -873,7 +874,8 @@ namespace TechnicSolderHelper
 
             // Create array with all the mod locations
             List<String> files = new List<String>();
-
+            totalMods = 0;
+            currentMod = 0;
             // Add the different mod files to the files array
             foreach (String file in Directory.GetFiles(InputDirectory, "*.zip", SearchOption.AllDirectories))
             {
@@ -900,6 +902,24 @@ namespace TechnicSolderHelper
                 //Debug.WriteLine(file);
             }
             Debug.WriteLine(totalMods);
+            while (String.IsNullOrWhiteSpace(ModpackName))
+            {
+                ModpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
+                Debug.WriteLine(ModpackName);
+            }
+            while (String.IsNullOrWhiteSpace(ModpackVersion))
+            {
+                ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
+            }
+            if (String.IsNullOrWhiteSpace(ModpackArchive))
+            {
+                ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
+            }
+            if (globalfunctions.isUnix())
+            {
+                ModpackArchive = ModpackArchive.Replace("\\", "/");
+            }
+            FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
             //Check if files have already been added
             foreach (String file in files)
             {
@@ -991,7 +1011,7 @@ namespace TechnicSolderHelper
 
                             mcmod mod = new mcmod();
 
-                            if (modinfo2.modinfoversion == 2)
+                            if (modinfo2.modinfoversion != null && modinfo2.modinfoversion == 2 || modinfo2.modListVersion != null && modinfo2.modListVersion == 2)
                             {
                                 //Debug.WriteLine("Is version 2");
                                 mod.mcversion = modinfo2.modlist[0].mcversion.ToString();
@@ -1145,7 +1165,14 @@ namespace TechnicSolderHelper
                                     mod.mcversion = llversion.mcversion;
                                     mod.name = "Liteloader";
                                     mod.modid = llversion.tweakClass;
-                                    mod.version = llversion.version.Substring(llversion.version.LastIndexOf("_") + 1);
+                                    try
+                                    {
+                                        mod.version = llversion.version.Substring(llversion.version.LastIndexOf("_") + 1);
+                                    }
+                                    catch (System.NullReferenceException)
+                                    {
+                                        mod.version = 1.ToString();
+                                    }
                                     requireUserInfo(mod, file);
                                     break;
                                 case 0:
@@ -1196,11 +1223,8 @@ namespace TechnicSolderHelper
             Environment.CurrentDirectory = InputDirectory;
             String[] Directories = Directory.GetDirectories(InputDirectory);
             String minecraftVersionPattern = @"^[0-9]{1}\.[0-9]{1}\.[0-9]{1,2}$";
-            List<String> doneDirectories = new List<string>();
             foreach (String dir in Directories)
             {
-
-
                 String dirName = "";
                 if (globalfunctions.isUnix())
                 {
@@ -1280,7 +1304,10 @@ namespace TechnicSolderHelper
                             }
                             else
                             {
-
+                                while (String.IsNullOrWhiteSpace(ModpackVersion))
+                                {
+                                    ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
+                                }
                                 //So we need to include this folder
                                 Environment.CurrentDirectory = levelOverInputDirectory;
                                 String outputfile = Path.Combine(OutputDirectory, dirName, dirName + ".zip");
@@ -1288,19 +1315,15 @@ namespace TechnicSolderHelper
                                 if (globalfunctions.isUnix())
                                 {
                                     startInfo.FileName = "zip";
-                                    startInfo.Arguments = String.Format("-r \"{0}\" mods/{1}", outputfile, dirName);
+                                    startInfo.Arguments = String.Format("-r \"{0}{2}\" mods/{1}", outputfile, dirName, ModpackVersion);
                                 }
                                 else
                                 {
                                     startInfo.FileName = SevenZipLocation;
-                                    startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}\"", outputfile, dirName);
+                                    startInfo.Arguments = String.Format("a -y \"{0}{2}\" \"mods\\{1}\"", outputfile, dirName, ModpackVersion);
                                 }
-                                Debug.WriteLine(Environment.CurrentDirectory);
-                                Debug.WriteLine(startInfo.Arguments);
-                                Debug.WriteLine(startInfo.ToString());
                                 process.StartInfo = startInfo;
                                 process.Start();
-                                doneDirectories.Add(dirName);
                                 process.WaitForExit();
 
                             }
@@ -1315,25 +1338,6 @@ namespace TechnicSolderHelper
                         }
                         else
                         {
-                            while (String.IsNullOrWhiteSpace(ModpackName))
-                            {
-                                ModpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
-                                Debug.WriteLine(ModpackName);
-                            }
-                            while (String.IsNullOrWhiteSpace(ModpackVersion))
-                            {
-                                ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
-                            }
-                            if (String.IsNullOrWhiteSpace(ModpackArchive))
-                            {
-                                ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
-                            }
-                            if (globalfunctions.isUnix())
-                            {
-                                ModpackArchive = ModpackArchive.Replace("\\", "/");
-                            }
-                            FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
-
                             if (globalfunctions.isUnix())
                             {
                                 startInfo.FileName = "zip";
@@ -1351,24 +1355,6 @@ namespace TechnicSolderHelper
                     } 
                     if (CreateFTBPack.Checked)
                     {
-                        while (String.IsNullOrWhiteSpace(ModpackName))
-                        {
-                            ModpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
-                            Debug.WriteLine(ModpackName);
-                        }
-                        while (String.IsNullOrWhiteSpace(ModpackVersion))
-                        {
-                            ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
-                        }
-                        if (String.IsNullOrWhiteSpace(ModpackArchive))
-                        {
-                            ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
-                        }
-                        if (globalfunctions.isUnix())
-                        {
-                            ModpackArchive = ModpackArchive.Replace("\\", "/");
-                        }
-                        FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
                         // Create FTB Pack
 
                         String tmpDir = Path.Combine(OutputDirectory, "minecraft", "mods");
@@ -1391,6 +1377,72 @@ namespace TechnicSolderHelper
 				
             }
 
+            // Pack additional folders if they are marked
+            if (CreateTechnicPack.Checked)
+            {
+                if (globalfunctions.isUnix())
+                {
+                    Environment.CurrentDirectory = OutputDirectory.Remove(OutputDirectory.LastIndexOf("/"));
+                }
+                else
+                {
+                    Environment.CurrentDirectory = OutputDirectory.Remove(OutputDirectory.LastIndexOf("\\"));
+                }
+
+                foreach (KeyValuePair<String, CheckBox> cb in additionalDirectories)
+                {
+                    if (cb.Value.Checked)
+                    {
+                        String folderName = "";
+                        if (globalfunctions.isUnix())
+                        {
+                            folderName = cb.Key.Substring(cb.Key.LastIndexOf("/") + 1);
+                        }
+                        else
+                        {
+                            folderName = cb.Key.Substring(cb.Key.LastIndexOf("\\") + 1);
+                        }
+                        if (SolderPack.Checked)
+                        {
+                            String of = Path.Combine(OutputDirectory, folderName);
+                            Directory.CreateDirectory(of);
+                            String outputfile = Path.Combine(of, folderName + ".zip");
+                            if (globalfunctions.isUnix())
+                            {
+                                startInfo.FileName = "zip";
+                                startInfo.Arguments = String.Format("-r \"{0}{2}\" {1}", outputfile, folderName, ModpackVersion);
+                            }
+                            else
+                            {
+                                startInfo.FileName = SevenZipLocation;
+                                startInfo.Arguments = String.Format("a -y \"{0}{2}\" \"{1}\"", outputfile, folderName, ModpackVersion);
+                            }
+                            process.StartInfo = startInfo;
+                            process.Start();
+                            process.WaitForExit();
+                        }
+                        else
+                        {
+
+                            if (globalfunctions.isUnix())
+                            {
+                                startInfo.FileName = "zip";
+                                startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", ModpackArchive, folderName);
+                            }
+                            else
+                            {
+                                startInfo.FileName = SevenZipLocation;
+                                startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", ModpackArchive, folderName);
+                            }
+                            process.StartInfo = startInfo;
+                            process.Start();
+                            process.WaitForExit();
+                        }
+                    }
+                }
+            }
+
+
 
             if (CreateTechnicPack.Checked && IncludeConfigZip.Checked)
             {
@@ -1400,6 +1452,37 @@ namespace TechnicSolderHelper
             //FTB pack configs
             if (CreateFTBPack.Checked)
             {
+                foreach (KeyValuePair<String, CheckBox> cb in additionalDirectories)
+                {
+                    if (cb.Value.Checked)
+                    {
+                        String dirName = "";
+                        if (globalfunctions.isUnix())
+                        {
+                            dirName = cb.Key.Substring(cb.Key.LastIndexOf("/"));
+                        }
+                        else
+                        {
+                            dirName = cb.Key.Substring(cb.Key.LastIndexOf("\\"));
+                        }
+                        String tmpDir = Path.Combine(OutputDirectory, "minecraft");
+                        Directory.CreateDirectory(tmpDir);
+                        if (globalfunctions.isUnix())
+                        {
+                            startInfo.FileName = "cp";
+                            startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", dirName, tmpDir);
+                        }
+                        else
+                        {
+                            startInfo.FileName = "for";
+                            startInfo.Arguments = String.Format("/d %a in (\"{0}\") do robocopy \"%a\" \"{1}\" /s", dirName, tmpDir);
+                        }
+                        process.StartInfo = startInfo;
+                        process.Start();
+                        process.WaitForExit();
+                    }
+                }
+
                 String tmpConfigDirectory = Path.Combine(OutputDirectory, Path.Combine("minecraft", "config"));
                 Debug.WriteLine(tmpConfigDirectory);
                 Directory.CreateDirectory(tmpConfigDirectory);
@@ -2314,6 +2397,7 @@ namespace TechnicSolderHelper
                     Properties.Settings.Default.Save();
                 }
             }
+            InputFolder_TextChanged(null, null);
 
         }
 
@@ -2363,14 +2447,69 @@ namespace TechnicSolderHelper
             if (globalfunctions.isUnix())
             {
                 superDirectory = InputFolder.Text.Remove(InputFolder.Text.LastIndexOf("/"));
-            } 
+            }
             else
-	        {
+            {
                 superDirectory = InputFolder.Text.Remove(InputFolder.Text.LastIndexOf("\\"));
-	        }
+            }
 
-            Debug.WriteLine(superDirectory);
+            //Debug.WriteLine(superDirectory);
 
+            List<String> dirs = new List<string>();
+            foreach (String dir in Directory.GetDirectories(superDirectory))
+            {
+                if (dir.EndsWith("mods") || dir.EndsWith("config"))
+                {
+                    continue;
+                }
+                else
+                {
+                    dirs.Add(dir);
+                }
+            }
+            additionalDirectories.Clear();
+            int c = 0;
+            for (int i = 23; i < dirs.Count * 23 + 23; i += 23)
+            {
+                if (!additionalDirectories.ContainsKey(dirs[c]))
+                {
+                    Debug.WriteLine(dirs[c]);
+                    String dirname = "";
+                    if (globalfunctions.isUnix())
+                    {
+                        dirname = dirs[c].Substring(dirs[c].LastIndexOf("/") + 1);
+                    }
+                    else
+                    {
+                        dirname = dirs[c].Substring(dirs[c].LastIndexOf("\\") + 1);
+                    }
+                    additionalDirectories.Add(dirs[c], new CheckBox()
+                        {
+                            Left = 20,
+                            Top = i,
+                            Height = 20,
+                            Text = dirname
+                        });
+                }
+                c++;
+            }
+            String serversDat = Path.Combine(superDirectory, "servers.dat");
+            if (File.Exists(serversDat))
+            {
+                additionalDirectories.Add(serversDat, new CheckBox()
+                    {
+                        Left = 20,
+                        Top = c * 23 + 23,
+                        Height = 20,
+                        Text = "Servers.dat file"
+                    });
+            }
+            groupBox1.Controls.Clear();
+            foreach (CheckBox cb in additionalDirectories.Values)
+            {
+                Debug.WriteLine("added box with text: " + cb.Text);
+                groupBox1.Controls.Add(cb);
+            }
         }
 
         private void OutputFolder_TextChanged(object sender, EventArgs e)
@@ -2649,14 +2788,8 @@ namespace TechnicSolderHelper
 
             foreach (KeyValuePair<String, versions> item in liteloader.versions)
             {
-                //Debug.WriteLine(item.Value.artefacts["com.mumfrey:liteloader"].Count);
                 foreach (versionclass it in item.Value.artefacts["com.mumfrey:liteloader"].Values)
                 {
-                    /*Debug.WriteLine("");
-                    Debug.WriteLine(it.file);
-                    Debug.WriteLine(it.version);
-                    Debug.WriteLine(it.md5);
-                    Debug.WriteLine(item.Key);*/
                     liteloadersqlhelper.addVersion(it.file, it.version, it.md5, item.Key, it.tweakClass);
                 }
 

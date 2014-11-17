@@ -221,6 +221,8 @@ namespace TechnicSolderHelper
     {
         public int modinfoversion { get; set; }
 
+        public int modListVersion { get; set; }
+
         public List<Modlist> modlist { get; set; }
     }
 }

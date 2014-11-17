@@ -48,7 +48,7 @@ namespace TechnicSolderHelper
             {
                 foreach (var item in configValues)
                 {
-                    Debug.WriteLine(item.Key + "=" + item.Value);
+                    //Debug.WriteLine(item.Key + "=" + item.Value);
                     writer.WriteLine(item.Key + "=" + item.Value);
                 }
             }
