@@ -1363,15 +1363,15 @@ namespace TechnicSolderHelper
                         {
                             startInfo.FileName = "cp";
                             startInfo.Arguments = String.Format("-r \"./mods/{0}\" \"{1}\"", dirName, tmpDir);
+                            process.StartInfo = startInfo;
+                            process.Start();
+                            process.WaitForExit();
                         }
                         else
                         {
-                            startInfo.FileName = "for";
-                            startInfo.Arguments = String.Format("/d %a in (\"mods\\{0}\") do robocopy \"%a\" \"{1}\" /s", dirName, tmpDir);
+                            String input = Path.Combine(InputDirectory, dirName);
+                            DirectoryCopy(input, tmpDir, true);
                         }
-                        process.StartInfo = startInfo;
-                        process.Start();
-                        process.WaitForExit();
                     }
                 }
 				
@@ -1474,15 +1474,16 @@ namespace TechnicSolderHelper
                         {
                             startInfo.FileName = "cp";
                             startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", dirName, tmpDir);
+                            Debug.WriteLine(Environment.CurrentDirectory);
+                            Debug.WriteLine(startInfo.Arguments);
+                            process.StartInfo = startInfo;
+                            process.Start();
+                            process.WaitForExit();
                         }
                         else
                         {
-                            startInfo.FileName = "for";
-                            startInfo.Arguments = String.Format("/d %a in (\"{0}\") do robocopy \"%a\" \"{1}\" /s", dirName, tmpDir);
+                            DirectoryCopy(dirName, tmpDir, true);
                         }
-                        process.StartInfo = startInfo;
-                        process.Start();
-                        process.WaitForExit();
                     }
                 }
 
@@ -1816,37 +1817,46 @@ namespace TechnicSolderHelper
 
         public void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
-            // Get the subdirectories for the specified directory.
-            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-            DirectoryInfo[] dirs = dir.GetDirectories();
-
-            if (!dir.Exists)
+            FileAttributes attr = File.GetAttributes(sourceDirName);
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                Directory.CreateDirectory(destDirName);
-            }
+                Debug.WriteLine("WAs true");
+                // Get the subdirectories for the specified directory.
+                DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+                DirectoryInfo[] dirs = dir.GetDirectories();
 
-            // If the destination directory doesn't exist, create it. 
-            if (!Directory.Exists(destDirName))
-            {
-                Directory.CreateDirectory(destDirName);
-            }
-
-            // Get the files in the directory and copy them to the new location.
-            System.IO.FileInfo[] files = dir.GetFiles();
-            foreach (System.IO.FileInfo file in files)
-            {
-                string temppath = Path.Combine(destDirName, file.Name);
-                file.CopyTo(temppath, false);
-            }
-
-            // If copying subdirectories, copy them and their contents to new location. 
-            if (copySubDirs)
-            {
-                foreach (DirectoryInfo subdir in dirs)
+                if (!dir.Exists)
                 {
-                    string temppath = Path.Combine(destDirName, subdir.Name);
-                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                    Directory.CreateDirectory(destDirName);
                 }
+
+                // If the destination directory doesn't exist, create it. 
+                if (!Directory.Exists(destDirName))
+                {
+                    Directory.CreateDirectory(destDirName);
+                }
+
+                // Get the files in the directory and copy them to the new location.
+                System.IO.FileInfo[] files = dir.GetFiles();
+                foreach (System.IO.FileInfo file in files)
+                {
+                    string temppath = Path.Combine(destDirName, file.Name);
+                    file.CopyTo(temppath, false);
+                }
+
+                // If copying subdirectories, copy them and their contents to new location. 
+                if (copySubDirs)
+                {
+                    foreach (DirectoryInfo subdir in dirs)
+                    {
+                        string temppath = Path.Combine(destDirName, subdir.Name);
+                        DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+                    }
+                }
+            }
+            else
+            {
+                 File.Copy(sourceDirName, destDirName);
             }
         }
 
