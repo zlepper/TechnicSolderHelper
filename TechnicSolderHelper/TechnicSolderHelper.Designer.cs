@@ -69,7 +69,6 @@
             this.ModpackVersionInput = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.getliteloaderversions = new System.Windows.Forms.Button();
-            this.testInterface = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.SolderPackType.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
@@ -506,16 +505,6 @@
             this.getliteloaderversions.UseVisualStyleBackColor = true;
             this.getliteloaderversions.Click += new System.EventHandler(this.getliteloaderversions_Click);
             // 
-            // testInterface
-            // 
-            this.testInterface.Location = new System.Drawing.Point(348, 400);
-            this.testInterface.Name = "testInterface";
-            this.testInterface.Size = new System.Drawing.Size(75, 52);
-            this.testInterface.TabIndex = 22;
-            this.testInterface.Text = "testInterface";
-            this.testInterface.UseVisualStyleBackColor = true;
-            this.testInterface.Click += new System.EventHandler(this.testInterface_Click);
-            // 
             // groupBox1
             // 
             this.groupBox1.Location = new System.Drawing.Point(636, 25);
@@ -531,7 +520,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 464);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.testInterface);
             this.Controls.Add(this.getliteloaderversions);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.ModpackVersionInput);
@@ -619,7 +607,6 @@
         private System.Windows.Forms.TextBox ModpackVersionInput;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button getliteloaderversions;
-        private System.Windows.Forms.Button testInterface;
         private System.Windows.Forms.GroupBox groupBox1;
     }
 }
