@@ -31,7 +31,6 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT PermLink, ModLink FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
-            Debug.WriteLine(sql);
 
             bool didLoopRun = false;
             ownPermissions p = new ownPermissions();
@@ -94,7 +93,6 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT ModAuthor FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
-            Debug.WriteLine(sql);
 
             if (isUnix())
             {
@@ -144,7 +142,6 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink, ModLink) VALUES ('{1}','{2}','{3}','{4}');", this.TableName, ModName, ModID, PermissionLink, modLink);
-            Debug.WriteLine(sql);
 
             executeDatabaseQuery(sql);
         }
@@ -154,7 +151,6 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("UPDATE {0} SET ModAuthor = '{2}' WHERE ModID LIKE '{1}';", this.TableName, ModID, AuthorName);
-            Debug.WriteLine(sql);
 
             executeDatabaseQuery(sql);
         }

@@ -36,7 +36,6 @@ namespace TechnicSolderHelper.SQL
 
             String sql = "";
             sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ShortName LIKE '{1}' OR ModID LIKE '{1}';", this.TableName, toCheck.ToLower());
-            Debug.WriteLine(sql);
             if (isUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
@@ -138,7 +137,6 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT {2} FROM {0} WHERE ModID LIKE '{1}' OR ShortName LIKE '{1}';", this.TableName, ModID.ToLower(), infoType.ToString());
-            Debug.WriteLine(sql);
 
             if (isUnix())
             {
@@ -182,7 +180,6 @@ namespace TechnicSolderHelper.SQL
             ShortName = ShortName.Replace("'", "`");
 
             String sql = String.Format("SELECT {2} FROM {0} WHERE ShortName LIKE '{1}';", this.TableName, ShortName.ToLower(), infoType.ToString());
-            Debug.WriteLine(sql);
 
             if (isUnix())
             {
@@ -226,7 +223,6 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("SELECT ShortName FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
-            Debug.WriteLine(sql);
 
             if (isUnix())
             {
@@ -280,7 +276,6 @@ namespace TechnicSolderHelper.SQL
             ModID = ModID.Replace("'", "`");
 
             String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModAuthor, ModID, PublicPerm, PrivatePerm, ModLink, PermLink, CustPrivate, CustFTB, ShortName) VALUES ('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}', '{10}');", this.TableName, ModName, ModAuthor, ModID, PublicPermissions, PrivatePermissions, ModLink, PermLink, CustPrivate, CustFTB, shortname);
-            //Debug.WriteLine(sql);
 
             executeDatabaseQuery(sql);
         }

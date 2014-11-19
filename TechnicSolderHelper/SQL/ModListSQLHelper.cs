@@ -13,6 +13,7 @@ namespace TechnicSolderHelper.SQL
     public class ModListSQLHelper : SQLHelper
     {
         protected readonly String CreateTableString;
+
         public ModListSQLHelper()
             : base("ModList", "modlist")
         {
@@ -52,15 +53,14 @@ namespace TechnicSolderHelper.SQL
             if (OnSolder)
             {
                 sql = String.Format("INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '1');",
-                           this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
+                    this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
             }
             else
             {
                 sql = String.Format("INSERT OR IGNORE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');",
-                           this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
+                    this.TableName, ModName, modID, ModVersion, MinecraftVersion, FileName, FileVersion, MD5value);
             }
 
-            Debug.WriteLine(sql);
             executeDatabaseQuery(sql);
         }
 
@@ -79,11 +79,8 @@ namespace TechnicSolderHelper.SQL
                         {
                             while (reader.Read())
                             {
-                                Debug.WriteLine(reader["MD5"]);
-                                Debug.WriteLine(MD5Value);
                                 if (reader["MD5"].ToString().Equals(MD5Value))
                                 {
-                                    Debug.WriteLine(reader["OnSolder"].ToString());
                                     if (reader["OnSolder"].ToString().Equals("1"))
                                     {
                                         return true;
@@ -112,7 +109,6 @@ namespace TechnicSolderHelper.SQL
                             {
                                 if (reader["MD5"].ToString().Equals(MD5Value))
                                 {
-                                    Debug.WriteLine(reader["OnSolder"].ToString());
                                     if (reader["OnSolder"].ToString().Equals("1"))
                                     {
                                         return true;

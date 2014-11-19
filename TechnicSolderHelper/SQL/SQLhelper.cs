@@ -20,7 +20,6 @@ namespace TechnicSolderHelper.SQL
             Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper"));
             databaseName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", databaseName);
             this.databaseName = databaseName;
-            Debug.WriteLine(this.databaseName);
             try
             {
                 if (!File.Exists(this.databaseName))
@@ -37,7 +36,6 @@ namespace TechnicSolderHelper.SQL
             }
             catch (Exception)
             {
-                Debug.WriteLine("Database already existing");
             }
             if (isUnix())
             {
@@ -95,10 +93,8 @@ namespace TechnicSolderHelper.SQL
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Debug.WriteLine(e.Message);
-                    Debug.WriteLine(e.StackTrace);
                 }
             }
             else
@@ -121,10 +117,8 @@ namespace TechnicSolderHelper.SQL
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Debug.WriteLine(e.Message);
-                    Debug.WriteLine(e.StackTrace);
                 }
             }
         }
