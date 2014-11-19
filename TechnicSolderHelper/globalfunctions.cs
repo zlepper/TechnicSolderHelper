@@ -4,9 +4,7 @@ namespace TechnicSolderHelper
 {
     public class globalfunctions
     {
-        public globalfunctions()
-        {
-        }
+        public static char pathSeperator;
 
         public static Boolean isUnix()
         {

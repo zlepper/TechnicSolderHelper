@@ -49,6 +49,14 @@ namespace TechnicSolderHelper
 
         public SolderHelper()
         {
+            if (globalfunctions.isUnix())
+            {
+                globalfunctions.pathSeperator = '/';
+            }
+            else
+            {
+                globalfunctions.pathSeperator = '\\';
+            }
             UserName = Environment.UserName;
             InitializeComponent();
             bool firstRun = true;
@@ -1459,16 +1467,9 @@ namespace TechnicSolderHelper
                 {
                     if (cb.Value.Checked)
                     {
-                        String dirName = "";
-                        if (globalfunctions.isUnix())
-                        {
-                            dirName = cb.Key.Substring(cb.Key.LastIndexOf("/") + 1);
-                        }
-                        else
-                        {
-                            dirName = cb.Key.Substring(cb.Key.LastIndexOf("\\") + 1);
-                        }
+                        String dirName = cb.Key.Substring(cb.Key.LastIndexOf(globalfunctions.pathSeperator) + 1);
                         String tmpDir = Path.Combine(OutputDirectory, "minecraft");
+
                         Directory.CreateDirectory(tmpDir);
                         if (globalfunctions.isUnix())
                         {
@@ -1482,7 +1483,18 @@ namespace TechnicSolderHelper
                         }
                         else
                         {
-                            DirectoryCopy(dirName, tmpDir, true);
+                            Debug.WriteLine(cb.Key);
+                            FileAttributes attr = File.GetAttributes(cb.Key);
+                            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                            {
+                                tmpDir = Path.Combine(tmpDir, dirName);
+                                DirectoryCopy(cb.Key, tmpDir, true);
+                            }
+                            else
+                            {
+                                String outputFile = Path.Combine(tmpDir, dirName);
+                                File.Copy(cb.Key, outputFile);
+                            }
                         }
                     }
                 }
@@ -1817,47 +1829,41 @@ namespace TechnicSolderHelper
 
         public void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
         {
-            FileAttributes attr = File.GetAttributes(sourceDirName);
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+            
+            Debug.WriteLine("WAs true");
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            if (!dir.Exists)
             {
-                Debug.WriteLine("WAs true");
-                // Get the subdirectories for the specified directory.
-                DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-                DirectoryInfo[] dirs = dir.GetDirectories();
+                Directory.CreateDirectory(destDirName);
+            }
 
-                if (!dir.Exists)
-                {
-                    Directory.CreateDirectory(destDirName);
-                }
+            // If the destination directory doesn't exist, create it. 
+            if (!Directory.Exists(destDirName))
+            {
+                Directory.CreateDirectory(destDirName);
+            }
 
-                // If the destination directory doesn't exist, create it. 
-                if (!Directory.Exists(destDirName))
-                {
-                    Directory.CreateDirectory(destDirName);
-                }
+            // Get the files in the directory and copy them to the new location.
+            System.IO.FileInfo[] files = dir.GetFiles();
+            foreach (System.IO.FileInfo file in files)
+            {
+                string temppath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(temppath, false);
+            }
 
-                // Get the files in the directory and copy them to the new location.
-                System.IO.FileInfo[] files = dir.GetFiles();
-                foreach (System.IO.FileInfo file in files)
+            // If copying subdirectories, copy them and their contents to new location. 
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
                 {
-                    string temppath = Path.Combine(destDirName, file.Name);
-                    file.CopyTo(temppath, false);
-                }
-
-                // If copying subdirectories, copy them and their contents to new location. 
-                if (copySubDirs)
-                {
-                    foreach (DirectoryInfo subdir in dirs)
-                    {
-                        string temppath = Path.Combine(destDirName, subdir.Name);
-                        DirectoryCopy(subdir.FullName, temppath, copySubDirs);
-                    }
+                    string temppath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, temppath, copySubDirs);
                 }
             }
-            else
-            {
-                 File.Copy(sourceDirName, destDirName);
-            }
+            
         }
 
         public void requireUserInfo(mcmod currentData, String File)
@@ -2506,6 +2512,8 @@ namespace TechnicSolderHelper
                 }
                 c++;
             }
+
+
             String serversDat = Path.Combine(superDirectory, "servers.dat");
             if (File.Exists(serversDat))
             {
