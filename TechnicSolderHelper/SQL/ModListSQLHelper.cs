@@ -181,8 +181,8 @@ namespace TechnicSolderHelper.SQL
 
         public override void resetTable()
         {
-            base.resetTable();
-            executeDatabaseQuery(CreateTableString);
+            String sql = String.Format("UPDATE {0} SET OnSolder = '0'", this.TableName);
+            executeDatabaseQuery(sql);
         }
     }
 }

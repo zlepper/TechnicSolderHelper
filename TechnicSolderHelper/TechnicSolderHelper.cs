@@ -799,7 +799,7 @@ namespace TechnicSolderHelper
                                   "<meta charset=\"utf-8\" />" + Environment.NewLine +
                                   "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js\"></script>" + Environment.NewLine +
                                   "<script src=\"http://cloud.zlepper.dk/technicsolderhelper.js\"></script>" + Environment.NewLine +
-                                  "<link type=\"text/css\" rel=\"stylesheet\" href=\"http://cloud.zlepper.dk/technicsolderhelper.css\"></style>" +
+                                  "<link type=\"text/css\" rel=\"stylesheet\" href=\"http://cloud.zlepper.dk/technicsolderhelper.css\">" +
                                   "</head>" + Environment.NewLine + "<body><table border='1'><tr><th>Modname</th><th>Modslug</th><th>Version</th></tr>" + Environment.NewLine;
                 File.WriteAllText(path, htmlfile);
             }
@@ -1199,20 +1199,21 @@ namespace TechnicSolderHelper
                                 }
                                 //So we need to include this folder
                                 Environment.CurrentDirectory = levelOverInputDirectory;
-                                String outputfile = Path.Combine(OutputDirectory, dirName, dirName + ".zip");
-                                Directory.CreateDirectory(Path.Combine(OutputDirectory, dirName));
+                                String outputfile = Path.Combine(OutputDirectory, dirName.ToLower(), dirName.ToLower() + "-" + ModpackName + "-" + ModpackVersion + ".zip");
+                                Directory.CreateDirectory(Path.Combine(OutputDirectory, dirName.ToLower()));
                                 if (globalfunctions.isUnix())
                                 {
                                     startInfo.FileName = "zip";
-                                    startInfo.Arguments = String.Format("-r \"{0}{2}\" mods/{1}", outputfile, dirName, ModpackVersion);
+                                    startInfo.Arguments = String.Format("-r \"{0}\" mods/{1}", outputfile, dirName);
                                 }
                                 else
                                 {
                                     startInfo.FileName = SevenZipLocation;
-                                    startInfo.Arguments = String.Format("a -y \"{0}{2}\" \"mods\\{1}\"", outputfile, dirName, ModpackVersion);
+                                    startInfo.Arguments = String.Format("a -y \"{0}\" \"mods\\{1}\"", outputfile, dirName);
                                 }
                                 process.StartInfo = startInfo;
                                 process.Start();
+                                createTableRow(dirName, dirName.ToLower(), ModpackName.ToLower() + "-" + ModpackVersion.ToLower());
                                 process.WaitForExit();
 
                             }
@@ -1279,7 +1280,7 @@ namespace TechnicSolderHelper
                         {
                             String of = Path.Combine(OutputDirectory, folderName);
                             Directory.CreateDirectory(of);
-                            String outputfile = Path.Combine(of, folderName + "-" + ModpackVersion + ".zip");
+                            String outputfile = Path.Combine(of, folderName + "-" + ModpackName + "-" + ModpackVersion + ".zip");
                             if (globalfunctions.isUnix())
                             {
                                 startInfo.FileName = "zip";
@@ -1293,6 +1294,7 @@ namespace TechnicSolderHelper
                             process.StartInfo = startInfo;
                             process.Start();
                             process.WaitForExit();
+                            createTableRow(folderName, folderName.ToLower(), ModpackName + "-" + ModpackVersion);
                         }
                         else
                         {
@@ -1412,16 +1414,7 @@ namespace TechnicSolderHelper
                     {
                         startInfo.Arguments = "a -y \"" + outputfile + "\" \"" + tmpdir + "\"";
                     }
-                    String AddedMod = "<tr>";
-                    File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"Minecraft Forge\"></input></td>";
-                    File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"forge\"></input></td>";
-                    File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + forgeinfo.version + "\"></input></td>";
-                    File.AppendAllText(path, AddedMod.ToLower());
-                    File.AppendAllText(path, "<td><button class=\"Hide\" type=\"button\">Hide</button></td>");
-                    File.AppendAllText(path, "</tr>" + Environment.NewLine);
+                    createTableRow("Minecraft Forge", "forge", forgeinfo.version.ToLower());
                 }
                 else
                 {
@@ -1490,6 +1483,16 @@ namespace TechnicSolderHelper
         }
 
         #region Technic Pack Function
+
+        private void createTableRow(String firstColumn, String secondColumn, String thirdColumn)
+        {
+            String AddedMod = "<tr>";
+            AddedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", firstColumn);
+            AddedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", secondColumn);
+            AddedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", thirdColumn);
+            AddedMod += "<td><button class=\"Hide\" type=\"button\">Hide</button></td></tr>";
+            File.AppendAllText(path, AddedMod + Environment.NewLine);
+        }
 
         /// <summary>
         /// Checks if the mod is on the list of mods which has custom support.
@@ -1603,16 +1606,7 @@ namespace TechnicSolderHelper
                 process.StartInfo = startInfo;
                 process.Start();
 
-                String AddedMod = "<tr>";
-                File.AppendAllText(path, AddedMod);
-                AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + ConfigFileName + "\"></input></td>";
-                File.AppendAllText(path, AddedMod);
-                AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + ConfigFileName + "\"></input></td>";
-                File.AppendAllText(path, AddedMod);
-                AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + ConfigVersion + "\"></input></td>";
-                File.AppendAllText(path, AddedMod.ToLower());
-                File.AppendAllText(path, "<td><button class=\"Hide\" type=\"button\">Hide</button></td>");
-                File.AppendAllText(path, "</tr>" + Environment.NewLine);
+                createTableRow(ConfigFileName, ConfigFileName, ConfigVersion.ToLower());
 
                 process.WaitForExit();
 
@@ -2071,23 +2065,16 @@ namespace TechnicSolderHelper
                     ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, true);
 
                     // Add mod info to a html file
-                    String AddedMod = "<tr>";
-                    File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.name.Replace("|", "") + "\"></input></td>";
-                    File.AppendAllText(path, AddedMod);
+                    string s = "";
                     if (mod.modid.Contains("|"))
                     {
-                        AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", String.Empty).ToLower() + "\"></input></td>";
+                        s = mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", String.Empty).ToLower();
                     }
                     else
                     {
-                        AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.modid.Replace(".", string.Empty).ToLower() + "\"></input></td>";
+                        s = mod.modid.Replace(".", string.Empty).ToLower();
                     }
-                    File.AppendAllText(path, AddedMod);
-                    AddedMod = "<td><input readonly class=\"containsInfo\" value=\"" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + "\"></input></td>";
-                    File.AppendAllText(path, AddedMod);
-                    File.AppendAllText(path, "<td><button class=\"Hide\" type=\"button\">Hide</button></td>");
-                    File.AppendAllText(path, "</tr>" + Environment.NewLine);
+                    createTableRow(mod.name.Replace("|", ""), s, mod.mcversion.ToLower() + "-" + mod.version.ToLower());
 
                     process.WaitForExit();
 
@@ -2202,6 +2189,11 @@ namespace TechnicSolderHelper
         public void button2_Click(object sender, EventArgs e)
         {
             ModsSQLhelper.resetTable();
+            String s = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "unarchievedFiles");
+            if (Directory.Exists(s))
+            {
+                Directory.Delete(s, true);
+            }
         }
 
         private void InputFolder_TextChanged(object sender, EventArgs e)
