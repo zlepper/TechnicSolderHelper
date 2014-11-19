@@ -81,7 +81,7 @@ namespace TechnicSolderHelper
 
         public static mcmod GoodVersioning(String fileName)
         {
-            fileName = fileName.Replace(".jar", "").Replace(".zip", "").Replace("\\", "").Replace("/", "");
+            fileName = fileName.Remove(fileName.LastIndexOf("."));
             mcmod mod = new mcmod();
 
             //Figure out modname
@@ -125,6 +125,7 @@ namespace TechnicSolderHelper
 
         public static mcmod wailaPattern(String FileName) // waila-1.5.5_1.7.10.jar
         {
+            FileName = FileName.Remove(FileName.LastIndexOf("."));
             mcmod mod = new mcmod();
 
             String name = "";
@@ -141,7 +142,7 @@ namespace TechnicSolderHelper
             }
             mod.name = name;
 
-            FileName = FileName.Replace(".jar", "").Replace(name, "");
+            FileName = FileName.Replace(name, "");
 
             String version = "";
             for (int i = 0; i < FileName.Length; i++)
@@ -167,10 +168,8 @@ namespace TechnicSolderHelper
         {
             mcmod mod = new mcmod();
 
-            FileName = FileName.Replace(".jar", String.Empty);
-            FileName = FileName.Replace(".zip", String.Empty);
-            Debug.WriteLine(FileName);
-            Debug.WriteLine("THis");
+            FileName = FileName.Remove(FileName.LastIndexOf("."));
+
             //Figure out mod name
             String[] reikas = FileName.Split(' ');
 

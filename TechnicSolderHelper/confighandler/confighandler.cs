@@ -7,13 +7,13 @@ namespace TechnicSolderHelper
 {
     public class ConfigHandler
     {
-        private static readonly string configFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/SolderHelper/config.cfg";
+        private static readonly string configFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "config.cfg");
 
         public ConfigHandler()
         {
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/SolderHelper"))
+            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper")))
             {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/SolderHelper");
+                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper"));
             }
             if (!File.Exists(configFile))
             {

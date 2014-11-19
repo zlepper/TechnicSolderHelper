@@ -16,17 +16,9 @@ namespace TechnicSolderHelper.SQL
         public SQLHelper(String databaseName, String TableName)
         {
             databaseName += ".db";
-            //databaseName = "C:\\" + databaseName;
-            if (globalfunctions.isUnix())
-            {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/SolderHelper");
-                databaseName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/SolderHelper/" + databaseName;
-            }
-            else
-            {
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SolderHelper");
-                databaseName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\SolderHelper\\" + databaseName;
-            }
+
+            Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper"));
+            databaseName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", databaseName);
             this.databaseName = databaseName;
             Debug.WriteLine(this.databaseName);
             try
@@ -45,8 +37,6 @@ namespace TechnicSolderHelper.SQL
             }
             catch (Exception)
             {
-                //Debug.WriteLine(e.Message);
-                //Debug.WriteLine(e.InnerException);
                 Debug.WriteLine("Database already existing");
             }
             if (isUnix())
@@ -61,8 +51,6 @@ namespace TechnicSolderHelper.SQL
                 c.DataSource = this.databaseName;
                 this.ConnectionString = c.ConnectionString;
             }
-            //c.Version = 3;
-            //this.ConnectionString = "Data Source=" + this.databaseName + ";Version=3;";
             this.TableName = TableName;
         }
 
@@ -87,7 +75,6 @@ namespace TechnicSolderHelper.SQL
 
         protected void executeDatabaseQuery(String sql, Boolean Async)
         {
-            //Debug.WriteLine (this.ConnectionString);
             if (isUnix())
             {
                 try

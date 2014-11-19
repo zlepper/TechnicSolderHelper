@@ -403,8 +403,7 @@ namespace TechnicSolderHelper
             {
                 return;
             }
-            String FileName = modfile.Replace(InputDirectory, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
-            FileName = modfile.Replace(InputDirectory, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Trim();
+            String FileName = modfile.Substring(modfile.LastIndexOf(globalfunctions.pathSeperator) + 1);
             if (IsWierdMod(FileName) == 0)
             {
                 return;
@@ -652,53 +651,27 @@ namespace TechnicSolderHelper
                 }
                 if (String.IsNullOrWhiteSpace(ModpackArchive))
                 {
-                    ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
+                    ModpackArchive = Path.Combine(OutputDirectory, String.Format("{0}-{1}.zip", ModpackName, ModpackVersion));
+                    FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
                 }
-                if (globalfunctions.isUnix())
-                {
-                    ModpackArchive = ModpackArchive.Replace("\\", "/");
-                }
-                FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
 
             }
 
 
-            String tempModDirectory = String.Format("{0}\\minecraft\\mods", OutputDirectory);
-            if (globalfunctions.isUnix())
-            {
-                tempModDirectory = tempModDirectory.Replace("\\", "/");
-            }
+            String tempModDirectory = Path.Combine(OutputDirectory, "minecraft", "mods");
             Directory.CreateDirectory(tempModDirectory);
-            String tempFile = String.Format("{0}\\{1}", tempModDirectory, FileName);
-            if (globalfunctions.isUnix())
-            {
-                tempFile = tempFile.Replace("\\", "/");
-            }
-            tempFile = tempFile.Replace("\\\\", "\\");
-            int index = 0;
-            if (globalfunctions.isUnix())
-            {
-                index = tempFile.LastIndexOf("/");
-            }
-            else
-            {
-                index = tempFile.LastIndexOf("\\");
-            }
+            String tempFile = Path.Combine(tempModDirectory, FileName);
+            int index = tempFile.LastIndexOf(globalfunctions.pathSeperator);
             String tempFileDirectory = tempFile.Remove(index);
-            if (globalfunctions.isUnix())
-            {
-                tempFileDirectory = tempFileDirectory.Replace("\\", "/");
-            }
             Debug.WriteLine(tempFileDirectory);
             Directory.CreateDirectory(tempFileDirectory);
             File.Copy(modfile, tempFile, true);
             Debug.WriteLine("Copying " + modfile + " to " + tempFile);
 
-            //ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
             if (globalfunctions.isUnix())
             {
-                FTBModpackArchive = FTBModpackArchive.Replace("\\", "/");
                 Environment.CurrentDirectory = OutputDirectory;
+                startInfo.FileName = "zip";
                 startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", FTBModpackArchive, "minecraft");
                 Debug.WriteLine(startInfo.Arguments);
             }
@@ -707,11 +680,7 @@ namespace TechnicSolderHelper
                 Environment.CurrentDirectory = OutputDirectory;
                 startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", FTBModpackArchive, "minecraft");
             }
-            if (globalfunctions.isUnix())
-            {
-                startInfo.FileName = "zip";
-                startInfo.Arguments = startInfo.Arguments.Replace("\\", "/");
-            }
+
             process.StartInfo = startInfo;
             process.Start();
             process.WaitForExit();
@@ -843,24 +812,13 @@ namespace TechnicSolderHelper
                 Properties.Settings.Default.Save();
             }
 
-            path = OutputDirectory + @"\mods.html";
-            if (globalfunctions.isUnix())
-            {
-                path = path.Replace("\\", "/");
-            }
+            path = Path.Combine(OutputDirectory, "mods.html");
 
 
             Directory.CreateDirectory(OutputDirectory);
             Environment.CurrentDirectory = OutputDirectory;
             Debug.WriteLine(Environment.CurrentDirectory);
-            if (globalfunctions.isUnix())
-            {
-                modlistTextFile = OutputDirectory + "/modlist.txt";
-            }
-            else
-            {
-                modlistTextFile = OutputDirectory + "\\modlist.txt";
-            }
+            modlistTextFile = Path.Combine(OutputDirectory, "modlist.txt");
             if (File.Exists(modlistTextFile))
             {
                 File.Delete(modlistTextFile);
@@ -921,13 +879,10 @@ namespace TechnicSolderHelper
             }
             if (String.IsNullOrWhiteSpace(ModpackArchive))
             {
-                ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
-            }
-            if (globalfunctions.isUnix())
-            {
-                ModpackArchive = ModpackArchive.Replace("\\", "/");
+                ModpackArchive = Path.Combine(OutputDirectory, String.Format("{0}-{1}.zip", ModpackName, ModpackVersion));
             }
             FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
+
             //Check if files have already been added
             foreach (String file in files)
             {
@@ -957,8 +912,8 @@ namespace TechnicSolderHelper
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
-                String mcmodfile = Path.Combine(OutputDirectory, "mcmod.info");//OutputDirectory + @"\mcmod.info";
-                String litemodfile = Path.Combine(OutputDirectory, "litemod.json");//OutputDirectory + @"\litemod.json";
+                String mcmodfile = Path.Combine(OutputDirectory, "mcmod.info");
+                String litemodfile = Path.Combine(OutputDirectory, "litemod.json");
                 if (File.Exists(litemodfile))
                 {
                     if (File.Exists(mcmodfile))
@@ -1145,8 +1100,7 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    String fileName = file.Replace(InputDirectory, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
-                    fileName = file.Replace(InputDirectory, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Trim();
+                    String fileName = file.Substring(file.LastIndexOf(globalfunctions.pathSeperator) + 1);
 
                     //Check the FTB permission sheet for info before doing anything else
                     String shortname = FTBPermsSQLhelper.getShortName(SQLHelper.calculateMD5(file));
@@ -1233,15 +1187,7 @@ namespace TechnicSolderHelper
             String minecraftVersionPattern = @"^[0-9]{1}\.[0-9]{1}\.[0-9]{1,2}$";
             foreach (String dir in Directories)
             {
-                String dirName = "";
-                if (globalfunctions.isUnix())
-                {
-                    dirName = dir.Substring(dir.LastIndexOf("/") + 1);
-                }
-                else
-                {
-                    dirName = dir.Substring(dir.LastIndexOf("\\") + 1);
-                }
+                String dirName = dir.Substring(dir.LastIndexOf(globalfunctions.pathSeperator) + 1);
                 if (Regex.IsMatch(dirName, minecraftVersionPattern, RegexOptions.Multiline))
                 {
                     continue;
@@ -1252,15 +1198,8 @@ namespace TechnicSolderHelper
                 {
                     continue;
                 }
-                String levelOverInputDirectory = "";
-                if (globalfunctions.isUnix())
-                {
-                    levelOverInputDirectory = InputDirectory.Remove(InputDirectory.LastIndexOf("/"));
-                }
-                else
-                {
-                    levelOverInputDirectory = InputDirectory.Remove(InputDirectory.LastIndexOf("\\"));
-                }
+                String levelOverInputDirectory = InputDirectory.Remove(InputDirectory.LastIndexOf(globalfunctions.pathSeperator));
+
                 Debug.WriteLine(levelOverInputDirectory);
                 //Debug.WriteLine("");
 				
@@ -1389,28 +1328,13 @@ namespace TechnicSolderHelper
             if (CreateTechnicPack.Checked)
             {
                 Debug.WriteLine(InputDirectory);
-                if (globalfunctions.isUnix())
-                {
-                    Environment.CurrentDirectory = InputDirectory.Remove(InputDirectory.LastIndexOf("/"));
-                }
-                else
-                {
-                    Environment.CurrentDirectory = InputDirectory.Remove(InputDirectory.LastIndexOf("\\"));
-                }
+                Environment.CurrentDirectory = InputDirectory.Remove(InputDirectory.LastIndexOf(globalfunctions.pathSeperator));
                 Debug.WriteLine(Environment.CurrentDirectory);
                 foreach (KeyValuePair<String, CheckBox> cb in additionalDirectories)
                 {
                     if (cb.Value.Checked)
                     {
-                        String folderName = "";
-                        if (globalfunctions.isUnix())
-                        {
-                            folderName = cb.Key.Substring(cb.Key.LastIndexOf("/") + 1);
-                        }
-                        else
-                        {
-                            folderName = cb.Key.Substring(cb.Key.LastIndexOf("\\") + 1);
-                        }
+                        String folderName = cb.Key.Substring(cb.Key.LastIndexOf(globalfunctions.pathSeperator) + 1);
                         if (SolderPack.Checked)
                         {
                             String of = Path.Combine(OutputDirectory, folderName);
@@ -1544,34 +1468,20 @@ namespace TechnicSolderHelper
                 string selectedBuild = ForgeBuild.SelectedItem.ToString();
                 Debug.WriteLine(selectedBuild);
                 Number forgeinfo = forgesqlhelper.getForgeInfo(selectedBuild);
-                String tmpdir = OutputDirectory + "\\bin";
-                if (globalfunctions.isUnix())
-                {
-                    tmpdir = tmpdir.Replace("\\", "/");
-                }
+                String tmpdir = Path.Combine(OutputDirectory, "bin");
                 Directory.CreateDirectory(tmpdir);
-                String tempfile = tmpdir + "\\modpack.jar";
-                if (globalfunctions.isUnix())
-                {
-                    tempfile = tempfile.Replace("\\", "/");
-                }
+                String tempfile = Path.Combine(tmpdir, "modpack.jar");
+
                 WebClient wb = new WebClient();
                 Debug.WriteLine("Downloading: " + forgeinfo.downloadurl);
                 wb.DownloadFile(forgeinfo.downloadurl, tempfile);
                 if (globalfunctions.isUnix())
-                {
-                    Directory.CreateDirectory(OutputDirectory + "/forge");
-                }
-                else
-                {
-                    Directory.CreateDirectory(OutputDirectory + "\\forge");
-                }
+                    Directory.CreateDirectory(Path.Combine(OutputDirectory, "forge"));
                 if (SolderPack.Checked)
                 {
-                    String outputfile = OutputDirectory + "\\forge\\forge-" + forgeinfo.version + ".zip";
+                    String outputfile = Path.Combine(OutputDirectory, "forge", "forge-" + forgeinfo.version + ".zip");
                     if (globalfunctions.isUnix())
                     {
-                        outputfile = outputfile.Replace("\\", "/");
                         startInfo.FileName = "zip";
                         Environment.CurrentDirectory = OutputDirectory;
                         startInfo.Arguments = "-r \"" + outputfile + "\" \"bin\"";
@@ -1601,27 +1511,14 @@ namespace TechnicSolderHelper
                 process.WaitForExit();
                 Directory.Delete(tmpdir, true);
             }
-            if (globalfunctions.isUnix())
+
+            if (Directory.Exists(Path.Combine(OutputDirectory, "assets")))
             {
-                if (Directory.Exists(OutputDirectory + "/assets"))
-                {
-                    Directory.Delete(OutputDirectory + "/assets", true);
-                }
-                if (Directory.Exists(OutputDirectory + "/example"))
-                {
-                    Directory.Delete(OutputDirectory + "/example", true);
-                }
+                Directory.Delete(Path.Combine(OutputDirectory, "assets"), true);
             }
-            else
+            if (Directory.Exists(Path.Combine(OutputDirectory, "example")))
             {
-                if (Directory.Exists(OutputDirectory + "\\assets"))
-                {
-                    Directory.Delete(OutputDirectory + "\\assets", true);
-                }
-                if (Directory.Exists(OutputDirectory + "\\example"))
-                {
-                    Directory.Delete(OutputDirectory + "\\example", true);
-                }
+                Directory.Delete(Path.Combine(OutputDirectory, "example"), true);
             }
             Debug.WriteLine(path);
             if (CreateTechnicPack.Checked && SolderPack.Checked)
@@ -1736,11 +1633,8 @@ namespace TechnicSolderHelper
             if (SolderPack.Checked)
             {
                 String InputDirectory = InputFolder.Text;
-                InputDirectory = InputDirectory.Replace("\\mods", "");
-                if (globalfunctions.isUnix())
-                {
-                    InputDirectory = InputDirectory.Replace("/mods", "").Replace("\\", "/");
-                }
+                InputDirectory = InputDirectory.Replace(globalfunctions.pathSeperator + "mods", "");
+
                 OutputDirectory = OutputFolder.Text;
                 String ConfigFileName = "";
                 if (ModpackName == null)
@@ -1880,8 +1774,8 @@ namespace TechnicSolderHelper
                 Debug.WriteLine("FileInfo is not in the database");
             }
 
-            String FileName = File.Replace(InputDirectory, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Replace(".jar", "").Replace(".zip", "").Replace(".litemod", "").Replace(".disabled", "").Trim();
-            FileName = File.Replace(InputDirectory, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Replace(".jar", "").Replace(".zip", "").Replace(".litemod", "").Replace(".disabled", "").Trim();
+            String FileName = File.Substring(File.LastIndexOf(globalfunctions.pathSeperator) + 1).Remove(File.LastIndexOf("."));
+
             //Debug.WriteLine(FileName);
             if (currentData.name != null)
             {
@@ -2013,8 +1907,7 @@ namespace TechnicSolderHelper
             {
                 return;
             }
-            String FileName = modfile.Replace(InputDirectory, "").Replace("1.6.4\\", "").Replace("1.7.2\\", "").Replace("1.7.10\\", "").Replace("1.5.2\\", "").Replace("\\", "").Trim();
-            FileName = modfile.Replace(InputDirectory, "").Replace("1.6.4/", "").Replace("1.7.2/", "").Replace("1.7.10/", "").Replace("1.5.2/", "").Replace("/", "").Trim();
+            String FileName = modfile.Substring(modfile.LastIndexOf(globalfunctions.pathSeperator));
             String modMD5 = SQLHelper.calculateMD5(modfile);
             ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, false);
             if (CheckPermissions.Checked)
@@ -2217,38 +2110,18 @@ namespace TechnicSolderHelper
                     String modDir = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modDir = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "\\mods";
+                        modDir = Path.Combine(OutputDirectory, mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), "mods");
                     }
                     else
                     {
-                        modDir = OutputDirectory + "\\" + mod.modid.Replace(".", string.Empty).ToLower() + "\\mods";
-                    }
-                    if (globalfunctions.isUnix())
-                    {
-                        modDir = modDir.Replace("\\", "/");
+                        modDir = Path.Combine(OutputDirectory, mod.modid.Replace(".", string.Empty).ToLower(), "mods");
                     }
                     Directory.CreateDirectory(modDir);
 
-                    String tempModFile = modDir + "\\" + FileName;
-                    if (globalfunctions.isUnix())
-                    {
-                        tempModFile = tempModFile.Replace("\\", "/");
-                    }
-                    tempModFile = tempModFile.Replace("\\\\", "\\");
-                    int index = 0;
-                    if (globalfunctions.isUnix())
-                    {
-                        index = tempModFile.LastIndexOf("/");
-                    }
-                    else
-                    {
-                        index = tempModFile.LastIndexOf("\\");
-                    }
-                    String tempFileDirectory = tempModFile.Remove(index);
-                    if (globalfunctions.isUnix())
-                    {
-                        tempFileDirectory = tempFileDirectory.Replace("\\", "/");
-                    }
+                    String tempModFile = Path.Combine(modDir, FileName);
+
+                    String tempFileDirectory = tempModFile.Remove(tempModFile.LastIndexOf(globalfunctions.pathSeperator));
+
                     Debug.WriteLine(tempFileDirectory);
                     Directory.CreateDirectory(tempFileDirectory);
                     File.Copy(modfile, tempModFile, true);
@@ -2256,27 +2129,25 @@ namespace TechnicSolderHelper
                     String modArchive = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modArchive = OutputDirectory + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "\\" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
+                        modArchive = Path.Combine(OutputDirectory, mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
                     }
                     else
                     {
-                        modArchive = OutputDirectory + "\\" + mod.modid.Replace(".", string.Empty).ToLower() + "\\" + mod.modid.Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip";
+                        modArchive = Path.Combine(OutputDirectory, mod.modid.Replace(".", string.Empty).ToLower(), mod.modid.Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
                     }
                     if (globalfunctions.isUnix())
                     {
                         if (mod.modid.Contains("|"))
                         {
-                            Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower();
+                            Environment.CurrentDirectory = Path.Combine(OutputDirectory, mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower());
                         }
                         else
                         {
-                            Environment.CurrentDirectory = OutputDirectory + "/" + mod.modid.Replace(".", string.Empty).ToLower();
+                            Environment.CurrentDirectory = Path.Combine(OutputDirectory, mod.modid.Replace(".", string.Empty).ToLower());
                         }
                         modDir = "mods";
-                        modArchive.Replace("\\", "/");
                         startInfo.FileName = "zip";
                         startInfo.Arguments = "-r \"" + modArchive + "\" \"" + modDir + "\" ";
-                        startInfo.Arguments = startInfo.Arguments.Replace("\\", "/");
                         Debug.WriteLine(startInfo.Arguments);
                     }
                     else
@@ -2330,43 +2201,20 @@ namespace TechnicSolderHelper
                     ModpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
                 }
 
-                String tempDirectory = String.Format("{0}\\tmp", OutputDirectory);
-                String tempModDirectory = String.Format("{0}\\mods", tempDirectory);
-                if (globalfunctions.isUnix())
-                {
-                    tempDirectory = tempDirectory.Replace("\\", "/");
-                    tempModDirectory = tempModDirectory.Replace("\\", "/");
-                }
+                String tempDirectory = String.Format(OutputDirectory, "tmp");
+                String tempModDirectory = Path.Combine(tempDirectory, "mods");
                 Directory.CreateDirectory(tempModDirectory);
-                String tempFile = String.Format("{0}\\{1}", tempModDirectory, FileName);
-                if (globalfunctions.isUnix())
-                {
-                    tempFile = tempFile.Replace("\\", "/");
-                }
-                tempFile = tempFile.Replace("\\\\", "\\");
-                int index = 0;
-                if (globalfunctions.isUnix())
-                {
-                    index = tempFile.LastIndexOf("/");
-                }
-                else
-                {
-                    index = tempFile.LastIndexOf("\\");
-                }
+                String tempFile = Path.Combine(tempModDirectory, FileName);
+
+                int index = tempFile.LastIndexOf(globalfunctions.pathSeperator);
+
                 String tempFileDirectory = tempFile.Remove(index);
-                if (globalfunctions.isUnix())
-                {
-                    tempFileDirectory = tempFileDirectory.Replace("\\", "/");
-                }
                 Debug.WriteLine(tempFileDirectory);
                 Directory.CreateDirectory(tempFileDirectory);
                 File.Copy(modfile, tempFile, true);
 
-                ModpackArchive = String.Format("{0}\\{1}-{2}.zip", OutputDirectory, ModpackName, ModpackVersion);
-                if (globalfunctions.isUnix())
-                {
-                    ModpackArchive = ModpackArchive.Replace("\\", "/");
-                }
+                ModpackArchive = Path.Combine(OutputDirectory, String.Format("{1}-{2}.zip", ModpackName, ModpackVersion));
+
                 if (globalfunctions.isUnix())
                 {
                     Environment.CurrentDirectory = tempDirectory;
@@ -2379,7 +2227,6 @@ namespace TechnicSolderHelper
                 if (globalfunctions.isUnix())
                 {
                     startInfo.FileName = "zip";
-                    startInfo.Arguments = startInfo.Arguments.Replace("\\", "/");
                 }
                 process.StartInfo = startInfo;
                 process.Start();

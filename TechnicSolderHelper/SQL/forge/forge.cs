@@ -15,47 +15,64 @@ namespace TechnicSolderHelper.forge
     public class FileInfo
     {
         public string branch { get; set; }
+
         public string buildnum { get; set; }
+
         public string buildtype { get; set; }
+
         public string ext { get; set; }
+
         public string jobbuildver { get; set; }
+
         public string jobname { get; set; }
+
         public string jobver { get; set; }
+
         public string mcver { get; set; }
+
         public string url { get; set; }
     }
 
     public class Build
     {
         public int build { get; set; }
+
         public List<FileInfo> files { get; set; }
+
         public string info { get; set; }
+
         public string version { get; set; }
     }
 
     public class Promotions
     {
         public string type { get; set; }
+
         public string url { get; set; }
     }
 
     public class Promotion
     {
         public List<Promotions> files { get; set; }
+
         public string name { get; set; }
     }
 
     public class Subsection
     {
         public string name { get; set; }
+
         public string url { get; set; }
     }
 
     public class Forge
     {
         public string adfly_id { get; set; }
+
         public List<Build> builds { get; set; }
+
         public List<Promotion> promotions { get; set; }
+
         public List<Subsection> subsections { get; set; }
     }
 
@@ -67,6 +84,7 @@ namespace TechnicSolderHelper.forge
     {
 
         protected readonly String CreateTableString;
+
         public ForgeSQLHelper()
             : base("Forge", "forge")
         {
@@ -228,11 +246,8 @@ namespace TechnicSolderHelper.forge
         {
             WebClient wb = new WebClient();
             String forgejsonweb = "http://files.minecraftforge.net/minecraftforge/json";
-            String jsonfile = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\forge.json";
-            if (globalfunctions.isUnix())
-            {
-                jsonfile.Replace("\\", "/");
-            }
+            String jsonfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "forge.json");
+
             wb.DownloadFile(forgejsonweb, jsonfile);
             Debug.WriteLine("Downloaded json file");
             String json = "";
