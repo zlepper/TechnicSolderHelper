@@ -14,7 +14,7 @@ namespace TechnicSolderHelper.SQL
         protected readonly String CreateTableString;
 
         public FTBPermissionsSQLHelper()
-            : base("FTBPermssions", "ftbperms")
+            : base("FTBPermissions", "ftbperms")
         {
             CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT, `ModAuthor` TEXT, `ShortName` TEXT, `ModID` TEXT UNIQUE, `PublicPerm` TEXT , `PrivatePerm` TEXT, `ModLink` TEXT, `PermLink` TEXT, `CustPrivate` TEXT, `CustFTB` TEXT, PRIMARY KEY(ID));", this.TableName);
             executeDatabaseQuery(CreateTableString);
@@ -30,19 +30,12 @@ namespace TechnicSolderHelper.SQL
         /// If true, Checks for public distribution permissions.</param>
         /// <returns>Return the level of distribution.
         /// If no level found, return PermissionLevel.Unknown</returns>
-        public PermissionLevel doFTBHavePermission(String toCheck, Boolean isPublic, Boolean checkShortName)
+        public PermissionLevel doFTBHavePermission(String toCheck, Boolean isPublic)
         {
             toCheck = toCheck.Replace("'", "`");
 
             String sql = "";
-            if (checkShortName)
-            {
-                sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ShortName LIKE '{1}';", this.TableName, toCheck.ToLower());
-            }
-            else
-            {
-                sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ModID LIKE '{1}';", this.TableName, toCheck.ToLower());
-            }
+            sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ShortName LIKE '{1}' OR ModID LIKE '{1}';", this.TableName, toCheck.ToLower());
             Debug.WriteLine(sql);
             if (isUnix())
             {
@@ -144,7 +137,7 @@ namespace TechnicSolderHelper.SQL
         {
             ModID = ModID.Replace("'", "`");
 
-            String sql = String.Format("SELECT {2} FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID.ToLower(), infoType.ToString());
+            String sql = String.Format("SELECT {2} FROM {0} WHERE ModID LIKE '{1}' OR ShortName LIKE '{1}';", this.TableName, ModID.ToLower(), infoType.ToString());
             Debug.WriteLine(sql);
 
             if (isUnix())
