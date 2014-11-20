@@ -199,6 +199,7 @@
     <Compile Include="messageToUser.cs" />
     <Compile Include="SQL\forge\liteloader.cs" />
     <Compile Include="modpacks.cs" />
+    <Compile Include="ftp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

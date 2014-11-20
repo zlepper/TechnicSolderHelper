@@ -27,23 +27,24 @@ namespace TechnicSolderHelper
     {
         #region Application Wide Variables
 
-        public static String InputDirectory;
-        public static String OutputDirectory;
+        public String InputDirectory;
+        public String OutputDirectory;
         public ModListSQLHelper ModsSQLhelper = new ModListSQLHelper();
         public FTBPermissionsSQLHelper FTBPermsSQLhelper = new FTBPermissionsSQLHelper();
         public OwnPermissionsSQLHelper OwnPermsSQLhelper = new OwnPermissionsSQLHelper();
         public ForgeSQLHelper forgesqlhelper = new ForgeSQLHelper();
         public liteloaderSQLHelper liteloadersqlhelper = new liteloaderSQLHelper();
-        public static String SevenZipLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TechnicSolderHelper", "7za.exe");
-        public static Process process = new System.Diagnostics.Process();
-        public static ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-        public static String UserName, path, CurrentMCVersion, ModpackVersion, ModpackName, ModpackArchive, FTBModpackArchive;
-        public static ConfigHandler confighandler = new ConfigHandler();
-        public static String modlistTextFile = "", technicPermissionList = "", FTBPermissionList = "", FTBOwnPermissionList = "";
-        public static short totalMods = 0, currentMod = 0;
-        public static String modpacksJsonFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "modpacks.json");
-        public static modpacks modpacks = new modpacks();
+        public String SevenZipLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TechnicSolderHelper", "7za.exe");
+        public Process process = new System.Diagnostics.Process();
+        public ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+        public String UserName, path, CurrentMCVersion, ModpackVersion, ModpackName, ModpackArchive, FTBModpackArchive;
+        public ConfigHandler confighandler = new ConfigHandler();
+        public String modlistTextFile = "", technicPermissionList = "", FTBPermissionList = "", FTBOwnPermissionList = "";
+        public short totalMods = 0, currentMod = 0;
+        public String modpacksJsonFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "modpacks.json");
+        public modpacks modpacks = new modpacks();
         public Dictionary<String, CheckBox> additionalDirectories = new Dictionary<string, CheckBox>();
+        public Ftp Ftp;
 
         #endregion
 
