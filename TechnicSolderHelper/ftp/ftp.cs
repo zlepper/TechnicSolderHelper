@@ -3,16 +3,18 @@ using System.IO;
 using System.Net;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security;
+using System.Security.Cryptography;
 
 namespace TechnicSolderHelper
 {
     public class Ftp
     {
         private String userName;
-        private String password;
+        private SecureString password;
         private String url;
 
-        public Ftp(String userName, String password, String url)
+        public Ftp(String userName, SecureString password, String url)
         {
             this.userName = userName;
             this.password = password;

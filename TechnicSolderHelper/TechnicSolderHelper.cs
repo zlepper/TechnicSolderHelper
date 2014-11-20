@@ -19,6 +19,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TechnicSolderHelper.SQL;
 using TechnicSolderHelper.forge;
+using System.Security.Cryptography;
+using System.Security;
 
 
 namespace TechnicSolderHelper
@@ -44,7 +46,7 @@ namespace TechnicSolderHelper
         public String modpacksJsonFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "modpacks.json");
         public modpacks modpacks = new modpacks();
         public Dictionary<String, CheckBox> additionalDirectories = new Dictionary<string, CheckBox>();
-        public Ftp Ftp;
+        public Ftp ftp;
 
         #endregion
 
@@ -2459,6 +2461,60 @@ namespace TechnicSolderHelper
                 Properties.Settings.Default.UploadToFTPServer = UploadToFTPServer.Checked;
                 Properties.Settings.Default.Save();
             }
+
+            if (UploadToFTPServer.Checked)
+            {
+                var responce = MessageBox.Show("Uploading to FTP can take a very long time. Do you still want to upload to FTP?", "FTP upload", MessageBoxButtons.YesNo);
+                if (responce == System.Windows.Forms.DialogResult.Yes)
+                {
+                    configureFTP.Show();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                configureFTP.Hide();
+            }
+            SecureString pass = new SecureString();
+            String userName = "";
+            String ftpUrl = "";
+            try
+            {
+                if (globalfunctions.isUnix())
+                {
+                    foreach (char c in confighandler.getConfig("ftpPassword").ToCharArray())
+                    {
+                        pass.AppendChar(c);
+                    }
+                    userName = confighandler.getConfig("ftpUserName");
+                    ftpUrl = confighandler.getConfig("ftpUrl");
+                }
+                else
+                {
+                    foreach (char c in Properties.Settings.Default.ftpPassword.ToCharArray())
+                    {
+                        pass.AppendChar(c);
+                    }
+                    userName = Properties.Settings.Default.ftpUserName;
+                    ftpUrl = Properties.Settings.Default.ftpUrl;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            if (pass.Length == 0 || String.IsNullOrWhiteSpace(userName))
+            {
+                configureFTP_Click(null, null);
+            }
+            if(ftp == null) {
+                ftp = new Ftp(userName, pass, ftpUrl);
+            }
+
         }
 
         private void MCversion_SelectedIndexChanged(object sender, EventArgs e)
@@ -2555,6 +2611,11 @@ namespace TechnicSolderHelper
                     this.Width = 800;
                 }
             }
+        }
+
+        private void configureFTP_Click(object sender, EventArgs e)
+        {
+            
         }
 
     }

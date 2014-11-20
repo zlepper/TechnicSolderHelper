@@ -43,24 +43,8 @@
             this.CreateTechnicPack = new System.Windows.Forms.CheckBox();
             this.OutputFolder = new System.Windows.Forms.TextBox();
             this.InputFolder = new System.Windows.Forms.TextBox();
-            this.SolderPackType = new System.Windows.Forms.GroupBox();
-            this.IncludeForgeVersion = new System.Windows.Forms.CheckBox();
-            this.CheckPermissions = new System.Windows.Forms.CheckBox();
-            this.ZipPack = new System.Windows.Forms.RadioButton();
-            this.SolderPack = new System.Windows.Forms.RadioButton();
-            this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
-            this.DistributionLevel = new System.Windows.Forms.GroupBox();
-            this.PublicFTBPack = new System.Windows.Forms.RadioButton();
-            this.PrivateFTBPack = new System.Windows.Forms.RadioButton();
-            this.TechnicDistributionLevel = new System.Windows.Forms.GroupBox();
-            this.TechnicPublicPermissions = new System.Windows.Forms.RadioButton();
-            this.TechnicPrivatePermissions = new System.Windows.Forms.RadioButton();
             this.UploadToFTPServer = new System.Windows.Forms.CheckBox();
-            this.MCversion = new System.Windows.Forms.ListBox();
-            this.ForgeBuild = new System.Windows.Forms.ListBox();
             this.GetForgeVersions = new System.Windows.Forms.Button();
-            this.labelmcversion = new System.Windows.Forms.Label();
-            this.labelforgeversion = new System.Windows.Forms.Label();
             this.missingInfoAction = new System.Windows.Forms.GroupBox();
             this.missingInfoActionCreateList = new System.Windows.Forms.RadioButton();
             this.missingInfoActionOnTheRun = new System.Windows.Forms.RadioButton();
@@ -70,10 +54,27 @@
             this.label5 = new System.Windows.Forms.Label();
             this.getliteloaderversions = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.SolderPackType.SuspendLayout();
-            this.DistributionLevel.SuspendLayout();
-            this.TechnicDistributionLevel.SuspendLayout();
+            this.configureFTP = new System.Windows.Forms.Button();
+            this.labelforgeversion = new System.Windows.Forms.Label();
+            this.labelmcversion = new System.Windows.Forms.Label();
+            this.ForgeBuild = new System.Windows.Forms.ListBox();
+            this.MCversion = new System.Windows.Forms.ListBox();
+            this.TechnicDistributionLevel = new System.Windows.Forms.GroupBox();
+            this.TechnicPublicPermissions = new System.Windows.Forms.RadioButton();
+            this.TechnicPrivatePermissions = new System.Windows.Forms.RadioButton();
+            this.DistributionLevel = new System.Windows.Forms.GroupBox();
+            this.PublicFTBPack = new System.Windows.Forms.RadioButton();
+            this.PrivateFTBPack = new System.Windows.Forms.RadioButton();
+            this.SolderPackType = new System.Windows.Forms.GroupBox();
+            this.IncludeForgeVersion = new System.Windows.Forms.CheckBox();
+            this.CheckPermissions = new System.Windows.Forms.CheckBox();
+            this.ZipPack = new System.Windows.Forms.RadioButton();
+            this.SolderPack = new System.Windows.Forms.RadioButton();
+            this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
             this.missingInfoAction.SuspendLayout();
+            this.TechnicDistributionLevel.SuspendLayout();
+            this.DistributionLevel.SuspendLayout();
+            this.SolderPackType.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -165,7 +166,7 @@
             // CreateFTBPack
             // 
             this.CreateFTBPack.AutoSize = true;
-            this.CreateFTBPack.Location = new System.Drawing.Point(14, 300);
+            this.CreateFTBPack.Location = new System.Drawing.Point(11, 298);
             this.CreateFTBPack.Name = "CreateFTBPack";
             this.CreateFTBPack.Size = new System.Drawing.Size(108, 17);
             this.CreateFTBPack.TabIndex = 7;
@@ -222,181 +223,17 @@
             this.InputFolder.Text = "C:\\Users\\User\\AppData\\Roaming\\.minecraft\\mods";
             this.InputFolder.TextChanged += new System.EventHandler(this.InputFolder_TextChanged);
             // 
-            // SolderPackType
-            // 
-            this.SolderPackType.Controls.Add(this.IncludeForgeVersion);
-            this.SolderPackType.Controls.Add(this.CheckPermissions);
-            this.SolderPackType.Controls.Add(this.ZipPack);
-            this.SolderPackType.Controls.Add(this.SolderPack);
-            this.SolderPackType.Controls.Add(this.IncludeConfigZip);
-            this.SolderPackType.Location = new System.Drawing.Point(14, 127);
-            this.SolderPackType.Name = "SolderPackType";
-            this.SolderPackType.Size = new System.Drawing.Size(148, 153);
-            this.SolderPackType.TabIndex = 10;
-            this.SolderPackType.TabStop = false;
-            this.SolderPackType.Text = "Pack Type";
-            this.SolderPackType.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicSolderFiles;
-            // 
-            // IncludeForgeVersion
-            // 
-            this.IncludeForgeVersion.AutoSize = true;
-            this.IncludeForgeVersion.Checked = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
-            this.IncludeForgeVersion.Location = new System.Drawing.Point(20, 65);
-            this.IncludeForgeVersion.Name = "IncludeForgeVersion";
-            this.IncludeForgeVersion.Size = new System.Drawing.Size(109, 17);
-            this.IncludeForgeVersion.TabIndex = 13;
-            this.IncludeForgeVersion.Text = "Include Forge Zip";
-            this.IncludeForgeVersion.UseVisualStyleBackColor = true;
-            this.IncludeForgeVersion.CheckedChanged += new System.EventHandler(this.IncludeForgeVersion_CheckedChanged);
-            // 
-            // CheckPermissions
-            // 
-            this.CheckPermissions.AutoSize = true;
-            this.CheckPermissions.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
-            this.CheckPermissions.Location = new System.Drawing.Point(20, 111);
-            this.CheckPermissions.Name = "CheckPermissions";
-            this.CheckPermissions.Size = new System.Drawing.Size(114, 17);
-            this.CheckPermissions.TabIndex = 6;
-            this.CheckPermissions.Text = "Check permissions";
-            this.CheckPermissions.UseVisualStyleBackColor = true;
-            this.CheckPermissions.CheckedChanged += new System.EventHandler(this.CheckPermissions_CheckedChanged);
-            // 
-            // ZipPack
-            // 
-            this.ZipPack.AutoSize = true;
-            this.ZipPack.Location = new System.Drawing.Point(20, 42);
-            this.ZipPack.Name = "ZipPack";
-            this.ZipPack.Size = new System.Drawing.Size(68, 17);
-            this.ZipPack.TabIndex = 0;
-            this.ZipPack.Text = "Zip Pack";
-            this.ZipPack.UseVisualStyleBackColor = true;
-            // 
-            // SolderPack
-            // 
-            this.SolderPack.AutoSize = true;
-            this.SolderPack.Checked = true;
-            this.SolderPack.Location = new System.Drawing.Point(20, 19);
-            this.SolderPack.Name = "SolderPack";
-            this.SolderPack.Size = new System.Drawing.Size(83, 17);
-            this.SolderPack.TabIndex = 0;
-            this.SolderPack.TabStop = true;
-            this.SolderPack.Text = "Solder Pack";
-            this.SolderPack.UseVisualStyleBackColor = true;
-            this.SolderPack.CheckedChanged += new System.EventHandler(this.SolderPack_CheckedChanged);
-            // 
-            // IncludeConfigZip
-            // 
-            this.IncludeConfigZip.AutoSize = true;
-            this.IncludeConfigZip.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicConfigZip;
-            this.IncludeConfigZip.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.IncludeConfigZip.Location = new System.Drawing.Point(20, 88);
-            this.IncludeConfigZip.Name = "IncludeConfigZip";
-            this.IncludeConfigZip.Size = new System.Drawing.Size(108, 17);
-            this.IncludeConfigZip.TabIndex = 5;
-            this.IncludeConfigZip.Text = "Create Config Zip";
-            this.IncludeConfigZip.UseVisualStyleBackColor = true;
-            this.IncludeConfigZip.CheckedChanged += new System.EventHandler(this.IncludeConfigZip_CheckedChanged);
-            // 
-            // DistributionLevel
-            // 
-            this.DistributionLevel.Controls.Add(this.PublicFTBPack);
-            this.DistributionLevel.Controls.Add(this.PrivateFTBPack);
-            this.DistributionLevel.Location = new System.Drawing.Point(19, 323);
-            this.DistributionLevel.Name = "DistributionLevel";
-            this.DistributionLevel.Size = new System.Drawing.Size(146, 70);
-            this.DistributionLevel.TabIndex = 11;
-            this.DistributionLevel.TabStop = false;
-            this.DistributionLevel.Text = "Distribution Level";
-            this.DistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateFTBPack;
-            // 
-            // PublicFTBPack
-            // 
-            this.PublicFTBPack.AutoSize = true;
-            this.PublicFTBPack.Location = new System.Drawing.Point(18, 44);
-            this.PublicFTBPack.Name = "PublicFTBPack";
-            this.PublicFTBPack.Size = new System.Drawing.Size(105, 17);
-            this.PublicFTBPack.TabIndex = 1;
-            this.PublicFTBPack.TabStop = true;
-            this.PublicFTBPack.Text = "Public FTB Pack";
-            this.PublicFTBPack.UseVisualStyleBackColor = true;
-            // 
-            // PrivateFTBPack
-            // 
-            this.PrivateFTBPack.AutoSize = true;
-            this.PrivateFTBPack.Location = new System.Drawing.Point(18, 20);
-            this.PrivateFTBPack.Name = "PrivateFTBPack";
-            this.PrivateFTBPack.Size = new System.Drawing.Size(109, 17);
-            this.PrivateFTBPack.TabIndex = 0;
-            this.PrivateFTBPack.TabStop = true;
-            this.PrivateFTBPack.Text = "Private FTB Pack";
-            this.PrivateFTBPack.UseVisualStyleBackColor = true;
-            this.PrivateFTBPack.CheckedChanged += new System.EventHandler(this.PrivateFTBPack_CheckedChanged);
-            // 
-            // TechnicDistributionLevel
-            // 
-            this.TechnicDistributionLevel.Controls.Add(this.TechnicPublicPermissions);
-            this.TechnicDistributionLevel.Controls.Add(this.TechnicPrivatePermissions);
-            this.TechnicDistributionLevel.Location = new System.Drawing.Point(168, 207);
-            this.TechnicDistributionLevel.Name = "TechnicDistributionLevel";
-            this.TechnicDistributionLevel.Size = new System.Drawing.Size(136, 73);
-            this.TechnicDistributionLevel.TabIndex = 7;
-            this.TechnicDistributionLevel.TabStop = false;
-            this.TechnicDistributionLevel.Text = "Permissions Level";
-            this.TechnicDistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
-            // 
-            // TechnicPublicPermissions
-            // 
-            this.TechnicPublicPermissions.AutoSize = true;
-            this.TechnicPublicPermissions.Location = new System.Drawing.Point(7, 43);
-            this.TechnicPublicPermissions.Name = "TechnicPublicPermissions";
-            this.TechnicPublicPermissions.Size = new System.Drawing.Size(82, 17);
-            this.TechnicPublicPermissions.TabIndex = 1;
-            this.TechnicPublicPermissions.TabStop = true;
-            this.TechnicPublicPermissions.Text = "Public Pack";
-            this.TechnicPublicPermissions.UseVisualStyleBackColor = true;
-            // 
-            // TechnicPrivatePermissions
-            // 
-            this.TechnicPrivatePermissions.AutoSize = true;
-            this.TechnicPrivatePermissions.Location = new System.Drawing.Point(7, 20);
-            this.TechnicPrivatePermissions.Name = "TechnicPrivatePermissions";
-            this.TechnicPrivatePermissions.Size = new System.Drawing.Size(86, 17);
-            this.TechnicPrivatePermissions.TabIndex = 0;
-            this.TechnicPrivatePermissions.TabStop = true;
-            this.TechnicPrivatePermissions.Text = "Private Pack";
-            this.TechnicPrivatePermissions.UseVisualStyleBackColor = true;
-            this.TechnicPrivatePermissions.CheckedChanged += new System.EventHandler(this.TechnicPrivatePermissions_CheckedChanged);
-            // 
             // UploadToFTPServer
             // 
             this.UploadToFTPServer.AutoSize = true;
             this.UploadToFTPServer.Enabled = false;
-            this.UploadToFTPServer.Location = new System.Drawing.Point(14, 400);
+            this.UploadToFTPServer.Location = new System.Drawing.Point(11, 399);
             this.UploadToFTPServer.Name = "UploadToFTPServer";
             this.UploadToFTPServer.Size = new System.Drawing.Size(127, 17);
             this.UploadToFTPServer.TabIndex = 12;
             this.UploadToFTPServer.Text = "Upload to FTP server";
             this.UploadToFTPServer.UseVisualStyleBackColor = true;
             this.UploadToFTPServer.CheckedChanged += new System.EventHandler(this.UploadToFTPServer_CheckedChanged);
-            // 
-            // MCversion
-            // 
-            this.MCversion.FormattingEnabled = true;
-            this.MCversion.Location = new System.Drawing.Point(250, 127);
-            this.MCversion.Name = "MCversion";
-            this.MCversion.Size = new System.Drawing.Size(123, 30);
-            this.MCversion.TabIndex = 1;
-            this.MCversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
-            this.MCversion.SelectedIndexChanged += new System.EventHandler(this.MCversion_SelectedIndexChanged);
-            // 
-            // ForgeBuild
-            // 
-            this.ForgeBuild.FormattingEnabled = true;
-            this.ForgeBuild.Location = new System.Drawing.Point(250, 169);
-            this.ForgeBuild.Name = "ForgeBuild";
-            this.ForgeBuild.Size = new System.Drawing.Size(123, 30);
-            this.ForgeBuild.TabIndex = 0;
-            this.ForgeBuild.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             // 
             // GetForgeVersions
             // 
@@ -407,26 +244,6 @@
             this.GetForgeVersions.Text = "Get Forge versions";
             this.GetForgeVersions.UseVisualStyleBackColor = true;
             this.GetForgeVersions.Click += new System.EventHandler(this.GetForgeVersions_Click);
-            // 
-            // labelmcversion
-            // 
-            this.labelmcversion.AutoSize = true;
-            this.labelmcversion.Location = new System.Drawing.Point(172, 127);
-            this.labelmcversion.Name = "labelmcversion";
-            this.labelmcversion.Size = new System.Drawing.Size(57, 13);
-            this.labelmcversion.TabIndex = 15;
-            this.labelmcversion.Text = "MCversion";
-            this.labelmcversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
-            // 
-            // labelforgeversion
-            // 
-            this.labelforgeversion.AutoSize = true;
-            this.labelforgeversion.Location = new System.Drawing.Point(172, 169);
-            this.labelforgeversion.Name = "labelforgeversion";
-            this.labelforgeversion.Size = new System.Drawing.Size(72, 13);
-            this.labelforgeversion.TabIndex = 16;
-            this.labelforgeversion.Text = "Forge Version";
-            this.labelforgeversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             // 
             // missingInfoAction
             // 
@@ -514,11 +331,206 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Additional folders";
             // 
+            // configureFTP
+            // 
+            this.configureFTP.Location = new System.Drawing.Point(12, 424);
+            this.configureFTP.Name = "configureFTP";
+            this.configureFTP.Size = new System.Drawing.Size(107, 23);
+            this.configureFTP.TabIndex = 24;
+            this.configureFTP.Text = "Configure FTP";
+            this.configureFTP.UseVisualStyleBackColor = true;
+            this.configureFTP.Click += new System.EventHandler(this.configureFTP_Click);
+            // 
+            // labelforgeversion
+            // 
+            this.labelforgeversion.AutoSize = true;
+            this.labelforgeversion.Location = new System.Drawing.Point(172, 169);
+            this.labelforgeversion.Name = "labelforgeversion";
+            this.labelforgeversion.Size = new System.Drawing.Size(72, 13);
+            this.labelforgeversion.TabIndex = 16;
+            this.labelforgeversion.Text = "Forge Version";
+            this.labelforgeversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
+            // 
+            // labelmcversion
+            // 
+            this.labelmcversion.AutoSize = true;
+            this.labelmcversion.Location = new System.Drawing.Point(172, 127);
+            this.labelmcversion.Name = "labelmcversion";
+            this.labelmcversion.Size = new System.Drawing.Size(57, 13);
+            this.labelmcversion.TabIndex = 15;
+            this.labelmcversion.Text = "MCversion";
+            this.labelmcversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
+            // 
+            // ForgeBuild
+            // 
+            this.ForgeBuild.FormattingEnabled = true;
+            this.ForgeBuild.Location = new System.Drawing.Point(250, 169);
+            this.ForgeBuild.Name = "ForgeBuild";
+            this.ForgeBuild.Size = new System.Drawing.Size(123, 30);
+            this.ForgeBuild.TabIndex = 0;
+            this.ForgeBuild.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
+            // 
+            // MCversion
+            // 
+            this.MCversion.FormattingEnabled = true;
+            this.MCversion.Location = new System.Drawing.Point(250, 127);
+            this.MCversion.Name = "MCversion";
+            this.MCversion.Size = new System.Drawing.Size(123, 30);
+            this.MCversion.TabIndex = 1;
+            this.MCversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
+            this.MCversion.SelectedIndexChanged += new System.EventHandler(this.MCversion_SelectedIndexChanged);
+            // 
+            // TechnicDistributionLevel
+            // 
+            this.TechnicDistributionLevel.Controls.Add(this.TechnicPublicPermissions);
+            this.TechnicDistributionLevel.Controls.Add(this.TechnicPrivatePermissions);
+            this.TechnicDistributionLevel.Location = new System.Drawing.Point(168, 207);
+            this.TechnicDistributionLevel.Name = "TechnicDistributionLevel";
+            this.TechnicDistributionLevel.Size = new System.Drawing.Size(136, 73);
+            this.TechnicDistributionLevel.TabIndex = 7;
+            this.TechnicDistributionLevel.TabStop = false;
+            this.TechnicDistributionLevel.Text = "Permissions Level";
+            this.TechnicDistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
+            // 
+            // TechnicPublicPermissions
+            // 
+            this.TechnicPublicPermissions.AutoSize = true;
+            this.TechnicPublicPermissions.Location = new System.Drawing.Point(7, 43);
+            this.TechnicPublicPermissions.Name = "TechnicPublicPermissions";
+            this.TechnicPublicPermissions.Size = new System.Drawing.Size(82, 17);
+            this.TechnicPublicPermissions.TabIndex = 1;
+            this.TechnicPublicPermissions.TabStop = true;
+            this.TechnicPublicPermissions.Text = "Public Pack";
+            this.TechnicPublicPermissions.UseVisualStyleBackColor = true;
+            // 
+            // TechnicPrivatePermissions
+            // 
+            this.TechnicPrivatePermissions.AutoSize = true;
+            this.TechnicPrivatePermissions.Location = new System.Drawing.Point(7, 20);
+            this.TechnicPrivatePermissions.Name = "TechnicPrivatePermissions";
+            this.TechnicPrivatePermissions.Size = new System.Drawing.Size(86, 17);
+            this.TechnicPrivatePermissions.TabIndex = 0;
+            this.TechnicPrivatePermissions.TabStop = true;
+            this.TechnicPrivatePermissions.Text = "Private Pack";
+            this.TechnicPrivatePermissions.UseVisualStyleBackColor = true;
+            this.TechnicPrivatePermissions.CheckedChanged += new System.EventHandler(this.TechnicPrivatePermissions_CheckedChanged);
+            // 
+            // DistributionLevel
+            // 
+            this.DistributionLevel.Controls.Add(this.PublicFTBPack);
+            this.DistributionLevel.Controls.Add(this.PrivateFTBPack);
+            this.DistributionLevel.Location = new System.Drawing.Point(12, 323);
+            this.DistributionLevel.Name = "DistributionLevel";
+            this.DistributionLevel.Size = new System.Drawing.Size(146, 70);
+            this.DistributionLevel.TabIndex = 11;
+            this.DistributionLevel.TabStop = false;
+            this.DistributionLevel.Text = "Distribution Level";
+            this.DistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateFTBPack;
+            // 
+            // PublicFTBPack
+            // 
+            this.PublicFTBPack.AutoSize = true;
+            this.PublicFTBPack.Location = new System.Drawing.Point(18, 44);
+            this.PublicFTBPack.Name = "PublicFTBPack";
+            this.PublicFTBPack.Size = new System.Drawing.Size(105, 17);
+            this.PublicFTBPack.TabIndex = 1;
+            this.PublicFTBPack.TabStop = true;
+            this.PublicFTBPack.Text = "Public FTB Pack";
+            this.PublicFTBPack.UseVisualStyleBackColor = true;
+            // 
+            // PrivateFTBPack
+            // 
+            this.PrivateFTBPack.AutoSize = true;
+            this.PrivateFTBPack.Location = new System.Drawing.Point(18, 20);
+            this.PrivateFTBPack.Name = "PrivateFTBPack";
+            this.PrivateFTBPack.Size = new System.Drawing.Size(109, 17);
+            this.PrivateFTBPack.TabIndex = 0;
+            this.PrivateFTBPack.TabStop = true;
+            this.PrivateFTBPack.Text = "Private FTB Pack";
+            this.PrivateFTBPack.UseVisualStyleBackColor = true;
+            this.PrivateFTBPack.CheckedChanged += new System.EventHandler(this.PrivateFTBPack_CheckedChanged);
+            // 
+            // SolderPackType
+            // 
+            this.SolderPackType.Controls.Add(this.IncludeForgeVersion);
+            this.SolderPackType.Controls.Add(this.CheckPermissions);
+            this.SolderPackType.Controls.Add(this.ZipPack);
+            this.SolderPackType.Controls.Add(this.SolderPack);
+            this.SolderPackType.Controls.Add(this.IncludeConfigZip);
+            this.SolderPackType.Location = new System.Drawing.Point(11, 127);
+            this.SolderPackType.Name = "SolderPackType";
+            this.SolderPackType.Size = new System.Drawing.Size(148, 153);
+            this.SolderPackType.TabIndex = 10;
+            this.SolderPackType.TabStop = false;
+            this.SolderPackType.Text = "Pack Type";
+            this.SolderPackType.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicSolderFiles;
+            // 
+            // IncludeForgeVersion
+            // 
+            this.IncludeForgeVersion.AutoSize = true;
+            this.IncludeForgeVersion.Checked = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
+            this.IncludeForgeVersion.Location = new System.Drawing.Point(20, 65);
+            this.IncludeForgeVersion.Name = "IncludeForgeVersion";
+            this.IncludeForgeVersion.Size = new System.Drawing.Size(109, 17);
+            this.IncludeForgeVersion.TabIndex = 13;
+            this.IncludeForgeVersion.Text = "Include Forge Zip";
+            this.IncludeForgeVersion.UseVisualStyleBackColor = true;
+            this.IncludeForgeVersion.CheckedChanged += new System.EventHandler(this.IncludeForgeVersion_CheckedChanged);
+            // 
+            // CheckPermissions
+            // 
+            this.CheckPermissions.AutoSize = true;
+            this.CheckPermissions.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
+            this.CheckPermissions.Location = new System.Drawing.Point(20, 111);
+            this.CheckPermissions.Name = "CheckPermissions";
+            this.CheckPermissions.Size = new System.Drawing.Size(114, 17);
+            this.CheckPermissions.TabIndex = 6;
+            this.CheckPermissions.Text = "Check permissions";
+            this.CheckPermissions.UseVisualStyleBackColor = true;
+            this.CheckPermissions.CheckedChanged += new System.EventHandler(this.CheckPermissions_CheckedChanged);
+            // 
+            // ZipPack
+            // 
+            this.ZipPack.AutoSize = true;
+            this.ZipPack.Location = new System.Drawing.Point(20, 42);
+            this.ZipPack.Name = "ZipPack";
+            this.ZipPack.Size = new System.Drawing.Size(68, 17);
+            this.ZipPack.TabIndex = 0;
+            this.ZipPack.Text = "Zip Pack";
+            this.ZipPack.UseVisualStyleBackColor = true;
+            // 
+            // SolderPack
+            // 
+            this.SolderPack.AutoSize = true;
+            this.SolderPack.Checked = true;
+            this.SolderPack.Location = new System.Drawing.Point(20, 19);
+            this.SolderPack.Name = "SolderPack";
+            this.SolderPack.Size = new System.Drawing.Size(83, 17);
+            this.SolderPack.TabIndex = 0;
+            this.SolderPack.TabStop = true;
+            this.SolderPack.Text = "Solder Pack";
+            this.SolderPack.UseVisualStyleBackColor = true;
+            this.SolderPack.CheckedChanged += new System.EventHandler(this.SolderPack_CheckedChanged);
+            // 
+            // IncludeConfigZip
+            // 
+            this.IncludeConfigZip.AutoSize = true;
+            this.IncludeConfigZip.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicConfigZip;
+            this.IncludeConfigZip.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.IncludeConfigZip.Location = new System.Drawing.Point(20, 88);
+            this.IncludeConfigZip.Name = "IncludeConfigZip";
+            this.IncludeConfigZip.Size = new System.Drawing.Size(108, 17);
+            this.IncludeConfigZip.TabIndex = 5;
+            this.IncludeConfigZip.Text = "Create Config Zip";
+            this.IncludeConfigZip.UseVisualStyleBackColor = true;
+            this.IncludeConfigZip.CheckedChanged += new System.EventHandler(this.IncludeConfigZip_CheckedChanged);
+            // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 464);
+            this.Controls.Add(this.configureFTP);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.getliteloaderversions);
             this.Controls.Add(this.label5);
@@ -551,14 +563,14 @@
             this.Controls.Add(this.InputFolder);
             this.Name = "SolderHelper";
             this.Text = "Modpack Helper";
-            this.SolderPackType.ResumeLayout(false);
-            this.SolderPackType.PerformLayout();
-            this.DistributionLevel.ResumeLayout(false);
-            this.DistributionLevel.PerformLayout();
-            this.TechnicDistributionLevel.ResumeLayout(false);
-            this.TechnicDistributionLevel.PerformLayout();
             this.missingInfoAction.ResumeLayout(false);
             this.missingInfoAction.PerformLayout();
+            this.TechnicDistributionLevel.ResumeLayout(false);
+            this.TechnicDistributionLevel.PerformLayout();
+            this.DistributionLevel.ResumeLayout(false);
+            this.DistributionLevel.PerformLayout();
+            this.SolderPackType.ResumeLayout(false);
+            this.SolderPackType.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -608,5 +620,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button getliteloaderversions;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button configureFTP;
     }
 }
