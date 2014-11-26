@@ -35,6 +35,7 @@
             this.Host = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.Acceptbutton = new System.Windows.Forms.Button();
+            this.test = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Username
@@ -90,11 +91,21 @@
             // 
             this.Acceptbutton.Location = new System.Drawing.Point(12, 146);
             this.Acceptbutton.Name = "Acceptbutton";
-            this.Acceptbutton.Size = new System.Drawing.Size(128, 28);
-            this.Acceptbutton.TabIndex = 2;
+            this.Acceptbutton.Size = new System.Drawing.Size(71, 28);
+            this.Acceptbutton.TabIndex = 3;
             this.Acceptbutton.Text = "Accept";
             this.Acceptbutton.UseVisualStyleBackColor = true;
             this.Acceptbutton.Click += new System.EventHandler(this.Acceptbutton_Click);
+            // 
+            // test
+            // 
+            this.test.Location = new System.Drawing.Point(90, 146);
+            this.test.Name = "test";
+            this.test.Size = new System.Drawing.Size(54, 28);
+            this.test.TabIndex = 4;
+            this.test.Text = "test";
+            this.test.UseVisualStyleBackColor = true;
+            this.test.Click += new System.EventHandler(this.test_Click);
             // 
             // ftpInfo
             // 
@@ -102,6 +113,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(156, 184);
+            this.Controls.Add(this.test);
             this.Controls.Add(this.Acceptbutton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -109,6 +121,7 @@
             this.Controls.Add(this.Host);
             this.Controls.Add(this.Password);
             this.Controls.Add(this.Username);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ftpInfo";
             this.Text = "ftpInfo";
             this.ResumeLayout(false);
@@ -125,5 +138,6 @@
         private System.Windows.Forms.TextBox Host;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button Acceptbutton;
+        private System.Windows.Forms.Button test;
     }
 }

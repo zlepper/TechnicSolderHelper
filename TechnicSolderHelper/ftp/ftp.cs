@@ -11,14 +11,24 @@ namespace TechnicSolderHelper
     public class Ftp
     {
         private String userName;
-        private SecureString password;
+        private String password;
         private String url;
 
-        public Ftp(String userName, SecureString password, String url)
+        public Ftp()
         {
-            this.userName = userName;
-            this.password = password;
-
+            if (globalfunctions.isUnix())
+            {
+                ConfigHandler ch = new ConfigHandler();
+                url = ch.getConfig("ftpUrl");
+                password = ch.getConfig("ftpPassword");
+                userName = ch.getConfig("ftpUserName");
+            }
+            else
+            {
+                url = Properties.Settings.Default.ftpUrl;
+                userName = Properties.Settings.Default.ftpUserName;
+                password = Properties.Settings.Default.ftpPassword;
+            }
             if (url.EndsWith("/"))
             {
                 url.Remove(url.Length - 1);
@@ -27,8 +37,6 @@ namespace TechnicSolderHelper
             {
                 url = "ftp://" + url;
             }
-
-            this.url = url;
         }
 
         public void uploadFolder(String folderPath)
@@ -39,8 +47,8 @@ namespace TechnicSolderHelper
             {
                 Debug.WriteLine("");
                 Debug.WriteLine(file);
-                Debug.WriteLine(file.Replace(folderPath + "/", ""));
-                uploadFile(file, file.Replace(folderPath + "/", ""), "mods");
+                Debug.WriteLine(file.Replace(folderPath + globalfunctions.pathSeperator, ""));
+                uploadFile(file, file.Replace(folderPath + globalfunctions.pathSeperator, ""), "mods");
             }
 
         }
@@ -49,21 +57,22 @@ namespace TechnicSolderHelper
         {
             if (constant != null)
             {
-                destinationOnServer = constant + "/" + destinationOnServer;
+                destinationOnServer = constant + globalfunctions.pathSeperator + destinationOnServer;
             }
-            String[] tmp = destinationOnServer.Split('/');
+            String[] tmp = destinationOnServer.Split(globalfunctions.pathSeperator);
             List<String> folders = new List<String>(tmp);
             String fileToUpload = folders[folders.Count - 1];
             folders.Remove(folders[folders.Count - 1]);
             for (int i = 0; i < folders.Count; i++)
             {
-                folders[i] = folders[i].Replace("/", "");
+                folders[i] = folders[i].Replace(globalfunctions.pathSeperator.ToString(), "");
             }
             FtpWebRequest request = WebRequest.Create(url) as FtpWebRequest;
             request.Credentials = new NetworkCredential(this.userName, this.password);
             Debug.WriteLine(request.RequestUri);
-            foreach (var folder in folders)
+            foreach (String folder in folders)
             {
+                Debug.WriteLine(folder);
                 if (request.RequestUri.ToString().EndsWith("/"))
                 {
                     request = WebRequest.Create(request.RequestUri + folder) as FtpWebRequest;
@@ -79,15 +88,14 @@ namespace TechnicSolderHelper
                 {
                     FtpWebResponse responce = (FtpWebResponse)request.GetResponse();
                 }
-                catch (System.Net.WebException)
-                {
-                    //Console.WriteLine("error getting responce");
-                    //Console.WriteLine(e.Message);
+                catch (System.Net.WebException e) {
+                    Debug.WriteLine(e.Message);
                 }
             }
 
             try
             {
+                Debug.WriteLine("Uploading file: "+ fileToUpload );
                 request = WebRequest.Create(request.RequestUri + "/" + fileToUpload) as FtpWebRequest;
                 request.Credentials = new NetworkCredential(this.userName, this.password);
                 request.Method = WebRequestMethods.Ftp.UploadFile;

@@ -161,7 +161,7 @@ namespace TechnicSolderHelper
                 CreateFTBPack.Checked = Properties.Settings.Default.CreateFTBPack;
             }
 
-            Boolean CSP = true, CPFP = true, TPP = true, IFV = false, ICZ = true, CP = false;
+            Boolean CSP = true, CPFP = true, TPP = true, IFV = false, ICZ = true, CP = false, UFTP = false;
             if (globalfunctions.isUnix())
             {
                 try
@@ -206,6 +206,13 @@ namespace TechnicSolderHelper
                 catch (Exception)
                 {
                 }
+                try
+                {
+                    UFTP = Convert.ToBoolean(confighandler.getConfig("UploadToFTPServer"));
+                }
+                catch
+                {
+                }
             }
             else
             {
@@ -215,6 +222,7 @@ namespace TechnicSolderHelper
                 IFV = Properties.Settings.Default.IncludeForgeVersion;
                 ICZ = Properties.Settings.Default.CreateTechnicConfigZip;
                 CP = Properties.Settings.Default.CheckTecnicPermissions;
+                UFTP = Properties.Settings.Default.UploadToFTPServer;
             }
 
             if (CSP)
@@ -247,6 +255,15 @@ namespace TechnicSolderHelper
             {
                 TechnicPrivatePermissions.Checked = false;
                 TechnicPublicPermissions.Checked = true;
+            }
+            UploadToFTPServer.Checked = UFTP;
+            if (UploadToFTPServer.Checked)
+            {
+                configureFTP.Show();
+            }
+            else
+            {
+                configureFTP.Hide();
             }
             IncludeForgeVersion.Checked = IFV;
             IncludeConfigZip.Checked = ICZ;
@@ -700,6 +717,49 @@ namespace TechnicSolderHelper
                         return;
                     }
                 }
+            }
+            if(UploadToFTPServer.Checked) {
+                String test = "";
+                if (globalfunctions.isUnix())
+                {
+                    test = confighandler.getConfig("ftpUrl");
+                }
+                else
+                {
+                    test = Properties.Settings.Default.ftpUrl;
+                }
+                if (String.IsNullOrWhiteSpace(test))
+                {
+                    MessageBox.Show("You do not have an uploadurl set for your FTP server.");
+                    return;
+                }
+                if (globalfunctions.isUnix())
+                {
+                    test = confighandler.getConfig("ftpUserName");
+                }
+                else
+                {
+                    test = Properties.Settings.Default.ftpUserName;
+                }
+                if (String.IsNullOrWhiteSpace(test))
+                {
+                    MessageBox.Show("You do not have an username set for your FTP server.");
+                    return;
+                }
+                if (globalfunctions.isUnix())
+                {
+                    test = confighandler.getConfig("ftpPassword");
+                }
+                else
+                {
+                    test = Properties.Settings.Default.ftpPassword;
+                }
+                if (String.IsNullOrWhiteSpace(test))
+                {
+                    MessageBox.Show("You do not have an password set for your FTP server.");
+                    return;
+                }
+
             }
 
             if (CreateTechnicPack.Checked && IncludeForgeVersion.Checked)
@@ -1481,7 +1541,21 @@ namespace TechnicSolderHelper
                 }
 
             }
-            ProgressLabel.Text = "Waiting...";
+            if (CreateTechnicPack.Checked && SolderPack.Checked)
+            {
+                ProgressLabel.Text = "Uploading to FTP Server";
+                if (ftp == null)
+                {
+                    ftp = new Ftp();
+                }
+
+                messageToUser m = new messageToUser();
+                Thread startingThread = new Thread(new ThreadStart(m.uploadingToFTP));
+                startingThread.Start();
+
+                ftp.uploadFolder(Path.Combine(OutputDirectory, "mods"));
+
+            }
 
         }
 
@@ -2019,11 +2093,11 @@ namespace TechnicSolderHelper
                     String modDir = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modDir = Path.Combine(OutputDirectory, mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), "mods");
+                        modDir = Path.Combine(OutputDirectory,"mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), "mods");
                     }
                     else
                     {
-                        modDir = Path.Combine(OutputDirectory, mod.modid.Replace(".", string.Empty).ToLower(), "mods");
+                        modDir = Path.Combine(OutputDirectory,"mods", mod.modid.Replace(".", string.Empty).ToLower(), "mods");
                     }
                     Directory.CreateDirectory(modDir);
 
@@ -2037,21 +2111,21 @@ namespace TechnicSolderHelper
                     String modArchive = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modArchive = Path.Combine(OutputDirectory, mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
+                        modArchive = Path.Combine(OutputDirectory,"mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
                     }
                     else
                     {
-                        modArchive = Path.Combine(OutputDirectory, mod.modid.Replace(".", string.Empty).ToLower(), mod.modid.Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
+                        modArchive = Path.Combine(OutputDirectory,"mods", mod.modid.Replace(".", string.Empty).ToLower(), mod.modid.Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
                     }
                     if (globalfunctions.isUnix())
                     {
                         if (mod.modid.Contains("|"))
                         {
-                            Environment.CurrentDirectory = Path.Combine(OutputDirectory, mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower());
+                            Environment.CurrentDirectory = Path.Combine(OutputDirectory,"mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower());
                         }
                         else
                         {
-                            Environment.CurrentDirectory = Path.Combine(OutputDirectory, mod.modid.Replace(".", string.Empty).ToLower());
+                            Environment.CurrentDirectory = Path.Combine(OutputDirectory,"mods", mod.modid.Replace(".", string.Empty).ToLower());
                         }
                         modDir = "mods";
                         startInfo.FileName = "zip";
@@ -2464,55 +2538,42 @@ namespace TechnicSolderHelper
 
             if (UploadToFTPServer.Checked)
             {
-                var responce = MessageBox.Show("Uploading to FTP can take a very long time. Do you still want to upload to FTP?", "FTP upload", MessageBoxButtons.YesNo);
-                if (responce == System.Windows.Forms.DialogResult.Yes)
+                bool hasbeenwarned = false;
+                if (globalfunctions.isUnix())
                 {
-                    configureFTP.Show();
+                    try
+                    {
+                        hasbeenwarned = Convert.ToBoolean(confighandler.getConfig("HasBeenWarnedAboutLongFTPTimes"));
+                    }
+                    catch { }
                 }
                 else
                 {
-                    return;
+                    hasbeenwarned = Properties.Settings.Default.HasBeenWarnedAboutLongFTBTimes;
                 }
+                if (!hasbeenwarned)
+                {
+                    if (globalfunctions.isUnix()) { confighandler.setConfig("HasBeenWarnedAboutLongFTPTimes", true); } else { Properties.Settings.Default.HasBeenWarnedAboutLongFTBTimes = true; }
+                    var responce = MessageBox.Show("Uploading to FTP can take a very long time. Do you still want to upload to FTP?", "FTP upload", MessageBoxButtons.YesNo);
+                    if (responce == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        configureFTP.Show();
+                    }
+                    else
+                    {
+                        UploadToFTPServer.Checked = false;
+                        return;
+                    }
+                }
+                configureFTP.Show();
             }
             else
             {
                 configureFTP.Hide();
-            }
-            SecureString pass = new SecureString();
-            String userName = "";
-            String ftpUrl = "";
-            try
-            {
-                if (globalfunctions.isUnix())
-                {
-                    foreach (char c in confighandler.getConfig("ftpPassword").ToCharArray())
-                    {
-                        pass.AppendChar(c);
-                    }
-                    userName = confighandler.getConfig("ftpUserName");
-                    ftpUrl = confighandler.getConfig("ftpUrl");
-                }
-                else
-                {
-                    foreach (char c in Properties.Settings.Default.ftpPassword.ToCharArray())
-                    {
-                        pass.AppendChar(c);
-                    }
-                    userName = Properties.Settings.Default.ftpUserName;
-                    ftpUrl = Properties.Settings.Default.ftpUrl;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-
-            if (pass.Length == 0 || String.IsNullOrWhiteSpace(userName))
-            {
-                configureFTP_Click(null, null);
+                return;
             }
             if(ftp == null) {
-                ftp = new Ftp(userName, pass, ftpUrl);
+                ftp = new Ftp();
             }
 
         }
@@ -2615,7 +2676,9 @@ namespace TechnicSolderHelper
 
         private void configureFTP_Click(object sender, EventArgs e)
         {
-            
+            Form f = new ftp.ftpInfo();
+            f.ShowDialog();
+
         }
 
     }

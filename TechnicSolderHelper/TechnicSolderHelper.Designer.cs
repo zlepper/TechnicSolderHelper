@@ -226,7 +226,6 @@
             // UploadToFTPServer
             // 
             this.UploadToFTPServer.AutoSize = true;
-            this.UploadToFTPServer.Enabled = false;
             this.UploadToFTPServer.Location = new System.Drawing.Point(11, 399);
             this.UploadToFTPServer.Name = "UploadToFTPServer";
             this.UploadToFTPServer.Size = new System.Drawing.Size(127, 17);

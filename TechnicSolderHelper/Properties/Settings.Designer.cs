@@ -215,5 +215,17 @@ namespace TechnicSolderHelper.Properties {
                 this["ftpUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HasBeenWarnedAboutLongFTBTimes {
+            get {
+                return ((bool)(this["HasBeenWarnedAboutLongFTBTimes"]));
+            }
+            set {
+                this["HasBeenWarnedAboutLongFTBTimes"] = value;
+            }
+        }
     }
 }
