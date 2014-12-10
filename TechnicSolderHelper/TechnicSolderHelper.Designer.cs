@@ -42,7 +42,7 @@
             this.ProgressLabel = new System.Windows.Forms.Label();
             this.CreateTechnicPack = new System.Windows.Forms.CheckBox();
             this.OutputFolder = new System.Windows.Forms.TextBox();
-            this.InputFolder = new System.Windows.Forms.TextBox();
+            this.InputFolder = new System.Windows.Forms.ComboBox();
             this.UploadToFTPServer = new System.Windows.Forms.CheckBox();
             this.GetForgeVersions = new System.Windows.Forms.Button();
             this.missingInfoAction = new System.Windows.Forms.GroupBox();
@@ -579,7 +579,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox InputFolder;
+        private System.Windows.Forms.ComboBox InputFolder;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox OutputFolder;

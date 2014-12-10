@@ -115,8 +115,11 @@ namespace TechnicSolderHelper
 
             }
             #region Reload Interface
-
-            inputDirectories = JsonConvert.DeserializeObject<List<String>>(File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json")));
+            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json"))) {
+                inputDirectories = JsonConvert.DeserializeObject<List<String>>(File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json")));
+                InputFolder.Items.Clear();
+                InputFolder.Items.AddRange(inputDirectories.ToArray());
+            }
 
             if (globalfunctions.isUnix())
             {
@@ -1567,6 +1570,8 @@ namespace TechnicSolderHelper
             }
             ProgressLabel.Text = "Waiting...";
 
+            InputFolder.Items.Clear();
+            InputFolder.Items.AddRange(inputDirectories.ToArray());
         }
 
         #region Technic Pack Function
@@ -2230,7 +2235,9 @@ namespace TechnicSolderHelper
         private void InputDirectoryBrowse_Click(object sender, EventArgs e)
         {
             FolderBrowser.SelectedPath = InputFolder.Text;
+            Debug.WriteLine(FolderBrowser.SelectedPath);
             DialogResult result = FolderBrowser.ShowDialog();
+            Debug.WriteLine("Shown dialong");
             if (result == DialogResult.OK)
             {
                 InputFolder.Text = FolderBrowser.SelectedPath;
@@ -2703,7 +2710,7 @@ namespace TechnicSolderHelper
 
         private void OnApplicationClosing(object sender, EventArgs e)
         {
-            MessageBox.Show("Exiting");
+            //MessageBox.Show("Exiting");
             String json = JsonConvert.SerializeObject(inputDirectories);
             System.IO.FileInfo inputDirectoriesFile = new System.IO.FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json"));
             File.WriteAllText(inputDirectoriesFile.ToString(), json);
