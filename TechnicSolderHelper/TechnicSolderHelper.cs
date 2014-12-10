@@ -47,6 +47,7 @@ namespace TechnicSolderHelper
         public modpacks modpacks = new modpacks();
         public Dictionary<String, CheckBox> additionalDirectories = new Dictionary<string, CheckBox>();
         public Ftp ftp;
+        public List<String> inputDirectories = new List<String>();
 
         #endregion
 
@@ -702,6 +703,10 @@ namespace TechnicSolderHelper
             {
                 MessageBox.Show("Input directory does not exist!");
                 return;
+            }
+            if (!inputDirectories.Contains(InputDirectory))
+            {
+                inputDirectories.Add(InputDirectory);
             }
             if (checkBox1.Checked)
             {
@@ -1674,7 +1679,7 @@ namespace TechnicSolderHelper
                 if (globalfunctions.isUnix())
                 {
                     startInfo.FileName = "zip";
-                    Directory.CreateDirectory(OutputDirectory + "/" + ConfigFileName);
+                    Directory.CreateDirectory(OutputDirectory + "/mods/" + ConfigFileName);
                     Environment.CurrentDirectory = InputDirectory;
                     startInfo.Arguments = "-r \"" + OutputDirectory + "/mods/" + ConfigFileName + "/" + ConfigFileZipName + "\" \"config\" -x config/YAMPST.nbt";
                 }
@@ -2692,6 +2697,11 @@ namespace TechnicSolderHelper
             f.ShowDialog();
 
         }
+
+        /*private void OnApplicationExit(object sender, EventArgs e)
+        {
+
+        }*/
 
     }
 }
