@@ -2234,10 +2234,8 @@ namespace TechnicSolderHelper
 
         private void InputDirectoryBrowse_Click(object sender, EventArgs e)
         {
-            FolderBrowser.SelectedPath = InputFolder.Text;
-            Debug.WriteLine(FolderBrowser.SelectedPath);
+            FolderBrowser.SelectedPath = InputFolder.SelectedText;
             DialogResult result = FolderBrowser.ShowDialog();
-            Debug.WriteLine("Shown dialong");
             if (result == DialogResult.OK)
             {
                 InputFolder.Text = FolderBrowser.SelectedPath;
