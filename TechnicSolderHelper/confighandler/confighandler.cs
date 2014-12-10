@@ -24,7 +24,15 @@ namespace TechnicSolderHelper
         public string getConfig(String configName)
         {
             Dictionary<String, String> configValues = getAllConfigs();
-            return configValues[configName];
+            try
+            {
+                return configValues[configName];
+            }
+            catch (Exception)
+            {
+                setConfig(configName, "0");
+                return "0";
+            }
         }
 
         public void setConfig(String configName, Boolean configValue)

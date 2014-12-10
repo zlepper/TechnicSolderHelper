@@ -21,10 +21,16 @@ namespace TechnicSolderHelper.ftp
             String pass = "";
             if (globalfunctions.isUnix())
             {
-                ConfigHandler ch = new ConfigHandler();
-                url = ch.getConfig("ftpUrl");
-                username = ch.getConfig("ftpUserName");
-                pass = ch.getConfig("ftpPassword");
+                try
+                {
+                    ConfigHandler ch = new ConfigHandler();
+                    url = ch.getConfig("ftpUrl");
+                    username = ch.getConfig("ftpUserName");
+                    pass = ch.getConfig("ftpPassword");
+                }
+                catch (Exception)
+                {
+                }
             }
             else
             {

@@ -87,15 +87,17 @@ namespace TechnicSolderHelper
                 try
                 {
                     FtpWebResponse responce = (FtpWebResponse)request.GetResponse();
+                    Debug.WriteLine(responce.StatusDescription);
                 }
-                catch (System.Net.WebException e) {
+                catch (System.Net.WebException e)
+                {
                     Debug.WriteLine(e.Message);
                 }
             }
 
             try
             {
-                Debug.WriteLine("Uploading file: "+ fileToUpload );
+                Debug.WriteLine("Uploading file: " + fileToUpload);
                 request = WebRequest.Create(request.RequestUri + "/" + fileToUpload) as FtpWebRequest;
                 request.Credentials = new NetworkCredential(this.userName, this.password);
                 request.Method = WebRequestMethods.Ftp.UploadFile;

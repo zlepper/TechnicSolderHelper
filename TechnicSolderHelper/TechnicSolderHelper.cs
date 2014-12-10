@@ -718,7 +718,8 @@ namespace TechnicSolderHelper
                     }
                 }
             }
-            if(UploadToFTPServer.Checked) {
+            if (UploadToFTPServer.Checked)
+            {
                 String test = "";
                 if (globalfunctions.isUnix())
                 {
@@ -915,7 +916,7 @@ namespace TechnicSolderHelper
                 {
                     continue;
                 }
-                String FileName = file.Replace(InputDirectory, "");
+                String FileName = file.Substring(file.LastIndexOf(globalfunctions.pathSeperator) + 1);
                 ProgressLabel.Text = FileName;
                 //Check for mcmod.info
                 Directory.CreateDirectory(OutputDirectory);
@@ -1440,11 +1441,11 @@ namespace TechnicSolderHelper
                 if (globalfunctions.isUnix())
                 {
                     startInfo.FileName = "zip";
-                    startInfo.Arguments = String.Format("-r \"{0}\" \"minecraft\"", FTBModpackArchive);
+                    startInfo.Arguments = String.Format("-r \"{0}\" \"minecraft\" -x minecraft/config/YAMPST.nbt", FTBModpackArchive);
                 }
                 else
                 {
-                    startInfo.Arguments = "a -y \"" + FTBModpackArchive + "\" \"minecraft\"";
+                    startInfo.Arguments = "a -x YAMPST.nbt -y \"" + FTBModpackArchive + "\" \"minecraft\" ";
                 }
 
                 process.StartInfo = startInfo;
@@ -1541,7 +1542,7 @@ namespace TechnicSolderHelper
                 }
 
             }
-            if (CreateTechnicPack.Checked && SolderPack.Checked)
+            if (CreateTechnicPack.Checked && SolderPack.Checked && UploadToFTPServer.Checked)
             {
                 ProgressLabel.Text = "Uploading to FTP Server";
                 if (ftp == null)
@@ -1556,6 +1557,7 @@ namespace TechnicSolderHelper
                 ftp.uploadFolder(Path.Combine(OutputDirectory, "mods"));
 
             }
+            ProgressLabel.Text = "Waiting...";
 
         }
 
@@ -1584,7 +1586,8 @@ namespace TechnicSolderHelper
                     "ForgeMultipart", 
                     "ejml-",
                     "commons-codec",
-                    "commons-compress"
+                    "commons-compress",
+                    "Cleanup"
                 };
             for (int i = 0; i < skipMods.Length; i++)
             {
@@ -1673,11 +1676,11 @@ namespace TechnicSolderHelper
                     startInfo.FileName = "zip";
                     Directory.CreateDirectory(OutputDirectory + "/" + ConfigFileName);
                     Environment.CurrentDirectory = InputDirectory;
-                    startInfo.Arguments = "-r \"" + OutputDirectory + "/" + ConfigFileName + "/" + ConfigFileZipName + "\" \"config\"";
+                    startInfo.Arguments = "-r \"" + OutputDirectory + "/mods/" + ConfigFileName + "/" + ConfigFileZipName + "\" \"config\" -x config/YAMPST.nbt";
                 }
                 else
                 {
-                    startInfo.Arguments = "a -y \"" + OutputDirectory + "\\" + ConfigFileName + "\\" + ConfigFileZipName + "\" \"" + InputDirectory + "\\config" + "\"";
+                    startInfo.Arguments = "a -x config\\YAMPST.nbt -y \"" + OutputDirectory + "\\mods\\" + ConfigFileName + "\\" + ConfigFileZipName + "\" \"" + InputDirectory + "\\config" + "\"";
                 }
                 startInfo.Arguments = startInfo.Arguments;
                 process.StartInfo = startInfo;
@@ -1695,13 +1698,13 @@ namespace TechnicSolderHelper
                 {
                     Environment.CurrentDirectory = InputDirectory.Remove(InputDirectory.LastIndexOf(globalfunctions.pathSeperator));
                     startInfo.FileName = "zip";
-                    startInfo.Arguments = String.Format("-r \"{0}\" \"config\"", ModpackArchive);
+                    startInfo.Arguments = String.Format("-r \"{0}\" \"config\" -x config/YAMPST.nbt", ModpackArchive);
                 }
                 else
                 {
                     String Input = InputFolder.Text;
                     Input = InputDirectory.Replace("\\mods", "\\config");
-                    startInfo.Arguments = "a -y \"" + ModpackArchive + "\" \"" + Input + "\"";
+                    startInfo.Arguments = "a -x config\\YAMPST.nbt -y \"" + ModpackArchive + "\" \"" + Input + "\"";
                 }
                 process.StartInfo = startInfo;
                 process.Start();
@@ -2093,11 +2096,11 @@ namespace TechnicSolderHelper
                     String modDir = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modDir = Path.Combine(OutputDirectory,"mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), "mods");
+                        modDir = Path.Combine(OutputDirectory, "mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower().Replace(globalfunctions.pathSeperator.ToString(), String.Empty), "mods");
                     }
                     else
                     {
-                        modDir = Path.Combine(OutputDirectory,"mods", mod.modid.Replace(".", string.Empty).ToLower(), "mods");
+                        modDir = Path.Combine(OutputDirectory, "mods", mod.modid.Replace(".", string.Empty).ToLower().Replace(globalfunctions.pathSeperator.ToString(), String.Empty), "mods");
                     }
                     Directory.CreateDirectory(modDir);
 
@@ -2111,21 +2114,21 @@ namespace TechnicSolderHelper
                     String modArchive = "";
                     if (mod.modid.Contains("|"))
                     {
-                        modArchive = Path.Combine(OutputDirectory,"mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
+                        modArchive = Path.Combine(OutputDirectory, "mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower(), mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
                     }
                     else
                     {
-                        modArchive = Path.Combine(OutputDirectory,"mods", mod.modid.Replace(".", string.Empty).ToLower(), mod.modid.Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
+                        modArchive = Path.Combine(OutputDirectory, "mods", mod.modid.Replace(".", string.Empty).ToLower(), mod.modid.Replace(".", string.Empty).ToLower() + "-" + mod.mcversion.ToLower() + "-" + mod.version.ToLower() + ".zip");
                     }
                     if (globalfunctions.isUnix())
                     {
                         if (mod.modid.Contains("|"))
                         {
-                            Environment.CurrentDirectory = Path.Combine(OutputDirectory,"mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower());
+                            Environment.CurrentDirectory = Path.Combine(OutputDirectory, "mods", mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", string.Empty).ToLower());
                         }
                         else
                         {
-                            Environment.CurrentDirectory = Path.Combine(OutputDirectory,"mods", mod.modid.Replace(".", string.Empty).ToLower());
+                            Environment.CurrentDirectory = Path.Combine(OutputDirectory, "mods", mod.modid.Replace(".", string.Empty).ToLower());
                         }
                         modDir = "mods";
                         startInfo.FileName = "zip";
@@ -2545,7 +2548,9 @@ namespace TechnicSolderHelper
                     {
                         hasbeenwarned = Convert.ToBoolean(confighandler.getConfig("HasBeenWarnedAboutLongFTPTimes"));
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                 }
                 else
                 {
@@ -2553,7 +2558,14 @@ namespace TechnicSolderHelper
                 }
                 if (!hasbeenwarned)
                 {
-                    if (globalfunctions.isUnix()) { confighandler.setConfig("HasBeenWarnedAboutLongFTPTimes", true); } else { Properties.Settings.Default.HasBeenWarnedAboutLongFTBTimes = true; }
+                    if (globalfunctions.isUnix())
+                    {
+                        confighandler.setConfig("HasBeenWarnedAboutLongFTPTimes", true);
+                    }
+                    else
+                    {
+                        Properties.Settings.Default.HasBeenWarnedAboutLongFTBTimes = true;
+                    }
                     var responce = MessageBox.Show("Uploading to FTP can take a very long time. Do you still want to upload to FTP?", "FTP upload", MessageBoxButtons.YesNo);
                     if (responce == System.Windows.Forms.DialogResult.Yes)
                     {
@@ -2572,7 +2584,8 @@ namespace TechnicSolderHelper
                 configureFTP.Hide();
                 return;
             }
-            if(ftp == null) {
+            if (ftp == null)
+            {
                 ftp = new Ftp();
             }
 
