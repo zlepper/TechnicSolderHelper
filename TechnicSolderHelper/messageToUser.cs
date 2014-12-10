@@ -18,6 +18,7 @@ namespace TechnicSolderHelper
         public void uploadingToFTP()
         {
             MessageBox.Show("Uploading stuff to FTP");
+            Console.WriteLine("Yep, i'm uploading all the things!!!");
             return;
         }
     }

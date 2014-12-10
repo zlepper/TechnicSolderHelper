@@ -53,8 +53,48 @@ namespace TechnicSolderHelper
 
         }
 
+        private List<String> getDirectoryContent(String location)
+        {
+            List<String> folderContent = new List<string>();
+            FtpWebRequest request;
+            if (location == null)
+            {
+                request = (FtpWebRequest)WebRequest.Create(this.url);
+            }
+            else
+            {
+                request = (FtpWebRequest)WebRequest.Create(location);
+            }
+            request.Method = WebRequestMethods.Ftp.ListDirectory;
+
+            request.Credentials = new NetworkCredential(userName, password);
+
+            using (FtpWebResponse responce = (FtpWebResponse)request.GetResponse())
+            {
+                Stream responceStream = responce.GetResponseStream();
+                using (StreamReader reader = new StreamReader(responceStream))
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            String s = reader.ReadLine();
+                            folderContent.Add(s);
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return folderContent;
+        }
+
         public void uploadFile(String FullyQualifiedPathName, String destinationOnServer, String constant)
         {
+            getDirectoryContent(null);
             if (constant != null)
             {
                 destinationOnServer = constant + globalfunctions.pathSeperator + destinationOnServer;
@@ -73,25 +113,40 @@ namespace TechnicSolderHelper
             foreach (String folder in folders)
             {
                 Debug.WriteLine(folder);
-                if (request.RequestUri.ToString().EndsWith("/"))
+                if (getDirectoryContent(request.RequestUri.ToString()).Contains(folder))
                 {
-                    request = WebRequest.Create(request.RequestUri + folder) as FtpWebRequest;
+                    if (request.RequestUri.ToString().EndsWith("/"))
+                    {
+                        request = WebRequest.Create(request.RequestUri + folder) as FtpWebRequest;
+                    }
+                    else
+                    {
+                        request = WebRequest.Create(request.RequestUri + "/" + folder) as FtpWebRequest;
+                    }
+                    Debug.WriteLine(request.RequestUri);
                 }
                 else
                 {
-                    request = WebRequest.Create(request.RequestUri + "/" + folder) as FtpWebRequest;
-                }
-                Debug.WriteLine(request.RequestUri);
-                request.Credentials = new NetworkCredential(this.userName, this.password);
-                request.Method = WebRequestMethods.Ftp.MakeDirectory;
-                try
-                {
-                    FtpWebResponse responce = (FtpWebResponse)request.GetResponse();
-                    Debug.WriteLine(responce.StatusDescription);
-                }
-                catch (System.Net.WebException e)
-                {
-                    Debug.WriteLine(e.Message);
+                    if (request.RequestUri.ToString().EndsWith("/"))
+                    {
+                        request = WebRequest.Create(request.RequestUri + folder) as FtpWebRequest;
+                    }
+                    else
+                    {
+                        request = WebRequest.Create(request.RequestUri + "/" + folder) as FtpWebRequest;
+                    }
+                    Debug.WriteLine(request.RequestUri);
+                    request.Credentials = new NetworkCredential(this.userName, this.password);
+                    request.Method = WebRequestMethods.Ftp.MakeDirectory;
+                    try
+                    {
+                        FtpWebResponse responce = (FtpWebResponse)request.GetResponse();
+                        Debug.WriteLine(responce.StatusDescription);
+                    }
+                    catch (System.Net.WebException e)
+                    {
+                        Debug.WriteLine(e.Message);
+                    }
                 }
             }
 
