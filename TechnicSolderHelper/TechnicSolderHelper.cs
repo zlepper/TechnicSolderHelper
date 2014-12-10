@@ -1445,7 +1445,7 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    startInfo.Arguments = "a -x YAMPST.nbt -y \"" + FTBModpackArchive + "\" \"minecraft\" ";
+                    startInfo.Arguments = "a -x!minecraft\\config\\YAMPST.nbt -y \"" + FTBModpackArchive + "\" \"minecraft\" ";
                 }
 
                 process.StartInfo = startInfo;
@@ -1680,9 +1680,8 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    startInfo.Arguments = "a -x config\\YAMPST.nbt -y \"" + OutputDirectory + "\\mods\\" + ConfigFileName + "\\" + ConfigFileZipName + "\" \"" + InputDirectory + "\\config" + "\"";
+                    startInfo.Arguments = "a -x!config\\YAMPST.nbt -y \"" + OutputDirectory + "\\mods\\" + ConfigFileName + "\\" + ConfigFileZipName + "\" \"" + InputDirectory + "\\config" + "\"";
                 }
-                startInfo.Arguments = startInfo.Arguments;
                 process.StartInfo = startInfo;
                 process.Start();
 
@@ -1704,7 +1703,7 @@ namespace TechnicSolderHelper
                 {
                     String Input = InputFolder.Text;
                     Input = InputDirectory.Replace("\\mods", "\\config");
-                    startInfo.Arguments = "a -x config\\YAMPST.nbt -y \"" + ModpackArchive + "\" \"" + Input + "\"";
+                    startInfo.Arguments = "a -x!config\\YAMPST.nbt -y \"" + ModpackArchive + "\" \"" + Input + "\"";
                 }
                 process.StartInfo = startInfo;
                 process.Start();
