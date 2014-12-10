@@ -115,6 +115,9 @@ namespace TechnicSolderHelper
 
             }
             #region Reload Interface
+
+            inputDirectories = JsonConvert.DeserializeObject<List<String>>(File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json")));
+
             if (globalfunctions.isUnix())
             {
                 try
@@ -2698,10 +2701,13 @@ namespace TechnicSolderHelper
 
         }
 
-        /*private void OnApplicationExit(object sender, EventArgs e)
+        private void OnApplicationClosing(object sender, EventArgs e)
         {
-
-        }*/
+            MessageBox.Show("Exiting");
+            String json = JsonConvert.SerializeObject(inputDirectories);
+            System.IO.FileInfo inputDirectoriesFile = new System.IO.FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json"));
+            File.WriteAllText(inputDirectoriesFile.ToString(), json);
+        }
 
     }
 }

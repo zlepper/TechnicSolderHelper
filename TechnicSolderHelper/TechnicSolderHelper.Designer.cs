@@ -563,6 +563,7 @@
             this.Controls.Add(this.InputFolder);
             this.Name = "SolderHelper";
             this.Text = "Modpack Helper";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(OnApplicationClosing);
             this.missingInfoAction.ResumeLayout(false);
             this.missingInfoAction.PerformLayout();
             this.TechnicDistributionLevel.ResumeLayout(false);
