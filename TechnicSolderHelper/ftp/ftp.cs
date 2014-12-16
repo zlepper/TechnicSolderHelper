@@ -41,7 +41,16 @@ namespace TechnicSolderHelper
 
         public void uploadFolder(String folderPath)
         {
-            String[] files = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories);
+            String[] files;
+            try
+            {
+                files = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories);
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                Debug.WriteLine("No files was created, so no reason to upload anything");
+                return;
+            }
 
             foreach (String file in files)
             {
