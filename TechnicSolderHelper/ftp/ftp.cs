@@ -4,7 +4,8 @@ using System.Net;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security;
-using System.Security.Cryptography;
+using TechnicSolderHelper.confighandler;
+using TechnicSolderHelper.cryptography;
 
 namespace TechnicSolderHelper
 {
@@ -16,18 +17,27 @@ namespace TechnicSolderHelper
 
         public Ftp()
         {
+            Crypto crypto = new Crypto();
             if (globalfunctions.isUnix())
             {
                 ConfigHandler ch = new ConfigHandler();
                 url = ch.getConfig("ftpUrl");
-                password = ch.getConfig("ftpPassword");
+                password = crypto.DecryptString(ch.getConfig("ftpPassword"));
                 userName = ch.getConfig("ftpUserName");
             }
             else
             {
                 url = Properties.Settings.Default.ftpUrl;
                 userName = Properties.Settings.Default.ftpUserName;
-                password = Properties.Settings.Default.ftpPassword;
+                try
+                {
+                    password = crypto.DecryptString(Properties.Settings.Default.ftpPassword);
+                }
+                catch (Exception)
+                {
+                    Properties.Settings.Default.ftpPassword = crypto.EncryptToString("password");
+                    password = "password";
+                }
             }
             if (url.EndsWith("/"))
             {
@@ -88,6 +98,10 @@ namespace TechnicSolderHelper
                         try
                         {
                             String s = reader.ReadLine();
+                            if (s.Contains("/"))
+                            {
+                                s = s.Substring(s.LastIndexOf("/") + 1);
+                            }
                             folderContent.Add(s);
                         }
                         catch (Exception)
@@ -122,7 +136,8 @@ namespace TechnicSolderHelper
             foreach (String folder in folders)
             {
                 Debug.WriteLine(folder);
-                if (getDirectoryContent(request.RequestUri.ToString()).Contains(folder))
+                List<String> directoryContent = getDirectoryContent(request.RequestUri.ToString());
+                if (directoryContent.Contains(folder))
                 {
                     if (request.RequestUri.ToString().EndsWith("/"))
                     {

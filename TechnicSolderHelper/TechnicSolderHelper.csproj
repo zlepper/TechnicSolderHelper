@@ -125,6 +125,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data">
+      <HintPath>..\packages\MySql.Data.6.9.5\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -164,6 +167,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="cryptography\crypto.cs" />
+    <Compile Include="cryptography\KeyHandler.cs" />
     <Compile Include="ftp\ftpInfo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,6 +186,13 @@
     <Compile Include="SQL\FTBPermissionsSQLHelper.cs" />
     <Compile Include="SQL\ModListSQLHelper.cs" />
     <Compile Include="SQL\OwnPermissionsSQLHelper.cs" />
+    <Compile Include="SQL\SolderSQLHandler.cs" />
+    <Compile Include="SQL\sqlInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SQL\sqlInfo.Designer.cs">
+      <DependentUpon>sqlInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="TechnicSolderHelper.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -269,6 +281,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SQL\sqlInfo.resx">
+      <DependentUpon>sqlInfo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TechnicSolderHelper.resx">
       <DependentUpon>TechnicSolderHelper.cs</DependentUpon>

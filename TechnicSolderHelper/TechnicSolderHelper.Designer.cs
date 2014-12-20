@@ -71,6 +71,10 @@
             this.ZipPack = new System.Windows.Forms.RadioButton();
             this.SolderPack = new System.Windows.Forms.RadioButton();
             this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
+            this.testmysql = new System.Windows.Forms.Button();
+            this.useSolder = new System.Windows.Forms.CheckBox();
+            this.configureSolder = new System.Windows.Forms.Button();
+            this.savesqlcommands = new System.Windows.Forms.CheckBox();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
@@ -218,7 +222,7 @@
             // 
             this.InputFolder.Location = new System.Drawing.Point(12, 25);
             this.InputFolder.Name = "InputFolder";
-            this.InputFolder.Size = new System.Drawing.Size(432, 20);
+            this.InputFolder.Size = new System.Drawing.Size(432, 21);
             this.InputFolder.TabIndex = 0;
             this.InputFolder.Text = "C:\\Users\\User\\AppData\\Roaming\\.minecraft\\mods";
             this.InputFolder.TextChanged += new System.EventHandler(this.InputFolder_TextChanged);
@@ -226,12 +230,11 @@
             // UploadToFTPServer
             // 
             this.UploadToFTPServer.AutoSize = true;
-            this.UploadToFTPServer.Enabled = true;
             this.UploadToFTPServer.Location = new System.Drawing.Point(11, 399);
             this.UploadToFTPServer.Name = "UploadToFTPServer";
-            this.UploadToFTPServer.Size = new System.Drawing.Size(127, 17);
+            this.UploadToFTPServer.Size = new System.Drawing.Size(135, 17);
             this.UploadToFTPServer.TabIndex = 12;
-            this.UploadToFTPServer.Text = "Upload to FTP server";
+            this.UploadToFTPServer.Text = "Upload to FTP address";
             this.UploadToFTPServer.UseVisualStyleBackColor = true;
             this.UploadToFTPServer.CheckedChanged += new System.EventHandler(this.UploadToFTPServer_CheckedChanged);
             // 
@@ -525,11 +528,57 @@
             this.IncludeConfigZip.UseVisualStyleBackColor = true;
             this.IncludeConfigZip.CheckedChanged += new System.EventHandler(this.IncludeConfigZip_CheckedChanged);
             // 
+            // testmysql
+            // 
+            this.testmysql.Location = new System.Drawing.Point(429, 371);
+            this.testmysql.Name = "testmysql";
+            this.testmysql.Size = new System.Drawing.Size(75, 23);
+            this.testmysql.TabIndex = 25;
+            this.testmysql.Text = "Test mysql";
+            this.testmysql.UseVisualStyleBackColor = true;
+            this.testmysql.Click += new System.EventHandler(this.testmysql_Click);
+            // 
+            // useSolder
+            // 
+            this.useSolder.AutoSize = true;
+            this.useSolder.Location = new System.Drawing.Point(168, 298);
+            this.useSolder.Name = "useSolder";
+            this.useSolder.Size = new System.Drawing.Size(128, 17);
+            this.useSolder.TabIndex = 26;
+            this.useSolder.Text = "Use solder installation";
+            this.useSolder.UseVisualStyleBackColor = true;
+            this.useSolder.CheckedChanged += new System.EventHandler(this.useSolder_CheckedChanged);
+            // 
+            // configureSolder
+            // 
+            this.configureSolder.Location = new System.Drawing.Point(168, 321);
+            this.configureSolder.Name = "configureSolder";
+            this.configureSolder.Size = new System.Drawing.Size(103, 23);
+            this.configureSolder.TabIndex = 27;
+            this.configureSolder.Text = "Configure solder";
+            this.configureSolder.UseVisualStyleBackColor = true;
+            this.configureSolder.Click += new System.EventHandler(this.configureSolder_Click);
+            // 
+            // savesqlcommands
+            // 
+            this.savesqlcommands.AutoSize = true;
+            this.savesqlcommands.Location = new System.Drawing.Point(168, 351);
+            this.savesqlcommands.Name = "savesqlcommands";
+            this.savesqlcommands.Size = new System.Drawing.Size(132, 17);
+            this.savesqlcommands.TabIndex = 28;
+            this.savesqlcommands.Text = "Save SQL commands ";
+            this.savesqlcommands.UseVisualStyleBackColor = true;
+            this.savesqlcommands.CheckedChanged += new System.EventHandler(this.savesqlcommands_CheckedChanged);
+            // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 464);
+            this.Controls.Add(this.savesqlcommands);
+            this.Controls.Add(this.configureSolder);
+            this.Controls.Add(this.useSolder);
+            this.Controls.Add(this.testmysql);
             this.Controls.Add(this.configureFTP);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.getliteloaderversions);
@@ -563,7 +612,7 @@
             this.Controls.Add(this.InputFolder);
             this.Name = "SolderHelper";
             this.Text = "Modpack Helper";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(OnApplicationClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnApplicationClosing);
             this.missingInfoAction.ResumeLayout(false);
             this.missingInfoAction.PerformLayout();
             this.TechnicDistributionLevel.ResumeLayout(false);
@@ -622,5 +671,9 @@
         private System.Windows.Forms.Button getliteloaderversions;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button configureFTP;
+        private System.Windows.Forms.Button testmysql;
+        private System.Windows.Forms.CheckBox useSolder;
+        private System.Windows.Forms.Button configureSolder;
+        private System.Windows.Forms.CheckBox savesqlcommands;
     }
 }

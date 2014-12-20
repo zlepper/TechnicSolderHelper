@@ -36,13 +36,14 @@
             this.label3 = new System.Windows.Forms.Label();
             this.Acceptbutton = new System.Windows.Forms.Button();
             this.test = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Username
             // 
             this.Username.Location = new System.Drawing.Point(12, 27);
             this.Username.Name = "Username";
-            this.Username.Size = new System.Drawing.Size(128, 20);
+            this.Username.Size = new System.Drawing.Size(179, 20);
             this.Username.TabIndex = 0;
             // 
             // label1
@@ -58,7 +59,7 @@
             // 
             this.Password.Location = new System.Drawing.Point(12, 74);
             this.Password.Name = "Password";
-            this.Password.Size = new System.Drawing.Size(128, 20);
+            this.Password.Size = new System.Drawing.Size(179, 20);
             this.Password.TabIndex = 1;
             this.Password.UseSystemPasswordChar = true;
             // 
@@ -75,7 +76,7 @@
             // 
             this.Host.Location = new System.Drawing.Point(12, 120);
             this.Host.Name = "Host";
-            this.Host.Size = new System.Drawing.Size(128, 20);
+            this.Host.Size = new System.Drawing.Size(179, 20);
             this.Host.TabIndex = 2;
             // 
             // label3
@@ -91,7 +92,7 @@
             // 
             this.Acceptbutton.Location = new System.Drawing.Point(12, 146);
             this.Acceptbutton.Name = "Acceptbutton";
-            this.Acceptbutton.Size = new System.Drawing.Size(71, 28);
+            this.Acceptbutton.Size = new System.Drawing.Size(52, 26);
             this.Acceptbutton.TabIndex = 3;
             this.Acceptbutton.Text = "Accept";
             this.Acceptbutton.UseVisualStyleBackColor = true;
@@ -99,20 +100,31 @@
             // 
             // test
             // 
-            this.test.Location = new System.Drawing.Point(90, 146);
+            this.test.Location = new System.Drawing.Point(70, 146);
             this.test.Name = "test";
-            this.test.Size = new System.Drawing.Size(54, 28);
+            this.test.Size = new System.Drawing.Size(55, 26);
             this.test.TabIndex = 4;
             this.test.Text = "test";
             this.test.UseVisualStyleBackColor = true;
             this.test.Click += new System.EventHandler(this.test_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(131, 146);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(60, 26);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Cancel";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // ftpInfo
             // 
             this.AcceptButton = this.Acceptbutton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(156, 184);
+            this.ClientSize = new System.Drawing.Size(203, 184);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.test);
             this.Controls.Add(this.Acceptbutton);
             this.Controls.Add(this.label3);
@@ -139,5 +151,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button Acceptbutton;
         private System.Windows.Forms.Button test;
+        private System.Windows.Forms.Button button1;
     }
 }

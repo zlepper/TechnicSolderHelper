@@ -227,5 +227,65 @@ namespace TechnicSolderHelper.Properties {
                 this["HasBeenWarnedAboutLongFTBTimes"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string mysqlPassword {
+            get {
+                return ((string)(this["mysqlPassword"]));
+            }
+            set {
+                this["mysqlPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string mysqlUsername {
+            get {
+                return ((string)(this["mysqlUsername"]));
+            }
+            set {
+                this["mysqlUsername"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string mysqlDatabase {
+            get {
+                return ((string)(this["mysqlDatabase"]));
+            }
+            set {
+                this["mysqlDatabase"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string mysqlAddress {
+            get {
+                return ((string)(this["mysqlAddress"]));
+            }
+            set {
+                this["mysqlAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool useSolder {
+            get {
+                return ((bool)(this["useSolder"]));
+            }
+            set {
+                this["useSolder"] = value;
+            }
+        }
     }
 }

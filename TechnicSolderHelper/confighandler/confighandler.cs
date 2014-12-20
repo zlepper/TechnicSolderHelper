@@ -2,8 +2,10 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 
-namespace TechnicSolderHelper
+namespace TechnicSolderHelper.confighandler
 {
     public class ConfigHandler
     {
@@ -30,8 +32,8 @@ namespace TechnicSolderHelper
             }
             catch (Exception)
             {
-                setConfig(configName, "0");
-                return "0";
+                setConfig(configName, String.Empty);
+                return String.Empty;
             }
         }
 

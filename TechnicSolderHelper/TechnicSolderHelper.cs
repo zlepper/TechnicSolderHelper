@@ -21,6 +21,7 @@ using TechnicSolderHelper.SQL;
 using TechnicSolderHelper.forge;
 using System.Security.Cryptography;
 using System.Security;
+using TechnicSolderHelper.confighandler;
 
 
 namespace TechnicSolderHelper
@@ -36,6 +37,7 @@ namespace TechnicSolderHelper
         public OwnPermissionsSQLHelper OwnPermsSQLhelper = new OwnPermissionsSQLHelper();
         public ForgeSQLHelper forgesqlhelper = new ForgeSQLHelper();
         public liteloaderSQLHelper liteloadersqlhelper = new liteloaderSQLHelper();
+        public SolderSQLHandler soldersqlhandler = new SolderSQLHandler();
         public String SevenZipLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "TechnicSolderHelper", "7za.exe");
         public Process process = new System.Diagnostics.Process();
         public ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -48,11 +50,17 @@ namespace TechnicSolderHelper
         public Dictionary<String, CheckBox> additionalDirectories = new Dictionary<string, CheckBox>();
         public Ftp ftp;
         public List<String> inputDirectories = new List<String>();
+        public String SQLcommandPath = "";
+
+        public int modpackID;
+        public int buildID;
 
         #endregion
 
         public SolderHelper()
         {
+            //if (Debugger.IsAttached) { Properties.Settings.Default.Reset(); }
+
             if (globalfunctions.isUnix())
             {
                 globalfunctions.pathSeperator = '/';
@@ -169,6 +177,22 @@ namespace TechnicSolderHelper
             }
 
             Boolean CSP = true, CPFP = true, TPP = true, IFV = false, ICZ = true, CP = false, UFTP = false;
+            try
+            {
+                useSolder.Checked = Convert.ToBoolean(confighandler.getConfig("useSolder"));
+            }
+            catch (Exception)
+            {
+                useSolder.Checked = false;
+            }
+            if (useSolder.Checked)
+            {
+                configureSolder.Show();
+            }
+            else
+            {
+                configureSolder.Hide();
+            }
             if (globalfunctions.isUnix())
             {
                 try
@@ -696,6 +720,8 @@ namespace TechnicSolderHelper
             FTBOwnPermissionList = Path.Combine(OutputDirectory, "Own Permission List.txt");
             FTBPermissionList = Path.Combine(OutputDirectory, "FTB Permission List.txt");
             technicPermissionList = Path.Combine(OutputDirectory, "Technic Permission List.txt");
+            SQLcommandPath = Path.Combine(OutputDirectory, "commands.sql");
+            CurrentMCVersion = null;
 
             if (globalfunctions.isUnix())
             {
@@ -742,7 +768,7 @@ namespace TechnicSolderHelper
                 }
                 if (String.IsNullOrWhiteSpace(test))
                 {
-                    MessageBox.Show("You do not have an uploadurl set for your FTP server.");
+                    MessageBox.Show("You do not have an uploadurl set for your FTP address.");
                     return;
                 }
                 if (globalfunctions.isUnix())
@@ -755,7 +781,7 @@ namespace TechnicSolderHelper
                 }
                 if (String.IsNullOrWhiteSpace(test))
                 {
-                    MessageBox.Show("You do not have an username set for your FTP server.");
+                    MessageBox.Show("You do not have an username set for your FTP address.");
                     return;
                 }
                 if (globalfunctions.isUnix())
@@ -768,7 +794,7 @@ namespace TechnicSolderHelper
                 }
                 if (String.IsNullOrWhiteSpace(test))
                 {
-                    MessageBox.Show("You do not have an password set for your FTP server.");
+                    MessageBox.Show("You do not have an password set for your FTP address.");
                     return;
                 }
 
@@ -918,6 +944,27 @@ namespace TechnicSolderHelper
                 ModpackArchive = Path.Combine(OutputDirectory, String.Format("{0}-{1}.zip", ModpackName, ModpackVersion));
             }
             FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
+
+            if (String.IsNullOrWhiteSpace(CurrentMCVersion))
+	        {
+                CurrentMCVersion = Prompt.ShowDialog("What is the Minecraft Version for the modpack?", "Minecraft Version");
+	        }
+
+            if (useSolder.Checked)
+            {
+                modpackID = soldersqlhandler.getModpackID(ModpackName);
+                if (modpackID == -1)
+                {
+                    soldersqlhandler.createNewModpack(ModpackName, ModpackName.ToLower().Replace(" ", "-"));
+                    modpackID = soldersqlhandler.getModpackID(ModpackName);
+                }
+                buildID = soldersqlhandler.getBuildID(modpackID, ModpackVersion);
+                if (buildID == -1)
+                {
+                    soldersqlhandler.createModpackBuild(modpackID, ModpackVersion, CurrentMCVersion);
+                    buildID = soldersqlhandler.getBuildID(modpackID, ModpackVersion);
+                }
+            }
 
             //Check if files have already been added
             foreach (String file in files)
@@ -1085,6 +1132,7 @@ namespace TechnicSolderHelper
                                 mod.mcversion = liteloadermod.mcversion;
                                 mod.modid = liteloadermod.name.Replace(" ", "");
                                 mod.name = liteloadermod.name;
+                                mod.description = liteloadermod.description;
                                 mod.authors = new List<string>();
                                 mod.authors.Add(liteloadermod.author);
 
@@ -1274,8 +1322,8 @@ namespace TechnicSolderHelper
                                 }
                                 //So we need to include this folder
                                 Environment.CurrentDirectory = levelOverInputDirectory;
-                                String outputfile = Path.Combine(OutputDirectory, dirName.ToLower(), dirName.ToLower() + "-" + ModpackName + "-" + ModpackVersion + ".zip");
-                                Directory.CreateDirectory(Path.Combine(OutputDirectory, dirName.ToLower()));
+                                String outputfile = Path.Combine(OutputDirectory,"mods", dirName.ToLower(), dirName.ToLower() + "-" + makeUrlFriendly(ModpackName + "-" + ModpackVersion) + ".zip");
+                                Directory.CreateDirectory(Path.Combine(OutputDirectory,"mods", dirName.ToLower()));
                                 if (globalfunctions.isUnix())
                                 {
                                     startInfo.FileName = "zip";
@@ -1290,6 +1338,21 @@ namespace TechnicSolderHelper
                                 process.Start();
                                 createTableRow(dirName, dirName.ToLower(), ModpackName.ToLower() + "-" + ModpackVersion.ToLower());
                                 process.WaitForExit();
+
+                                if (useSolder.Checked)
+                                {
+                                    int id = soldersqlhandler.getModID(dirName.ToLower());
+                                    if (id == -1)
+                                    {
+                                        soldersqlhandler.addModToSolder(dirName.ToLower(), null, null, null, dirName);
+                                        id = soldersqlhandler.getModID(dirName.ToLower());
+                                    }
+                                    soldersqlhandler.addNewModversionToSolder(id, ModpackName + "-" + ModpackVersion, SQLHelper.calculateMD5(outputfile).ToLower());
+
+                                    id = soldersqlhandler.getModID(dirName.ToLower());
+                                    int modVersionID = soldersqlhandler.getModversionID(id, ModpackName + "-" + ModpackVersion);
+                                    soldersqlhandler.addModversionToBuild(buildID, modVersionID);
+                                }
 
                             }
                             if (File.Exists(md5valuesFile))
@@ -1353,7 +1416,7 @@ namespace TechnicSolderHelper
                         String folderName = cb.Key.Substring(cb.Key.LastIndexOf(globalfunctions.pathSeperator) + 1);
                         if (SolderPack.Checked)
                         {
-                            String of = Path.Combine(OutputDirectory, folderName);
+                            String of = Path.Combine(OutputDirectory,"mods", folderName);
                             Directory.CreateDirectory(of);
                             String outputfile = Path.Combine(of, folderName + "-" + ModpackName + "-" + ModpackVersion + ".zip");
                             if (globalfunctions.isUnix())
@@ -1369,7 +1432,22 @@ namespace TechnicSolderHelper
                             process.StartInfo = startInfo;
                             process.Start();
                             process.WaitForExit();
+
                             createTableRow(folderName, folderName.ToLower(), ModpackName + "-" + ModpackVersion);
+
+                            if (useSolder.Checked)
+                            {
+                                int id = soldersqlhandler.getModID(folderName.ToLower());
+                                if (id == -1)
+                                {
+                                    soldersqlhandler.addModToSolder(folderName.ToLower(), null, null, null, folderName);
+                                    id = soldersqlhandler.getModID(folderName.ToLower());
+                                }
+                                soldersqlhandler.addNewModversionToSolder(id, ModpackName + "-" + ModpackVersion, SQLHelper.calculateMD5(outputfile).ToLower());
+
+                                int modVersionID = soldersqlhandler.getModversionID(soldersqlhandler.getModID(folderName.ToLower()), ModpackName + "-" + ModpackVersion);
+                                soldersqlhandler.addModversionToBuild(buildID, modVersionID);
+                            }
                         }
                         else
                         {
@@ -1387,6 +1465,7 @@ namespace TechnicSolderHelper
                             process.StartInfo = startInfo;
                             process.Start();
                             process.WaitForExit();
+
                         }
                     }
                 }
@@ -1477,8 +1556,8 @@ namespace TechnicSolderHelper
                 wb.DownloadFile(forgeinfo.downloadurl, tempfile);
                 if (SolderPack.Checked)
                 {
-                    Directory.CreateDirectory(Path.Combine(OutputDirectory, "forge"));
-                    String outputfile = Path.Combine(OutputDirectory, "forge", "forge-" + forgeinfo.version + ".zip");
+                    Directory.CreateDirectory(Path.Combine(OutputDirectory,"mods", "forge"));
+                    String outputfile = Path.Combine(OutputDirectory,"mods", "forge", "forge-" + forgeinfo.version + ".zip");
                     if (globalfunctions.isUnix())
                     {
                         startInfo.FileName = "zip";
@@ -1490,6 +1569,8 @@ namespace TechnicSolderHelper
                         startInfo.Arguments = "a -y \"" + outputfile + "\" \"" + tmpdir + "\"";
                     }
                     createTableRow("Minecraft Forge", "forge", forgeinfo.version.ToLower());
+
+                    
                 }
                 else
                 {
@@ -1507,6 +1588,22 @@ namespace TechnicSolderHelper
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();
+
+                if (useSolder.Checked && SolderPack.Checked)
+                {
+                    int id = soldersqlhandler.getModID("forge");
+                    if (id == -1)
+                    {
+                        soldersqlhandler.addModToSolder("forge", "Minecraft Forge is a common open source API allowing a broad range of mods to work cooperatively together. It allows many mods to be created without them editing the main Minecraft code.", "LexManos, Eloram, Spacetoad", "http://MinecraftForge.net", "Minecraft Forge");
+                        id = soldersqlhandler.getModID("forge");
+                    }
+                    String outputfile = Path.Combine(OutputDirectory, "mods", "forge", "forge-" + forgeinfo.version + ".zip");
+                    soldersqlhandler.addNewModversionToSolder(id, forgeinfo.version.ToLower(), SQLHelper.calculateMD5(outputfile).ToLower());
+
+                    int modVersionID = soldersqlhandler.getModversionID(soldersqlhandler.getModID("forge"), forgeinfo.version.ToLower());
+                    soldersqlhandler.addModversionToBuild(buildID, modVersionID);
+                }
+
                 Directory.Delete(tmpdir, true);
             }
 
@@ -1653,6 +1750,11 @@ namespace TechnicSolderHelper
             return true;
         }
 
+        public String makeUrlFriendly(String value)
+        {
+            return Regex.Replace(value, @"[^A-Za-z0-9_\.~]+", "-");
+        }
+
         public void createConfigZip()
         {
             if (SolderPack.Checked)
@@ -1664,11 +1766,11 @@ namespace TechnicSolderHelper
                 String ConfigFileName = "";
                 if (ModpackName == null)
                 {
-                    ConfigFileName = Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config FileInfo Name");
+                    ConfigFileName = makeUrlFriendly(Prompt.ShowDialog("What do you want the file name of the config " + Environment.NewLine + "folder to be?", "Config FileInfo Name"));
                 }
                 else
                 {
-                    ConfigFileName = ModpackName + "-configs";
+                    ConfigFileName = makeUrlFriendly(ModpackName) + "-configs";
                 }
                 String ConfigVersion = "";
                 if (ModpackVersion == null)
@@ -1682,25 +1784,40 @@ namespace TechnicSolderHelper
                 String ConfigFileZipName = ConfigFileName + "-" + ConfigVersion;
                 if (!(ConfigFileZipName.EndsWith(".zip")))
                 {
-                    ConfigFileZipName = ConfigFileZipName + ".zip";
+                    ConfigFileZipName = ConfigFileZipName.ToLower().Replace(" ", "-") + ".zip";
                 }
                 if (globalfunctions.isUnix())
                 {
                     startInfo.FileName = "zip";
-                    Directory.CreateDirectory(OutputDirectory + "/mods/" + ConfigFileName);
+                    Directory.CreateDirectory(OutputDirectory + "/mods/" + ConfigFileName.ToLower());
                     Environment.CurrentDirectory = InputDirectory;
-                    startInfo.Arguments = "-r \"" + OutputDirectory + "/mods/" + ConfigFileName + "/" + ConfigFileZipName + "\" \"config\" -x config/YAMPST.nbt";
+                    startInfo.Arguments = "-r \"" + OutputDirectory + "/mods/" + ConfigFileName.ToLower() + "/" + ConfigFileZipName.ToLower() + "\" \"config\" -x config/YAMPST.nbt";
                 }
                 else
                 {
-                    startInfo.Arguments = "a -x!config\\YAMPST.nbt -y \"" + OutputDirectory + "\\mods\\" + ConfigFileName + "\\" + ConfigFileZipName + "\" \"" + InputDirectory + "\\config" + "\"";
+                    startInfo.Arguments = "a -x!config\\YAMPST.nbt -y \"" + OutputDirectory + "\\mods\\" + ConfigFileName.ToLower() + "\\" + ConfigFileZipName.ToLower() + "\" \"" + InputDirectory + "\\config" + "\"";
                 }
                 process.StartInfo = startInfo;
                 process.Start();
 
-                createTableRow(ConfigFileName, ConfigFileName, ConfigVersion.ToLower());
+                createTableRow(ConfigFileName, ConfigFileName.ToLower(), ConfigVersion.ToLower());
 
                 process.WaitForExit();
+
+                if (useSolder.Checked)
+                {
+                    int id = soldersqlhandler.getModID(ConfigFileName.ToLower());
+                    if (id == -1)
+                    {
+                        soldersqlhandler.addModToSolder(ConfigFileName.ToLower(), null, null, null, ConfigFileName);
+                        id = soldersqlhandler.getModID(ConfigFileName.ToLower());
+                    }
+                    String outputFile = Path.Combine(OutputDirectory, "mods", ConfigFileName.ToLower(), ConfigFileZipName.ToLower());
+                    soldersqlhandler.addNewModversionToSolder(id, ModpackVersion, SQLHelper.calculateMD5(outputFile).ToLower());
+
+                    int modVersionID = soldersqlhandler.getModversionID(soldersqlhandler.getModID(ConfigFileName.ToLower()), ModpackVersion);
+                    soldersqlhandler.addModversionToBuild(buildID, modVersionID);
+                }
 
 
             }
@@ -2103,6 +2220,25 @@ namespace TechnicSolderHelper
             }
             if (SolderPack.Checked)
             {
+                string modid = "";
+                if (mod.modid.Contains("|"))
+                {
+                    modid = mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", String.Empty).ToLower();
+                }
+                else
+                {
+                    modid = mod.modid.Replace(".", string.Empty).ToLower();
+                }
+                if (useSolder.Checked)
+                {
+                    if (soldersqlhandler.isModversionOnline(modid, mod.mcversion.ToLower() + "-" + mod.version.ToLower()))
+                    {
+                        int id = soldersqlhandler.getModID(modid);
+                        int modVersionID = soldersqlhandler.getModversionID(id, mod.mcversion.ToLower() + "-" + mod.version.ToLower());
+                        soldersqlhandler.addModversionToBuild(buildID, modVersionID);
+                        return;
+                    }
+                }
                 if (!ModsSQLhelper.IsFileInSolder(modfile))
                 {
                     String modDir = "";
@@ -2157,23 +2293,27 @@ namespace TechnicSolderHelper
                     ModsSQLhelper.addMod(mod.name, mod.modid, mod.version, mod.mcversion, FileName, modMD5, true);
 
                     // Add mod info to a html file
-                    string s = "";
-                    if (mod.modid.Contains("|"))
-                    {
-                        s = mod.modid.Remove(mod.modid.LastIndexOf("|")).Replace(".", String.Empty).ToLower();
-                    }
-                    else
-                    {
-                        s = mod.modid.Replace(".", string.Empty).ToLower();
-                    }
-                    createTableRow(mod.name.Replace("|", ""), s, mod.mcversion.ToLower() + "-" + mod.version.ToLower());
-
+                    createTableRow(mod.name.Replace("|", ""), modid, mod.mcversion.ToLower() + "-" + mod.version.ToLower());
+                    
                     process.WaitForExit();
 
+                    if (useSolder.Checked)
+                    {
+                        int id = soldersqlhandler.getModID(modid);
+                        if (id == -1)
+                        {
+                            soldersqlhandler.addModToSolder(modid, mod.description, getAuthors(mod), mod.url, mod.name);
+                            id = soldersqlhandler.getModID(modid);
+                        }
+                        string archive = Path.Combine(OutputDirectory, "mods", modArchive);
+                        soldersqlhandler.addNewModversionToSolder(modid, mod.mcversion.ToLower() + "-" + mod.version.ToLower(), SQLHelper.calculateMD5(archive).ToLower());
+
+                        id = soldersqlhandler.getModID(modid);
+                        int modVersionID = soldersqlhandler.getModversionID(id, mod.mcversion.ToLower() + "-" + mod.version.ToLower());
+                        soldersqlhandler.addModversionToBuild(buildID, modVersionID);
+                    }
+
                     Directory.Delete(modDir, true);
-                }
-                else
-                {
                 }
             }
             else
@@ -2304,51 +2444,54 @@ namespace TechnicSolderHelper
 
 
             List<String> dirs = new List<string>();
-            foreach (String dir in Directory.GetDirectories(superDirectory))
+            if (Directory.Exists(superDirectory))
             {
-                if (dir.EndsWith("mods") || dir.EndsWith("config"))
+                foreach (String dir in Directory.GetDirectories(superDirectory))
                 {
-                    continue;
+                    if (dir.EndsWith("mods") || dir.EndsWith("config"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        dirs.Add(dir);
+                    }
                 }
-                else
+                additionalDirectories.Clear();
+                int c = 0;
+                for (int i = 23; i < dirs.Count * 23 + 23; i += 23)
                 {
-                    dirs.Add(dir);
+                    if (!additionalDirectories.ContainsKey(dirs[c]))
+                    {
+                        String dirname = dirs[c].Substring(dirs[c].LastIndexOf(globalfunctions.pathSeperator) + 1);
+                        additionalDirectories.Add(dirs[c], new CheckBox()
+                            {
+                                Left = 20,
+                                Top = i,
+                                Height = 20,
+                                Text = dirname
+                            });
+                    }
+                    c++;
                 }
-            }
-            additionalDirectories.Clear();
-            int c = 0;
-            for (int i = 23; i < dirs.Count * 23 + 23; i += 23)
-            {
-                if (!additionalDirectories.ContainsKey(dirs[c]))
+
+
+                String serversDat = Path.Combine(superDirectory, "servers.dat");
+                if (File.Exists(serversDat))
                 {
-                    String dirname = dirs[c].Substring(dirs[c].LastIndexOf(globalfunctions.pathSeperator) + 1);
-                    additionalDirectories.Add(dirs[c], new CheckBox()
+                    additionalDirectories.Add(serversDat, new CheckBox()
                         {
                             Left = 20,
-                            Top = i,
+                            Top = c * 23 + 23,
                             Height = 20,
-                            Text = dirname
+                            Text = "Servers.dat file"
                         });
                 }
-                c++;
-            }
-
-
-            String serversDat = Path.Combine(superDirectory, "servers.dat");
-            if (File.Exists(serversDat))
-            {
-                additionalDirectories.Add(serversDat, new CheckBox()
-                    {
-                        Left = 20,
-                        Top = c * 23 + 23,
-                        Height = 20,
-                        Text = "Servers.dat file"
-                    });
-            }
-            groupBox1.Controls.Clear();
-            foreach (CheckBox cb in additionalDirectories.Values)
-            {
-                groupBox1.Controls.Add(cb);
+                groupBox1.Controls.Clear();
+                foreach (CheckBox cb in additionalDirectories.Values)
+                {
+                    groupBox1.Controls.Add(cb);
+                }
             }
         }
 
@@ -2703,7 +2846,7 @@ namespace TechnicSolderHelper
         {
             Form f = new ftp.ftpInfo();
             f.ShowDialog();
-
+            ftp = new Ftp();
         }
 
         private void OnApplicationClosing(object sender, EventArgs e)
@@ -2712,6 +2855,37 @@ namespace TechnicSolderHelper
             String json = JsonConvert.SerializeObject(inputDirectories);
             System.IO.FileInfo inputDirectoriesFile = new System.IO.FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json"));
             File.WriteAllText(inputDirectoriesFile.ToString(), json);
+        }
+
+        private void testmysql_Click(object sender, EventArgs e)
+        {
+            SolderSQLHandler sqh = new SolderSQLHandler("192.168.1.60", "solder", "password", "solderapi");
+            Debug.WriteLine(sqh.getModID("forge"));
+        }
+
+        private void configureSolder_Click(object sender, EventArgs e)
+        {
+            Form f = new sqlInfo();
+            f.ShowDialog();
+            soldersqlhandler = new SolderSQLHandler();
+        }
+
+        private void useSolder_CheckedChanged(object sender, EventArgs e)
+        {
+            confighandler.setConfig("useSolder", useSolder.Checked);
+            if (useSolder.Checked)
+            {
+                configureSolder.Show();
+            }
+            else
+            {
+                configureSolder.Hide();
+            }
+        }
+
+        private void savesqlcommands_CheckedChanged(object sender, EventArgs e)
+        {
+            confighandler.setConfig("saveSQL", savesqlcommands.Checked);
         }
 
     }

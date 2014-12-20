@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
+using TechnicSolderHelper.confighandler;
+using TechnicSolderHelper.cryptography;
 
 namespace TechnicSolderHelper.ftp
 {
@@ -19,24 +21,16 @@ namespace TechnicSolderHelper.ftp
             String url = "";
             String username = "";
             String pass = "";
-            if (globalfunctions.isUnix())
+            Crypto crypto = new Crypto();
+            try
             {
-                try
-                {
-                    ConfigHandler ch = new ConfigHandler();
-                    url = ch.getConfig("ftpUrl");
-                    username = ch.getConfig("ftpUserName");
-                    pass = ch.getConfig("ftpPassword");
-                }
-                catch (Exception)
-                {
-                }
+                ConfigHandler ch = new ConfigHandler();
+                url = ch.getConfig("ftpUrl");
+                username = ch.getConfig("ftpUserName");
+                pass = crypto.DecryptString(ch.getConfig("ftpPassword"));
             }
-            else
+            catch (Exception)
             {
-                url = Properties.Settings.Default.ftpUrl;
-                username = Properties.Settings.Default.ftpUserName;
-                pass = Properties.Settings.Default.ftpPassword;
             }
             Username.Text = username;
             Password.Text = pass;
@@ -55,19 +49,11 @@ namespace TechnicSolderHelper.ftp
                 String url = Host.Text;
                 if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
                 {
-                    if (globalfunctions.isUnix())
-                    {
-                        ConfigHandler ch = new ConfigHandler();
-                        ch.setConfig("ftpUserName", Username.Text);
-                        ch.setConfig("ftpUrl", url);
-                        ch.setConfig("ftpPassword", Password.Text);
-                    }
-                    else
-                    {
-                        Properties.Settings.Default.ftpUserName = Username.Text;
-                        Properties.Settings.Default.ftpUrl = Host.Text;
-                        Properties.Settings.Default.ftpPassword = Password.Text;
-                    }
+                    Crypto crypto = new Crypto();
+                    ConfigHandler ch = new ConfigHandler();
+                    ch.setConfig("ftpUserName", Username.Text);
+                    ch.setConfig("ftpUrl", url);
+                    ch.setConfig("ftpPassword", crypto.EncryptToString(Password.Text));
                     this.Close();
                 }
                 else
@@ -109,6 +95,11 @@ namespace TechnicSolderHelper.ftp
             {
                 return "Invalid hostname";
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
