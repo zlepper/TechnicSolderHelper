@@ -40,7 +40,7 @@ namespace TechnicSolderHelper.SQL
 
         private bool isEverythingFilledIn()
         {
-            if (String.IsNullOrWhiteSpace(database.Text) || String.IsNullOrWhiteSpace(serveraddress.Text) || String.IsNullOrWhiteSpace(password.Text) || String.IsNullOrWhiteSpace(username.Text))
+            if (String.IsNullOrWhiteSpace(database.Text) || String.IsNullOrWhiteSpace(serveraddress.Text) || String.IsNullOrWhiteSpace(username.Text))
             {
                 return false;
             }
