@@ -112,7 +112,7 @@ namespace TechnicSolderHelper.SQL
         /// <returns>True if the modpack exists, otherwise false.</returns>
         public int getModpackID(String modpackName)
         {
-            String sql = "SELECT id FROM solderapi.modpacks WHERE slug LIKE @modpack OR name LIKE @modpack";
+            String sql = String.Format("SELECT id FROM {0}.modpacks WHERE slug LIKE @modpack OR name LIKE @modpack", database);
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
