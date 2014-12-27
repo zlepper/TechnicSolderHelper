@@ -72,20 +72,13 @@ namespace TechnicSolderHelper
             UserName = Environment.UserName;
             InitializeComponent();
             bool firstRun = true;
-            if (globalfunctions.isUnix())
+            try
             {
-                try
-                {
-                    firstRun = Convert.ToBoolean(confighandler.getConfig("FirstRun"));
-                }
-                catch (Exception)
-                {
-                    firstRun = true;
-                }
+                firstRun = Convert.ToBoolean(confighandler.getConfig("FirstRun"));
             }
-            else
+            catch (Exception)
             {
-                firstRun = Properties.Settings.Default.FirstRun;
+                firstRun = true;
             }
             if (firstRun)
             {
@@ -93,19 +86,9 @@ namespace TechnicSolderHelper
                 Thread startingThread = new Thread(new ThreadStart(m.firstTimeRun));
                 startingThread.Start();
                 getliteloaderversions_Click(null, null);
-                if (globalfunctions.isUnix())
-                {
-                    confighandler.setConfig("InputDirectory", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods");
-                    confighandler.setConfig("OutputDirectory", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "/SolderHelper");
-                    confighandler.setConfig("FirstRun", "false");
-                }
-                else
-                {
-                    Properties.Settings.Default.InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft\mods";
-                    Properties.Settings.Default.OutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\SolderHelper";
-                    Properties.Settings.Default.FirstRun = false;
-                    Properties.Settings.Default.Save();
-                }
+                confighandler.setConfig("InputDirectory", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods");
+                confighandler.setConfig("OutputDirectory", Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "/SolderHelper");
+                confighandler.setConfig("FirstRun", "false");
 
                 #region Find MC versions
 
@@ -123,57 +106,47 @@ namespace TechnicSolderHelper
 
             }
             #region Reload Interface
-            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json"))) {
+            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json")))
+            {
                 inputDirectories = JsonConvert.DeserializeObject<List<String>>(File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json")));
                 InputFolder.Items.Clear();
                 InputFolder.Items.AddRange(inputDirectories.ToArray());
             }
-
-            if (globalfunctions.isUnix())
+            try
             {
-                try
-                {
-                    InputFolder.Text = confighandler.getConfig("InputDirectory");
-                }
-                catch (Exception)
-                {
-                    InputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods";
-                }
-
-                try
-                {
-                    OutputFolder.Text = confighandler.getConfig("OutputDirectory");
-                }
-                catch (Exception)
-                {
-                    OutputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "/SolderHelper";
-                }
-
-                try
-                {
-                    CreateTechnicPack.Checked = Convert.ToBoolean(confighandler.getConfig("CreateTechnicSolderFiles"));
-                    SolderPackType.Visible = CreateTechnicPack.Checked;
-                }
-                catch (Exception)
-                {
-                    CreateTechnicPack.Checked = false;
-                }
-
-                try
-                {
-                    CreateFTBPack.Checked = Convert.ToBoolean(confighandler.getConfig("CreateFTBPack"));
-                }
-                catch (Exception)
-                {
-                    CreateFTBPack.Checked = false;
-                }
+                InputFolder.Text = confighandler.getConfig("InputDirectory");
             }
-            else
+            catch (Exception)
             {
-                InputFolder.Text = Properties.Settings.Default.InputDirectory.ToString();
-                OutputFolder.Text = Properties.Settings.Default.OutputDirectory.ToString();
-                CreateTechnicPack.Checked = Properties.Settings.Default.CreateTechnicSolderFiles;
-                CreateFTBPack.Checked = Properties.Settings.Default.CreateFTBPack;
+                InputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods";
+            }
+
+            try
+            {
+                OutputFolder.Text = confighandler.getConfig("OutputDirectory");
+            }
+            catch (Exception)
+            {
+                OutputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "/SolderHelper";
+            }
+
+            try
+            {
+                CreateTechnicPack.Checked = Convert.ToBoolean(confighandler.getConfig("CreateTechnicSolderFiles"));
+                SolderPackType.Visible = CreateTechnicPack.Checked;
+            }
+            catch (Exception)
+            {
+                CreateTechnicPack.Checked = false;
+            }
+
+            try
+            {
+                CreateFTBPack.Checked = Convert.ToBoolean(confighandler.getConfig("CreateFTBPack"));
+            }
+            catch (Exception)
+            {
+                CreateFTBPack.Checked = false;
             }
 
             Boolean CSP = true, CPFP = true, TPP = true, IFV = false, ICZ = true, CP = false, UFTP = false;
@@ -193,67 +166,54 @@ namespace TechnicSolderHelper
             {
                 configureSolder.Hide();
             }
-            if (globalfunctions.isUnix())
+            try
             {
-                try
-                {
-                    CSP = Convert.ToBoolean(confighandler.getConfig("CreateSolderPack"));
-                }
-                catch (Exception)
-                {
-                }
-                try
-                {
-                    CPFP = Convert.ToBoolean(confighandler.getConfig("CreatePrivateFTBPack"));
-                }
-                catch (Exception)
-                {
-                }
-                try
-                {
-                    TPP = Convert.ToBoolean(confighandler.getConfig("TechnicPrivatePermissionsLevel"));
-                }
-                catch (Exception)
-                {
-                }
-                try
-                {
-                    IFV = Convert.ToBoolean(confighandler.getConfig("IncludeForgeVersion"));
-                }
-                catch (Exception)
-                {
-                }
-                try
-                {
-                    ICZ = Convert.ToBoolean(confighandler.getConfig("CreateTechnicConfigZip"));
-                }
-                catch (Exception)
-                {
-                }
-                try
-                {
-                    CP = Convert.ToBoolean(confighandler.getConfig("CheckTecnicPermissions"));
-                }
-                catch (Exception)
-                {
-                }
-                try
-                {
-                    UFTP = Convert.ToBoolean(confighandler.getConfig("UploadToFTPServer"));
-                }
-                catch
-                {
-                }
+                CSP = Convert.ToBoolean(confighandler.getConfig("CreateSolderPack"));
             }
-            else
+            catch (Exception)
             {
-                CSP = Properties.Settings.Default.CreateSolderPack;
-                CPFP = Properties.Settings.Default.CreatePrivateFTBPack;
-                TPP = Properties.Settings.Default.TechnicPrivatePermissionsLevel;
-                IFV = Properties.Settings.Default.IncludeForgeVersion;
-                ICZ = Properties.Settings.Default.CreateTechnicConfigZip;
-                CP = Properties.Settings.Default.CheckTecnicPermissions;
-                UFTP = Properties.Settings.Default.UploadToFTPServer;
+            }
+            try
+            {
+                CPFP = Convert.ToBoolean(confighandler.getConfig("CreatePrivateFTBPack"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                TPP = Convert.ToBoolean(confighandler.getConfig("TechnicPrivatePermissionsLevel"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                IFV = Convert.ToBoolean(confighandler.getConfig("IncludeForgeVersion"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                ICZ = Convert.ToBoolean(confighandler.getConfig("CreateTechnicConfigZip"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                CP = Convert.ToBoolean(confighandler.getConfig("CheckTecnicPermissions"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                UFTP = Convert.ToBoolean(confighandler.getConfig("UploadToFTPServer"));
+            }
+            catch
+            {
             }
 
             if (CSP)
@@ -757,42 +717,21 @@ namespace TechnicSolderHelper
             }
             if (UploadToFTPServer.Checked)
             {
-                String test = "";
-                if (globalfunctions.isUnix())
-                {
-                    test = confighandler.getConfig("ftpUrl");
-                }
-                else
-                {
-                    test = Properties.Settings.Default.ftpUrl;
-                }
-                if (String.IsNullOrWhiteSpace(test))
+                String tmp = "";
+                tmp = confighandler.getConfig("ftpUrl");
+                if (String.IsNullOrWhiteSpace(tmp))
                 {
                     MessageBox.Show("You do not have an uploadurl set for your FTP address.");
                     return;
                 }
-                if (globalfunctions.isUnix())
-                {
-                    test = confighandler.getConfig("ftpUserName");
-                }
-                else
-                {
-                    test = Properties.Settings.Default.ftpUserName;
-                }
-                if (String.IsNullOrWhiteSpace(test))
+                tmp = confighandler.getConfig("ftpUserName");
+                if (String.IsNullOrWhiteSpace(tmp))
                 {
                     MessageBox.Show("You do not have an username set for your FTP address.");
                     return;
                 }
-                if (globalfunctions.isUnix())
-                {
-                    test = confighandler.getConfig("ftpPassword");
-                }
-                else
-                {
-                    test = Properties.Settings.Default.ftpPassword;
-                }
-                if (String.IsNullOrWhiteSpace(test))
+                tmp = confighandler.getConfig("ftpPassword");
+                if (String.IsNullOrWhiteSpace(tmp))
                 {
                     MessageBox.Show("You do not have an password set for your FTP address.");
                     return;
@@ -868,18 +807,8 @@ namespace TechnicSolderHelper
                 System.Uri SevenWeb = new Uri("http://cloud.zlepper.dk/7za.exe");
                 wb.DownloadFile(SevenWeb, SevenZipLocation);
             }
-
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("InputDirectory", InputFolder.Text);
-                confighandler.setConfig("OutputDirectory", OutputFolder.Text);
-            }
-            else
-            {
-                Properties.Settings.Default.InputDirectory = InputFolder.Text;
-                Properties.Settings.Default.OutputDirectory = OutputFolder.Text;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("InputDirectory", InputFolder.Text);
+            confighandler.setConfig("OutputDirectory", OutputFolder.Text);
 
             path = Path.Combine(OutputDirectory, "mods.html");
 
@@ -946,9 +875,9 @@ namespace TechnicSolderHelper
             FTBModpackArchive = Path.Combine(OutputDirectory, ModpackName + "-" + ModpackVersion + "-FTB" + ".zip");
 
             if (String.IsNullOrWhiteSpace(CurrentMCVersion))
-	        {
+            {
                 CurrentMCVersion = Prompt.ShowDialog("What is the Minecraft Version for the modpack?", "Minecraft Version");
-	        }
+            }
 
             if (useSolder.Checked)
             {
@@ -1322,8 +1251,8 @@ namespace TechnicSolderHelper
                                 }
                                 //So we need to include this folder
                                 Environment.CurrentDirectory = levelOverInputDirectory;
-                                String outputfile = Path.Combine(OutputDirectory,"mods", dirName.ToLower(), dirName.ToLower() + "-" + makeUrlFriendly(ModpackName + "-" + ModpackVersion) + ".zip");
-                                Directory.CreateDirectory(Path.Combine(OutputDirectory,"mods", dirName.ToLower()));
+                                String outputfile = Path.Combine(OutputDirectory, "mods", dirName.ToLower(), dirName.ToLower() + "-" + makeUrlFriendly(ModpackName + "-" + ModpackVersion) + ".zip");
+                                Directory.CreateDirectory(Path.Combine(OutputDirectory, "mods", dirName.ToLower()));
                                 if (globalfunctions.isUnix())
                                 {
                                     startInfo.FileName = "zip";
@@ -1416,7 +1345,7 @@ namespace TechnicSolderHelper
                         String folderName = cb.Key.Substring(cb.Key.LastIndexOf(globalfunctions.pathSeperator) + 1);
                         if (SolderPack.Checked)
                         {
-                            String of = Path.Combine(OutputDirectory,"mods", folderName);
+                            String of = Path.Combine(OutputDirectory, "mods", folderName);
                             Directory.CreateDirectory(of);
                             String outputfile = Path.Combine(of, folderName + "-" + ModpackName + "-" + ModpackVersion + ".zip");
                             if (globalfunctions.isUnix())
@@ -1556,8 +1485,8 @@ namespace TechnicSolderHelper
                 wb.DownloadFile(forgeinfo.downloadurl, tempfile);
                 if (SolderPack.Checked)
                 {
-                    Directory.CreateDirectory(Path.Combine(OutputDirectory,"mods", "forge"));
-                    String outputfile = Path.Combine(OutputDirectory,"mods", "forge", "forge-" + forgeinfo.version + ".zip");
+                    Directory.CreateDirectory(Path.Combine(OutputDirectory, "mods", "forge"));
+                    String outputfile = Path.Combine(OutputDirectory, "mods", "forge", "forge-" + forgeinfo.version + ".zip");
                     if (globalfunctions.isUnix())
                     {
                         startInfo.FileName = "zip";
@@ -2379,15 +2308,7 @@ namespace TechnicSolderHelper
             if (result == DialogResult.OK)
             {
                 InputFolder.Text = FolderBrowser.SelectedPath;
-                if (globalfunctions.isUnix())
-                {
-                    confighandler.setConfig("InputDirectory", InputFolder.Text);
-                }
-                else
-                {
-                    Properties.Settings.Default.InputDirectory = InputFolder.Text;
-                    Properties.Settings.Default.Save();
-                }
+                confighandler.setConfig("InputDirectory", InputFolder.Text);
             }
             InputFolder_TextChanged(null, null);
 
@@ -2400,15 +2321,7 @@ namespace TechnicSolderHelper
             if (result == DialogResult.OK)
             {
                 OutputFolder.Text = FolderBrowser.SelectedPath;
-                if (globalfunctions.isUnix())
-                {
-                    confighandler.setConfig("OutputDirectory", OutputFolder.Text);
-                }
-                else
-                {
-                    Properties.Settings.Default.OutputDirectory = OutputFolder.Text;
-                    Properties.Settings.Default.Save();
-                }
+                confighandler.setConfig("OutputDirectory", OutputFolder.Text);
             }
 
         }
@@ -2430,15 +2343,7 @@ namespace TechnicSolderHelper
 
         private void InputFolder_TextChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("InputDirectory", InputFolder.Text);
-            }
-            else
-            {
-                Properties.Settings.Default.InputDirectory = InputFolder.Text;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("InputDirectory", InputFolder.Text);
 
             String superDirectory = InputFolder.Text.Remove(InputFolder.Text.LastIndexOf(globalfunctions.pathSeperator));
 
@@ -2497,15 +2402,7 @@ namespace TechnicSolderHelper
 
         private void OutputFolder_TextChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("OutputDirectory", OutputFolder.Text);
-            }
-            else
-            {
-                Properties.Settings.Default.OutputDirectory = OutputFolder.Text;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("OutputDirectory", OutputFolder.Text);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -2519,15 +2416,7 @@ namespace TechnicSolderHelper
 
         private void CreateFTBPack_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("CreateFTBPack", CreateFTBPack.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.CreateFTBPack = CreateFTBPack.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("CreateFTBPack", CreateFTBPack.Checked);
 
             if (CreateFTBPack.Checked)
             {
@@ -2541,15 +2430,7 @@ namespace TechnicSolderHelper
 
         private void PrivateFTBPack_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("CreatePrivateFTBPack", PrivateFTBPack.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.CreatePrivateFTBPack = PrivateFTBPack.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("CreatePrivateFTBPack", PrivateFTBPack.Checked);
         }
 
         #endregion
@@ -2558,15 +2439,7 @@ namespace TechnicSolderHelper
 
         private void CreateTechnicPack_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("CreateTechnicSolderFiles", CreateTechnicPack.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.CreateTechnicSolderFiles = CreateTechnicPack.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("CreateTechnicSolderFiles", CreateTechnicPack.Checked);
             if (CreateTechnicPack.Checked)
             {
                 SolderPackType.Show();
@@ -2610,28 +2483,12 @@ namespace TechnicSolderHelper
 
         private void IncludeConfigZip_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("CreateTechnicConfigZip", IncludeConfigZip.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.CreateTechnicConfigZip = IncludeConfigZip.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("CreateTechnicConfigZip", IncludeConfigZip.Checked);
         }
 
         private void SolderPack_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("CreateSolderPack", SolderPack.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.CreateSolderPack = SolderPack.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("CreateSolderPack", SolderPack.Checked);
 
             if (SolderPack.Checked)
             {
@@ -2647,15 +2504,7 @@ namespace TechnicSolderHelper
 
         private void CheckPermissions_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("CheckTecnicPermissions", CheckPermissions.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.CheckTecnicPermissions = CheckPermissions.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("CheckTecnicPermissions", CheckPermissions.Checked);
 
             if (CheckPermissions.Checked)
             {
@@ -2669,58 +2518,28 @@ namespace TechnicSolderHelper
 
         private void TechnicPrivatePermissions_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("TechnicPrivatePermissionsLevel", TechnicPrivatePermissions.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.TechnicPrivatePermissionsLevel = TechnicPrivatePermissions.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("TechnicPrivatePermissionsLevel", TechnicPrivatePermissions.Checked);
         }
 
         #endregion
 
         private void UploadToFTPServer_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("UploadToFTPServer", UploadToFTPServer.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.UploadToFTPServer = UploadToFTPServer.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("UploadToFTPServer", UploadToFTPServer.Checked);
 
             if (UploadToFTPServer.Checked)
             {
                 bool hasbeenwarned = false;
-                if (globalfunctions.isUnix())
+                try
                 {
-                    try
-                    {
-                        hasbeenwarned = Convert.ToBoolean(confighandler.getConfig("HasBeenWarnedAboutLongFTPTimes"));
-                    }
-                    catch
-                    {
-                    }
+                    hasbeenwarned = Convert.ToBoolean(confighandler.getConfig("HasBeenWarnedAboutLongFTPTimes"));
                 }
-                else
+                catch
                 {
-                    hasbeenwarned = Properties.Settings.Default.HasBeenWarnedAboutLongFTBTimes;
                 }
                 if (!hasbeenwarned)
                 {
-                    if (globalfunctions.isUnix())
-                    {
-                        confighandler.setConfig("HasBeenWarnedAboutLongFTPTimes", true);
-                    }
-                    else
-                    {
-                        Properties.Settings.Default.HasBeenWarnedAboutLongFTBTimes = true;
-                    }
+                    confighandler.setConfig("HasBeenWarnedAboutLongFTPTimes", true);
                     var responce = MessageBox.Show("Uploading to FTP can take a very long time. Do you still want to upload to FTP?", "FTP upload", MessageBoxButtons.YesNo);
                     if (responce == System.Windows.Forms.DialogResult.Yes)
                     {
@@ -2776,15 +2595,7 @@ namespace TechnicSolderHelper
 
         private void IncludeForgeVersion_CheckedChanged(object sender, EventArgs e)
         {
-            if (globalfunctions.isUnix())
-            {
-                confighandler.setConfig("IncludeForgeVersion", IncludeForgeVersion.Checked);
-            }
-            else
-            {
-                Properties.Settings.Default.IncludeForgeVersion = IncludeForgeVersion.Checked;
-                Properties.Settings.Default.Save();
-            }
+            confighandler.setConfig("IncludeForgeVersion", IncludeForgeVersion.Checked);
 
             if (IncludeForgeVersion.Checked)
             {
