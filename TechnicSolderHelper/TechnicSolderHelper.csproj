@@ -169,12 +169,6 @@
   <ItemGroup>
     <Compile Include="cryptography\crypto.cs" />
     <Compile Include="cryptography\KeyHandler.cs" />
-    <Compile Include="ftp\ftpInfo.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ftp\ftpInfo.Designer.cs">
-      <DependentUpon>ftpInfo.cs</DependentUpon>
-    </Compile>
     <Compile Include="mod.cs" />
     <Compile Include="PermLevel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -217,7 +211,13 @@
     <Compile Include="messageToUser.cs" />
     <Compile Include="SQL\forge\liteloader.cs" />
     <Compile Include="modpacks.cs" />
-    <Compile Include="ftp\ftp.cs" />
+    <Compile Include="FileUpload\ftpInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileUpload\ftpInfo.Designer.cs">
+      <DependentUpon>ftpInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileUpload\ftp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -275,9 +275,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ftp\ftpInfo.resx">
-      <DependentUpon>ftpInfo.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -287,6 +284,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TechnicSolderHelper.resx">
       <DependentUpon>TechnicSolderHelper.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileUpload\ftpInfo.resx">
+      <DependentUpon>ftpInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

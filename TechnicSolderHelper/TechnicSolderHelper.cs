@@ -22,6 +22,7 @@ using TechnicSolderHelper.forge;
 using System.Security.Cryptography;
 using System.Security;
 using TechnicSolderHelper.confighandler;
+using TechnicSolderHelper.FileUpload;
 
 
 namespace TechnicSolderHelper
@@ -2655,7 +2656,7 @@ namespace TechnicSolderHelper
 
         private void configureFTP_Click(object sender, EventArgs e)
         {
-            Form f = new ftp.ftpInfo();
+            Form f = new FileUpload.ftpInfo();
             f.ShowDialog();
             ftp = new Ftp();
         }

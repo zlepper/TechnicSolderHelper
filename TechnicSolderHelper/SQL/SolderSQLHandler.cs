@@ -59,7 +59,7 @@ namespace TechnicSolderHelper.SQL
             tables.Add("modversions");
             tables.Add("mods");
             tables.Add("modpacks");
-            tables.Add("laravel_migrations");
+            tables.Add("migrations");
             tables.Add("keys");
             tables.Add("clients");
             tables.Add("client_modpack");
