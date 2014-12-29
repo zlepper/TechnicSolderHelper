@@ -1,11 +1,14 @@
-﻿namespace TechnicSolderHelper.FileUpload
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace TechnicSolderHelper.FileUpload
 {
-    partial class ftpInfo
+    partial class FtpInfo
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -143,14 +146,14 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox Username;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox Password;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox Host;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button Acceptbutton;
-        private System.Windows.Forms.Button test;
-        private System.Windows.Forms.Button button1;
+        private TextBox Username;
+        private Label label1;
+        private TextBox Password;
+        private Label label2;
+        private TextBox Host;
+        private Label label3;
+        private Button Acceptbutton;
+        private Button test;
+        private Button button1;
     }
 }

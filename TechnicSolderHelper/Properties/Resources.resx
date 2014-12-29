@@ -98,4 +98,82 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+  <data name="SolderHelper_SolderHelper_Create_Forge_zip" xml:space="preserve">
+    <value>Create Forge zip</value>
+  </data>
+  <data name="SolderHelper_SolderHelper_Create_Config_zip" xml:space="preserve">
+    <value>Create Config zip</value>
+  </data>
+  <data name="SolderHelper_SolderHelper_Include_Forge_in_zip" xml:space="preserve">
+    <value>Include Forge in zip</value>
+  </data>
+  <data name="SolderHelper_SolderHelper_Include_Configs_in_zip" xml:space="preserve">
+    <value>Include Configs in zip</value>
+  </data>
+  <data name="SolderHelper_CreateFtbPackZip_Not_an_imgur_link" xml:space="preserve">
+    <value>Not an imgur link</value>
+  </data>
+  <data name="SolderHelper_CreateFtbPackZip_Invalid_url" xml:space="preserve">
+    <value>Invalid url</value>
+  </data>
+  <data name="SolderHelper_Start_Input_directory_does_not_exist_" xml:space="preserve">
+    <value>Input directory does not exist!</value>
+  </data>
+  <data name="SolderHelper_Start_Unable_to_clear_solderDirectory_" xml:space="preserve">
+    <value>Unable to clear solderDirectory.</value>
+  </data>
+  <data name="SolderHelper_Start_Please_restart_the_process_when_the_directory_is_no_longer_in_use_" xml:space="preserve">
+    <value>Please restart the process when the directory is no longer in use.</value>
+  </data>
+  <data name="SolderHelper_Start_You_do_not_have_an_uploadurl_set_for_your_FTP_address_" xml:space="preserve">
+    <value>You do not have an uploadurl set for your FTP address.</value>
+  </data>
+  <data name="SolderHelper_Start_You_do_not_have_an_username_set_for_your_FTP_address_" xml:space="preserve">
+    <value>You do not have an username set for your FTP address.</value>
+  </data>
+  <data name="SolderHelper_Start_You_do_not_have_an_password_set_for_your_FTP_address_" xml:space="preserve">
+    <value>You do not have an password set for your FTP address.</value>
+  </data>
+  <data name="SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_selected_a_Minecraft_Version_" xml:space="preserve">
+    <value>You have choosen to include Minecraft Forge, but you haven't selected a Minecraft Version.</value>
+  </data>
+  <data name="SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_selected_a_Forge_build_to_include_" xml:space="preserve">
+    <value>You have choosen to include Minecraft Forge, but you haven't selected a Forge build to include.</value>
+  </data>
+  <data name="SolderHelper_Start_I_can_t_seem_to_find_a_config_directory_for_the_FTB_pack_" xml:space="preserve">
+    <value>I can't seem to find a config directory for the FTB pack.</value>
+  </data>
+  <data name="SolderHelper_Start_Uploading_to_FTP_Server" xml:space="preserve">
+    <value>Uploading to FTP Server</value>
+  </data>
+  <data name="Prompt_ShowDialog_Skip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="Program_Main_An_unknown_error_occured__Please_check_the_error_log_on_you_desktop_" xml:space="preserve">
+    <value>An unknown error occured. Please check the error log on you desktop.</value>
+  </data>
+  <data name="Program_Main_It_should_have_opened_by_itself_" xml:space="preserve">
+    <value>It should have opened by itself.</value>
+  </data>
+  <data name="MessageToUser_FirstTimeRun_This_is_the_first_time_you_are_running_the_problem__so_it_might_take_a_while_to_start__since_it_needs_to_build_some_databases_" xml:space="preserve">
+    <value>This is the first time you are running the problem, so it might take a while to start, since it needs to build some databases.</value>
+  </data>
+  <data name="MessageToUser_UploadingToFtp_Yep__i_m_uploading_all_the_things___" xml:space="preserve">
+    <value>Yep, i'm uploading all the things!!!</value>
+  </data>
+  <data name="MessageToUser_UploadingToFtp_Uploading_stuff_to_FTP" xml:space="preserve">
+    <value>Uploading stuff to FTP</value>
+  </data>
+  <data name="SqlInfo_button1_Click_Please_fill_out_all_the_data" xml:space="preserve">
+    <value>Please fill out all the data</value>
+  </data>
+  <data name="SolderSqlHandler_TestConnection_The_database_is_alright_" xml:space="preserve">
+    <value>The database is alright.</value>
+  </data>
+  <data name="SolderSqlHandler_TestConnection_Some_tables_appears_to_be_missing_in_the_database__Please_reconstruct_it_and_try_again_" xml:space="preserve">
+    <value>Some tables appears to be missing in the database. Please reconstruct it and try again.</value>
+  </data>
+  <data name="FtpInfo_Acceptbutton_Click_Please_fill_out_all_values" xml:space="preserve">
+    <value>Please fill out all values</value>
+  </data>
 </root>

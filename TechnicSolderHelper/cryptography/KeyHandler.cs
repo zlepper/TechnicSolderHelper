@@ -1,44 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace TechnicSolderHelper.cryptography
 {
     public class KeyHandler
     {
-        String keysPath;
-        String VectorPath;
+        readonly String _keysPath;
+        readonly String _vectorPath;
 
         public KeyHandler()
         {
-            keysPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "keys.dat");
-            VectorPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "vector.dat");
+            _keysPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "keys.dat");
+            _vectorPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "vector.dat");
 
-            if (!File.Exists(keysPath))
+            Random r;
+            if (!File.Exists(_keysPath))
             {
-                Random r = new Random();
+                r = new Random();
                 for (int i = 0; i < 32; i++)
                 {
-                    File.AppendAllText(keysPath, r.Next(0, 255).ToString()+Environment.NewLine);
+                    File.AppendAllText(_keysPath, r.Next(0, 255)+Environment.NewLine);
                 }
             }
-            if (!File.Exists(VectorPath))
+            if (File.Exists(_vectorPath)) return;
+            r = new Random();
+            for (int i = 0; i < 16; i++)
             {
-                Random r = new Random();
-                for (int i = 0; i < 16; i++)
-                {
-                    File.AppendAllText(VectorPath, r.Next(0, 255).ToString() + Environment.NewLine);
-                }
+                File.AppendAllText(_vectorPath, r.Next(0, 255) + Environment.NewLine);
             }
         }
 
-        public byte[] getKeys()
+        public byte[] GetKeys()
         {
             byte[] b = new byte[32];
-            using (StreamReader reader = new StreamReader(keysPath))
+            using (StreamReader reader = new StreamReader(_keysPath))
             {
                 for (int i = 0; i < b.Length; i++)
                 {
@@ -48,10 +43,10 @@ namespace TechnicSolderHelper.cryptography
             return b;
         }
 
-        public byte[] getVector()
+        public byte[] GetVector()
         {
             byte[] b = new byte[16];
-            using (StreamReader reader = new StreamReader(VectorPath))
+            using (StreamReader reader = new StreamReader(_vectorPath))
             {
                 for (int i = 0; i < b.Length; i++)
                 {

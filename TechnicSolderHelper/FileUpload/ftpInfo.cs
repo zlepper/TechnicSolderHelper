@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Net;
-using TechnicSolderHelper.confighandler;
+using System.Windows.Forms;
+using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.cryptography;
 
 namespace TechnicSolderHelper.FileUpload
 {
-    public partial class ftpInfo : Form
+    public partial class FtpInfo : Form
     {
-        public ftpInfo()
+        public FtpInfo()
         {
             InitializeComponent();
             String url = "";
@@ -25,12 +18,13 @@ namespace TechnicSolderHelper.FileUpload
             try
             {
                 ConfigHandler ch = new ConfigHandler();
-                url = ch.getConfig("ftpUrl");
-                username = ch.getConfig("ftpUserName");
-                pass = crypto.DecryptString(ch.getConfig("ftpPassword"));
+                url = ch.GetConfig("ftpUrl");
+                username = ch.GetConfig("ftpUserName");
+                pass = crypto.DecryptString(ch.GetConfig("ftpPassword"));
             }
             catch (Exception)
             {
+                // ignored
             }
             Username.Text = username;
             Password.Text = pass;
@@ -42,7 +36,6 @@ namespace TechnicSolderHelper.FileUpload
             if (String.IsNullOrWhiteSpace(Username.Text) || String.IsNullOrWhiteSpace(Password.Text) || String.IsNullOrWhiteSpace(Host.Text))
             {
                 MessageBox.Show("Please fill out all values");
-                return;
             }
             else
             {
@@ -51,15 +44,14 @@ namespace TechnicSolderHelper.FileUpload
                 {
                     Crypto crypto = new Crypto();
                     ConfigHandler ch = new ConfigHandler();
-                    ch.setConfig("ftpUserName", Username.Text);
-                    ch.setConfig("ftpUrl", url);
-                    ch.setConfig("ftpPassword", crypto.EncryptToString(Password.Text));
-                    this.Close();
+                    ch.SetConfig("ftpUserName", Username.Text);
+                    ch.SetConfig("ftpUrl", url);
+                    ch.SetConfig("ftpPassword", crypto.EncryptToString(Password.Text));
+                    Close();
                 }
                 else
                 {
                     MessageBox.Show("Hostname is not valid");
-                    return;
                 }
 
             }
@@ -71,10 +63,10 @@ namespace TechnicSolderHelper.FileUpload
             String name = Username.Text;
             String pass = Password.Text;
 
-            MessageBox.Show(isValidConnection(url, name, pass));
+            MessageBox.Show(IsValidConnection(url, name, pass));
         }
 
-        private String isValidConnection(string url, string user, string password)
+        private String IsValidConnection(string url, string user, string password)
         {
             if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
@@ -91,15 +83,12 @@ namespace TechnicSolderHelper.FileUpload
                 }
                 return "All is working fine!!";
             }
-            else
-            {
-                return "Invalid hostname";
-            }
+            return "Invalid hostname";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

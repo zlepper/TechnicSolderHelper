@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace TechnicSolderHelper
 {
-    public class modpacks
+    public class Modpacks
     {
-        public Dictionary<String, List<String>> modpack;
+        public Dictionary<String, List<String>> Modpack;
     }
 }
 

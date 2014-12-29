@@ -1,75 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace TechnicSolderHelper
 {
-    public class mcmod
+    public class Mcmod
     {
-        public string modid { get; set; }
+        public string Modid { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public string version { get; set; }
+        public string Version { get; set; }
 
-        public string mcversion { get; set; }
+        public string Mcversion { get; set; }
 
-        public string url { get; set; }
+        public string Url { get; set; }
 
-        public string credits { get; set; }
+        public string Description { get; set; }
 
-        public string description { get; set; }
+        public Boolean HasBeenWritenToModlist { get; set; }
 
-        public Boolean hasBeenWritenToModlist { get; set; }
+        public Boolean IsSkipping { get; set; }
 
-        public Boolean isSkipping { get; set; }
+        public List<string> AuthorList { get; set; }
 
-        public List<string> authorList { get; set; }
+        public List<string> Authors { get; set; }
 
-        public List<string> authors { get; set; }
+        public PermissionLevel PublicPerms { get; set; }
 
-        public PermissionLevel publicPerms { get; set; }
+        public PermissionLevel PrivatePerms { get; set; }
 
-        public PermissionLevel privatePerms { get; set; }
+        public Boolean IsIgnore { get; set; }
 
-        public Boolean isIgnore { get; set; }
-
-        public Boolean useShortName { get; set; }
-
-        public Boolean ShortName{ get; set; }
+        public Boolean UseShortName { get; set; }
 
     }
 
-    public class litemod
+    public class OwnPermissions
     {
-        public string name { get; set; }
-
-        public string mcversion { get; set; }
-
-        public string version { get; set; }
-
-        public string revision { get; set; }
-
-        public string author { get; set; }
-
-        public string description { get; set; }
-    }
-
-    public class modlist
-    {
-
-        public int modListVersion { get; set; }
-
-        public List<String> modList { get; set; }
-    }
-
-    public class ownPermissions
-    {
-        public Boolean hasPermission { get; set; }
+        public Boolean HasPermission { get; set; }
 
         public String PermissionLink { get; set; }
 
@@ -79,149 +47,114 @@ namespace TechnicSolderHelper
     public class ModHelper
     {
 
-        public static mcmod GoodVersioning(String fileName)
+        public static Mcmod GoodVersioning(String fileName)
         {
             fileName = fileName.Remove(fileName.LastIndexOf("."));
-            mcmod mod = new mcmod();
+            Mcmod mod = new Mcmod();
 
             //Figure out modname
             String modname = "";
-            for (int i = 0; i < fileName.Length; i++)
+            foreach (char c in fileName)
             {
-                if (!(fileName[i].Equals('-')))
+                if (!(c.Equals('-')))
                 {
-                    modname = modname + fileName[i];
+                    modname = modname + c;
                 }
                 else
                 {
                     break;
                 }
             }
-            mod.name = modname;
+            mod.Name = modname;
             fileName = fileName.Replace(modname + "-", "");
 
             //Figure out minecraft version
             String mcversion = "";
-            for (int i = 0; i < fileName.Length; i++)
+            foreach (char c in fileName)
             {
-                if (!(fileName[i].Equals('-')))
+                if (!(c.Equals('-')))
                 {
-                    mcversion = mcversion + fileName[i];
+                    mcversion = mcversion + c;
                 }
                 else
                 {
                     break;
                 }
             }
-            mod.mcversion = mcversion;
+            mod.Mcversion = mcversion;
 
             //Figure out modversion
             fileName = fileName.Replace(mcversion + "-", "");
-            mod.version = fileName;
+            mod.Version = fileName;
 
 
             return mod;
         }
 
-        public static mcmod wailaPattern(String FileName) // waila-1.5.5_1.7.10.jar
+        public static Mcmod WailaPattern(String fileName) // waila-1.5.5_1.7.10.jar
         {
-            FileName = FileName.Remove(FileName.LastIndexOf("."));
-            mcmod mod = new mcmod();
+            fileName = fileName.Remove(fileName.LastIndexOf(".", StringComparison.Ordinal));
+            Mcmod mod = new Mcmod();
 
             String name = "";
-            for (int i = 0; i < FileName.Length; i++)
+            foreach (char c in fileName)
             {
-                if (!(FileName[i].Equals('-')))
+                if (!(c.Equals('-')))
                 {
-                    name = name + FileName[i];
+                    name = name + c;
                 }
                 else
                 {
                     break;
                 }
             }
-            mod.name = name;
+            mod.Name = name;
 
-            FileName = FileName.Replace(name, "");
+            fileName = fileName.Replace(name, "");
 
             String version = "";
-            for (int i = 0; i < FileName.Length; i++)
+            foreach (char c in fileName)
             {
-                if (!(FileName[i].Equals('_')))
+                if (!(c.Equals('_')))
                 {
-                    version = version + FileName[i];
+                    version = version + c;
                 }
                 else
                 {
                     break;
                 }
             }
-            mod.version = version;
+            mod.Version = version;
 
-            FileName = FileName.Replace("_", "").Replace(version, "");
-            mod.mcversion = FileName;
+            fileName = fileName.Replace("_", "").Replace(version, "");
+            mod.Mcversion = fileName;
 
             return mod;
         }
 
-        public static mcmod ReikasMods(String FileName)
+        public static Mcmod ReikasMods(String fileName)
         {
-            mcmod mod = new mcmod();
+            Mcmod mod = new Mcmod();
 
-            FileName = FileName.Remove(FileName.LastIndexOf("."));
+            fileName = fileName.Remove(fileName.LastIndexOf(".", StringComparison.Ordinal));
 
             //Figure out mod name
-            String[] reikas = FileName.Split(' ');
+            String[] reikas = fileName.Split(' ');
 
-            mod.name = reikas[0].Replace(" ", String.Empty);
-            mod.mcversion = reikas[1].Replace(" ", String.Empty);
-            mod.version = reikas[2].Replace(" ", String.Empty);
+            mod.Name = reikas[0].Replace(" ", String.Empty);
+            mod.Mcversion = reikas[1].Replace(" ", String.Empty);
+            mod.Version = reikas[2].Replace(" ", String.Empty);
 
             return mod;
         }
     }
 
-    public class Modlist
+    public class Mcmod2
     {
-        public string modid { get; set; }
+        public int Modinfoversion { get; set; }
 
-        public string name { get; set; }
+        public int ModListVersion { get; set; }
 
-        public string description { get; set; }
-
-        public string version { get; set; }
-
-        public string mcversion { get; set; }
-
-        public string url { get; set; }
-
-        public string updateUrl { get; set; }
-
-        public List<string> authors { get; set; }
-
-        public string credits { get; set; }
-
-        public string logoFile { get; set; }
-
-        public List<object> screenshots { get; set; }
-
-        public string parent { get; set; }
-
-        public List<string> requiredMods { get; set; }
-
-        public List<string> dependencies { get; set; }
-
-        public List<object> dependants { get; set; }
-
-        public string useDependencyInformation { get; set; }
-    }
-
-    public class mcmod2
-    {
-        public int modinfoversion { get; set; }
-
-        public int modListVersion { get; set; }
-
-        public List<Modlist> modlist { get; set; }
+        public List<Modlist> Modlist { get; set; }
     }
 }

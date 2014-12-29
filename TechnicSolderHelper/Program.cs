@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Net;
 using System.Windows.Forms;
+using TechnicSolderHelper.Properties;
 
 namespace TechnicSolderHelper
 {
-
     class Program
     {
         [STAThread]
@@ -35,11 +28,10 @@ namespace TechnicSolderHelper
                 File.AppendAllText(errorLocation, e.StackTrace);
                 if (e.InnerException != null)
                 {
-                    File.AppendAllText(errorLocation, Environment.NewLine + e.InnerException.ToString());
+                    File.AppendAllText(errorLocation, Environment.NewLine + e.InnerException);
                 }
                 Process.Start(errorLocation);
-                MessageBox.Show("An unknown error occured. Please check the error log on you desktop." + Environment.NewLine + "It should have opened by itself.");
-                return;
+                MessageBox.Show(Resources.Program_Main_An_unknown_error_occured__Please_check_the_error_log_on_you_desktop_ + Environment.NewLine + Resources.Program_Main_It_should_have_opened_by_itself_);
             }
 
         }

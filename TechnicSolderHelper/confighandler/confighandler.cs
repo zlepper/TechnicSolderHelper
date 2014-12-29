@@ -1,94 +1,81 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
-using System.Security.Cryptography;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Mono.Data.Sqlite;
 
-namespace TechnicSolderHelper.confighandler
+namespace TechnicSolderHelper.Confighandler
 {
-    public class ConfigHandler
+    public class ConfigHandler : TechnicSolderHelper.SQL.SqlHelper
     {
-        private static readonly string configFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "config.cfg");
-
-        public ConfigHandler()
+        private readonly String _createTableString;
+        public ConfigHandler() : base("configs")
         {
-            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper")))
-            {
-                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper"));
-            }
-            if (!File.Exists(configFile))
-            {
-                File.Create(configFile, 4000, FileOptions.SequentialScan);
-            }
+            _createTableString =
+                String.Format("CREATE TABLE IF NOT EXISTS `{0}` (`key` TEXT NOT NULL UNIQUE, `value` TEXT);", TableName);
+            ExecuteDatabaseQuery(_createTableString);
         }
 
-        public string getConfig(String configName)
+        public string GetConfig(String configName)
         {
-            Dictionary<String, String> configValues = getAllConfigs();
-            try
+            String sql = String.Format("SELECT value FROM {0} WHERE key LIKE '{1}';", TableName, configName);
+            if (Globalfunctions.IsUnix())
             {
-                return configValues[configName];
-            }
-            catch (Exception)
-            {
-                setConfig(configName, String.Empty);
-                return String.Empty;
-            }
-        }
-
-        public void setConfig(String configName, Boolean configValue)
-        {
-            setConfig(configName, configValue.ToString());
-        }
-
-        public void setConfig(String configName, String configValue)
-        {
-            Dictionary<String, String> configValues = getAllConfigs();
-            if (configValues.ContainsKey(configName))
-            {
-                configValues[configName] = configValue;
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                return reader["value"].ToString();
+                            }
+                        }
+                    }
+                }
             }
             else
             {
-                configValues.Add(configName, configValue);
-            }
-            File.WriteAllText(configFile, "");
-            using (StreamWriter writer = new StreamWriter(configFile))
-            {
-                foreach (var item in configValues)
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
                 {
-                    //Debug.WriteLine(item.Key + "=" + item.Value);
-                    writer.WriteLine(item.Key + "=" + item.Value);
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                return reader["value"].ToString();
+                            }
+                        }
+                    }
                 }
             }
+            return String.Empty;
         }
 
-        private Dictionary<String, String> getAllConfigs()
+        public void SetConfig(String configName, Boolean configValue)
         {
-            Dictionary<String, String> configValues = new Dictionary<string, string>();
-            using (StreamReader reader = new StreamReader(configFile))
-            {
-                while (true)
-                {
-                    string tmp = reader.ReadLine();
-                    if (!String.IsNullOrWhiteSpace(tmp))
-                    {
-                        String[] values = tmp.Split('=');
-                        for (int i = 0; i < values.Length; i++)
-                        {
-                            values[i] = values[i].Replace("=", "");
-                        }
-                        configValues.Add(values[0], values[1]);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-            return configValues;
+            SetConfig(configName, configValue.ToString());
+        }
+
+        public void SetConfig(String configName, String configValue)
+        {
+            String sql = String.Format("INSERT OR REPLACE INTO {0}(key, value) VALUES('{1}','{2}');", TableName,
+                configName, configValue);
+            Debug.WriteLine(sql);
+            ExecuteDatabaseQuery(sql);
+        }
+
+        public override void ResetTable()
+        {
+            base.ResetTable();
+            ExecuteDatabaseQuery(_createTableString);
         }
     }
 }
-

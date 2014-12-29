@@ -2,11 +2,11 @@
 
 namespace TechnicSolderHelper
 {
-    public class globalfunctions
+    public static class Globalfunctions
     {
-        public static char pathSeperator;
+        public static char PathSeperator;
 
-        public static Boolean isUnix()
+        public static Boolean IsUnix()
         {
             return Environment.OSVersion.ToString().ToLower().Contains("unix");
         }

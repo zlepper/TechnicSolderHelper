@@ -34,7 +34,7 @@
     <PublisherName>Rasmus Hansen</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>8</ApplicationRevision>
+    <ApplicationRevision>9</ApplicationRevision>
     <ApplicationVersion>1.0.3.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -50,6 +50,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -125,6 +126,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Mono-3.2.3\lib\mono\4.5\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>..\packages\MySql.Data.6.9.5\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
@@ -155,7 +160,6 @@
     <Reference Include="Excel">
       <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -167,9 +171,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="confighandler\confighandler.cs" />
     <Compile Include="cryptography\crypto.cs" />
     <Compile Include="cryptography\KeyHandler.cs" />
-    <Compile Include="mod.cs" />
+    <Compile Include="Litemod.cs" />
+    <Compile Include="Modlist.cs" />
     <Compile Include="PermLevel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -178,6 +184,7 @@
     </Compile>
     <Compile Include="SQL\excelReader.cs" />
     <Compile Include="SQL\FTBPermissionsSQLHelper.cs" />
+    <Compile Include="SQL\liteloader\liteloader.cs" />
     <Compile Include="SQL\ModListSQLHelper.cs" />
     <Compile Include="SQL\OwnPermissionsSQLHelper.cs" />
     <Compile Include="SQL\SolderSQLHandler.cs" />
@@ -205,11 +212,9 @@
     <Compile Include="Settings.cs" />
     <Compile Include="SQL\SQLhelper.cs" />
     <Compile Include="globalfunctions.cs" />
-    <Compile Include="confighandler\confighandler.cs" />
     <Compile Include="SQL\forge\forge.cs" />
     <Compile Include="SQL\forge\forgemaven.cs" />
     <Compile Include="messageToUser.cs" />
-    <Compile Include="SQL\forge\liteloader.cs" />
     <Compile Include="modpacks.cs" />
     <Compile Include="FileUpload\ftpInfo.cs">
       <SubType>Form</SubType>
@@ -231,6 +236,7 @@
     <None Include="TechnicSolderHelper_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Mono.Data.Sqlite.dll" />
     <Content Include="output\jquery.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -240,6 +246,7 @@
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="x86\Mono.Data.Sqlite.dll" />
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -277,7 +284,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SQL\sqlInfo.resx">
       <DependentUpon>sqlInfo.cs</DependentUpon>

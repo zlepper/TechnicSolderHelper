@@ -1,42 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
-using Mono.Data.Sqlite;
 using System.Diagnostics;
+using Mono.Data.Sqlite;
 
 namespace TechnicSolderHelper.SQL
 {
-    public class FTBPermissionsSQLHelper : SQLHelper
+    public class FtbPermissionsSqlHelper : SqlHelper
     {
-        protected readonly String CreateTableString;
+        private readonly String _createTableString;
 
-        public FTBPermissionsSQLHelper()
-            : base("FTBPermissions", "ftbperms")
+        public FtbPermissionsSqlHelper()
+            : base("ftbperms")
         {
-            CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT, `ModAuthor` TEXT, `ShortName` TEXT, `ModID` TEXT UNIQUE, `PublicPerm` TEXT , `PrivatePerm` TEXT, `ModLink` TEXT, `PermLink` TEXT, `CustPrivate` TEXT, `CustFTB` TEXT, PRIMARY KEY(ID));", this.TableName);
-            executeDatabaseQuery(CreateTableString);
+            _createTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT, `ModAuthor` TEXT, `ShortName` TEXT, `ModID` TEXT UNIQUE, `PublicPerm` TEXT , `PrivatePerm` TEXT, `ModLink` TEXT, `PermLink` TEXT, `CustPrivate` TEXT, `CustFTB` TEXT, PRIMARY KEY(ID));", TableName);
+            ExecuteDatabaseQuery(_createTableString);
         }
 
         /// <summary>
         /// Checks if the ftb database contains any permissions for the mod
         /// </summary>
-        /// <param name="ModID">
+        /// <param name="toCheck">
         /// The ID of the mod to check for</param>
         /// <param name="isPublic">
         /// If false, Checks for private distribution permissions. 
         /// If true, Checks for public distribution permissions.</param>
         /// <returns>Return the level of distribution.
         /// If no level found, return PermissionLevel.Unknown</returns>
-        public PermissionLevel doFTBHavePermission(String toCheck, Boolean isPublic)
+        public PermissionLevel DoFtbHavePermission(String toCheck, Boolean isPublic)
         {
             toCheck = toCheck.Replace("'", "`");
 
-            String sql = "";
-            sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ShortName LIKE '{1}' OR ModID LIKE '{1}';", this.TableName, toCheck.ToLower());
-            if (isUnix())
+            var sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ShortName LIKE '{1}' OR ModID LIKE '{1}';", TableName, toCheck.ToLower());
+            if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
                 {
@@ -48,14 +43,7 @@ namespace TechnicSolderHelper.SQL
                             String level = "";
                             while (reader.Read())
                             {
-                                if (isPublic)
-                                {
-                                    level = reader["PublicPerm"].ToString();
-                                }
-                                else
-                                {
-                                    level = reader["PrivatePerm"].ToString();
-                                }
+                                level = isPublic ? reader["PublicPerm"].ToString() : reader["PrivatePerm"].ToString();
                             }
 
                             switch (level.ToLower())
@@ -65,7 +53,7 @@ namespace TechnicSolderHelper.SQL
                                 case "closed":
                                     return PermissionLevel.Closed;
                                 case "ftb":
-                                    return PermissionLevel.FTB;
+                                    return PermissionLevel.Ftb;
                                 case "notify":
                                     return PermissionLevel.Notify;
                                 case "request":
@@ -77,43 +65,33 @@ namespace TechnicSolderHelper.SQL
                     }
                 }
             }
-            else
+            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
             {
-                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                db.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                 {
-                    db.Open();
-                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        String level = "";
+                        while (reader.Read())
                         {
-                            String level = "";
-                            while (reader.Read())
-                            {
-                                if (isPublic)
-                                {
-                                    level = reader["PublicPerm"].ToString();
-                                }
-                                else
-                                {
-                                    level = reader["PrivatePerm"].ToString();
-                                }
-                            }
+                            level = isPublic ? reader["PublicPerm"].ToString() : reader["PrivatePerm"].ToString();
+                        }
 
-                            switch (level.ToLower())
-                            {
-                                case "open":
-                                    return PermissionLevel.Open;
-                                case "closed":
-                                    return PermissionLevel.Closed;
-                                case "ftb":
-                                    return PermissionLevel.FTB;
-                                case "notify":
-                                    return PermissionLevel.Notify;
-                                case "request":
-                                    return PermissionLevel.Request;
-                                default:
-                                    return PermissionLevel.Unknown;
-                            }
+                        switch (level.ToLower())
+                        {
+                            case "open":
+                                return PermissionLevel.Open;
+                            case "closed":
+                                return PermissionLevel.Closed;
+                            case "ftb":
+                                return PermissionLevel.Ftb;
+                            case "notify":
+                                return PermissionLevel.Notify;
+                            case "request":
+                                return PermissionLevel.Request;
+                            default:
+                                return PermissionLevel.Unknown;
                         }
                     }
                 }
@@ -122,23 +100,23 @@ namespace TechnicSolderHelper.SQL
 
         public enum InfoType
         {
-            PermLink,
-            CustPrivate,
-            CustFTB,
+            //PermLink,
+            //CustPrivate,
+            //CustFtb,
             ModLink,
             ModAuthor,
-            ShortName,
-            ModID,
+            //ShortName,
+            //ModId,
             ModName
         }
 
-        public String getInfoFromModID(String ModID, InfoType infoType)
+        public String GetInfoFromModId(String modId, InfoType infoType)
         {
-            ModID = ModID.Replace("'", "`");
+            modId = modId.Replace("'", "`");
 
-            String sql = String.Format("SELECT {2} FROM {0} WHERE ModID LIKE '{1}' OR ShortName LIKE '{1}';", this.TableName, ModID.ToLower(), infoType.ToString());
+            String sql = String.Format("SELECT {2} FROM {0} WHERE ModID LIKE '{1}' OR ShortName LIKE '{1}';", TableName, modId.ToLower(), infoType);
 
-            if (isUnix())
+            if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
                 {
@@ -175,13 +153,13 @@ namespace TechnicSolderHelper.SQL
             return "";
         }
 
-        public String getInfoFromShortName(String ShortName, InfoType infoType)
+        public String GetInfoFromShortName(String shortName, InfoType infoType)
         {
-            ShortName = ShortName.Replace("'", "`");
+            shortName = shortName.Replace("'", "`");
 
-            String sql = String.Format("SELECT {2} FROM {0} WHERE ShortName LIKE '{1}';", this.TableName, ShortName.ToLower(), infoType.ToString());
+            String sql = String.Format("SELECT {2} FROM {0} WHERE ShortName LIKE '{1}';", TableName, shortName.ToLower(), infoType);
 
-            if (isUnix())
+            if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
                 {
@@ -218,13 +196,13 @@ namespace TechnicSolderHelper.SQL
             return "";
         }
 
-        public String getShortName(String ModID)
+        public String GetShortName(String modId)
         {
-            ModID = ModID.Replace("'", "`");
+            modId = modId.Replace("'", "`");
 
-            String sql = String.Format("SELECT ShortName FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
+            String sql = String.Format("SELECT ShortName FROM {0} WHERE ModID LIKE '{1}';", TableName, modId);
 
-            if (isUnix())
+            if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
                 {
@@ -264,34 +242,40 @@ namespace TechnicSolderHelper.SQL
         /// <summary>
         /// Adds a mod to the FTB permission database
         /// </summary>
-        /// <param name="ModName"></param>
-        /// <param name="ModAuthor"></param>
-        /// <param name="ModID"></param>
-        /// <param name="PublicPermissions"></param>
-        /// <param name="PrivatePermissions"></param>
-        public void addFTBModPerm(String ModName, String ModAuthor, String ModID, String PublicPermissions, String PrivatePermissions, String ModLink, String PermLink, String CustPrivate, String CustFTB, String shortname)
+        /// <param name="modName"></param>
+        /// <param name="modAuthor"></param>
+        /// <param name="modId"></param>
+        /// <param name="publicPermissions"></param>
+        /// <param name="privatePermissions"></param>
+        /// <param name="modLink"></param>
+        /// <param name="permLink"></param>
+        /// <param name="custPrivate"></param>
+        /// <param name="custFtb"></param>
+        /// <param name="shortname"></param>
+        public void AddFtbModPerm(String modName, String modAuthor, String modId, String publicPermissions, String privatePermissions, String modLink, String permLink, String custPrivate, String custFtb, String shortname)
         {
-            ModName = ModName.Replace("'", "`");
-            ModAuthor = ModAuthor.Replace("'", "`");
-            ModID = ModID.Replace("'", "`");
+            modName = modName.Replace("'", "`");
+            modAuthor = modAuthor.Replace("'", "`");
+            modId = modId.Replace("'", "`");
 
-            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModAuthor, ModID, PublicPerm, PrivatePerm, ModLink, PermLink, CustPrivate, CustFTB, ShortName) VALUES ('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}', '{10}');", this.TableName, ModName, ModAuthor, ModID, PublicPermissions, PrivatePermissions, ModLink, PermLink, CustPrivate, CustFTB, shortname);
+            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModAuthor, ModID, PublicPerm, PrivatePerm, ModLink, PermLink, CustPrivate, CustFTB, ShortName) VALUES ('{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}', '{10}');", TableName, modName, modAuthor, modId, publicPermissions, privatePermissions, modLink, permLink, custPrivate, custFtb, shortname);
 
-            executeDatabaseQuery(sql);
+            ExecuteDatabaseQuery(sql);
         }
 
-        public void addFTBModPerm(String ModID, String ShortName)
+        public void AddFtbModPerm(String modId, String shortName)
         {
-            ModID = ModID.Replace("'", "`");
+            modId = modId.Replace("'", "`");
 
-            String sql = String.Format("INSERT OR ABORT INTO {0}(ShortName, ModID) VALUES ('{1}', '{2}');", this.TableName, ShortName, ModID);
-            executeDatabaseQuery(sql);
+            String sql = String.Format("INSERT OR IGNORE INTO {0}(ShortName, ModID) VALUES ('{1}', '{2}');", TableName, shortName, modId);
+            Debug.WriteLine(sql);
+            ExecuteDatabaseQuery(sql);
         }
 
-        public override void resetTable()
+        public override void ResetTable()
         {
-            base.resetTable();
-            executeDatabaseQuery(CreateTableString);
+            base.ResetTable();
+            ExecuteDatabaseQuery(_createTableString);
         }
     }
 }

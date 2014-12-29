@@ -47,7 +47,7 @@ namespace TechnicSolderHelper.Properties {
         }
         
         /// <summary>
-        ///   Overrides the current thread'modid CurrentUICulture property for all
+        ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -57,6 +57,237 @@ namespace TechnicSolderHelper.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is the first time you are running the problem, so it might take a while to start, since it needs to build some databases..
+        /// </summary>
+        internal static string MessageToUser_FirstTimeRun_This_is_the_first_time_you_are_running_the_problem__so_it_might_take_a_while_to_start__since_it_needs_to_build_some_databases_ {
+            get {
+                return ResourceManager.GetString("MessageToUser_FirstTimeRun_This_is_the_first_time_you_are_running_the_problem__so" +
+                        "_it_might_take_a_while_to_start__since_it_needs_to_build_some_databases_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading stuff to FTP.
+        /// </summary>
+        internal static string MessageToUser_UploadingToFtp_Uploading_stuff_to_FTP {
+            get {
+                return ResourceManager.GetString("MessageToUser_UploadingToFtp_Uploading_stuff_to_FTP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yep, i&apos;m uploading all the things!!!.
+        /// </summary>
+        internal static string MessageToUser_UploadingToFtp_Yep__i_m_uploading_all_the_things___ {
+            get {
+                return ResourceManager.GetString("MessageToUser_UploadingToFtp_Yep__i_m_uploading_all_the_things___", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unknown error occured. Please check the error log on you desktop..
+        /// </summary>
+        internal static string Program_Main_An_unknown_error_occured__Please_check_the_error_log_on_you_desktop_ {
+            get {
+                return ResourceManager.GetString("Program_Main_An_unknown_error_occured__Please_check_the_error_log_on_you_desktop_" +
+                        "", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to It should have opened by itself..
+        /// </summary>
+        internal static string Program_Main_It_should_have_opened_by_itself_ {
+            get {
+                return ResourceManager.GetString("Program_Main_It_should_have_opened_by_itself_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip.
+        /// </summary>
+        internal static string Prompt_ShowDialog_Skip {
+            get {
+                return ResourceManager.GetString("Prompt_ShowDialog_Skip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid url.
+        /// </summary>
+        internal static string SolderHelper_CreateFtbPackZip_Invalid_url {
+            get {
+                return ResourceManager.GetString("SolderHelper_CreateFtbPackZip_Invalid_url", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not an imgur link.
+        /// </summary>
+        internal static string SolderHelper_CreateFtbPackZip_Not_an_imgur_link {
+            get {
+                return ResourceManager.GetString("SolderHelper_CreateFtbPackZip_Not_an_imgur_link", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Config zip.
+        /// </summary>
+        internal static string SolderHelper_SolderHelper_Create_Config_zip {
+            get {
+                return ResourceManager.GetString("SolderHelper_SolderHelper_Create_Config_zip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Forge zip.
+        /// </summary>
+        internal static string SolderHelper_SolderHelper_Create_Forge_zip {
+            get {
+                return ResourceManager.GetString("SolderHelper_SolderHelper_Create_Forge_zip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Configs in zip.
+        /// </summary>
+        internal static string SolderHelper_SolderHelper_Include_Configs_in_zip {
+            get {
+                return ResourceManager.GetString("SolderHelper_SolderHelper_Include_Configs_in_zip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Forge in zip.
+        /// </summary>
+        internal static string SolderHelper_SolderHelper_Include_Forge_in_zip {
+            get {
+                return ResourceManager.GetString("SolderHelper_SolderHelper_Include_Forge_in_zip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to I can&apos;t seem to find a config directory for the FTB pack..
+        /// </summary>
+        internal static string SolderHelper_Start_I_can_t_seem_to_find_a_config_directory_for_the_FTB_pack_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_I_can_t_seem_to_find_a_config_directory_for_the_FTB_pack_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input directory does not exist!.
+        /// </summary>
+        internal static string SolderHelper_Start_Input_directory_does_not_exist_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_Input_directory_does_not_exist_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please restart the process when the directory is no longer in use..
+        /// </summary>
+        internal static string SolderHelper_Start_Please_restart_the_process_when_the_directory_is_no_longer_in_use_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_Please_restart_the_process_when_the_directory_is_no_longer_in_" +
+                        "use_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to clear solderDirectory..
+        /// </summary>
+        internal static string SolderHelper_Start_Unable_to_clear_solderDirectory_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_Unable_to_clear_solderDirectory_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploading to FTP Server.
+        /// </summary>
+        internal static string SolderHelper_Start_Uploading_to_FTP_Server {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_Uploading_to_FTP_Server", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have an password set for your FTP address..
+        /// </summary>
+        internal static string SolderHelper_Start_You_do_not_have_an_password_set_for_your_FTP_address_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_You_do_not_have_an_password_set_for_your_FTP_address_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have an uploadurl set for your FTP address..
+        /// </summary>
+        internal static string SolderHelper_Start_You_do_not_have_an_uploadurl_set_for_your_FTP_address_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_You_do_not_have_an_uploadurl_set_for_your_FTP_address_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have an username set for your FTP address..
+        /// </summary>
+        internal static string SolderHelper_Start_You_do_not_have_an_username_set_for_your_FTP_address_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_You_do_not_have_an_username_set_for_your_FTP_address_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have choosen to include Minecraft Forge, but you haven&apos;t selected a Forge build to include..
+        /// </summary>
+        internal static string SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_selected_a_Forge_build_to_include_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_s" +
+                        "elected_a_Forge_build_to_include_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have choosen to include Minecraft Forge, but you haven&apos;t selected a Minecraft Version..
+        /// </summary>
+        internal static string SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_selected_a_Minecraft_Version_ {
+            get {
+                return ResourceManager.GetString("SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_s" +
+                        "elected_a_Minecraft_Version_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some tables appears to be missing in the database. Please reconstruct it and try again..
+        /// </summary>
+        internal static string SolderSqlHandler_TestConnection_Some_tables_appears_to_be_missing_in_the_database__Please_reconstruct_it_and_try_again_ {
+            get {
+                return ResourceManager.GetString("SolderSqlHandler_TestConnection_Some_tables_appears_to_be_missing_in_the_database" +
+                        "__Please_reconstruct_it_and_try_again_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The database is alright..
+        /// </summary>
+        internal static string SolderSqlHandler_TestConnection_The_database_is_alright_ {
+            get {
+                return ResourceManager.GetString("SolderSqlHandler_TestConnection_The_database_is_alright_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please fill out all the data.
+        /// </summary>
+        internal static string SqlInfo_button1_Click_Please_fill_out_all_the_data {
+            get {
+                return ResourceManager.GetString("SqlInfo_button1_Click_Please_fill_out_all_the_data", resourceCulture);
             }
         }
     }

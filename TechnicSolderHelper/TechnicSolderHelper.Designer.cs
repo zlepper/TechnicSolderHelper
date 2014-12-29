@@ -1,11 +1,22 @@
-﻿namespace TechnicSolderHelper
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using TechnicSolderHelper.SQL;
+using TechnicSolderHelper.Properties;
+
+namespace TechnicSolderHelper
 {
     partial class SolderHelper
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -536,6 +547,7 @@
             this.testmysql.TabIndex = 25;
             this.testmysql.Text = "Test mysql";
             this.testmysql.UseVisualStyleBackColor = true;
+            this.testmysql.Visible = false;
             this.testmysql.Click += new System.EventHandler(this.testmysql_Click);
             // 
             // useSolder
@@ -568,6 +580,7 @@
             this.savesqlcommands.TabIndex = 28;
             this.savesqlcommands.Text = "Save SQL commands ";
             this.savesqlcommands.UseVisualStyleBackColor = true;
+            this.savesqlcommands.Visible = false;
             this.savesqlcommands.CheckedChanged += new System.EventHandler(this.savesqlcommands_CheckedChanged);
             // 
             // SolderHelper
@@ -628,52 +641,297 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox InputFolder;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox OutputFolder;
-        private System.Windows.Forms.Button InputDirectoryBrowse;
-        private System.Windows.Forms.Button OutputDirectoryBrowse;
-        private System.Windows.Forms.FolderBrowserDialog FolderBrowser;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox IncludeConfigZip;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.CheckBox CreateFTBPack;
-        private System.Windows.Forms.Label label3;
-        public System.Windows.Forms.Label ProgressLabel;
-        private System.Windows.Forms.CheckBox CreateTechnicPack;
-        private System.Windows.Forms.GroupBox SolderPackType;
-        private System.Windows.Forms.RadioButton ZipPack;
-        private System.Windows.Forms.RadioButton SolderPack;
-        private System.Windows.Forms.GroupBox DistributionLevel;
-        private System.Windows.Forms.RadioButton PublicFTBPack;
-        private System.Windows.Forms.RadioButton PrivateFTBPack;
-        private System.Windows.Forms.CheckBox CheckPermissions;
-        private System.Windows.Forms.GroupBox TechnicDistributionLevel;
-        private System.Windows.Forms.RadioButton TechnicPublicPermissions;
-        private System.Windows.Forms.RadioButton TechnicPrivatePermissions;
-        private System.Windows.Forms.CheckBox UploadToFTPServer;
-        private System.Windows.Forms.CheckBox IncludeForgeVersion;
-        private System.Windows.Forms.ListBox MCversion;
-        private System.Windows.Forms.ListBox ForgeBuild;
-        private System.Windows.Forms.Button GetForgeVersions;
-        private System.Windows.Forms.Label labelmcversion;
-        private System.Windows.Forms.Label labelforgeversion;
-        private System.Windows.Forms.GroupBox missingInfoAction;
-        private System.Windows.Forms.RadioButton missingInfoActionCreateList;
-        private System.Windows.Forms.RadioButton missingInfoActionOnTheRun;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox ModpackNameInput;
-        private System.Windows.Forms.TextBox ModpackVersionInput;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button getliteloaderversions;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button configureFTP;
-        private System.Windows.Forms.Button testmysql;
-        private System.Windows.Forms.CheckBox useSolder;
-        private System.Windows.Forms.Button configureSolder;
-        private System.Windows.Forms.CheckBox savesqlcommands;
+        private ComboBox InputFolder;
+        private Label label1;
+        private Label label2;
+        private TextBox OutputFolder;
+        private Button InputDirectoryBrowse;
+        private Button OutputDirectoryBrowse;
+        private FolderBrowserDialog FolderBrowser;
+        private Button button1;
+        private Button button2;
+        private CheckBox checkBox1;
+        private CheckBox IncludeConfigZip;
+        private Button button3;
+        private CheckBox CreateFTBPack;
+        private Label label3;
+        public Label ProgressLabel;
+        private CheckBox CreateTechnicPack;
+        private GroupBox SolderPackType;
+        private RadioButton ZipPack;
+        private RadioButton SolderPack;
+        private GroupBox DistributionLevel;
+        private RadioButton PublicFTBPack;
+        private RadioButton PrivateFTBPack;
+        private CheckBox CheckPermissions;
+        private GroupBox TechnicDistributionLevel;
+        private RadioButton TechnicPublicPermissions;
+        private RadioButton TechnicPrivatePermissions;
+        private CheckBox UploadToFTPServer;
+        private CheckBox IncludeForgeVersion;
+        private ListBox MCversion;
+        private ListBox ForgeBuild;
+        private Button GetForgeVersions;
+        private Label labelmcversion;
+        private Label labelforgeversion;
+        private GroupBox missingInfoAction;
+        private RadioButton missingInfoActionCreateList;
+        private RadioButton missingInfoActionOnTheRun;
+        private Label label4;
+        private ComboBox ModpackNameInput;
+        private TextBox ModpackVersionInput;
+        private Label label5;
+        private Button getliteloaderversions;
+        private GroupBox groupBox1;
+        private Button configureFTP;
+        private Button testmysql;
+        private CheckBox useSolder;
+        private Button configureSolder;
+        private CheckBox savesqlcommands;
+
+        public SolderHelper()
+        {
+            //if (Debugger.IsAttached) { Properties.Settings.Default.Reset(); }
+
+            Globalfunctions.PathSeperator = Globalfunctions.IsUnix() ? '/' : '\\';
+            InitializeComponent();
+            bool firstRun = true;
+            try
+            {
+                firstRun = Convert.ToBoolean(_confighandler.GetConfig("FirstRun"));
+            }
+            catch (Exception)
+            {
+                firstRun = true;
+            }
+            if (firstRun)
+            {
+                MessageToUser m = new MessageToUser();
+                Thread startingThread = new Thread(m.FirstTimeRun);
+                startingThread.Start();
+                getliteloaderversions_Click(null, null);
+                _confighandler.SetConfig("InputDirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft", "mods"));
+                _confighandler.SetConfig("OutputDirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "SolderHelper"));
+                _confighandler.SetConfig("FirstRun", "false");
+
+                #region Find MC versions
+
+                MCversion.Items.Clear();
+
+                _forgeSqlHelper.FindAllForgeVersion();
+                List<String> mcversions = _forgeSqlHelper.GetMcVersions();
+                foreach (String mcversion in mcversions)
+                {
+                    MCversion.Items.Add(mcversion);
+                }
+
+                #endregion
+                ExcelReader.AddFtbPermissions();
+
+            }
+            #region Reload Interface
+            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json")))
+            {
+                _inputDirectories = JsonConvert.DeserializeObject<List<String>>(File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "inputDirectories.json")));
+                InputFolder.Items.Clear();
+                InputFolder.Items.AddRange(_inputDirectories.ToArray());
+            }
+            try
+            {
+                InputFolder.Text = _confighandler.GetConfig("InputDirectory");
+            }
+            catch (Exception)
+            {
+                InputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods";
+            }
+
+            try
+            {
+                OutputFolder.Text = _confighandler.GetConfig("OutputDirectory");
+            }
+            catch (Exception)
+            {
+                OutputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "/SolderHelper";
+            }
+
+            try
+            {
+                CreateTechnicPack.Checked = Convert.ToBoolean(_confighandler.GetConfig("CreateTechnicSolderFiles"));
+                SolderPackType.Visible = CreateTechnicPack.Checked;
+            }
+            catch (Exception)
+            {
+                CreateTechnicPack.Checked = false;
+            }
+
+            try
+            {
+                CreateFTBPack.Checked = Convert.ToBoolean(_confighandler.GetConfig("CreateFTBPack"));
+            }
+            catch (Exception)
+            {
+                CreateFTBPack.Checked = false;
+            }
+
+            Boolean csp = true, cpfp = true, tpp = true, ifv = false, icz = true, cp = false, uftp = false;
+            try
+            {
+                useSolder.Checked = Convert.ToBoolean(_confighandler.GetConfig("useSolder"));
+            }
+            catch (Exception)
+            {
+                useSolder.Checked = false;
+            }
+            if (useSolder.Checked)
+            {
+                configureSolder.Show();
+            }
+            else
+            {
+                configureSolder.Hide();
+            }
+            try
+            {
+                csp = Convert.ToBoolean(_confighandler.GetConfig("CreateSolderPack"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                cpfp = Convert.ToBoolean(_confighandler.GetConfig("CreatePrivateFTBPack"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                tpp = Convert.ToBoolean(_confighandler.GetConfig("TechnicPrivatePermissionsLevel"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                ifv = Convert.ToBoolean(_confighandler.GetConfig("IncludeForgeVersion"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                icz = Convert.ToBoolean(_confighandler.GetConfig("CreateTechnicConfigZip"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                cp = Convert.ToBoolean(_confighandler.GetConfig("CheckTecnicPermissions"));
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                uftp = Convert.ToBoolean(_confighandler.GetConfig("UploadToFTPServer"));
+            }
+            catch
+            {
+            }
+
+            if (csp)
+            {
+                ZipPack.Checked = false;
+                SolderPack.Checked = true;
+            }
+            else
+            {
+                SolderPack.Checked = false;
+                ZipPack.Checked = true;
+            }
+
+            if (cpfp)
+            {
+                PublicFTBPack.Checked = false;
+                PrivateFTBPack.Checked = true;
+            }
+            else
+            {
+                PrivateFTBPack.Checked = false;
+                PublicFTBPack.Checked = true;
+            }
+            if (tpp)
+            {
+                TechnicPublicPermissions.Checked = false;
+                TechnicPrivatePermissions.Checked = true;
+            }
+            else
+            {
+                TechnicPrivatePermissions.Checked = false;
+                TechnicPublicPermissions.Checked = true;
+            }
+            UploadToFTPServer.Checked = uftp;
+            if (UploadToFTPServer.Checked)
+            {
+                configureFTP.Show();
+            }
+            else
+            {
+                configureFTP.Hide();
+            }
+            IncludeForgeVersion.Checked = ifv;
+            IncludeConfigZip.Checked = icz;
+            CheckPermissions.Checked = cp;
+            if (cp && CreateTechnicPack.Checked)
+            {
+                TechnicDistributionLevel.Visible = true;
+            }
+            else
+            {
+                TechnicDistributionLevel.Visible = false;
+            }
+
+            if (SolderPack.Checked)
+            {
+                IncludeForgeVersion.Text = Resources.SolderHelper_SolderHelper_Create_Forge_zip;
+                IncludeConfigZip.Text = Resources.SolderHelper_SolderHelper_Create_Config_zip;
+            }
+            else
+            {
+                IncludeForgeVersion.Text = Resources.SolderHelper_SolderHelper_Include_Forge_in_zip;
+                IncludeConfigZip.Text = Resources.SolderHelper_SolderHelper_Include_Configs_in_zip;
+            }
+            List<String> minecraftversions = _forgeSqlHelper.GetMcVersions();
+            foreach (String mcversion in minecraftversions)
+                MCversion.Items.Add(mcversion);
+
+            if (!CreateTechnicPack.Checked)
+            {
+                MCversion.Hide();
+                ForgeBuild.Hide();
+                labelmcversion.Hide();
+                labelforgeversion.Hide();
+            }
+
+            #endregion
+
+            _startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            _startInfo.FileName = Globalfunctions.IsUnix() ? "unzip" : _sevenZipLocation;
+
+            if (File.Exists(_modpacksJsonFile))
+            {
+                String modpackJson = "";
+                using (StreamReader reader = new StreamReader(_modpacksJsonFile))
+                {
+                    modpackJson = reader.ReadToEnd();
+                }
+                _modpacks = JsonConvert.DeserializeObject<Modpacks>(modpackJson);
+                foreach (String item in _modpacks.Modpack.Keys)
+                {
+                    ModpackNameInput.Items.Add(item);
+                }
+            }
+        }
     }
 }

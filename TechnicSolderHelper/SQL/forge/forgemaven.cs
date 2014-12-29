@@ -1,39 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TechnicSolderHelper.forge
+namespace TechnicSolderHelper.SQL.forge
 {
-    public class forgemaven
+    public class Forgemaven
     {
-        public string homepage { get; set; }
 
-        public string name { get; set; }
+        public Dictionary<int, Number> Number { get; set; }
 
-        public Dictionary<int, Number> number { get; set; }
-
-        public string webpath { get; set; }
+        public string Webpath { get; set; }
     }
 
     public class Number
     {
-        public string branch { get; set; }
 
-        public int build { get; set; }
+        public int Build { get; set; }
 
-        public List<List<String>> files { get; set; }
+        public string Jobver { get; set; }
 
-        public string jobver { get; set; }
+        public string Mcversion { get; set; }
 
-        public string mcversion { get; set; }
+        public string Version { get; set; }
 
-        public string modified { get; set; }
-
-        public string version { get; set; }
-
-        public string downloadurl { get; set; }
+        public string Downloadurl { get; set; }
     }
 
 }

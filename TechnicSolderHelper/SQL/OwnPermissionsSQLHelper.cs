@@ -1,40 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 using Mono.Data.Sqlite;
-using System.Diagnostics;
 
 namespace TechnicSolderHelper.SQL
 {
-    public class OwnPermissionsSQLHelper : SQLHelper
+    public class OwnPermissionsSqlHelper : SqlHelper
     {
-        protected readonly String CreateTableString;
+        private readonly String _createTableString;
 
-        public OwnPermissionsSQLHelper()
-            : base("OwnPermissions", "ownperm")
+        public OwnPermissionsSqlHelper()
+            : base("ownperm")
         {
-            CreateTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, PRIMARY KEY(ID));", this.TableName);
-            executeDatabaseQuery(CreateTableString);
+            _createTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, PRIMARY KEY(ID));", TableName);
+            ExecuteDatabaseQuery(_createTableString);
         }
 
         /// <summary>
         /// Checks if the user already has their own permissions linked
         /// </summary>
-        /// <param name="ModID">
+        /// <param name="modId">
         /// The Mod ID to search for</param>
         /// <returns>Returns a ownPermission object, with hasPermission set to true if the user have permission</returns>
-        public ownPermissions doUserHavePermission(String ModID)
+        public OwnPermissions DoUserHavePermission(String modId)
         {
-            ModID = ModID.Replace("'", "`");
+            modId = modId.Replace("'", "`");
 
-            String sql = String.Format("SELECT PermLink, ModLink FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
+            String sql = String.Format("SELECT PermLink, ModLink FROM {0} WHERE ModID LIKE '{1}';", TableName, modId);
 
             bool didLoopRun = false;
-            ownPermissions p = new ownPermissions();
-            if (isUnix())
+            OwnPermissions p = new OwnPermissions();
+            if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
                 {
@@ -46,7 +41,7 @@ namespace TechnicSolderHelper.SQL
                             while (reader.Read())
                             {
                                 didLoopRun = true;
-                                p.hasPermission = true;
+                                p.HasPermission = true;
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
                                 break;
@@ -67,7 +62,7 @@ namespace TechnicSolderHelper.SQL
                             while (reader.Read())
                             {
                                 didLoopRun = true;
-                                p.hasPermission = true;
+                                p.HasPermission = true;
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
                                 break;
@@ -81,20 +76,17 @@ namespace TechnicSolderHelper.SQL
             {
                 return p;
             }
-            else
-            {
-                p.hasPermission = false;
-                return p;
-            }
+            p.HasPermission = false;
+            return p;
         }
 
-        public String getAuthor(String ModID)
+        public String GetAuthor(String modId)
         {
-            ModID = ModID.Replace("'", "`");
+            modId = modId.Replace("'", "`");
 
-            String sql = String.Format("SELECT ModAuthor FROM {0} WHERE ModID LIKE '{1}';", this.TableName, ModID);
+            String sql = String.Format("SELECT ModAuthor FROM {0} WHERE ModID LIKE '{1}';", TableName, modId);
 
-            if (isUnix())
+            if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
                 {
@@ -131,34 +123,29 @@ namespace TechnicSolderHelper.SQL
             return "";
         }
 
-        public void addOwnModPerm(String ModName, String ModID, String PermissionLink)
+        public void AddOwnModPerm(String modName, String modId, String permissionLink, String modLink = "")
         {
-            addOwnModPerm(ModName, ModID, PermissionLink, "");
+            modName = modName.Replace("'", "`");
+            modId = modId.Replace("'", "`");
+
+            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink, ModLink) VALUES ('{1}','{2}','{3}','{4}');", TableName, modName, modId, permissionLink, modLink);
+
+            ExecuteDatabaseQuery(sql);
         }
 
-        public void addOwnModPerm(String ModName, String ModID, String PermissionLink, String modLink)
+        public void AddAuthor(String modId, String authorName)
         {
-            ModName = ModName.Replace("'", "`");
-            ModID = ModID.Replace("'", "`");
+            modId = modId.Replace("'", "`");
 
-            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink, ModLink) VALUES ('{1}','{2}','{3}','{4}');", this.TableName, ModName, ModID, PermissionLink, modLink);
+            String sql = String.Format("UPDATE {0} SET ModAuthor = '{2}' WHERE ModID LIKE '{1}';", TableName, modId, authorName);
 
-            executeDatabaseQuery(sql);
+            ExecuteDatabaseQuery(sql);
         }
 
-        public void addAuthor(String ModID, String AuthorName)
+        public override void ResetTable()
         {
-            ModID = ModID.Replace("'", "`");
-
-            String sql = String.Format("UPDATE {0} SET ModAuthor = '{2}' WHERE ModID LIKE '{1}';", this.TableName, ModID, AuthorName);
-
-            executeDatabaseQuery(sql);
-        }
-
-        public override void resetTable()
-        {
-            base.resetTable();
-            executeDatabaseQuery(CreateTableString);
+            base.ResetTable();
+            ExecuteDatabaseQuery(_createTableString);
         }
     }
 }

@@ -4,7 +4,7 @@
     {
         Open,
         Notify,
-        FTB,
+        Ftb,
         Request,
         Closed,
         Unknown

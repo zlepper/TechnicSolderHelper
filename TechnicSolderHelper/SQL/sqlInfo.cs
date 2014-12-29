@@ -1,76 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using TechnicSolderHelper.confighandler;
+using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.cryptography;
+using TechnicSolderHelper.Properties;
 
 namespace TechnicSolderHelper.SQL
 {
-    public partial class sqlInfo : Form
+    public partial class SqlInfo : Form
     {
-        public sqlInfo()
+        public SqlInfo()
         {
             InitializeComponent();
             Crypto crypto = new Crypto();
             ConfigHandler ch = new ConfigHandler();
-            this.database.Text = ch.getConfig("mysqlDatabase");
-            this.serveraddress.Text = ch.getConfig("mysqlAddress");
-            this.password.Text = crypto.DecryptString(ch.getConfig("mysqlPassword"));
-            this.username.Text = ch.getConfig("mysqlUsername");
+            database.Text = ch.GetConfig("mysqlDatabase");
+            serveraddress.Text = ch.GetConfig("mysqlAddress");
+            password.Text = crypto.DecryptString(ch.GetConfig("mysqlPassword"));
+            username.Text = ch.GetConfig("mysqlUsername");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (isEverythingFilledIn())
+            if (IsEverythingFilledIn())
             {
-                SolderSQLHandler sqh = new SolderSQLHandler(serveraddress.Text, username.Text, password.Text, database.Text);
-                sqh.testConnection();
+                SolderSqlHandler sqh = new SolderSqlHandler(serveraddress.Text, username.Text, password.Text, database.Text);
+                sqh.TestConnection();
             }
             else
             {
-                MessageBox.Show("Please fill out all the data");
+                MessageBox.Show(Resources.SqlInfo_button1_Click_Please_fill_out_all_the_data);
             }
         }
 
-        private bool isEverythingFilledIn()
+        private bool IsEverythingFilledIn()
         {
-            if (String.IsNullOrWhiteSpace(database.Text) || String.IsNullOrWhiteSpace(serveraddress.Text) || String.IsNullOrWhiteSpace(username.Text))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return !String.IsNullOrWhiteSpace(database.Text) && !String.IsNullOrWhiteSpace(serveraddress.Text) && !String.IsNullOrWhiteSpace(username.Text);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (isEverythingFilledIn())
+            if (IsEverythingFilledIn())
             {
                 ConfigHandler ch = new ConfigHandler();
                 Crypto crypto = new Crypto();
-                ch.setConfig("mysqlUsername", username.Text);
-                ch.setConfig("mysqlPassword", crypto.EncryptToString(password.Text));
-                ch.setConfig("mysqlAddress", serveraddress.Text);
-                ch.setConfig("mysqlDatabase", database.Text);
-                this.Close();
+                ch.SetConfig("mysqlUsername", username.Text);
+                ch.SetConfig("mysqlPassword", crypto.EncryptToString(password.Text));
+                ch.SetConfig("mysqlAddress", serveraddress.Text);
+                ch.SetConfig("mysqlDatabase", database.Text);
+                Close();
             }
             else
             {
-                MessageBox.Show("Please fill out all the data");
+                MessageBox.Show(Resources.SqlInfo_button1_Click_Please_fill_out_all_the_data);
             }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
 
