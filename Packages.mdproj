@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ItemType>PackagingProject</ItemType>
+    <ProjectGuid>{ACB0CA1A-8E18-4ECB-B3D3-53A1AA94F68B}</ProjectGuid>
+    <Packages>
+      <Packages xmlns="">
+        <Package name="TechnicSolderHelper">
+          <Builder targetFile="TechnicSolderHelper.zip" platform="Linux" configuration="Release" ctype="BinariesZipPackageBuilder">
+            <ChildEntries>
+              <SolutionItemReference path="TechnicSolderHelper\TechnicSolderHelper.csproj" />
+            </ChildEntries>
+            <RootEntry path="TechnicSolderHelper.sln" id=":root:" />
+          </Builder>
+        </Package>
+      </Packages>
+    </Packages>
+  </PropertyGroup>
+</Project>
