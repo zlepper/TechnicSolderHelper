@@ -46,7 +46,6 @@ namespace TechnicSolderHelper
         private readonly List<String> _inputDirectories = new List<String>();
         private String _sqlCommandPath = "";
         private int _buildId, _modpackId;
-        private S3 s3service;
 
         #endregion
 
@@ -365,7 +364,8 @@ namespace TechnicSolderHelper
             _process.WaitForExit();
             Directory.Delete(tempModDirectory, true);
 
-            if (mod.HasBeenWritenToModlist) return;
+            if (mod.HasBeenWritenToModlist)
+                return;
             File.AppendAllText(_modlistTextFile, mod.Name + Environment.NewLine);
             mod.HasBeenWritenToModlist = true;
         }
@@ -746,7 +746,7 @@ namespace TechnicSolderHelper
                                     Modid = liteloadermod.Name.Replace(" ", ""),
                                     Name = liteloadermod.Name,
                                     Description = liteloadermod.Description,
-                                    Authors = new List<string> {liteloadermod.Author}
+                                    Authors = new List<string> { liteloadermod.Author }
                                 };
 
                                 if (String.IsNullOrEmpty(liteloadermod.Version) || String.IsNullOrEmpty(liteloadermod.Revision))
@@ -1051,7 +1051,7 @@ namespace TechnicSolderHelper
                                 }
                                 String md5 = SqlHelper.CalculateMd5(outputfile).ToLower();
                                 if (_solderSqlHandler.IsModversionOnline(folderName.ToLower(),
-                                    _modpackName + "-" + _modpackVersion))
+                                        _modpackName + "-" + _modpackVersion))
                                     _solderSqlHandler.UpdateModversionMd5(folderName.ToLower(),
                                         _modpackName + "-" + _modpackVersion, md5);
                                 else
@@ -1374,9 +1374,9 @@ namespace TechnicSolderHelper
                 if (_modpackName == null)
                     configFileName =
                         MakeUrlFriendly(
-                            Prompt.ShowDialog(
-                                "What do you want the file name of the config " + Environment.NewLine + "folder to be?",
-                                "Config FileInfo Name"));
+                        Prompt.ShowDialog(
+                            "What do you want the file name of the config " + Environment.NewLine + "folder to be?",
+                            "Config FileInfo Name"));
                 else
                     configFileName = MakeUrlFriendly(_modpackName) + "-configs";
                 var configVersion = _modpackVersion ?? Prompt.ShowDialog("What is the config version?", "Config Version");
@@ -1403,7 +1403,8 @@ namespace TechnicSolderHelper
 
                 _process.WaitForExit();
 
-                if (!useSolder.Checked) return;
+                if (!useSolder.Checked)
+                    return;
                 int id = _solderSqlHandler.GetModId(configFileName.ToLower());
                 if (id == -1)
                 {
@@ -1459,7 +1460,8 @@ namespace TechnicSolderHelper
             }
 
             // If copying subdirectories, copy them and their contents to new location. 
-            if (!copySubDirs) return;
+            if (!copySubDirs)
+                return;
             foreach (DirectoryInfo subdir in dirs)
             {
                 string temppath = Path.Combine(destDirName, subdir.Name);
@@ -1470,7 +1472,7 @@ namespace TechnicSolderHelper
         private void RequireUserInfo(Mcmod currentData, String file)
         {
 
-            Mcmod mod = new Mcmod {UseShortName = false};
+            Mcmod mod = new Mcmod { UseShortName = false };
             try
             {
                 mod = _modsSqLhelper.GetModInfo(SqlHelper.CalculateMd5(file));
@@ -1529,20 +1531,20 @@ namespace TechnicSolderHelper
             if (currentData.Mcversion != null)
                 mod.Mcversion = currentData.Mcversion;
             else if (mod.Mcversion == null)
-                if (_currentMcVersion == null)
-                {
-                    String a =
-                        String.Format(
-                            "Minecraft Version of {0}" + Environment.NewLine +
-                            "Go bug the mod author to include an mcmod.info file!", fileName);
-                    mod.Mcversion = Prompt.ShowDialog(a, "Minecraft Version", false,
-                        Prompt.ModsLeftString(_totalMods, _currentMod));
-                    _currentMcVersion = mod.Mcversion;
-                }
-                else
-                {
-                    mod.Mcversion = _currentMcVersion;
-                }
+            if (_currentMcVersion == null)
+            {
+                String a =
+                    String.Format(
+                        "Minecraft Version of {0}" + Environment.NewLine +
+                        "Go bug the mod author to include an mcmod.info file!", fileName);
+                mod.Mcversion = Prompt.ShowDialog(a, "Minecraft Version", false,
+                    Prompt.ModsLeftString(_totalMods, _currentMod));
+                _currentMcVersion = mod.Mcversion;
+            }
+            else
+            {
+                mod.Mcversion = _currentMcVersion;
+            }
 
 
             mod.Modid = currentData.Modid ?? mod.Name.Replace(" ", "").ToLower();
@@ -1555,7 +1557,7 @@ namespace TechnicSolderHelper
 
         private void RequireUserInfo(String file)
         {
-            Mcmod mod = new Mcmod {Mcversion = null, Modid = null, Name = null, Version = null};
+            Mcmod mod = new Mcmod { Mcversion = null, Modid = null, Name = null, Version = null };
 
             RequireUserInfo(mod, file);
         }
@@ -1872,7 +1874,8 @@ namespace TechnicSolderHelper
                 Directory.Delete(tempDirectory, true);
             }
 
-            if (mod.HasBeenWritenToModlist) return;
+            if (mod.HasBeenWritenToModlist)
+                return;
             File.AppendAllText(_modlistTextFile, mod.Name + Environment.NewLine);
             mod.HasBeenWritenToModlist = true;
         }
@@ -1898,7 +1901,8 @@ namespace TechnicSolderHelper
         {
             FolderBrowser.SelectedPath = OutputFolder.Text;
             DialogResult result = FolderBrowser.ShowDialog();
-            if (result != DialogResult.OK) return;
+            if (result != DialogResult.OK)
+                return;
             OutputFolder.Text = FolderBrowser.SelectedPath;
             _confighandler.SetConfig("OutputDirectory", OutputFolder.Text);
         }
@@ -1925,7 +1929,8 @@ namespace TechnicSolderHelper
             String superDirectory = InputFolder.Text.Remove(InputFolder.Text.LastIndexOf(Globalfunctions.PathSeperator));
 
 
-            if (!Directory.Exists(superDirectory)) return;
+            if (!Directory.Exists(superDirectory))
+                return;
             List<String> dirs = Directory.GetDirectories(superDirectory).Where(dir => !dir.EndsWith("mods") && !dir.EndsWith("config")).ToList();
             _additionalDirectories.Clear();
             int c = 0;
@@ -1935,12 +1940,12 @@ namespace TechnicSolderHelper
                 {
                     String dirname = dirs[c].Substring(dirs[c].LastIndexOf(Globalfunctions.PathSeperator) + 1);
                     _additionalDirectories.Add(dirs[c], new CheckBox
-                    {
-                        Left = 20,
-                        Top = i,
-                        Height = 20,
-                        Text = dirname
-                    });
+                        {
+                            Left = 20,
+                            Top = i,
+                            Height = 20,
+                            Text = dirname
+                        });
                 }
                 c++;
             }
@@ -1950,12 +1955,12 @@ namespace TechnicSolderHelper
             if (File.Exists(serversDat))
             {
                 _additionalDirectories.Add(serversDat, new CheckBox
-                {
-                    Left = 20,
-                    Top = c * 23 + 23,
-                    Height = 20,
-                    Text = @"Servers.dat file"
-                });
+                    {
+                        Left = 20,
+                        Top = c * 23 + 23,
+                        Height = 20,
+                        Text = @"Servers.dat file"
+                    });
             }
             groupBox1.Controls.Clear();
             foreach (CheckBox cb in _additionalDirectories.Values)
