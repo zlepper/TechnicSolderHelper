@@ -1273,12 +1273,21 @@ namespace TechnicSolderHelper
                 _ftp.UploadFolder(Path.Combine(_outputDirectory, "mods"));
 
             }
+
+            if (CreateTechnicPack.Checked && SolderPack.Checked && UseS3.Checked)
+            {
+                ProgressLabel.Text = "Uploading to s3.";
+                S3 s3Client = new S3();
+                s3Client.UploadFolder(Path.Combine(_outputDirectory, "mods"));
+            }
+
+
             ProgressLabel.Text = @"Waiting...";
 
             InputFolder.Items.Clear();
             try
             {
-                InputFolder.Items.AddRange(items: _inputDirectories.ToArray());
+                InputFolder.Items.AddRange(_inputDirectories.ToArray());
             }
             catch
             {

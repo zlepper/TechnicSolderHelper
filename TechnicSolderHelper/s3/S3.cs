@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -28,6 +29,7 @@ namespace TechnicSolderHelper.s3
             _accessKey = crypto.DecryptString(ch.GetConfig("S3accessKey"));
             _secretKey = crypto.DecryptString(ch.GetConfig("S3secretKey"));
             String url = ch.GetConfig("S3url");
+            Bucket = ch.GetConfig("S3Bucket");
             var config = new AmazonS3Config {ServiceURL = url};
             client = AWSClientFactory.CreateAmazonS3Client(_accessKey, _secretKey, config) as AmazonS3Client;
         }
@@ -55,17 +57,33 @@ namespace TechnicSolderHelper.s3
 
         public void CreateNewBucket(String bucketName)
         {
-            PutBucketRequest request = new PutBucketRequest {BucketName = bucketName};
-            client.PutBucket(request);
+            try
+            {
+                PutBucketRequest request = new PutBucketRequest {BucketName = bucketName};
+                client.PutBucket(request);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(string.Format("Could not create bucket:\n{0}", exception.Message));
+            }
         }
 
         public void UploadFolder(String folderPath)
         {
-            TransferUtility directoryTransferUtility = new TransferUtility(client);
             MessageToUser m = new MessageToUser();
             Thread startingThread = new Thread(m.UploadToS3);
             startingThread.Start();
-            directoryTransferUtility.UploadDirectory(folderPath, Bucket, "*.zip", SearchOption.AllDirectories);
+            TransferUtilityUploadDirectoryRequest request = new TransferUtilityUploadDirectoryRequest()
+            {
+                BucketName = Bucket,
+                Directory = folderPath,
+                SearchOption = SearchOption.AllDirectories,
+                SearchPattern = "*.zip",
+                KeyPrefix = "mods"
+            };
+            TransferUtility directorytTransferUtility = new TransferUtility(client);
+            directorytTransferUtility.UploadDirectory(request);
+            MessageBox.Show("Done uploading files to s3");
         }
     }
 }
