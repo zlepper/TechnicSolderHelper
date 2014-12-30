@@ -14,6 +14,7 @@ using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.SQL.forge;
 using TechnicSolderHelper.FileUpload;
 using TechnicSolderHelper.Properties;
+using TechnicSolderHelper.s3;
 using FileInfo = System.IO.FileInfo;
 using TechnicSolderHelper.SQL.liteloader;
 
@@ -45,6 +46,7 @@ namespace TechnicSolderHelper
         private readonly List<String> _inputDirectories = new List<String>();
         private String _sqlCommandPath = "";
         private int _buildId, _modpackId;
+        private S3 s3service;
 
         #endregion
 
@@ -2216,5 +2218,16 @@ namespace TechnicSolderHelper
             _confighandler.SetConfig("saveSQL", savesqlcommands.Checked);
         }
 
+        private void UseS3_CheckedChanged(object sender, EventArgs e)
+        {
+            _confighandler.SetConfig("useS3", UseS3.Checked);
+            ConfigureS3.Visible = UseS3.Checked;
+        }
+
+        private void ConfigureS3_Click(object sender, EventArgs e)
+        {
+            Form f = new S3Info();
+            f.Show();
+        }
     }
 }

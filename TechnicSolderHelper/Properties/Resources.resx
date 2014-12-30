@@ -176,4 +176,7 @@
   <data name="FtpInfo_Acceptbutton_Click_Please_fill_out_all_values" xml:space="preserve">
     <value>Please fill out all values</value>
   </data>
+  <data name="MessageToUser_UploadToS3_Uploading_files_to_s3" xml:space="preserve">
+    <value>Uploading files to s3</value>
+  </data>
 </root>

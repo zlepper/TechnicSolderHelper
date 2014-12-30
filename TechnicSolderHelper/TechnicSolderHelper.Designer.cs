@@ -86,6 +86,8 @@ namespace TechnicSolderHelper
             this.useSolder = new System.Windows.Forms.CheckBox();
             this.configureSolder = new System.Windows.Forms.Button();
             this.savesqlcommands = new System.Windows.Forms.CheckBox();
+            this.UseS3 = new System.Windows.Forms.CheckBox();
+            this.ConfigureS3 = new System.Windows.Forms.Button();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
@@ -583,11 +585,34 @@ namespace TechnicSolderHelper
             this.savesqlcommands.Visible = false;
             this.savesqlcommands.CheckedChanged += new System.EventHandler(this.savesqlcommands_CheckedChanged);
             // 
+            // UseS3
+            // 
+            this.UseS3.AutoSize = true;
+            this.UseS3.Location = new System.Drawing.Point(168, 375);
+            this.UseS3.Name = "UseS3";
+            this.UseS3.Size = new System.Drawing.Size(61, 17);
+            this.UseS3.TabIndex = 29;
+            this.UseS3.Text = "Use S3";
+            this.UseS3.UseVisualStyleBackColor = true;
+            this.UseS3.CheckedChanged += new System.EventHandler(this.UseS3_CheckedChanged);
+            // 
+            // ConfigureS3
+            // 
+            this.ConfigureS3.Location = new System.Drawing.Point(168, 399);
+            this.ConfigureS3.Name = "ConfigureS3";
+            this.ConfigureS3.Size = new System.Drawing.Size(103, 23);
+            this.ConfigureS3.TabIndex = 30;
+            this.ConfigureS3.Text = "Configure S3";
+            this.ConfigureS3.UseVisualStyleBackColor = true;
+            this.ConfigureS3.Click += new System.EventHandler(this.ConfigureS3_Click);
+            // 
             // SolderHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 464);
+            this.Controls.Add(this.ConfigureS3);
+            this.Controls.Add(this.UseS3);
             this.Controls.Add(this.savesqlcommands);
             this.Controls.Add(this.configureSolder);
             this.Controls.Add(this.useSolder);
@@ -773,7 +798,7 @@ namespace TechnicSolderHelper
                 CreateFTBPack.Checked = false;
             }
 
-            Boolean csp = true, cpfp = true, tpp = true, ifv = false, icz = true, cp = false, uftp = false;
+            Boolean csp = true, cpfp = true, tpp = true, ifv = false, icz = true, cp = false, uftp = false, uses3 = false;
             try
             {
                 useSolder.Checked = Convert.ToBoolean(_confighandler.GetConfig("useSolder"));
@@ -839,7 +864,24 @@ namespace TechnicSolderHelper
             catch
             {
             }
+            try
+            {
+                uses3 = Convert.ToBoolean(_confighandler.GetConfig("useS3"));
+            }
+            catch
+            {
+            }
 
+            if (uses3)
+            {
+                UseS3.Checked = true;
+                ConfigureS3.Show();
+            }
+            else
+            {
+                UseS3.Checked = false;
+                ConfigureS3.Hide();
+            }
             if (csp)
             {
                 ZipPack.Checked = false;
@@ -933,5 +975,8 @@ namespace TechnicSolderHelper
                 }
             }
         }
+
+        private CheckBox UseS3;
+        private Button ConfigureS3;
     }
 }

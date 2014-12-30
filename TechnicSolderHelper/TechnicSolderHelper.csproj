@@ -126,6 +126,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK">
+      <HintPath>..\packages\AWSSDK.2.3.14.0\lib\net45\AWSSDK.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Mono-3.2.3\lib\mono\4.5\Mono.Data.Sqlite.dll</HintPath>
@@ -181,6 +184,13 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="s3\S3.cs" />
+    <Compile Include="s3\S3Info.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="s3\S3Info.Designer.cs">
+      <DependentUpon>S3Info.cs</DependentUpon>
     </Compile>
     <Compile Include="SQL\excelReader.cs" />
     <Compile Include="SQL\FTBPermissionsSQLHelper.cs" />
@@ -285,6 +295,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="s3\S3Info.resx">
+      <DependentUpon>S3Info.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SQL\sqlInfo.resx">
       <DependentUpon>sqlInfo.cs</DependentUpon>

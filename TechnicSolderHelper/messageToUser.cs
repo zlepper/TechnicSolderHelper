@@ -16,6 +16,11 @@ namespace TechnicSolderHelper
             MessageBox.Show(Resources.MessageToUser_UploadingToFtp_Uploading_stuff_to_FTP);
             Console.WriteLine(Resources.MessageToUser_UploadingToFtp_Yep__i_m_uploading_all_the_things___);
         }
+
+        public void UploadToS3()
+        {
+            MessageBox.Show("Uploading files to s3");
+        }
     }
 }
 
