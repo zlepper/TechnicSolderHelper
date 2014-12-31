@@ -31,7 +31,7 @@ namespace TechnicSolderHelper
                     File.AppendAllText(errorLocation, Environment.NewLine + e.InnerException);
                 }
                 Process.Start(errorLocation);
-                MessageBox.Show(Resources.Program_Main_An_unknown_error_occured__Please_check_the_error_log_on_you_desktop_ + Environment.NewLine + Resources.Program_Main_It_should_have_opened_by_itself_);
+                MessageBox.Show("An unknown error occured  Please check the error log on you desktop" + Environment.NewLine + "It should have opened by itself");
             }
 
         }

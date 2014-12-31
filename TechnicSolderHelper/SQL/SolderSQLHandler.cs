@@ -56,13 +56,9 @@ namespace TechnicSolderHelper.SQL
         {
             List<String> tables = new List<string>
             {
-                "users",
-                "user_permissions",
                 "modversions",
                 "mods",
                 "modpacks",
-                "migrations",
-                "keys",
                 "clients",
                 "client_modpack",
                 "builds",
@@ -87,10 +83,10 @@ namespace TechnicSolderHelper.SQL
                             }
                             if (tables.Count == 0)
                             {
-                                MessageBox.Show(Resources.SolderSqlHandler_TestConnection_The_database_is_alright_);
+                                MessageBox.Show("The database isalright");
                                 return;
                             }
-                            MessageBox.Show(Resources.SolderSqlHandler_TestConnection_Some_tables_appears_to_be_missing_in_the_database__Please_reconstruct_it_and_try_again_);
+                            MessageBox.Show("Some tables appears to be missing in the database. Please reconstruct it and try again.");
                         }
                     }
                 }

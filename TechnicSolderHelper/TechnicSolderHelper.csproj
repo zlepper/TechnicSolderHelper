@@ -34,7 +34,7 @@
     <PublisherName>Rasmus Hansen</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>11</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>1.0.3.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -180,11 +180,6 @@
     <Compile Include="Litemod.cs" />
     <Compile Include="Modlist.cs" />
     <Compile Include="PermLevel.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="s3\S3.cs" />
     <Compile Include="s3\S3Info.cs">
       <SubType>Form</SubType>
@@ -290,10 +285,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="s3\S3Info.resx">
       <DependentUpon>S3Info.cs</DependentUpon>
     </EmbeddedResource>

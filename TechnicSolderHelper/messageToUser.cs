@@ -8,13 +8,12 @@ namespace TechnicSolderHelper
     {
         public void FirstTimeRun()
         {
-            MessageBox.Show(Resources.MessageToUser_FirstTimeRun_This_is_the_first_time_you_are_running_the_problem__so_it_might_take_a_while_to_start__since_it_needs_to_build_some_databases_);
+            MessageBox.Show("This is the first time you are running SolderHelper so it might take a while to start  since it needs to build some databases.");
         }
 
         public void UploadingToFtp()
         {
-            MessageBox.Show(Resources.MessageToUser_UploadingToFtp_Uploading_stuff_to_FTP);
-            Console.WriteLine(Resources.MessageToUser_UploadingToFtp_Yep__i_m_uploading_all_the_things___);
+            MessageBox.Show("Uploading stuff to FTP");
         }
 
         public void UploadToS3()

@@ -28,7 +28,7 @@ namespace TechnicSolderHelper.SQL
             }
             else
             {
-                MessageBox.Show(Resources.SqlInfo_button1_Click_Please_fill_out_all_the_data);
+                MessageBox.Show("Please_fill_out_all_the_data");
             }
         }
 
@@ -51,7 +51,7 @@ namespace TechnicSolderHelper.SQL
             }
             else
             {
-                MessageBox.Show(Resources.SqlInfo_button1_Click_Please_fill_out_all_the_data);
+                MessageBox.Show("Please fill out all the data");
             }
         }
 

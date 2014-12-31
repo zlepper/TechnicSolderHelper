@@ -167,11 +167,11 @@ namespace TechnicSolderHelper
                                             CreateFtbPermissionInfo(mod.Name, mod.Modid, a, overwritelink);
                                             break;
                                         }
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Not_an_imgur_link);
+                                        MessageBox.Show("Not an imgur link");
                                     }
                                     else
                                     {
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Invalid_url);
+                                        MessageBox.Show("Invalid url");
                                     }
                                     overwritelink = Prompt.ShowDialog(string.Format("{0} requires that you notify the author of inclusion.{1}Please provide proof that you have done this:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
@@ -207,11 +207,11 @@ namespace TechnicSolderHelper
                                             CreateFtbPermissionInfo(mod.Name, mod.Modid, a, overwritelink);
                                             break;
                                         }
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Not_an_imgur_link);
+                                        MessageBox.Show("Not an imgur link");
                                     }
                                     else
                                     {
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Invalid_url);
+                                        MessageBox.Show("Invalid url");
                                     }
                                     overwritelink = Prompt.ShowDialog(string.Format("This mod requires that you request permissions from the Mod Author of {0}{1}Please provide proof that you have this permission:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
@@ -245,11 +245,11 @@ namespace TechnicSolderHelper
                                             CreateFtbPermissionInfo(mod.Name, mod.Modid, a, overwritelink);
                                             break;
                                         }
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Not_an_imgur_link);
+                                        MessageBox.Show("Not an imgur link");
                                     }
                                     else
                                     {
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Invalid_url);
+                                        MessageBox.Show("Invalid url");
                                     }
                                     overwritelink = Prompt.ShowDialog(string.Format("The FTB permissionsheet states that permissions for {0} is closed.{1}Please provide proof that this is not the case:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
@@ -279,11 +279,11 @@ namespace TechnicSolderHelper
                                         {
                                             break;
                                         }
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Not_an_imgur_link);
+                                        MessageBox.Show("Not an imgur link");
                                     }
                                     else
                                     {
-                                        MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Invalid_url);
+                                        MessageBox.Show("Invalid url");
                                     }
                                     overwritelink = Prompt.ShowDialog(string.Format("Permissions for {0} is unknown{1}Please provide proof of permissions:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
@@ -302,7 +302,7 @@ namespace TechnicSolderHelper
                                         break;
 
                                     }
-                                    MessageBox.Show(Resources.SolderHelper_CreateFtbPackZip_Invalid_url);
+                                    MessageBox.Show("Invalid url");
                                     
                                 }
                                 String a = GetAuthors(mod);
@@ -383,7 +383,7 @@ namespace TechnicSolderHelper
             Environment.CurrentDirectory = Globalfunctions.IsUnix() ? "/" : "C:\\";
             if (!Directory.Exists(InputFolder.Text))
             {
-                MessageBox.Show(Resources.SolderHelper_Start_Input_directory_does_not_exist_);
+                MessageBox.Show("Input directory does not exist.");
                 return;
             }
             if (!_inputDirectories.Contains(_inputDirectory))
@@ -400,7 +400,7 @@ namespace TechnicSolderHelper
                     }
                     catch (Exception)
                     {
-                        MessageBox.Show(Resources.SolderHelper_Start_Unable_to_clear_solderDirectory_ + Environment.NewLine + Resources.SolderHelper_Start_Please_restart_the_process_when_the_directory_is_no_longer_in_use_);
+                        MessageBox.Show("Unable to clear solderDirectory." + Environment.NewLine + "Please restart the process when the directory is no longer in use.");
                         return;
                     }
                 }
@@ -410,19 +410,19 @@ namespace TechnicSolderHelper
                 var tmp = _confighandler.GetConfig("ftpUrl");
                 if (String.IsNullOrWhiteSpace(tmp))
                 {
-                    MessageBox.Show(Resources.SolderHelper_Start_You_do_not_have_an_uploadurl_set_for_your_FTP_address_);
+                    MessageBox.Show("You do not have an uploadurl set for your FTP address.");
                     return;
                 }
                 tmp = _confighandler.GetConfig("ftpUserName");
                 if (String.IsNullOrWhiteSpace(tmp))
                 {
-                    MessageBox.Show(Resources.SolderHelper_Start_You_do_not_have_an_username_set_for_your_FTP_address_);
+                    MessageBox.Show("You do not have an username set for your FTP address.");
                     return;
                 }
                 tmp = _confighandler.GetConfig("ftpPassword");
                 if (String.IsNullOrWhiteSpace(tmp))
                 {
-                    MessageBox.Show(Resources.SolderHelper_Start_You_do_not_have_an_password_set_for_your_FTP_address_);
+                    MessageBox.Show("You do not have an password set for your FTP address.");
                     return;
                 }
 
@@ -432,12 +432,12 @@ namespace TechnicSolderHelper
             {
                 if (MCversion.SelectedItem == null)
                 {
-                    MessageBox.Show(Resources.SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_selected_a_Minecraft_Version_);
+                    MessageBox.Show("You have choosen to include Minecraft Forge, but you haven't selected a Minecraft Version.");
                     return;
                 }
                 if (ForgeBuild.SelectedItem == null)
                 {
-                    MessageBox.Show(Resources.SolderHelper_Start_You_have_choosen_to_include_Minecraft_Forge__but_you_haven_t_selected_a_Forge_build_to_include_);
+                    MessageBox.Show("You have choosen to include Minecraft Forge, but you haven't selected a Forge build to include.");
                     return;
                 }
             }
@@ -1133,7 +1133,7 @@ namespace TechnicSolderHelper
                 }
                 catch (DirectoryNotFoundException)
                 {
-                    MessageBox.Show(Resources.SolderHelper_Start_I_can_t_seem_to_find_a_config_directory_for_the_FTB_pack_);
+                    MessageBox.Show("I can't seem to find a config directory for the FTB pack.");
                 }
 
                 Environment.CurrentDirectory = _outputDirectory;
@@ -1260,7 +1260,7 @@ namespace TechnicSolderHelper
             }
             if (CreateTechnicPack.Checked && SolderPack.Checked && UploadToFTPServer.Checked)
             {
-                ProgressLabel.Text = Resources.SolderHelper_Start_Uploading_to_FTP_Server;
+                ProgressLabel.Text = "Start Uploading to FTP Server";
                 if (_ftp == null)
                 {
                     _ftp = new Ftp();
@@ -2061,13 +2061,13 @@ namespace TechnicSolderHelper
 
             if (SolderPack.Checked)
             {
-                IncludeForgeVersion.Text = Resources.SolderHelper_SolderHelper_Create_Forge_zip;
-                IncludeConfigZip.Text = Resources.SolderHelper_SolderHelper_Create_Config_zip;
+                IncludeForgeVersion.Text = "Create Forge zip";
+                IncludeConfigZip.Text = "Create Config zip";
             }
             else
             {
-                IncludeForgeVersion.Text = Resources.SolderHelper_SolderHelper_Include_Forge_in_zip;
-                IncludeConfigZip.Text = Resources.SolderHelper_SolderHelper_Include_Configs_in_zip;
+                IncludeForgeVersion.Text = "Include Forge in zip";
+                IncludeConfigZip.Text = "Include Configs in zip";
             }
         }
 

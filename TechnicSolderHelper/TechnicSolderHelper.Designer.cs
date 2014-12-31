@@ -608,6 +608,7 @@ namespace TechnicSolderHelper
             // 
             // SolderHelper
             // 
+            this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 464);
@@ -936,13 +937,13 @@ namespace TechnicSolderHelper
 
             if (SolderPack.Checked)
             {
-                IncludeForgeVersion.Text = Resources.SolderHelper_SolderHelper_Create_Forge_zip;
-                IncludeConfigZip.Text = Resources.SolderHelper_SolderHelper_Create_Config_zip;
+                IncludeForgeVersion.Text = "Create Forge zip";
+                IncludeConfigZip.Text = "Create Config zip";
             }
             else
             {
-                IncludeForgeVersion.Text = Resources.SolderHelper_SolderHelper_Include_Forge_in_zip;
-                IncludeConfigZip.Text = Resources.SolderHelper_SolderHelper_Include_Configs_in_zip;
+                IncludeForgeVersion.Text = "Include Forge in zip";
+                IncludeConfigZip.Text = "Include Configs in zip";
             }
             List<String> minecraftversions = _forgeSqlHelper.GetMcVersions();
             foreach (String mcversion in minecraftversions)

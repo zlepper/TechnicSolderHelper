@@ -30,7 +30,7 @@ namespace TechnicSolderHelper
             prompt.Controls.Add(confirmation);
             prompt.Controls.Add(textLabel);
             prompt.AcceptButton = confirmation;
-            Button skip = new Button { Text = Resources.Prompt_ShowDialog_Skip, Left = 240, Width = 100, Top = 110, Visible = showSkip };
+            Button skip = new Button { Text = "Skip", Left = 240, Width = 100, Top = 110, Visible = showSkip };
             skip.Click += (sender, e) =>
             {
                 textBox.Text = @"skip";
