@@ -1354,6 +1354,10 @@ namespace TechnicSolderHelper
             if (String.IsNullOrWhiteSpace(mod.Name) || String.IsNullOrWhiteSpace(mod.Version) ||
                 String.IsNullOrWhiteSpace(mod.Mcversion) || String.IsNullOrWhiteSpace(mod.Modid))
                 return false;
+            if (mod.Name.Contains("${") || mod.Version.Contains("${") || mod.Mcversion.Contains("${") || mod.Modid.Contains("${"))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -1495,28 +1499,29 @@ namespace TechnicSolderHelper
             }
 
 
-            if (currentData.Name != null)
+            if (currentData.Name != null && !currentData.Name.Contains("${"))
             {
                 mod.Name = currentData.Name;
 
             }
             else
             {
-                if (mod.Name == null)
+                if (mod.Name == null || currentData.Name.Contains("${"))
                 {
                     String a = string.Format("Mod name of {0}{1}Go bug the mod author to include an mcmod.info file!", fileName, Environment.NewLine);
                     mod.Name = Prompt.ShowDialog(a, "Mod Name", false, Prompt.ModsLeftString(_totalMods, _currentMod));
+                    currentData.Name = mod.Name;
                     if (mod.Name.Equals(""))
                         return;
                 }
 
             }
 
-            if (currentData.Version != null)
+            if (currentData.Version != null && !currentData.Version.Contains("${"))
                 mod.Version = currentData.Version.Replace(" ", "+").ToLower();
             else
             {
-                if (mod.Version == null)
+                if (mod.Version == null || currentData.Version.Contains("${"))
                 {
                     String a =
                         String.Format(
@@ -1528,9 +1533,9 @@ namespace TechnicSolderHelper
                 }
             }
 
-            if (currentData.Mcversion != null)
+            if (currentData.Mcversion != null && !currentData.Mcversion.Contains("${"))
                 mod.Mcversion = currentData.Mcversion;
-            else if (mod.Mcversion == null)
+            else if (mod.Mcversion == null || currentData.Mcversion.Contains("${"))
             if (_currentMcVersion == null)
             {
                 String a =
@@ -1540,14 +1545,20 @@ namespace TechnicSolderHelper
                 mod.Mcversion = Prompt.ShowDialog(a, "Minecraft Version", false,
                     Prompt.ModsLeftString(_totalMods, _currentMod));
                 _currentMcVersion = mod.Mcversion;
+                currentData.Mcversion = _currentMcVersion;
             }
             else
             {
                 mod.Mcversion = _currentMcVersion;
+                currentData.Mcversion = _currentMcVersion;
             }
 
 
-            mod.Modid = currentData.Modid ?? mod.Name.Replace(" ", "").ToLower();
+            //mod.Modid = currentData.Modid ?? mod.Name.Replace(" ", "").ToLower();
+            if ((mod.Modid.Contains("${") || currentData.Modid.Contains("${")) || String.IsNullOrWhiteSpace(mod.Modid))
+            {
+                mod.Modid = mod.Name.Replace(" ", "").ToLower();
+            }
 
             if (CreateTechnicPack.Checked)
                 CreateTechnicModZip(mod, file);
