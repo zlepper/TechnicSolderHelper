@@ -1555,7 +1555,7 @@ namespace TechnicSolderHelper
 
 
             //mod.Modid = currentData.Modid ?? mod.Name.Replace(" ", "").ToLower();
-            if ((mod.Modid.Contains("${") || currentData.Modid.Contains("${")) || String.IsNullOrWhiteSpace(mod.Modid))
+            if (String.IsNullOrWhiteSpace(mod.Modid) || (mod.Modid.Contains("${") || currentData.Modid.Contains("${")))
             {
                 mod.Modid = mod.Name.Replace(" ", "").ToLower();
             }
