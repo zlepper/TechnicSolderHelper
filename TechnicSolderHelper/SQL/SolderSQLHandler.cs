@@ -76,14 +76,26 @@ namespace TechnicSolderHelper.SQL
                         {
                             Debug.WriteLine("Connection succesful");
                             string s = "Tables_in_" + _database;
+                            List<String> databaseList = new List<string>();
                             while (reader.Read())
                             {
                                 Debug.WriteLine(reader[s]);
-                                tables.Remove(reader[s].ToString());
+                                //tables.Remove(reader[s].ToString());
+                                databaseList.Add(reader[s].ToString());
+                            }
+                            foreach (string database in databaseList)
+                            {
+                                for (int i = 0; i < tables.Count; i++)
+                                {
+                                    if (tables[i].Contains(database))
+                                    {
+                                        tables.RemoveAt(i);
+                                    }
+                                }
                             }
                             if (tables.Count == 0)
                             {
-                                MessageBox.Show("The database isalright");
+                                MessageBox.Show("The database is alright");
                                 return;
                             }
                             MessageBox.Show("Some tables appears to be missing in the database. Please reconstruct it and try again.");
