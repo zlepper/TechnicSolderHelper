@@ -365,7 +365,6 @@ namespace TechnicSolderHelper
             this.labelforgeversion.Size = new System.Drawing.Size(72, 13);
             this.labelforgeversion.TabIndex = 16;
             this.labelforgeversion.Text = "Forge Version";
-            this.labelforgeversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             // 
             // labelmcversion
             // 
@@ -375,7 +374,6 @@ namespace TechnicSolderHelper
             this.labelmcversion.Size = new System.Drawing.Size(57, 13);
             this.labelmcversion.TabIndex = 15;
             this.labelmcversion.Text = "MCversion";
-            this.labelmcversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             // 
             // ForgeBuild
             // 
@@ -384,7 +382,6 @@ namespace TechnicSolderHelper
             this.ForgeBuild.Name = "ForgeBuild";
             this.ForgeBuild.Size = new System.Drawing.Size(123, 30);
             this.ForgeBuild.TabIndex = 0;
-            this.ForgeBuild.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             // 
             // MCversion
             // 
@@ -393,7 +390,6 @@ namespace TechnicSolderHelper
             this.MCversion.Name = "MCversion";
             this.MCversion.Size = new System.Drawing.Size(123, 30);
             this.MCversion.TabIndex = 1;
-            this.MCversion.Visible = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             this.MCversion.SelectedIndexChanged += new System.EventHandler(this.MCversion_SelectedIndexChanged);
             // 
             // TechnicDistributionLevel
@@ -406,7 +402,6 @@ namespace TechnicSolderHelper
             this.TechnicDistributionLevel.TabIndex = 7;
             this.TechnicDistributionLevel.TabStop = false;
             this.TechnicDistributionLevel.Text = "Permissions Level";
-            this.TechnicDistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
             // 
             // TechnicPublicPermissions
             // 
@@ -441,7 +436,6 @@ namespace TechnicSolderHelper
             this.DistributionLevel.TabIndex = 11;
             this.DistributionLevel.TabStop = false;
             this.DistributionLevel.Text = "Distribution Level";
-            this.DistributionLevel.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateFTBPack;
             // 
             // PublicFTBPack
             // 
@@ -479,12 +473,10 @@ namespace TechnicSolderHelper
             this.SolderPackType.TabIndex = 10;
             this.SolderPackType.TabStop = false;
             this.SolderPackType.Text = "Pack Type";
-            this.SolderPackType.Visible = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicSolderFiles;
             // 
             // IncludeForgeVersion
             // 
             this.IncludeForgeVersion.AutoSize = true;
-            this.IncludeForgeVersion.Checked = global::TechnicSolderHelper.Properties.Settings.Default.IncludeForgeVersion;
             this.IncludeForgeVersion.Location = new System.Drawing.Point(20, 65);
             this.IncludeForgeVersion.Name = "IncludeForgeVersion";
             this.IncludeForgeVersion.Size = new System.Drawing.Size(109, 17);
@@ -496,7 +488,6 @@ namespace TechnicSolderHelper
             // CheckPermissions
             // 
             this.CheckPermissions.AutoSize = true;
-            this.CheckPermissions.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CheckTecnicPermissions;
             this.CheckPermissions.Location = new System.Drawing.Point(20, 111);
             this.CheckPermissions.Name = "CheckPermissions";
             this.CheckPermissions.Size = new System.Drawing.Size(114, 17);
@@ -531,7 +522,6 @@ namespace TechnicSolderHelper
             // IncludeConfigZip
             // 
             this.IncludeConfigZip.AutoSize = true;
-            this.IncludeConfigZip.Checked = global::TechnicSolderHelper.Properties.Settings.Default.CreateTechnicConfigZip;
             this.IncludeConfigZip.CheckState = System.Windows.Forms.CheckState.Checked;
             this.IncludeConfigZip.Location = new System.Drawing.Point(20, 88);
             this.IncludeConfigZip.Name = "IncludeConfigZip";
