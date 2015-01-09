@@ -789,7 +789,7 @@ namespace TechnicSolderHelper
                 CreateFTBPack.Checked = false;
             }
 
-            Boolean csp = true, cpfp = true, tpp = true, ifv = false, icz = true, cp = false, uftp = false, uses3 = false;
+            Boolean createSolderHelper = true, createPrivateFtbPack = true, technicPrivatePermissionsLevel = true, includeForgeVersion = false, createTechnicConfigZip = true, checkTecnicPermissions = false, uploadToFTPServer = false, uses3 = false, createFtbPack = false;
             try
             {
                 useSolder.Checked = Convert.ToBoolean(_confighandler.GetConfig("useSolder"));
@@ -808,49 +808,58 @@ namespace TechnicSolderHelper
             }
             try
             {
-                csp = Convert.ToBoolean(_confighandler.GetConfig("CreateSolderPack"));
+                createSolderHelper = Convert.ToBoolean(_confighandler.GetConfig("CreateSolderPack"));
             }
             catch (Exception)
             {
             }
             try
             {
-                cpfp = Convert.ToBoolean(_confighandler.GetConfig("CreatePrivateFTBPack"));
+                createFtbPack = Convert.ToBoolean(_confighandler.GetConfig("CreateFTBPack"));
+            }
+            catch (Exception)
+            {
+                
+            }
+            try
+            {
+                createPrivateFtbPack = Convert.ToBoolean(_confighandler.GetConfig("CreatePrivateFTBPack"));
             }
             catch (Exception)
             {
             }
             try
             {
-                tpp = Convert.ToBoolean(_confighandler.GetConfig("TechnicPrivatePermissionsLevel"));
+                technicPrivatePermissionsLevel = Convert.ToBoolean(_confighandler.GetConfig("TechnicPrivatePermissionsLevel"));
             }
             catch (Exception)
             {
             }
             try
             {
-                ifv = Convert.ToBoolean(_confighandler.GetConfig("IncludeForgeVersion"));
+                includeForgeVersion = Convert.ToBoolean(_confighandler.GetConfig("IncludeForgeVersion"));
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                createTechnicConfigZip = Convert.ToBoolean(_confighandler.GetConfig("CreateTechnicConfigZip"));
             }
             catch (Exception)
             {
             }
             try
             {
-                icz = Convert.ToBoolean(_confighandler.GetConfig("CreateTechnicConfigZip"));
+                checkTecnicPermissions = Convert.ToBoolean(_confighandler.GetConfig("CheckTecnicPermissions"));
             }
             catch (Exception)
             {
             }
             try
             {
-                cp = Convert.ToBoolean(_confighandler.GetConfig("CheckTecnicPermissions"));
-            }
-            catch (Exception)
-            {
-            }
-            try
-            {
-                uftp = Convert.ToBoolean(_confighandler.GetConfig("UploadToFTPServer"));
+                uploadToFTPServer = Convert.ToBoolean(_confighandler.GetConfig("UploadToFTPServer"));
             }
             catch
             {
@@ -873,7 +882,7 @@ namespace TechnicSolderHelper
                 UseS3.Checked = false;
                 ConfigureS3.Hide();
             }
-            if (csp)
+            if (createSolderHelper)
             {
                 ZipPack.Checked = false;
                 SolderPack.Checked = true;
@@ -883,8 +892,15 @@ namespace TechnicSolderHelper
                 SolderPack.Checked = false;
                 ZipPack.Checked = true;
             }
-
-            if (cpfp)
+            if (createFtbPack)
+            {
+                DistributionLevel.Show();
+            }
+            else
+            {
+                DistributionLevel.Hide();
+            }
+            if (createPrivateFtbPack)
             {
                 PublicFTBPack.Checked = false;
                 PrivateFTBPack.Checked = true;
@@ -894,7 +910,7 @@ namespace TechnicSolderHelper
                 PrivateFTBPack.Checked = false;
                 PublicFTBPack.Checked = true;
             }
-            if (tpp)
+            if (technicPrivatePermissionsLevel)
             {
                 TechnicPublicPermissions.Checked = false;
                 TechnicPrivatePermissions.Checked = true;
@@ -904,7 +920,7 @@ namespace TechnicSolderHelper
                 TechnicPrivatePermissions.Checked = false;
                 TechnicPublicPermissions.Checked = true;
             }
-            UploadToFTPServer.Checked = uftp;
+            UploadToFTPServer.Checked = uploadToFTPServer;
             if (UploadToFTPServer.Checked)
             {
                 configureFTP.Show();
@@ -913,10 +929,10 @@ namespace TechnicSolderHelper
             {
                 configureFTP.Hide();
             }
-            IncludeForgeVersion.Checked = ifv;
-            IncludeConfigZip.Checked = icz;
-            CheckPermissions.Checked = cp;
-            if (cp && CreateTechnicPack.Checked)
+            IncludeForgeVersion.Checked = includeForgeVersion;
+            IncludeConfigZip.Checked = createTechnicConfigZip;
+            CheckPermissions.Checked = checkTecnicPermissions;
+            if (checkTecnicPermissions && CreateTechnicPack.Checked)
             {
                 TechnicDistributionLevel.Visible = true;
             }

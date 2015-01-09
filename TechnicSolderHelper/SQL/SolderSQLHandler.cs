@@ -76,6 +76,7 @@ namespace TechnicSolderHelper.SQL
                         {
                             Debug.WriteLine("Connection succesful");
                             string s = "Tables_in_" + _database;
+                            List<String> databaseList = new List<string>();
                             while (reader.Read())
                             {
                                 Debug.WriteLine(reader[s]);
