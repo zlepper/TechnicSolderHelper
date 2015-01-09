@@ -79,11 +79,26 @@ namespace TechnicSolderHelper.SQL
                             while (reader.Read())
                             {
                                 Debug.WriteLine(reader[s]);
-                                tables.Remove(reader[s].ToString());
+                                try
+                                {
+                                    foreach (String table in tables)
+                                    {
+                                        if (reader[s].ToString().EndsWith(table))
+                                        {
+                                            tables.Remove(table);
+                                        }
+                                    }
+                                }
+                                catch (InvalidOperationException e)
+                                {
+
+                                }
+                                //tables.Remove(reader[s].ToString());
                             }
+                            Debug.WriteLine(tables.Count);
                             if (tables.Count == 0)
                             {
-                                MessageBox.Show("The database isalright");
+                                MessageBox.Show("The database is alright");
                                 return;
                             }
                             MessageBox.Show("Some tables appears to be missing in the database. Please reconstruct it and try again.");
@@ -256,7 +271,8 @@ namespace TechnicSolderHelper.SQL
         /// <param name="md5">The MD5 value of the zip</param>
         public void AddNewModversionToSolder(int modid, String version, String md5)
         {
-            if (IsModversionOnline(modid, version)) return;
+            if (IsModversionOnline(modid, version))
+                return;
             String sql = String.Format("INSERT INTO {0}.modversions(mod_id, version, md5, created_at, updated_at) VALUES(@modslug, @version, @md5, @create, @update);", _database);
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {

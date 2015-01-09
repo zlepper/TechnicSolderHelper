@@ -4,7 +4,7 @@
     <ItemType>PackagingProject</ItemType>
     <ProjectGuid>{ACB0CA1A-8E18-4ECB-B3D3-53A1AA94F68B}</ProjectGuid>
     <Packages>
-      <Packages xmlns="">
+      <Packages>
         <Package name="TechnicSolderHelper">
           <Builder targetFile="TechnicSolderHelper.zip" platform="Linux" configuration="Release" ctype="BinariesZipPackageBuilder">
             <ChildEntries>
