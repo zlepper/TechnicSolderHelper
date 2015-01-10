@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -997,7 +998,14 @@ namespace TechnicSolderHelper
                     ModpackNameInput.Items.Add(item);
                 }
             }
-            this.MinimumSize = new System.Drawing.Size(923, 527);
+            if (Globalfunctions.IsUnix())
+            {
+                this.MinimumSize = new System.Drawing.Size(923, 527);
+            }
+            else
+            {
+                this.MinimumSize = new Size(800, 503);
+            }
             Debug.WriteLine(this.Width);
             Debug.WriteLine(this.Height);
             Debug.WriteLine(groupBox1.Width);

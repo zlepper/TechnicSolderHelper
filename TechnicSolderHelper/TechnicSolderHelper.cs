@@ -49,11 +49,17 @@ namespace TechnicSolderHelper
 
         private void form_resize(object sender, EventArgs e)
         {
-            if (this.Width > 923)
+            if ((Globalfunctions.IsUnix() && Width > 923) || (!Globalfunctions.IsUnix() && Width > 800))
             {
-                Debug.WriteLine(this.Width - 923 + 159);
-                groupBox1.Width = this.Width - 923 + 159;
-                //Debug.WriteLine(groupBox1.Width);
+                //Debug.WriteLine(Width - 923 + 159);
+                if (Globalfunctions.IsUnix())
+                {
+                    groupBox1.Width = Width - 923 + 159;
+                }
+                else
+                {
+                    groupBox1.Width = Width - 800 + 136;
+                }
                 Debug.WriteLine(groupBox1.Width);
             }
         }
