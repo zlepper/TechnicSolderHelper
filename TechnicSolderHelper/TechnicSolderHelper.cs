@@ -560,6 +560,7 @@ namespace TechnicSolderHelper
             {
                 _currentMcVersion = Prompt.ShowDialog("What is the Minecraft Version for the modpack?", "Minecraft Version");
             }
+            _solderSqlHandler = new SolderSqlHandler();
 
             if (useSolder.Checked)
             {

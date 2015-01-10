@@ -17,18 +17,19 @@ namespace TechnicSolderHelper.SQL
             serveraddress.Text = ch.GetConfig("mysqlAddress");
             password.Text = crypto.DecryptString(ch.GetConfig("mysqlPassword"));
             username.Text = ch.GetConfig("mysqlUsername");
+            Prefix.Text = ch.GetConfig("mysqlPrefix");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             if (IsEverythingFilledIn())
             {
-                SolderSqlHandler sqh = new SolderSqlHandler(serveraddress.Text, username.Text, password.Text, database.Text);
+                SolderSqlHandler sqh = new SolderSqlHandler(serveraddress.Text, username.Text, password.Text, database.Text, Prefix.Text);
                 sqh.TestConnection();
             }
             else
             {
-                MessageBox.Show("Please_fill_out_all_the_data");
+                MessageBox.Show("Please fill out all the data");
             }
         }
 
@@ -47,6 +48,7 @@ namespace TechnicSolderHelper.SQL
                 ch.SetConfig("mysqlPassword", crypto.EncryptToString(password.Text));
                 ch.SetConfig("mysqlAddress", serveraddress.Text);
                 ch.SetConfig("mysqlDatabase", database.Text);
+                ch.SetConfig("mysqlPrefix", Prefix.Text);
                 Close();
             }
             else
