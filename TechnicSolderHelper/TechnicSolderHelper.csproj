@@ -229,6 +229,8 @@
       <DependentUpon>ftpInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="FileUpload\ftp.cs" />
+    <Compile Include="FtbStuff.cs" />
+    <Compile Include="TechnicStuff.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

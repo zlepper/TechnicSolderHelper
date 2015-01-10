@@ -88,11 +88,13 @@ namespace TechnicSolderHelper
             this.savesqlcommands = new System.Windows.Forms.CheckBox();
             this.UseS3 = new System.Windows.Forms.CheckBox();
             this.ConfigureS3 = new System.Windows.Forms.Button();
+            this.Resize += new EventHandler(this.form_resize);
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.SolderPackType.SuspendLayout();
             this.SuspendLayout();
+
             // 
             // label1
             // 
@@ -930,6 +932,20 @@ namespace TechnicSolderHelper
                 configureFTP.Hide();
             }
             IncludeForgeVersion.Checked = includeForgeVersion;
+            if (includeForgeVersion)
+            {
+                MCversion.Show();
+                labelmcversion.Show();
+                labelforgeversion.Show();
+                ForgeBuild.Show();
+            }
+            else
+            {
+                MCversion.Hide();
+                labelmcversion.Hide();
+                labelforgeversion.Hide();
+                ForgeBuild.Hide();
+            }
             IncludeConfigZip.Checked = createTechnicConfigZip;
             CheckPermissions.Checked = checkTecnicPermissions;
             if (checkTecnicPermissions && CreateTechnicPack.Checked)
@@ -981,6 +997,10 @@ namespace TechnicSolderHelper
                     ModpackNameInput.Items.Add(item);
                 }
             }
+            this.MinimumSize = new System.Drawing.Size(923, 527);
+            Debug.WriteLine(this.Width);
+            Debug.WriteLine(this.Height);
+            Debug.WriteLine(groupBox1.Width);
         }
 
         private CheckBox UseS3;

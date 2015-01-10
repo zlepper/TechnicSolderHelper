@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SQLite;
 using Mono.Data.Sqlite;
+using System.Diagnostics;
 
 namespace TechnicSolderHelper.SQL
 {
@@ -111,8 +112,8 @@ namespace TechnicSolderHelper.SQL
         public Mcmod GetModInfo(String md5Value)
         {
             Mcmod mod = new Mcmod();
-            String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", TableName, md5Value);
-            //Debug.WriteLine(sql);
+            String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE @md5;", TableName);
+            Debug.WriteLine(sql);
             if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
@@ -120,6 +121,7 @@ namespace TechnicSolderHelper.SQL
                     db.Open();
                     using (SqliteCommand cmd = new SqliteCommand(sql, db))
                     {
+                        cmd.Parameters.AddWithValue("@md5", md5Value);
                         using (SqliteDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
