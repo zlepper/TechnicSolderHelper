@@ -34,7 +34,7 @@
     <PublisherName>Rasmus Hansen</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>26</ApplicationRevision>
+    <ApplicationRevision>28</ApplicationRevision>
     <ApplicationVersion>1.0.3.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -235,8 +235,12 @@
       <DependentUpon>ftpInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="FileUpload\ftp.cs" />
-    <Compile Include="FtbStuff.cs" />
-    <Compile Include="TechnicStuff.cs" />
+    <Compile Include="FtbStuff.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TechnicStuff.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
