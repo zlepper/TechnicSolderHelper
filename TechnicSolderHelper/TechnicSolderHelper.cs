@@ -1244,9 +1244,12 @@ namespace TechnicSolderHelper
                     currentData.Mcversion = _currentMcVersion;
                 }
 
-
+                if (!String.IsNullOrWhiteSpace(currentData.Modid))
+                {
+                    mod.Modid = currentData.Modid;
+                }
                 //mod.Modid = currentData.Modid ?? mod.Name.Replace(" ", "").ToLower();
-                if (String.IsNullOrWhiteSpace(mod.Modid) && (String.IsNullOrWhiteSpace(currentData.Modid) || mod.Modid.Contains("${") || currentData.Modid.Contains("${")))
+                if (String.IsNullOrWhiteSpace(mod.Modid) || mod.Modid.Contains("${"))
                 {
                     mod.Modid = mod.Name.Replace(" ", "").ToLower();
                 }
