@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SQLite;
 using Mono.Data.Sqlite;
 using System.Diagnostics;
@@ -160,6 +161,134 @@ namespace TechnicSolderHelper.SQL
         {
             String sql = String.Format("UPDATE {0} SET OnSolder = '0'", TableName);
             ExecuteDatabaseQuery(sql);
+        }
+
+        public DataTable GetTableInfoForEditing()
+        {
+            String sql =
+                String.Format(
+                    "SELECT ID, ModName, ModID, ModVersion, MinecraftVersion, FileName FROM {0};", TableName);
+            DataTable table = new DataTable();
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        table.Load(reader);
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        table.Load(reader);
+                    }
+                }
+            }
+            return table;
+        }
+
+        /// <summary>
+        /// Sets the modlist info from the table
+        /// </summary>
+        /// <param name="table">The full table to be reinserted</param>
+        public void SetTableInfoAfterEditing(DataTable table)
+        {
+            foreach (DataRow dataRow in table.Rows)
+            {
+                switch (dataRow.RowState)
+                {
+                    case DataRowState.Deleted:
+                        DeleteRow(dataRow["ID", DataRowVersion.Original].ToString());
+                        break;
+                    case DataRowState.Modified:
+                        UpdateRow(dataRow["ID"].ToString(), dataRow["ModName"].ToString(), dataRow["ModID"].ToString(), dataRow["ModVersion"].ToString(), dataRow["MinecraftVersion"].ToString(), dataRow["FileName"].ToString());
+                        break;
+                }
+            }
+        }
+
+        private void DeleteRow(String id)
+        {
+            String sql = String.Format("DELETE FROM {0} WHERE ID = @id;", TableName);
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        private void UpdateRow(String id, String modName, String modId, String modVersion, String minecraftVersion, String fileName)
+        {
+            String fileVersion = minecraftVersion + "-" + modVersion;
+            Debug.WriteLine(fileVersion);
+            String sql =
+                String.Format(
+                    "UPDATE {0} SET ModName = @modname, ModID = @modid, ModVersion = @modversion, MinecraftVersion = @minecraftversion, FileName = @filename, FileVersion = @fileversion WHERE ID = @id;",
+                    TableName);
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@modname", modName);
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@modversion", modVersion);
+                        cmd.Parameters.AddWithValue("@minecraftversion", minecraftVersion);
+                        cmd.Parameters.AddWithValue("@filename", fileName);
+                        cmd.Parameters.AddWithValue("@fileversion", fileVersion);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.Parameters.AddWithValue("@modname", modName);
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@modversion", modVersion);
+                        cmd.Parameters.AddWithValue("@minecraftversion", minecraftVersion);
+                        cmd.Parameters.AddWithValue("@filename", fileName);
+                        cmd.Parameters.AddWithValue("@fileversion", fileVersion);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
         }
     }
 }

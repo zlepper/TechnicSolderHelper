@@ -89,13 +89,12 @@ namespace TechnicSolderHelper
             this.savesqlcommands = new System.Windows.Forms.CheckBox();
             this.UseS3 = new System.Windows.Forms.CheckBox();
             this.ConfigureS3 = new System.Windows.Forms.Button();
-            this.Resize += new EventHandler(this.form_resize);
+            this.button4 = new System.Windows.Forms.Button();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.SolderPackType.SuspendLayout();
             this.SuspendLayout();
-
             // 
             // label1
             // 
@@ -525,6 +524,7 @@ namespace TechnicSolderHelper
             // IncludeConfigZip
             // 
             this.IncludeConfigZip.AutoSize = true;
+            this.IncludeConfigZip.Checked = true;
             this.IncludeConfigZip.CheckState = System.Windows.Forms.CheckState.Checked;
             this.IncludeConfigZip.Location = new System.Drawing.Point(20, 88);
             this.IncludeConfigZip.Name = "IncludeConfigZip";
@@ -599,12 +599,23 @@ namespace TechnicSolderHelper
             this.ConfigureS3.UseVisualStyleBackColor = true;
             this.ConfigureS3.Click += new System.EventHandler(this.ConfigureS3_Click);
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(428, 342);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 31;
+            this.button4.Text = "Edit data";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // SolderHelper
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 464);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.ConfigureS3);
             this.Controls.Add(this.UseS3);
             this.Controls.Add(this.savesqlcommands);
@@ -645,6 +656,7 @@ namespace TechnicSolderHelper
             this.Name = "SolderHelper";
             this.Text = "Modpack Helper";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnApplicationClosing);
+            this.Resize += new System.EventHandler(this.form_resize);
             this.missingInfoAction.ResumeLayout(false);
             this.missingInfoAction.PerformLayout();
             this.TechnicDistributionLevel.ResumeLayout(false);
@@ -1013,5 +1025,6 @@ namespace TechnicSolderHelper
 
         private CheckBox UseS3;
         private Button ConfigureS3;
+        private Button button4;
     }
 }

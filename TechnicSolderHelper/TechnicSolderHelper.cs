@@ -1624,5 +1624,11 @@ namespace TechnicSolderHelper
             Form f = new S3Info();
             f.Show();
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Form f = new DatabaseEditor();
+            f.Show();
+        }
     }
 }
