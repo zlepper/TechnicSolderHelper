@@ -795,7 +795,7 @@ namespace TechnicSolderHelper
                         {
                             String of = Path.Combine(_outputDirectory, "mods", folderName);
                             Directory.CreateDirectory(of);
-                            String outputfile = Path.Combine(of, folderName + "-" + _modpackName + "-" + _modpackVersion + ".zip");
+                            String outputfile = Path.Combine(of, folderName.ToLower() + "-" + _modpackName.Replace(" ", "-") + "-" + _modpackVersion + ".zip");
                             if (Globalfunctions.IsUnix())
                             {
                                 _startInfo.FileName = "zip";
@@ -810,7 +810,7 @@ namespace TechnicSolderHelper
                             _process.Start();
                             _process.WaitForExit();
 
-                            CreateTableRow(folderName, folderName.ToLower(), _modpackName + "-" + _modpackVersion);
+                            CreateTableRow(folderName, folderName.ToLower(), _modpackName.Replace(" ", "-") + "-" + _modpackVersion);
 
                             if (useSolder.Checked)
                             {
@@ -822,13 +822,13 @@ namespace TechnicSolderHelper
                                 }
                                 String md5 = SqlHelper.CalculateMd5(outputfile).ToLower();
                                 if (_solderSqlHandler.IsModversionOnline(folderName.ToLower(),
-                                        _modpackName + "-" + _modpackVersion))
+                                        _modpackName.Replace(" ", "-") + "-" + _modpackVersion))
                                     _solderSqlHandler.UpdateModversionMd5(folderName.ToLower(),
-                                        _modpackName + "-" + _modpackVersion, md5);
+                                        _modpackName.Replace(" ", "-") + "-" + _modpackVersion, md5);
                                 else
-                                    _solderSqlHandler.AddNewModversionToSolder(id, _modpackName + "-" + _modpackVersion,
+                                    _solderSqlHandler.AddNewModversionToSolder(id, _modpackName.Replace(" ", "-") + "-" + _modpackVersion,
                                         md5);
-                                int modVersionId = _solderSqlHandler.GetModversionId(_solderSqlHandler.GetModId(folderName.ToLower()), _modpackName + "-" + _modpackVersion);
+                                int modVersionId = _solderSqlHandler.GetModversionId(_solderSqlHandler.GetModId(folderName.ToLower()), _modpackName.Replace(" ", "-") + "-" + _modpackVersion);
                                 _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
                             }
                         }
