@@ -710,7 +710,7 @@ namespace TechnicSolderHelper
                             }
                             _process.StartInfo = _startInfo;
                             _process.Start();
-                            CreateTableRow(dirName, dirName.ToLower(), _modpackName.ToLower() + "-" + _modpackVersion.ToLower());
+                            CreateTableRow(dirName, dirName.ToLower(), MakeUrlFriendly(_modpackName + "-" + _modpackVersion));
                             _process.WaitForExit();
 
                             if (useSolder.Checked)
@@ -721,7 +721,7 @@ namespace TechnicSolderHelper
                                     _solderSqlHandler.AddModToSolder(dirName.ToLower(), null, null, null, dirName);
                                     id = _solderSqlHandler.GetModId(dirName.ToLower());
                                 }
-                                String modversion = _modpackName.ToLower() + "-" + _modpackVersion.ToLower();
+                                String modversion = MakeUrlFriendly(_modpackName + "-" + _modpackVersion);
                                 String md5 = SqlHelper.CalculateMd5(outputfile).ToLower();
                                 if (_solderSqlHandler.IsModversionOnline(dirName.ToLower(), modversion))
                                     _solderSqlHandler.UpdateModversionMd5(dirName.ToLower(), modversion, md5);
@@ -729,7 +729,7 @@ namespace TechnicSolderHelper
                                     _solderSqlHandler.AddNewModversionToSolder(id, modversion, md5);
 
                                 id = _solderSqlHandler.GetModId(dirName.ToLower());
-                                int modVersionId = _solderSqlHandler.GetModversionId(id, _modpackName + "-" + _modpackVersion);
+                                int modVersionId = _solderSqlHandler.GetModversionId(id, modversion);
                                 _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
                             }
                             if (File.Exists(md5ValuesFile))
@@ -790,12 +790,13 @@ namespace TechnicSolderHelper
                 {
                     if (cb.Value.Checked)
                     {
-                        String folderName = cb.Key.Substring(cb.Key.LastIndexOf(Globalfunctions.PathSeperator) + 1);
+                        String folderName = cb.Key.Substring(cb.Key.LastIndexOf(Globalfunctions.PathSeperator) + 1).ToLower();
                         if (SolderPack.Checked)
                         {
+                            String mpname = _modpackName.Replace(" ", "-").ToLower();
                             String of = Path.Combine(_outputDirectory, "mods", folderName);
                             Directory.CreateDirectory(of);
-                            String outputfile = Path.Combine(of, folderName.ToLower() + "-" + _modpackName.Replace(" ", "-") + "-" + _modpackVersion + ".zip");
+                            String outputfile = Path.Combine(of, folderName.ToLower() + "-" + mpname + "-" + _modpackVersion + ".zip");
                             if (Globalfunctions.IsUnix())
                             {
                                 _startInfo.FileName = "zip";
@@ -810,7 +811,7 @@ namespace TechnicSolderHelper
                             _process.Start();
                             _process.WaitForExit();
 
-                            CreateTableRow(folderName, folderName.ToLower(), _modpackName.Replace(" ", "-") + "-" + _modpackVersion);
+                            CreateTableRow(folderName, folderName.ToLower(), mpname + "-" + _modpackVersion);
 
                             if (useSolder.Checked)
                             {
@@ -822,13 +823,13 @@ namespace TechnicSolderHelper
                                 }
                                 String md5 = SqlHelper.CalculateMd5(outputfile).ToLower();
                                 if (_solderSqlHandler.IsModversionOnline(folderName.ToLower(),
-                                        _modpackName.Replace(" ", "-") + "-" + _modpackVersion))
+                                        mpname + "-" + _modpackVersion))
                                     _solderSqlHandler.UpdateModversionMd5(folderName.ToLower(),
-                                        _modpackName.Replace(" ", "-") + "-" + _modpackVersion, md5);
+                                        mpname + "-" + _modpackVersion, md5);
                                 else
-                                    _solderSqlHandler.AddNewModversionToSolder(id, _modpackName.Replace(" ", "-") + "-" + _modpackVersion,
+                                    _solderSqlHandler.AddNewModversionToSolder(id, mpname + "-" + _modpackVersion,
                                         md5);
-                                int modVersionId = _solderSqlHandler.GetModversionId(_solderSqlHandler.GetModId(folderName.ToLower()), _modpackName.Replace(" ", "-") + "-" + _modpackVersion);
+                                int modVersionId = _solderSqlHandler.GetModversionId(_solderSqlHandler.GetModId(folderName.ToLower()), mpname + "-" + _modpackVersion);
                                 _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
                             }
                         }
@@ -1126,6 +1127,7 @@ namespace TechnicSolderHelper
 
         private String MakeUrlFriendly(String value)
         {
+            value = value.ToLower();
             return Regex.Replace(value, @"[^A-Za-z0-9_\.~]+", "-");
         }
 
@@ -1165,13 +1167,16 @@ namespace TechnicSolderHelper
             try
             {
                 Mcmod mod = new Mcmod { UseShortName = false };
+                String s = SqlHelper.CalculateMd5(file);
+                Debug.WriteLine(s);
+
                 try
                 {
                     mod = _modsSqLhelper.GetModInfo(SqlHelper.CalculateMd5(file));
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // ignored
+                    Debug.WriteLine(e.Message);
                 }
 
                 String fileName = file.Substring(file.LastIndexOf(Globalfunctions.PathSeperator) + 1);
@@ -1207,7 +1212,6 @@ namespace TechnicSolderHelper
                     }
 
                 }
-
                 if (currentData.Version != null && !currentData.Version.Contains("${"))
                     mod.Version = currentData.Version.Replace(" ", "+").ToLower();
                 else

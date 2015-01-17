@@ -142,6 +142,7 @@ namespace TechnicSolderHelper.SQL
                 db.Open();
                 using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                 {
+                    cmd.Parameters.AddWithValue("@md5", md5Value);
                     using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
