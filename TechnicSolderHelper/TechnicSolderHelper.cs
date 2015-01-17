@@ -1221,6 +1221,8 @@ namespace TechnicSolderHelper
                         mod.Version = Prompt.ShowDialog(a, "Mod Version", false,
                             Prompt.ModsLeftString(_totalMods, _currentMod));
                         mod.Version = mod.Version.Replace(" ", "+").ToLower();
+                        if (mod.Version.Equals(""))
+                            return;
                     }
                 }
 
