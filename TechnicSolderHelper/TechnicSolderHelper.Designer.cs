@@ -69,8 +69,6 @@ namespace TechnicSolderHelper
             this.configureFTP = new System.Windows.Forms.Button();
             this.labelforgeversion = new System.Windows.Forms.Label();
             this.labelmcversion = new System.Windows.Forms.Label();
-            this.ForgeBuild = new System.Windows.Forms.ListBox();
-            this.MCversion = new System.Windows.Forms.ListBox();
             this.TechnicDistributionLevel = new System.Windows.Forms.GroupBox();
             this.TechnicPublicPermissions = new System.Windows.Forms.RadioButton();
             this.TechnicPrivatePermissions = new System.Windows.Forms.RadioButton();
@@ -90,6 +88,8 @@ namespace TechnicSolderHelper
             this.UseS3 = new System.Windows.Forms.CheckBox();
             this.ConfigureS3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.MCversion = new System.Windows.Forms.ComboBox();
+            this.ForgeBuild = new System.Windows.Forms.ComboBox();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
@@ -362,7 +362,7 @@ namespace TechnicSolderHelper
             // labelforgeversion
             // 
             this.labelforgeversion.AutoSize = true;
-            this.labelforgeversion.Location = new System.Drawing.Point(172, 169);
+            this.labelforgeversion.Location = new System.Drawing.Point(172, 171);
             this.labelforgeversion.Name = "labelforgeversion";
             this.labelforgeversion.Size = new System.Drawing.Size(72, 13);
             this.labelforgeversion.TabIndex = 16;
@@ -371,28 +371,12 @@ namespace TechnicSolderHelper
             // labelmcversion
             // 
             this.labelmcversion.AutoSize = true;
-            this.labelmcversion.Location = new System.Drawing.Point(172, 127);
+            this.labelmcversion.Location = new System.Drawing.Point(172, 148);
             this.labelmcversion.Name = "labelmcversion";
             this.labelmcversion.Size = new System.Drawing.Size(57, 13);
             this.labelmcversion.TabIndex = 15;
             this.labelmcversion.Text = "MCversion";
-            // 
-            // ForgeBuild
-            // 
-            this.ForgeBuild.FormattingEnabled = true;
-            this.ForgeBuild.Location = new System.Drawing.Point(250, 169);
-            this.ForgeBuild.Name = "ForgeBuild";
-            this.ForgeBuild.Size = new System.Drawing.Size(123, 30);
-            this.ForgeBuild.TabIndex = 0;
-            // 
-            // MCversion
-            // 
-            this.MCversion.FormattingEnabled = true;
-            this.MCversion.Location = new System.Drawing.Point(250, 127);
-            this.MCversion.Name = "MCversion";
-            this.MCversion.Size = new System.Drawing.Size(123, 30);
-            this.MCversion.TabIndex = 1;
-            this.MCversion.SelectedIndexChanged += new System.EventHandler(this.MCversion_SelectedIndexChanged);
+            this.labelmcversion.Click += new System.EventHandler(this.labelmcversion_Click);
             // 
             // TechnicDistributionLevel
             // 
@@ -609,12 +593,34 @@ namespace TechnicSolderHelper
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // MCversion
+            // 
+            this.MCversion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.MCversion.FormattingEnabled = true;
+            this.MCversion.Location = new System.Drawing.Point(250, 145);
+            this.MCversion.Name = "MCversion";
+            this.MCversion.Size = new System.Drawing.Size(121, 21);
+            this.MCversion.TabIndex = 32;
+            this.MCversion.SelectedIndexChanged += new System.EventHandler(this.MCversionCB_SelectedIndexChanged);
+            // 
+            // ForgeBuild
+            // 
+            this.ForgeBuild.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ForgeBuild.FormattingEnabled = true;
+            this.ForgeBuild.Location = new System.Drawing.Point(250, 168);
+            this.ForgeBuild.Name = "ForgeBuild";
+            this.ForgeBuild.Size = new System.Drawing.Size(121, 21);
+            this.ForgeBuild.TabIndex = 33;
+            this.ForgeBuild.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
             // SolderHelper
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 464);
+            this.Controls.Add(this.ForgeBuild);
+            this.Controls.Add(this.MCversion);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.ConfigureS3);
             this.Controls.Add(this.UseS3);
@@ -632,8 +638,6 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.missingInfoAction);
             this.Controls.Add(this.labelforgeversion);
             this.Controls.Add(this.labelmcversion);
-            this.Controls.Add(this.ForgeBuild);
-            this.Controls.Add(this.MCversion);
             this.Controls.Add(this.GetForgeVersions);
             this.Controls.Add(this.UploadToFTPServer);
             this.Controls.Add(this.TechnicDistributionLevel);
@@ -700,8 +704,6 @@ namespace TechnicSolderHelper
         private RadioButton TechnicPrivatePermissions;
         private CheckBox UploadToFTPServer;
         private CheckBox IncludeForgeVersion;
-        private ListBox MCversion;
-        private ListBox ForgeBuild;
         private Button GetForgeVersions;
         private Label labelmcversion;
         private Label labelforgeversion;
@@ -1026,5 +1028,7 @@ namespace TechnicSolderHelper
         private CheckBox UseS3;
         private Button ConfigureS3;
         private Button button4;
+        private ComboBox MCversion;
+        private ComboBox ForgeBuild;
     }
 }
