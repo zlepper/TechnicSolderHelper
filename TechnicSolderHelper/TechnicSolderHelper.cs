@@ -16,6 +16,7 @@ using TechnicSolderHelper.FileUpload;
 using TechnicSolderHelper.s3;
 using FileInfo = System.IO.FileInfo;
 using TechnicSolderHelper.SQL.liteloader;
+using TechnicSolderHelper.SQL.workTogether;
 
 namespace TechnicSolderHelper
 {
@@ -464,38 +465,22 @@ namespace TechnicSolderHelper
                                     throw new JsonSerializationException("Invalid Json in file" + FileName);
                                 }
                                 var mod = modinfo[0];
-
-                                if (file.ToLower().Contains("mekanism"))
+                                if (IsFullyInformed(mod))
                                 {
-                                    mod = ModHelper.GoodVersioning(FileName);
-                                    RequireUserInfo(mod, file);
+                                    if (CreateTechnicPack.Checked)
+                                    {
+                                        CreateTechnicModZip(mod, file);
+                                    }
+                                    if (CreateFTBPack.Checked)
+                                    {
+                                        CreateFtbPackZip(mod, file);
+                                    }
                                 }
                                 else
                                 {
-                                    if (mod.Modid.ToLower().StartsWith("mystcraft"))
-                                    {
-                                        mod = ModHelper.GoodVersioning(FileName);
-                                        RequireUserInfo(mod, file);
-                                    }
-                                    else
-                                    {
-                                        if (IsFullyInformed(mod))
-                                        {
-                                            if (CreateTechnicPack.Checked)
-                                            {
-                                                CreateTechnicModZip(mod, file);
-                                            }
-                                            if (CreateFTBPack.Checked)
-                                            {
-                                                CreateFtbPackZip(mod, file);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            RequireUserInfo(mod, file);
-                                        }
-                                    }
+                                    RequireUserInfo(mod, file);
                                 }
+                                
                             }
                             catch (JsonSerializationException)
                             {
@@ -1260,12 +1245,19 @@ namespace TechnicSolderHelper
                     mod.Modid = mod.Name.Replace(" ", "").ToLower();
                 }
 
+                DataSuggest suggest = new DataSuggest();
+                string md5 = SqlHelper.CalculateMd5(file);
+                if (!mod.FromSuggestion && !suggest.IsModSuggested(md5))
+                {
+                    suggest.Suggest(fileName, mod.Mcversion, mod.Version, md5);
+                }
+
                 if (CreateTechnicPack.Checked)
                     CreateTechnicModZip(mod, file);
                 if (CreateFTBPack.Checked)
                     CreateFtbPackZip(mod, file);
             }
-            catch (System.NullReferenceException ex)
+            catch (NullReferenceException ex)
             {
                 String error = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "error.txt");
                 File.AppendAllText(error, ex.Message);

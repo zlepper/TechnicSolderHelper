@@ -206,6 +206,7 @@
     <Compile Include="SQL\sqlInfo.Designer.cs">
       <DependentUpon>sqlInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="SQL\workTogether\DataSuggest.cs" />
     <Compile Include="TechnicSolderHelper.cs">
       <SubType>Form</SubType>
     </Compile>

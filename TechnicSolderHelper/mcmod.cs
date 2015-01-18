@@ -33,6 +33,8 @@ namespace TechnicSolderHelper
 
         public Boolean UseShortName { get; set; }
 
+        public Boolean FromSuggestion { get; set; }
+
     }
 
     public class OwnPermissions

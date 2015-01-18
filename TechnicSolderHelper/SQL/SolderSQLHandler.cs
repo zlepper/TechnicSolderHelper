@@ -13,14 +13,14 @@ namespace TechnicSolderHelper.SQL
     {
         private readonly String _connectionString;
         private readonly String _database;
-        public readonly String Prefix;
+        private readonly String _prefix;
 
         public SolderSqlHandler(String address, String username, String password, String database, String prefix = "")
         {
             _connectionString = String.Format("address={0};username={1};password={2};database={3}", address, username, password, database);
             Debug.WriteLine(_connectionString);
             _database = database;
-            Prefix = prefix;
+            _prefix = prefix;
         }
 
         public SolderSqlHandler()
@@ -45,8 +45,8 @@ namespace TechnicSolderHelper.SQL
             var username = ch.GetConfig("mysqlUsername");
             var address = ch.GetConfig("mysqlAddress");
             _database = ch.GetConfig("mysqlDatabase");
-            Prefix = ch.GetConfig("mysqlPrefix");
-            Debug.WriteLine(Prefix);
+            _prefix = ch.GetConfig("mysqlPrefix");
+            Debug.WriteLine(_prefix);
             _connectionString = String.Format("address={0};username={1};password={2};database={3}", address, username, password, _database);
             Debug.WriteLine(_connectionString);
         }
@@ -59,13 +59,13 @@ namespace TechnicSolderHelper.SQL
         {
             List<String> tables = new List<string>
             {
-                Prefix + "modversions",
-                Prefix + "mods",
-                Prefix + "modpacks",
-                Prefix + "clients",
-                Prefix + "client_modpack",
-                Prefix + "builds",
-                Prefix + "build_modversion"
+                _prefix + "modversions",
+                _prefix + "mods",
+                _prefix + "modpacks",
+                _prefix + "clients",
+                _prefix + "client_modpack",
+                _prefix + "builds",
+                _prefix + "build_modversion"
             };
             try
             {
@@ -106,7 +106,7 @@ namespace TechnicSolderHelper.SQL
         public void UpdateModversionMd5(String modslug, String modversion, String md5)
         {
             int id = GetModId(modslug);
-            String sql = string.Format("UPDATE {0}.{1} SET md5=@md5 , updated_at=@update WHERE version LIKE @modversion AND mod_id LIKE @modid;", _database, Prefix + "modversions");
+            String sql = string.Format("UPDATE {0}.{1} SET md5=@md5 , updated_at=@update WHERE version LIKE @modversion AND mod_id LIKE @modid;", _database, _prefix + "modversions");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -128,7 +128,7 @@ namespace TechnicSolderHelper.SQL
         /// <returns>True if the modpack exists, otherwise false.</returns>
         public int GetModpackId(String modpackName)
         {
-            String sql = string.Format("SELECT id FROM {0}.{1} WHERE slug LIKE @modpack OR name LIKE @modpack", _database, Prefix + "modpacks");
+            String sql = string.Format("SELECT id FROM {0}.{1} WHERE slug LIKE @modpack OR name LIKE @modpack", _database, _prefix + "modpacks");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -158,7 +158,7 @@ namespace TechnicSolderHelper.SQL
         /// <param name="name">The pretty name of the mod. Cannot be null</param>
         public void AddModToSolder(String modslug, String description, String author, String link, String name)
         {
-            String sql = string.Format("INSERT INTO {0}.{1}(name, description, author, link, pretty_name, created_at, updated_at) VALUES(@modslug, descriptionValue, authorValue, linkValue, @name, @create, @update);", _database, Prefix + "mods");
+            String sql = string.Format("INSERT INTO {0}.{1}(name, description, author, link, pretty_name, created_at, updated_at) VALUES(@modslug, descriptionValue, authorValue, linkValue, @name, @create, @update);", _database, _prefix + "mods");
             
             sql = !String.IsNullOrWhiteSpace(description) ? sql.Replace("descriptionValue", "\"" + description + "\"") : sql.Replace(" descriptionValue,", String.Empty).Replace(" description,", String.Empty);
 
@@ -188,7 +188,7 @@ namespace TechnicSolderHelper.SQL
         /// <returns>Returns the modslug of the mod if found, otherwise returns -1.</returns>
         public int GetModId(String slug)
         {
-            String sql = string.Format("SELECT id FROM {0}.{1} WHERE name LIKE @modname", _database, Prefix + "mods");
+            String sql = string.Format("SELECT id FROM {0}.{1} WHERE name LIKE @modname", _database, _prefix + "mods");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -217,7 +217,7 @@ namespace TechnicSolderHelper.SQL
         /// <returns>Returns true if the mod version is on solder, false if not. </returns>
         private Boolean IsModversionOnline(int modid, String version)
         {
-            String sql = string.Format("SELECT id FROM {0}.{1} WHERE version LIKE @version AND mod_id LIKE @modslug;", _database, Prefix + "modversions");
+            String sql = string.Format("SELECT id FROM {0}.{1} WHERE version LIKE @version AND mod_id LIKE @modslug;", _database, _prefix + "modversions");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -261,7 +261,7 @@ namespace TechnicSolderHelper.SQL
         {
             if (IsModversionOnline(modid, version))
                 return;
-            String sql = string.Format("INSERT INTO {0}.{1}(mod_id, version, md5, created_at, updated_at) VALUES(@modslug, @version, @md5, @create, @update);", _database, Prefix + "modversions");
+            String sql = string.Format("INSERT INTO {0}.{1}(mod_id, version, md5, created_at, updated_at) VALUES(@modslug, @version, @md5, @create, @update);", _database, _prefix + "modversions");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -291,7 +291,7 @@ namespace TechnicSolderHelper.SQL
 
         public void CreateNewModpack(String modpackName, String modpackSlug)
         {
-            String sql = string.Format("INSERT INTO {0}.{1}(name, slug, created_at, updated_at) VALUES(@name, @slug, @create, @update);", _database, Prefix + "modpacks");
+            String sql = string.Format("INSERT INTO {0}.{1}(name, slug, created_at, updated_at) VALUES(@name, @slug, @create, @update);", _database, _prefix + "modpacks");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -308,7 +308,7 @@ namespace TechnicSolderHelper.SQL
 
         public void CreateModpackBuild(int modpackId, String version, String mcVersion)
         {
-            String sql = string.Format("INSERT INTO {0}.{1}(modpack_id, version, minecraft, is_published, private, created_at, updated_at) VALUES(@modpack, @version, @mcVersion, 0, 0, @create, @update);", _database, Prefix + "builds");
+            String sql = string.Format("INSERT INTO {0}.{1}(modpack_id, version, minecraft, is_published, private, created_at, updated_at) VALUES(@modpack, @version, @mcVersion, 0, 0, @create, @update);", _database, _prefix + "builds");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -321,7 +321,7 @@ namespace TechnicSolderHelper.SQL
                     cmd.Parameters.AddWithValue("@update", DateTime.Now);
                     cmd.ExecuteNonQuery();
                 }
-                sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @id;", _database, Prefix + "modpacks");
+                sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @id;", _database, _prefix + "modpacks");
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@update", DateTime.Now);
@@ -333,7 +333,7 @@ namespace TechnicSolderHelper.SQL
 
         public int GetBuildId(int modpackId, String version)
         {
-            String sql = string.Format("SELECT id FROM {0}.{1} WHERE modpack_id LIKE @modpack AND version LIKE @version;", _database, Prefix + "builds");
+            String sql = string.Format("SELECT id FROM {0}.{1} WHERE modpack_id LIKE @modpack AND version LIKE @version;", _database, _prefix + "builds");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -356,7 +356,7 @@ namespace TechnicSolderHelper.SQL
 
         public int GetModversionId(int modId, String version)
         {
-            String sql = string.Format("SELECT id FROM {0}.{1} WHERE mod_id LIKE @mod AND version LIKE @version", _database, Prefix + "modversions");
+            String sql = string.Format("SELECT id FROM {0}.{1} WHERE mod_id LIKE @mod AND version LIKE @version", _database, _prefix + "modversions");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -380,7 +380,7 @@ namespace TechnicSolderHelper.SQL
 
         private Boolean IsModversionInBuild(int build, int modversionId)
         {
-            String sql = string.Format("SELECT id FROM {0}.{1} WHERE modversion_id LIKE @version AND build_id LIKE @build;", _database, Prefix + "build_modversion");
+            String sql = string.Format("SELECT id FROM {0}.{1} WHERE modversion_id LIKE @version AND build_id LIKE @build;", _database, _prefix + "build_modversion");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -404,7 +404,7 @@ namespace TechnicSolderHelper.SQL
         {
             if (!IsModversionInBuild(build, modversionId))
             {
-                String sql = string.Format("INSERT INTO {0}.{1}(modversion_id, build_id) VALUES(@modslug, @buildid);", _database, Prefix + "build_modversion");
+                String sql = string.Format("INSERT INTO {0}.{1}(modversion_id, build_id) VALUES(@modslug, @buildid);", _database, _prefix + "build_modversion");
                 using (MySqlConnection conn = new MySqlConnection(_connectionString))
                 {
                     conn.Open();
@@ -414,7 +414,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@buildid", build);
                         cmd.ExecuteNonQuery();
                     }
-                    sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @id;", _database, Prefix + "builds");
+                    sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @id;", _database, _prefix + "builds");
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@id", build);
@@ -422,7 +422,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.ExecuteNonQuery();
                     }
                     int modpackid;
-                    sql = string.Format("SELECT modpack_id FROM {0}.{1} WHERE id LIKE @buildid;", _database, Prefix + "builds");
+                    sql = string.Format("SELECT modpack_id FROM {0}.{1} WHERE id LIKE @buildid;", _database, _prefix + "builds");
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@buildid", build);
@@ -432,7 +432,7 @@ namespace TechnicSolderHelper.SQL
                             modpackid = Convert.ToInt32(reader["modpack_id"].ToString());
                         }
                     }
-                    sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @modpackid;", _database, Prefix + "modpacks");
+                    sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @modpackid;", _database, _prefix + "modpacks");
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@update", DateTime.Now);
