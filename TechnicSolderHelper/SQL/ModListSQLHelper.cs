@@ -112,7 +112,6 @@ namespace TechnicSolderHelper.SQL
 
         public Mcmod GetModInfo(String md5Value)
         {
-            Mcmod mod = new Mcmod();
             String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE @md5;", TableName);
             Debug.WriteLine(sql);
             if (IsUnix())
@@ -125,14 +124,22 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@md5", md5Value);
                         using (SqliteDataReader reader = cmd.ExecuteReader())
                         {
-                            while (reader.Read())
+                            if (reader.HasRows)
                             {
-                                mod.Name = reader["ModName"].ToString();
-                                mod.Mcversion = reader["MinecraftVersion"].ToString();
-                                mod.Modid = reader["ModID"].ToString();
-                                mod.Version = reader["ModVersion"].ToString();
+                                Mcmod mod = new Mcmod();
+                                while (reader.Read())
+                                {
+                                    mod.Name = reader["ModName"].ToString();
+                                    mod.Mcversion = reader["MinecraftVersion"].ToString();
+                                    mod.Modid = reader["ModID"].ToString();
+                                    mod.Version = reader["ModVersion"].ToString();
+                                }
+                                return mod;
                             }
-                            return mod;
+                            else
+                            {
+                                return null;
+                            }
                         }
                     }
                 }
@@ -145,14 +152,22 @@ namespace TechnicSolderHelper.SQL
                     cmd.Parameters.AddWithValue("@md5", md5Value);
                     using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        if (reader.HasRows)
                         {
-                            mod.Name = reader["ModName"].ToString();
-                            mod.Mcversion = reader["MinecraftVersion"].ToString();
-                            mod.Modid = reader["ModID"].ToString();
-                            mod.Version = reader["ModVersion"].ToString();
+                            Mcmod mod = new Mcmod();
+                            while (reader.Read())
+                            {
+                                mod.Name = reader["ModName"].ToString();
+                                mod.Mcversion = reader["MinecraftVersion"].ToString();
+                                mod.Modid = reader["ModID"].ToString();
+                                mod.Version = reader["ModVersion"].ToString();
+                            }
+                            return mod;
                         }
-                        return mod;
+                        else
+                        {
+                            return null;
+                        }
                     }
                 }
             }

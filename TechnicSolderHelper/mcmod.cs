@@ -35,6 +35,8 @@ namespace TechnicSolderHelper
 
         public Boolean FromSuggestion { get; set; }
 
+        public Boolean FromUserInput { get; set; }
+
     }
 
     public class OwnPermissions

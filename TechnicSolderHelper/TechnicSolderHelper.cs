@@ -1154,27 +1154,44 @@ namespace TechnicSolderHelper
                 Mcmod mod = new Mcmod { UseShortName = false };
                 String s = SqlHelper.CalculateMd5(file);
                 Debug.WriteLine(s);
+                DataSuggest suggest = new DataSuggest();
 
                 try
                 {
                     mod = _modsSqLhelper.GetModInfo(SqlHelper.CalculateMd5(file));
+                    Debug.WriteLine("Got from local database");
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
+                    mod = suggest.GetMcmod(SqlHelper.CalculateMd5(file));
+                    if (mod == null)
+                    {
+                        mod = new Mcmod();
+                    }
+                    else
+                    {
+                        mod.FromSuggestion = true;
+                        Debug.WriteLine("Got from remove database");
+                    }
+                }
+                if (mod == null)
+                {
+                    Debug.WriteLine("didn't get anything from local database");
+                    mod = suggest.GetMcmod(SqlHelper.CalculateMd5(file));
+                    if (mod == null)
+                    {
+                        mod = new Mcmod();
+                    }
+                    else
+                    {
+                        mod.FromSuggestion = true;
+                        Debug.WriteLine("Got from remove database");
+                    }
                 }
 
                 String fileName = file.Substring(file.LastIndexOf(Globalfunctions.PathSeperator) + 1);
                 fileName = fileName.Remove(fileName.LastIndexOf(".", StringComparison.Ordinal));
-
-                if (currentData.Name != null && mod.Name != null)
-                {
-                    if (currentData.Name.Equals("Mystcraft") || mod.Name.Equals("Mystcraft"))
-                    {
-                        mod.Version = ModHelper.GoodVersioning(fileName).Version;
-                        mod.Mcversion = ModHelper.GoodVersioning(fileName).Mcversion;
-                    }
-                }
 
 
                 if (currentData.Name != null && !currentData.Name.Contains("${"))
@@ -1194,6 +1211,7 @@ namespace TechnicSolderHelper
                         currentData.Name = mod.Name;
                         if (mod.Name.Equals(""))
                             return;
+                        mod.FromUserInput = true;
                     }
 
                 }
@@ -1212,6 +1230,7 @@ namespace TechnicSolderHelper
                         mod.Version = mod.Version.Replace(" ", "+").ToLower();
                         if (mod.Version.Equals(""))
                             return;
+                        mod.FromUserInput = true;
                     }
                 }
 
@@ -1240,16 +1259,15 @@ namespace TechnicSolderHelper
                     mod.Modid = currentData.Modid;
                 }
                 //mod.Modid = currentData.Modid ?? mod.Name.Replace(" ", "").ToLower();
-                if (String.IsNullOrWhiteSpace(mod.Modid) || mod.Modid.Contains("${"))
+                if (mod.Name != null && (String.IsNullOrWhiteSpace(mod.Modid) || mod.Modid.Contains("${")))
                 {
                     mod.Modid = mod.Name.Replace(" ", "").ToLower();
                 }
 
-                DataSuggest suggest = new DataSuggest();
                 string md5 = SqlHelper.CalculateMd5(file);
-                if (!mod.FromSuggestion && !suggest.IsModSuggested(md5))
+                if (mod.FromUserInput && !mod.FromSuggestion && !suggest.IsModSuggested(md5))
                 {
-                    suggest.Suggest(fileName, mod.Mcversion, mod.Version, md5);
+                    suggest.Suggest(fileName, mod.Mcversion, mod.Version, md5, mod.Modid, mod.Name);
                 }
 
                 if (CreateTechnicPack.Checked)
