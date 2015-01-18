@@ -45,7 +45,6 @@
             this.data.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader;
             this.data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.data.Location = new System.Drawing.Point(13, 13);
-            this.data.MultiSelect = false;
             this.data.Name = "data";
             this.data.Size = new System.Drawing.Size(672, 533);
             this.data.TabIndex = 0;
