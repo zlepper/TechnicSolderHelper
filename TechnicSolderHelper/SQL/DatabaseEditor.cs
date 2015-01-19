@@ -23,16 +23,18 @@ namespace TechnicSolderHelper.SQL
             }
             Shown += DatabaseEditor_Shown;
         }
+
         private void DatabaseEditor_Shown(object sender, EventArgs e)
         {
             int col1 = data.Columns["ModName"].Width;
             int col2 = data.Columns["ModID"].Width; 
             int col3 = data.Columns["ModVersion"].Width;
             int col4 = data.Columns["MinecraftVersion"].Width;
-            int col5 = data.Columns["Filename"].Width;
+            int col5 = data.Columns["FileName"].Width;
             int allCol = col1 + col2 + col3 + col4 + col5;
-            this.Size = new System.Drawing.Size(allCol +95, this.Height);
+            this.Size = new System.Drawing.Size(allCol + 95, this.Height);
         }
+
         private void Save_Click(object sender, EventArgs e)
         {
             ModListSqlHelper modListSqlHelper = new ModListSqlHelper();
