@@ -32,22 +32,28 @@
             this.Save = new System.Windows.Forms.Button();
             this.Cancel = new System.Windows.Forms.Button();
             this.SaveAndExit = new System.Windows.Forms.Button();
+            this.highLightVerBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.data)).BeginInit();
             this.SuspendLayout();
             // 
             // data
             // 
             this.data.AllowUserToAddRows = false;
+            this.data.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.data.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader;
             this.data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.data.Location = new System.Drawing.Point(13, 13);
             this.data.Name = "data";
-            this.data.Size = new System.Drawing.Size(606, 431);
+            this.data.Size = new System.Drawing.Size(672, 533);
             this.data.TabIndex = 0;
+            this.data.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.data_CellContentClick);
             // 
             // Save
             // 
-            this.Save.Location = new System.Drawing.Point(16, 462);
+            this.Save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Save.Location = new System.Drawing.Point(16, 564);
             this.Save.Name = "Save";
             this.Save.Size = new System.Drawing.Size(121, 28);
             this.Save.TabIndex = 1;
@@ -57,8 +63,9 @@
             // 
             // Cancel
             // 
+            this.Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Cancel.Location = new System.Drawing.Point(500, 462);
+            this.Cancel.Location = new System.Drawing.Point(567, 562);
             this.Cancel.Name = "Cancel";
             this.Cancel.Size = new System.Drawing.Size(118, 32);
             this.Cancel.TabIndex = 2;
@@ -68,7 +75,8 @@
             // 
             // SaveAndExit
             // 
-            this.SaveAndExit.Location = new System.Drawing.Point(144, 462);
+            this.SaveAndExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.SaveAndExit.Location = new System.Drawing.Point(144, 564);
             this.SaveAndExit.Name = "SaveAndExit";
             this.SaveAndExit.Size = new System.Drawing.Size(106, 28);
             this.SaveAndExit.TabIndex = 3;
@@ -76,13 +84,25 @@
             this.SaveAndExit.UseVisualStyleBackColor = true;
             this.SaveAndExit.Click += new System.EventHandler(this.SaveAndExit_Click);
             // 
+            // highLightVerBtn
+            // 
+            this.highLightVerBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.highLightVerBtn.Location = new System.Drawing.Point(267, 564);
+            this.highLightVerBtn.Name = "highLightVerBtn";
+            this.highLightVerBtn.Size = new System.Drawing.Size(145, 28);
+            this.highLightVerBtn.TabIndex = 4;
+            this.highLightVerBtn.Text = "Highlight Odd ModVersions";
+            this.highLightVerBtn.UseVisualStyleBackColor = true;
+            this.highLightVerBtn.Click += new System.EventHandler(this.highLightVerBtn_Click);
+            // 
             // DatabaseEditor
             // 
             this.AcceptButton = this.SaveAndExit;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancel;
-            this.ClientSize = new System.Drawing.Size(631, 506);
+            this.ClientSize = new System.Drawing.Size(691, 608);
+            this.Controls.Add(this.highLightVerBtn);
             this.Controls.Add(this.SaveAndExit);
             this.Controls.Add(this.Cancel);
             this.Controls.Add(this.Save);
@@ -100,5 +120,6 @@
         private System.Windows.Forms.Button Save;
         private System.Windows.Forms.Button Cancel;
         private System.Windows.Forms.Button SaveAndExit;
+        private System.Windows.Forms.Button highLightVerBtn;
     }
 }

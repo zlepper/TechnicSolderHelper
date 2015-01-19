@@ -128,7 +128,7 @@ namespace TechnicSolderHelper
             _ftbPermissionList = Path.Combine(_outputDirectory, "FTB Permission List.txt");
             _technicPermissionList = Path.Combine(_outputDirectory, "Technic Permission List.txt");
             //_sqlCommandPath = Path.Combine(_outputDirectory, "commands.sql");
-            _currentMcVersion = null;
+            _currentMcVersion = MCversion.SelectedItem.ToString();
 
             Environment.CurrentDirectory = Globalfunctions.IsUnix() ? "/" : "C:\\";
             if (!Directory.Exists(InputFolder.Text))
@@ -1648,6 +1648,26 @@ namespace TechnicSolderHelper
         {
             Form f = new DatabaseEditor();
             f.Show();
+        }
+
+        private void MCversionCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ForgeBuild.Items.Clear();
+            String selectedMcversion = MCversion.SelectedItem.ToString();
+            List<String> forgeVersions = _forgeSqlHelper.GetForgeVersions(selectedMcversion);
+            foreach (String build in forgeVersions)
+                ForgeBuild.Items.Add(build);
+            ForgeBuild.SelectedIndex = ForgeBuild.Items.Count - 1;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelmcversion_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
