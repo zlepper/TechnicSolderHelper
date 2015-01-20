@@ -20,7 +20,7 @@ using TechnicSolderHelper.SQL.workTogether;
 
 namespace TechnicSolderHelper
 {
-    public partial class SolderHelper : Form
+    public partial class SolderHelper
     {
         #region Application Wide Variables
 
@@ -270,7 +270,7 @@ namespace TechnicSolderHelper
             return false;
         }
 
-        private List<String> getModFiles()
+        private List<String> GetModFiles()
         {
             // Create array with all the mod locations
             List<String> files = new List<String>();
@@ -324,7 +324,7 @@ namespace TechnicSolderHelper
                 return;
             }
 
-            List<String> files = getModFiles();
+            List<String> files = GetModFiles();
 
             while (String.IsNullOrWhiteSpace(_modpackName))
             {
@@ -1151,20 +1151,20 @@ namespace TechnicSolderHelper
         {
             try
             {
-                Mcmod mod = new Mcmod { UseShortName = false };
+                Mcmod mod;
                 String s = SqlHelper.CalculateMd5(file);
                 Debug.WriteLine(s);
                 DataSuggest suggest = new DataSuggest();
 
                 try
                 {
-                    mod = _modsSqLhelper.GetModInfo(SqlHelper.CalculateMd5(file));
+                    mod = _modsSqLhelper.GetModInfo(s);
                     Debug.WriteLine("Got from local database");
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
-                    mod = suggest.GetMcmod(SqlHelper.CalculateMd5(file));
+                    mod = suggest.GetMcmod(s);
                     if (mod == null)
                     {
                         mod = new Mcmod();

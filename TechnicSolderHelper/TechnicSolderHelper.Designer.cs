@@ -273,7 +273,6 @@ namespace TechnicSolderHelper
             this.missingInfoAction.TabIndex = 0;
             this.missingInfoAction.TabStop = false;
             this.missingInfoAction.Text = "Missing Info";
-            this.missingInfoAction.Visible = false;
             // 
             // missingInfoActionCreateList
             // 
@@ -616,8 +615,8 @@ namespace TechnicSolderHelper
             // SolderHelper
             // 
             this.AcceptButton = this.button1;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(784, 464);
             this.Controls.Add(this.ForgeBuild);
             this.Controls.Add(this.MCversion);
