@@ -34,7 +34,7 @@
     <PublisherName>Rasmus Hansen</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>1.0.4.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
