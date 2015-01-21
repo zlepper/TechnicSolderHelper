@@ -128,7 +128,7 @@ namespace TechnicSolderHelper
             _ftbPermissionList = Path.Combine(_outputDirectory, "FTB Permission List.txt");
             _technicPermissionList = Path.Combine(_outputDirectory, "Technic Permission List.txt");
             //_sqlCommandPath = Path.Combine(_outputDirectory, "commands.sql");
-            _currentMcVersion = MCversion.SelectedItem.ToString();
+            _currentMcVersion = string.IsNullOrEmpty(MCversion.Text) ? null : MCversion.SelectedItem.ToString();
 
             Environment.CurrentDirectory = Globalfunctions.IsUnix() ? "/" : "C:\\";
             if (!Directory.Exists(InputFolder.Text))
@@ -353,6 +353,7 @@ namespace TechnicSolderHelper
             //Check if files have already been added
             foreach (String file in files)
             {
+                Debug.WriteLine("");
                 _currentMod++;
                 if (IsWierdMod(file) == 0)
                 {
@@ -1103,7 +1104,8 @@ namespace TechnicSolderHelper
             if (String.IsNullOrWhiteSpace(mod.Name) || String.IsNullOrWhiteSpace(mod.Version) ||
                 String.IsNullOrWhiteSpace(mod.Mcversion) || String.IsNullOrWhiteSpace(mod.Modid))
                 return false;
-            if (mod.Name.Contains("${") || mod.Version.Contains("${") || mod.Mcversion.Contains("${") || mod.Modid.Contains("${"))
+            Debug.WriteLine(mod.Version);
+            if (mod.Name.Contains("${") || mod.Version.Contains("${") || mod.Mcversion.Contains("${") || mod.Modid.Contains("${") || mod.Version.ToLower().Contains("@version@"))
             {
                 return false;
             }
@@ -1215,11 +1217,11 @@ namespace TechnicSolderHelper
                     }
 
                 }
-                if (currentData.Version != null && !currentData.Version.Contains("${"))
+                if (currentData.Version != null && !currentData.Version.Contains("${") && !currentData.Version.ToLower().Contains("@version@"))
                     mod.Version = currentData.Version.Replace(" ", "+").ToLower();
                 else
                 {
-                    if (mod.Version == null && (String.IsNullOrWhiteSpace(currentData.Version) || currentData.Version.Contains("${")))
+                    if (mod.Version == null && (String.IsNullOrWhiteSpace(currentData.Version) || currentData.Version.Contains("${") || currentData.Version.ToLower().Contains("@version@")))
                     {
                         String a =
                             String.Format(
