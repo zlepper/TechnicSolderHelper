@@ -60,7 +60,7 @@ namespace TechnicSolderHelper
                             op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!op.HasPermission)
                             {
-                                overwritelink = Prompt.ShowDialog(string.Format("{0} requires that you notify the author of inclusion.{1}Please provide proof that you have done this:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name).Replace(" ", "");
+                                overwritelink = Prompt.ShowDialog(string.Format("{0} requires that you notify the author of inclusion.{1}Please provide proof(an imgur link) that you have done this:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name).Replace(" ", "");
                                 while (true)
                                 {
                                     if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -84,7 +84,7 @@ namespace TechnicSolderHelper
                                     {
                                         MessageBox.Show("Invalid url");
                                     }
-                                    overwritelink = Prompt.ShowDialog(string.Format("{0} requires that you notify the author of inclusion.{1}Please provide proof that you have done this:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
+                                    overwritelink = Prompt.ShowDialog(string.Format("{0} requires that you notify the author of inclusion.{1}Please provide proof(an imgur link) that you have done this:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
                             }
                             else
@@ -100,7 +100,7 @@ namespace TechnicSolderHelper
                             op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!op.HasPermission)
                             {
-                                overwritelink = Prompt.ShowDialog(string.Format("This mod requires that you request permissions from the Mod Author of {0}{1}Please provide proof that you have this permission:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
+                                overwritelink = Prompt.ShowDialog(string.Format("This mod requires that you request permissions from the Mod Author of {0}{1}Please provide proof(an imgur link) that you have this permission:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 while (true)
                                 {
                                     if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -124,7 +124,7 @@ namespace TechnicSolderHelper
                                     {
                                         MessageBox.Show("Invalid url");
                                     }
-                                    overwritelink = Prompt.ShowDialog(string.Format("This mod requires that you request permissions from the Mod Author of {0}{1}Please provide proof that you have this permission:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
+                                    overwritelink = Prompt.ShowDialog(string.Format("This mod requires that you request permissions from the Mod Author of {0}{1}Please provide proof(an imgur link) that you have this permission:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
                             }
                             else
@@ -138,7 +138,7 @@ namespace TechnicSolderHelper
                             op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!op.HasPermission)
                             {
-                                overwritelink = Prompt.ShowDialog(string.Format("The FTB permissionsheet states that permissions for {0} is closed.{1}Please provide proof that this is not the case:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
+                                overwritelink = Prompt.ShowDialog(string.Format("The FTB permissionsheet states that permissions for {0} is closed.{1}Please provide proof(an imgur link) that this is not the case:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 while (true)
                                 {
                                     if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -162,7 +162,7 @@ namespace TechnicSolderHelper
                                     {
                                         MessageBox.Show("Invalid url");
                                     }
-                                    overwritelink = Prompt.ShowDialog(string.Format("The FTB permissionsheet states that permissions for {0} is closed.{1}Please provide proof that this is not the case:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
+                                    overwritelink = Prompt.ShowDialog(string.Format("The FTB permissionsheet states that permissions for {0} is closed.{1}Please provide proof(an imgur link) that this is not the case:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
                             }
                             else
@@ -176,7 +176,7 @@ namespace TechnicSolderHelper
                             op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!op.HasPermission)
                             {
-                                overwritelink = Prompt.ShowDialog(string.Format("Permissions for {0} is unknown{1}Please provide proof of permissions:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
+                                overwritelink = Prompt.ShowDialog(string.Format("Permissions for {0} is unknown{1}Please provide proof(an imgur link) of permissions:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 while (true)
                                 {
                                     if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -196,7 +196,7 @@ namespace TechnicSolderHelper
                                     {
                                         MessageBox.Show("Invalid url");
                                     }
-                                    overwritelink = Prompt.ShowDialog(string.Format("Permissions for {0} is unknown{1}Please provide proof of permissions:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
+                                    overwritelink = Prompt.ShowDialog(string.Format("Permissions for {0} is unknown{1}Please provide proof(an imgur link) of permissions:{1}Enter \"skip\" to skip the mod.", mod.Name, Environment.NewLine), mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod)).Replace(" ", "");
                                 }
                                 string modLink;
                                 while (true)
