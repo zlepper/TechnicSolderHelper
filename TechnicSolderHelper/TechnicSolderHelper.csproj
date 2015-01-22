@@ -187,6 +187,9 @@
     </Compile>
     <Compile Include="Modlist.cs" />
     <Compile Include="PermLevel.cs" />
+    <Compile Include="ReadOnlyRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="s3\S3.cs" />
     <Compile Include="s3\S3Info.cs">
       <SubType>Form</SubType>

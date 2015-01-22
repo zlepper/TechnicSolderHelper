@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -350,6 +351,8 @@ namespace TechnicSolderHelper
                 initializeSolderSqlHandler();
             }
 
+            List<Mcmod> modsList = new List<Mcmod>(_totalMods);
+            
             //Check if files have already been added
             foreach (String file in files)
             {
@@ -444,7 +447,16 @@ namespace TechnicSolderHelper
                                 mod.Authors = modinfo2.Modlist[0].Authors;
                                 mod.Description = modinfo2.Modlist[0].Description;
                                 mod.Url = modinfo2.Modlist[0].Url;
-                                RequireUserInfo(mod, file);
+                                if (missingInfoActionOnTheRun.Checked)
+                                {
+                                    RequireUserInfo(mod, file);
+                                }
+                                else
+                                {
+                                    mod.Filename = FileName;
+                                    mod.Path = file;
+                                    modsList.Add(mod);
+                                }
                             }
                             else
                             {
@@ -466,22 +478,31 @@ namespace TechnicSolderHelper
                                     throw new JsonSerializationException("Invalid Json in file" + FileName);
                                 }
                                 var mod = modinfo[0];
-                                if (IsFullyInformed(mod))
+                                if (missingInfoActionOnTheRun.Checked)
                                 {
-                                    if (CreateTechnicPack.Checked)
+                                    if (IsFullyInformed(mod))
                                     {
-                                        CreateTechnicModZip(mod, file);
+                                        if (CreateTechnicPack.Checked)
+                                        {
+                                            CreateTechnicModZip(mod, file);
+                                        }
+                                        if (CreateFTBPack.Checked)
+                                        {
+                                            CreateFtbPackZip(mod, file);
+                                        }
                                     }
-                                    if (CreateFTBPack.Checked)
+                                    else
                                     {
-                                        CreateFtbPackZip(mod, file);
+                                        RequireUserInfo(mod, file);
                                     }
                                 }
                                 else
                                 {
-                                    RequireUserInfo(mod, file);
+                                    mod.Filename = FileName;
+                                    mod.Path = file;
+                                    modsList.Add(mod);
                                 }
-                                
+
                             }
                             catch (JsonSerializationException)
                             {
@@ -524,8 +545,16 @@ namespace TechnicSolderHelper
                                 {
                                     mod.Version = liteloadermod.Version + "-" + liteloadermod.Revision;
                                 }
-
-                                RequireUserInfo(mod, file);
+                                if (missingInfoActionOnTheRun.Checked)
+                                {
+                                    RequireUserInfo(mod, file);
+                                }
+                                else
+                                {
+                                    mod.Filename = FileName;
+                                    mod.Path = file;
+                                    modsList.Add(mod);
+                                }
 
                             }
                         }
@@ -539,13 +568,13 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    String fileName = file.Substring(file.LastIndexOf(Globalfunctions.PathSeperator) + 1);
-
+                    
+                    
                     //Check the FTB permission sheet for info before doing anything else
                     String shortname = _ftbPermsSqLhelper.GetShortName(SqlHelper.CalculateMd5(file));
                     if (String.IsNullOrWhiteSpace(shortname))
                     {
-                        int fixNr = IsWierdMod(fileName);
+                        int fixNr = IsWierdMod(FileName);
                         if (fixNr != Int32.MaxValue)
                         {
                             Mcmod mod;
@@ -553,11 +582,11 @@ namespace TechnicSolderHelper
                             {
                             //Reikas Pattern
                                 case 1:
-                                    mod = ModHelper.ReikasMods(fileName);
+                                    mod = ModHelper.ReikasMods(FileName);
                                     RequireUserInfo(mod, file);
                                     break;
                                 case 2:
-                                    mod = ModHelper.WailaPattern(fileName);
+                                    mod = ModHelper.WailaPattern(FileName);
                                     RequireUserInfo(mod, file);
                                     break;
                                 case 3:
@@ -576,13 +605,33 @@ namespace TechnicSolderHelper
                                     {
                                         mod.Version = 1.ToString();
                                     }
-                                    RequireUserInfo(mod, file);
+                                    if (missingInfoActionOnTheRun.Checked)
+                                    {
+                                        RequireUserInfo(mod, file);
+                                    }
+                                    else
+                                    {
+                                        mod.Filename = FileName;
+                                        mod.Path = file;
+                                        modsList.Add(mod);
+                                    }
                                     break;
                             }
                         }
                         else
                         {
-                            RequireUserInfo(file);
+                            if (missingInfoActionOnTheRun.Checked)
+                            {
+                                RequireUserInfo(file);
+                            }
+                            else
+                            {
+                                modsList.Add(new Mcmod
+                                {
+                                    Path = file,
+                                    Filename = FileName
+                                });
+                            }
                         }
                     }
                     else
@@ -607,15 +656,29 @@ namespace TechnicSolderHelper
                             mod.PublicPerms = _ftbPermsSqLhelper.DoFtbHavePermission(shortname, true);
                         }
 
-                        if (CreateFTBPack.Checked && !CreateTechnicPack.Checked)
-                            CreateFtbPackZip(mod, file);
+                        if (missingInfoActionOnTheRun.Checked)
+                        {
+                            if (CreateFTBPack.Checked && !CreateTechnicPack.Checked)
+                                CreateFtbPackZip(mod, file);
+                            else
+                            {
+                                if (CreateFTBPack.Checked || CreateTechnicPack.Checked)
+                                    RequireUserInfo(mod, file);
+                            }
+                        }
                         else
                         {
-                            if (CreateFTBPack.Checked || CreateTechnicPack.Checked)
-                                RequireUserInfo(mod, file);
+                            mod.Filename = FileName;
+                            mod.Path = file;
+                            modsList.Add(mod);
                         }
                     }
                 }
+            }
+            if (missingInfoActionCreateList.Checked)
+            {
+                Form modinfo = new Modinfo(modsList, this);
+                modinfo.ShowDialog();
             }
 
             Environment.CurrentDirectory = _inputDirectory;
@@ -1605,8 +1668,8 @@ namespace TechnicSolderHelper
 
         private void testmysql_Click(object sender, EventArgs e)
         {
-            SolderSqlHandler sqh = new SolderSqlHandler("192.168.1.60", "solder", "password", "solderapi");
-            Debug.WriteLine(sqh.GetModId("forge"));
+            Form f = new Modinfo(this);
+            f.Show();
         }
 
         private void configureSolder_Click(object sender, EventArgs e)

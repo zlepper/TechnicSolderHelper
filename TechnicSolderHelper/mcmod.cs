@@ -37,6 +37,10 @@ namespace TechnicSolderHelper
 
         public Boolean FromUserInput { get; set; }
 
+        public String Filename { get; set; }
+
+        public String Path { get; set; }
+
     }
 
     public class OwnPermissions

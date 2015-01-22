@@ -81,7 +81,7 @@ namespace TechnicSolderHelper
             this.ZipPack = new System.Windows.Forms.RadioButton();
             this.SolderPack = new System.Windows.Forms.RadioButton();
             this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
-            this.testmysql = new System.Windows.Forms.Button();
+            this.testButton = new System.Windows.Forms.Button();
             this.useSolder = new System.Windows.Forms.CheckBox();
             this.configureSolder = new System.Windows.Forms.Button();
             this.savesqlcommands = new System.Windows.Forms.CheckBox();
@@ -517,16 +517,16 @@ namespace TechnicSolderHelper
             this.IncludeConfigZip.UseVisualStyleBackColor = true;
             this.IncludeConfigZip.CheckedChanged += new System.EventHandler(this.IncludeConfigZip_CheckedChanged);
             // 
-            // testmysql
+            // testButton
             // 
-            this.testmysql.Location = new System.Drawing.Point(429, 371);
-            this.testmysql.Name = "testmysql";
-            this.testmysql.Size = new System.Drawing.Size(75, 23);
-            this.testmysql.TabIndex = 25;
-            this.testmysql.Text = "Test mysql";
-            this.testmysql.UseVisualStyleBackColor = true;
-            this.testmysql.Visible = false;
-            this.testmysql.Click += new System.EventHandler(this.testmysql_Click);
+            this.testButton.Location = new System.Drawing.Point(429, 371);
+            this.testButton.Name = "testButton";
+            this.testButton.Size = new System.Drawing.Size(75, 23);
+            this.testButton.TabIndex = 25;
+            this.testButton.Text = "Test";
+            this.testButton.UseVisualStyleBackColor = true;
+            this.testButton.Visible = false;
+            this.testButton.Click += new System.EventHandler(this.testmysql_Click);
             // 
             // useSolder
             // 
@@ -626,7 +626,7 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.savesqlcommands);
             this.Controls.Add(this.configureSolder);
             this.Controls.Add(this.useSolder);
-            this.Controls.Add(this.testmysql);
+            this.Controls.Add(this.testButton);
             this.Controls.Add(this.configureFTP);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.getliteloaderversions);
@@ -716,15 +716,13 @@ namespace TechnicSolderHelper
         private Button getliteloaderversions;
         private GroupBox groupBox1;
         private Button configureFTP;
-        private Button testmysql;
+        private Button testButton;
         private CheckBox useSolder;
         private Button configureSolder;
         private CheckBox savesqlcommands;
 
         public SolderHelper()
         {
-            //if (Debugger.IsAttached) { Properties.Settings.Default.Reset(); }
-
             Globalfunctions.PathSeperator = Globalfunctions.IsUnix() ? '/' : '\\';
             InitializeComponent();
             bool firstRun = true;
@@ -1022,6 +1020,14 @@ namespace TechnicSolderHelper
             Debug.WriteLine(this.Width);
             Debug.WriteLine(this.Height);
             Debug.WriteLine(groupBox1.Width);
+            if (Debugger.IsAttached)
+            {
+                testButton.Show();
+            }
+            else
+            {
+                testButton.Hide();
+            }
         }
 
         private CheckBox UseS3;
