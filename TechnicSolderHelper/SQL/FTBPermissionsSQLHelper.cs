@@ -20,7 +20,7 @@ namespace TechnicSolderHelper.SQL
         /// Checks if the ftb database contains any permissions for the mod
         /// </summary>
         /// <param name="toCheck">
-        /// The ID of the mod to check for</param>
+        /// The ID of the mod, or the shortname to check for</param>
         /// <param name="isPublic">
         /// If false, Checks for private distribution permissions. 
         /// If true, Checks for public distribution permissions.</param>
@@ -100,7 +100,7 @@ namespace TechnicSolderHelper.SQL
 
         public enum InfoType
         {
-            //PermLink,
+            PermLink,
             //CustPrivate,
             //CustFtb,
             ModLink,

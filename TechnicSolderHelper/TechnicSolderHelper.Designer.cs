@@ -77,7 +77,7 @@ namespace TechnicSolderHelper
             this.PrivateFTBPack = new System.Windows.Forms.RadioButton();
             this.SolderPackType = new System.Windows.Forms.GroupBox();
             this.IncludeForgeVersion = new System.Windows.Forms.CheckBox();
-            this.CheckPermissions = new System.Windows.Forms.CheckBox();
+            this.TechnicPermissions = new System.Windows.Forms.CheckBox();
             this.ZipPack = new System.Windows.Forms.RadioButton();
             this.SolderPack = new System.Windows.Forms.RadioButton();
             this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
@@ -295,6 +295,7 @@ namespace TechnicSolderHelper
             this.missingInfoActionOnTheRun.TabStop = true;
             this.missingInfoActionOnTheRun.Text = "Ask as needed";
             this.missingInfoActionOnTheRun.UseVisualStyleBackColor = true;
+            this.missingInfoActionOnTheRun.CheckedChanged += new System.EventHandler(this.missingInfoActionOnTheRun_CheckedChanged);
             // 
             // label4
             // 
@@ -448,7 +449,7 @@ namespace TechnicSolderHelper
             // SolderPackType
             // 
             this.SolderPackType.Controls.Add(this.IncludeForgeVersion);
-            this.SolderPackType.Controls.Add(this.CheckPermissions);
+            this.SolderPackType.Controls.Add(this.TechnicPermissions);
             this.SolderPackType.Controls.Add(this.ZipPack);
             this.SolderPackType.Controls.Add(this.SolderPack);
             this.SolderPackType.Controls.Add(this.IncludeConfigZip);
@@ -470,16 +471,16 @@ namespace TechnicSolderHelper
             this.IncludeForgeVersion.UseVisualStyleBackColor = true;
             this.IncludeForgeVersion.CheckedChanged += new System.EventHandler(this.IncludeForgeVersion_CheckedChanged);
             // 
-            // CheckPermissions
+            // TechnicPermissions
             // 
-            this.CheckPermissions.AutoSize = true;
-            this.CheckPermissions.Location = new System.Drawing.Point(20, 111);
-            this.CheckPermissions.Name = "CheckPermissions";
-            this.CheckPermissions.Size = new System.Drawing.Size(114, 17);
-            this.CheckPermissions.TabIndex = 6;
-            this.CheckPermissions.Text = "Check permissions";
-            this.CheckPermissions.UseVisualStyleBackColor = true;
-            this.CheckPermissions.CheckedChanged += new System.EventHandler(this.CheckPermissions_CheckedChanged);
+            this.TechnicPermissions.AutoSize = true;
+            this.TechnicPermissions.Location = new System.Drawing.Point(20, 111);
+            this.TechnicPermissions.Name = "TechnicPermissions";
+            this.TechnicPermissions.Size = new System.Drawing.Size(114, 17);
+            this.TechnicPermissions.TabIndex = 6;
+            this.TechnicPermissions.Text = "Check permissions";
+            this.TechnicPermissions.UseVisualStyleBackColor = true;
+            this.TechnicPermissions.CheckedChanged += new System.EventHandler(this.CheckPermissions_CheckedChanged);
             // 
             // ZipPack
             // 
@@ -687,7 +688,6 @@ namespace TechnicSolderHelper
         private CheckBox checkBox1;
         private CheckBox IncludeConfigZip;
         private Button button3;
-        private CheckBox CreateFTBPack;
         private Label label3;
         public Label ProgressLabel;
         private CheckBox CreateTechnicPack;
@@ -695,12 +695,7 @@ namespace TechnicSolderHelper
         private RadioButton ZipPack;
         private RadioButton SolderPack;
         private GroupBox DistributionLevel;
-        private RadioButton PublicFTBPack;
-        private RadioButton PrivateFTBPack;
-        private CheckBox CheckPermissions;
         private GroupBox TechnicDistributionLevel;
-        private RadioButton TechnicPublicPermissions;
-        private RadioButton TechnicPrivatePermissions;
         private CheckBox UploadToFTPServer;
         private CheckBox IncludeForgeVersion;
         private Button GetForgeVersions;
@@ -772,7 +767,7 @@ namespace TechnicSolderHelper
             }
             catch (Exception)
             {
-                InputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft/mods";
+                InputFolder.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft", "mods");
             }
 
             try
@@ -781,7 +776,7 @@ namespace TechnicSolderHelper
             }
             catch (Exception)
             {
-                OutputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "/SolderHelper";
+                OutputFolder.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "SolderHelper");
             }
 
             try
@@ -803,7 +798,7 @@ namespace TechnicSolderHelper
                 CreateFTBPack.Checked = false;
             }
 
-            Boolean createSolderHelper = true, createPrivateFtbPack = true, technicPrivatePermissionsLevel = true, includeForgeVersion = false, createTechnicConfigZip = true, checkTecnicPermissions = false, uploadToFTPServer = false, uses3 = false, createFtbPack = false;
+            Boolean createSolderHelper = true, createPrivateFtbPack = true, technicPrivatePermissionsLevel = true, includeForgeVersion = false, createTechnicConfigZip = true, checkTecnicPermissions = false, uploadToFTPServer = false, uses3 = false, createFtbPack = false, missingInfoAction = true;
             try
             {
                 useSolder.Checked = Convert.ToBoolean(_confighandler.GetConfig("useSolder"));
@@ -886,6 +881,20 @@ namespace TechnicSolderHelper
             {
             }
 
+            try
+            {
+                missingInfoAction = Convert.ToBoolean(_confighandler.GetConfig("missingInfoAction"));
+            }
+            catch { }
+
+            if (missingInfoAction)
+            {
+                missingInfoActionOnTheRun.Checked = true;
+            }
+            else
+            {
+                missingInfoActionCreateList.Checked = true;
+            }
             if (uses3)
             {
                 UseS3.Checked = true;
@@ -959,7 +968,7 @@ namespace TechnicSolderHelper
                 ForgeBuild.Hide();
             }
             IncludeConfigZip.Checked = createTechnicConfigZip;
-            CheckPermissions.Checked = checkTecnicPermissions;
+            TechnicPermissions.Checked = checkTecnicPermissions;
             if (checkTecnicPermissions && CreateTechnicPack.Checked)
             {
                 TechnicDistributionLevel.Visible = true;
@@ -1035,5 +1044,11 @@ namespace TechnicSolderHelper
         private Button button4;
         private ComboBox MCversion;
         private ComboBox ForgeBuild;
+        public CheckBox CreateFTBPack;
+        public RadioButton PublicFTBPack;
+        public RadioButton PrivateFTBPack;
+        public CheckBox TechnicPermissions;
+        public RadioButton TechnicPublicPermissions;
+        public RadioButton TechnicPrivatePermissions;
     }
 }

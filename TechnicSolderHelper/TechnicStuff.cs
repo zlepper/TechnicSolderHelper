@@ -142,7 +142,7 @@ namespace TechnicSolderHelper
             String fileName = modfile.Substring(modfile.LastIndexOf(Globalfunctions.PathSeperator) + 1);
             String modMd5 = SqlHelper.CalculateMd5(modfile);
             _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, false);
-            if (CheckPermissions.Checked)
+            if (TechnicPermissions.Checked)
             {
                 PermissionLevel permLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid, PublicFTBPack.Checked);
                 String overwritelink;

@@ -36,7 +36,7 @@ namespace TechnicSolderHelper
         private readonly String _sevenZipLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "7za.exe");
         private readonly Process _process = new Process();
         private readonly ProcessStartInfo _startInfo = new ProcessStartInfo();
-        private String _path, _currentMcVersion, _modpackVersion, _modpackName, _modpackArchive, _ftbModpackArchive;
+        public String _path, _currentMcVersion, _modpackVersion, _modpackName, _modpackArchive, _ftbModpackArchive;
         private readonly ConfigHandler _confighandler = new ConfigHandler();
         private String _modlistTextFile = "", _technicPermissionList = "", _ftbPermissionList = "", _ftbOwnPermissionList = "";
         private short _totalMods, _currentMod;
@@ -66,7 +66,7 @@ namespace TechnicSolderHelper
             }
         }
 
-        private string GetAuthors(Mcmod mod)
+        public string GetAuthors(Mcmod mod)
         {
             string authorString = "";
             bool isFirst = true;
@@ -1162,7 +1162,7 @@ namespace TechnicSolderHelper
         /// <param name="mod"></param>
         /// <returns>
         /// Returns true if everything is alright</returns>
-        private static bool IsFullyInformed(Mcmod mod)
+        public static bool IsFullyInformed(Mcmod mod)
         {
             if (String.IsNullOrWhiteSpace(mod.Name) || String.IsNullOrWhiteSpace(mod.Version) ||
                 String.IsNullOrWhiteSpace(mod.Mcversion) || String.IsNullOrWhiteSpace(mod.Modid))
@@ -1479,7 +1479,7 @@ namespace TechnicSolderHelper
                 SolderPackType.Show();
                 DistributionLevel.Location = new Point(DistributionLevel.Location.X, DistributionLevel.Location.Y + SolderPackType.Height);
                 CreateFTBPack.Location = new Point(CreateFTBPack.Location.X, CreateFTBPack.Location.Y + SolderPackType.Height);
-                if (CheckPermissions.Checked)
+                if (TechnicPermissions.Checked)
                 {
                     TechnicDistributionLevel.Show();
                 }
@@ -1538,9 +1538,9 @@ namespace TechnicSolderHelper
 
         private void CheckPermissions_CheckedChanged(object sender, EventArgs e)
         {
-            _confighandler.SetConfig("CheckTecnicPermissions", CheckPermissions.Checked);
+            _confighandler.SetConfig("CheckTecnicPermissions", TechnicPermissions.Checked);
 
-            if (CheckPermissions.Checked)
+            if (TechnicPermissions.Checked)
                 TechnicDistributionLevel.Show();
             else
                 TechnicDistributionLevel.Hide();
@@ -1733,6 +1733,11 @@ namespace TechnicSolderHelper
         private void labelmcversion_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void missingInfoActionOnTheRun_CheckedChanged(object sender, EventArgs e)
+        {
+            _confighandler.SetConfig("missingInfoAction", missingInfoActionOnTheRun.Checked);
         }
     }
 }

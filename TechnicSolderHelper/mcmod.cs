@@ -29,6 +29,10 @@ namespace TechnicSolderHelper
 
         public PermissionLevel PrivatePerms { get; set; }
 
+        public String PermissionLink { get; set; }
+
+        public String LicenseLink { get; set; }
+
         public Boolean IsIgnore { get; set; }
 
         public Boolean UseShortName { get; set; }
@@ -40,6 +44,8 @@ namespace TechnicSolderHelper
         public String Filename { get; set; }
 
         public String Path { get; set; }
+
+        public Boolean Aredone { get; set; }
 
     }
 
