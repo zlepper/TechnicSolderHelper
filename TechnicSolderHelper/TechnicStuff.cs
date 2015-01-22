@@ -157,7 +157,7 @@ namespace TechnicSolderHelper
                         op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!op.HasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog(mod.Name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                            overwritelink = Prompt.ShowDialog(mod.Name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof(an imgur link) that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -175,7 +175,7 @@ namespace TechnicSolderHelper
                                         break;
                                     }
                                 }
-                                overwritelink = Prompt.ShowDialog(mod.Name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                                overwritelink = Prompt.ShowDialog(mod.Name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof(an imgur link) that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
                         }
                         else
@@ -188,7 +188,7 @@ namespace TechnicSolderHelper
                         op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!op.HasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is FTB exclusive" + Environment.NewLine + "Please provide proof of things being otherwise:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is FTB exclusive" + Environment.NewLine + "Please provide proof(an imgur link) of things being otherwise:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -204,7 +204,7 @@ namespace TechnicSolderHelper
                                         break;
                                     }
                                 }
-                                overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is FTB exclusive" + Environment.NewLine + "Please provide proof of things being otherwise:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                                overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is FTB exclusive" + Environment.NewLine + "Please provide proof(an imgur link) of things being otherwise:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
                         }
                         op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
@@ -215,7 +215,7 @@ namespace TechnicSolderHelper
                         op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!op.HasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.Name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name);
+                            overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.Name + Environment.NewLine + "Please provide proof(an imgur link) that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name);
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -231,7 +231,7 @@ namespace TechnicSolderHelper
                                         break;
                                     }
                                 }
-                                overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.Name + Environment.NewLine + "Please provide proof that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                                overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.Name + Environment.NewLine + "Please provide proof(an imgur link) that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
                         }
                         op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
@@ -242,7 +242,7 @@ namespace TechnicSolderHelper
                         op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!op.HasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.Name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                            overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.Name + " is closed." + Environment.NewLine + "Please provide proof(an imgur link) that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -258,7 +258,7 @@ namespace TechnicSolderHelper
                                         break;
                                     }
                                 }
-                                overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.Name + " is closed." + Environment.NewLine + "Please provide proof that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name);
+                                overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.Name + " is closed." + Environment.NewLine + "Please provide proof(an imgur link) that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name);
                             }
                         }
                         op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
@@ -270,7 +270,7 @@ namespace TechnicSolderHelper
                         var modLink = op.ModLink;
                         if (!op.HasPermission)
                         {
-                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                            overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is unknown" + Environment.NewLine + "Please provide proof(an imgur link) of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
                             {
                                 if (overwritelink.ToLower().Equals("skip".ToLower()))
@@ -285,7 +285,7 @@ namespace TechnicSolderHelper
                                         break;
                                     }
                                 }
-                                overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is unknown" + Environment.NewLine + "Please provide proof of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
+                                overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is unknown" + Environment.NewLine + "Please provide proof(an imgur link) of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
                             while (String.IsNullOrWhiteSpace(modLink))
                             {
