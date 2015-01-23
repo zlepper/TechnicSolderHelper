@@ -78,23 +78,40 @@ namespace TechnicSolderHelper
         private void modlist_SelectedIndexChanged(object sender, EventArgs e)
         {
             int index = modlist.SelectedIndex;
-            Mcmod m = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
-            textBoxFileName.Text = m.Filename;
+            if (index >= 0)
+            {
+                Mcmod m = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
+                textBoxFileName.Text = m.Filename;
 
-            textBoxAuthor.Text = m.Authors != null ? _solderHelper.GetAuthors(m) : String.Empty;
+                textBoxAuthor.Text = m.Authors != null ? _solderHelper.GetAuthors(m) : String.Empty;
 
-            textBoxModName.Text = m.Name ?? String.Empty;
+                textBoxModName.Text = m.Name ?? String.Empty;
 
-            textBoxModID.Text = m.Modid ?? String.Empty;
-            textBoxModID.ReadOnly = !String.IsNullOrWhiteSpace(textBoxModID.Text);
+                textBoxModID.Text = m.Modid ?? String.Empty;
+                textBoxModID.ReadOnly = !String.IsNullOrWhiteSpace(textBoxModID.Text);
 
-            textBoxModVersion.Text = m.Version ?? String.Empty;
+                textBoxModVersion.Text = m.Version ?? String.Empty;
 
-            ShowPermissions();
+                ShowPermissions();
+            }
         }
 
         private void textBoxModName_TextChanged(object sender, EventArgs e)
         {
+            int index = modlist.SelectedIndex;
+            var mod = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
+
+            if (!String.IsNullOrWhiteSpace(textBoxModName.Text))
+            {
+                mod.Name = textBoxModName.Text;
+                modlist.Items[index] = mod.Name;
+            }
+            else
+            {
+                mod.Name = String.Empty;
+                modlist.Items[index] = mod.Filename;
+            }
+
             if (textBoxModID.ReadOnly)
                 return;
             textBoxModID.Text = textBoxModName.Text.Replace(" ", "").ToLower();
@@ -127,6 +144,14 @@ namespace TechnicSolderHelper
             if (!technicPermissions.Visible)
             {
                 FTBPermissions.Location = technicPermissions.Location;
+                this.Width -= technicPermissions.Width;
+            }
+            else
+            {
+                if (!FTBPermissions.Visible)
+                {
+                    this.Width -= FTBPermissions.Width;
+                }
             }
         }
 
@@ -245,6 +270,29 @@ namespace TechnicSolderHelper
         private void getPermissions_Click(object sender, EventArgs e)
         {
             ShowPermissions();
+        }
+
+        private void textBoxModVersion_TextChanged(object sender, EventArgs e)
+        {
+            int index = modlist.SelectedIndex;
+            Mcmod mod = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
+            mod.Version = !String.IsNullOrWhiteSpace(textBoxModVersion.Text) ? textBoxModVersion.Text : String.Empty;
+        }
+
+        private void textBoxAuthor_TextChanged(object sender, EventArgs e)
+        {
+            int index = modlist.SelectedIndex;
+            Mcmod mod = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
+            if (!String.IsNullOrWhiteSpace(textBoxAuthor.Text))
+            {
+                String a = textBoxAuthor.Text;
+                List<String> s = a.Split(',').ToList();
+                mod.Authors = s;
+            }
+            else
+            {
+                mod.Authors = null;
+            }
         }
     }
 }

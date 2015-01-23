@@ -165,6 +165,7 @@ namespace TechnicSolderHelper
             this.textBoxAuthor.Name = "textBoxAuthor";
             this.textBoxAuthor.Size = new System.Drawing.Size(205, 20);
             this.textBoxAuthor.TabIndex = 0;
+            this.textBoxAuthor.TextChanged += new System.EventHandler(this.textBoxAuthor_TextChanged);
             // 
             // textBoxModVersion
             // 
@@ -172,6 +173,7 @@ namespace TechnicSolderHelper
             this.textBoxModVersion.Name = "textBoxModVersion";
             this.textBoxModVersion.Size = new System.Drawing.Size(205, 20);
             this.textBoxModVersion.TabIndex = 0;
+            this.textBoxModVersion.TextChanged += new System.EventHandler(this.textBoxModVersion_TextChanged);
             // 
             // textBoxModID
             // 
