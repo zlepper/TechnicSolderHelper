@@ -133,7 +133,7 @@ namespace TechnicSolderHelper
             File.AppendAllText(_technicPermissionList, ps + Environment.NewLine);
         }
 
-        private void CreateTechnicModZip(Mcmod mod, String modfile)
+        public void CreateTechnicModZip(Mcmod mod, String modfile)
         {
             if (mod.IsSkipping)
             {

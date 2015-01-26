@@ -27,7 +27,7 @@ namespace TechnicSolderHelper
             File.AppendAllText(_ftbPermissionList, output);
         }
 
-        private void CreateFtbPackZip(Mcmod mod, string modfile)
+        public void CreateFtbPackZip(Mcmod mod, string modfile)
         {
             if (mod.IsSkipping)
             {

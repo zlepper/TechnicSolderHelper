@@ -162,6 +162,10 @@ namespace TechnicSolderHelper.SQL
 
         public void AddAuthor(String modId, String authorName)
         {
+            if (String.IsNullOrWhiteSpace(modId))
+            {
+                return;
+            }
             modId = modId.Replace("'", "`");
 
             String sql = String.Format("UPDATE {0} SET ModAuthor = @author WHERE ModID LIKE @modid;", TableName);

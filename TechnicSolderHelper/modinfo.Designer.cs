@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace TechnicSolderHelper
 {
@@ -181,6 +182,7 @@ namespace TechnicSolderHelper
             this.textBoxModID.Name = "textBoxModID";
             this.textBoxModID.Size = new System.Drawing.Size(205, 20);
             this.textBoxModID.TabIndex = 0;
+            this.textBoxModID.TextChanged += new System.EventHandler(this.textBoxModID_TextChanged);
             // 
             // textBoxModName
             // 
@@ -522,6 +524,7 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.modlist);
             this.Name = "Modinfo";
             this.Text = "modinfo";
+            this.Closing += new System.ComponentModel.CancelEventHandler(this.modinfo_Closing);
             this.Load += new System.EventHandler(this.Modinfo_Load);
             this.dataBox.ResumeLayout(false);
             this.dataBox.PerformLayout();

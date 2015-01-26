@@ -690,7 +690,6 @@ namespace TechnicSolderHelper
         private Button button3;
         private Label label3;
         public Label ProgressLabel;
-        private CheckBox CreateTechnicPack;
         private GroupBox SolderPackType;
         private RadioButton ZipPack;
         private RadioButton SolderPack;
@@ -1050,5 +1049,6 @@ namespace TechnicSolderHelper
         public CheckBox TechnicPermissions;
         public RadioButton TechnicPublicPermissions;
         public RadioButton TechnicPrivatePermissions;
+        public CheckBox CreateTechnicPack;
     }
 }
