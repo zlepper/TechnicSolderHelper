@@ -74,6 +74,7 @@ namespace TechnicSolderHelper
             this.permissionFTBFTBExclusive = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.permissionFTBOpen = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.getPermissions = new System.Windows.Forms.Button();
+            this.Done = new System.Windows.Forms.Button();
             this.dataBox.SuspendLayout();
             this.technicPermissions.SuspendLayout();
             this.FTBPermissions.SuspendLayout();
@@ -308,6 +309,7 @@ namespace TechnicSolderHelper
             this.textBoxTechnicPermissionLink.Name = "textBoxTechnicPermissionLink";
             this.textBoxTechnicPermissionLink.Size = new System.Drawing.Size(205, 20);
             this.textBoxTechnicPermissionLink.TabIndex = 0;
+            this.textBoxTechnicPermissionLink.TextChanged += new System.EventHandler(this.textBoxPermissionLink_TextChanged);
             // 
             // permissionTechnicFTBExclusive
             // 
@@ -475,6 +477,7 @@ namespace TechnicSolderHelper
             this.textBoxFTBPermissionLink.Name = "textBoxFTBPermissionLink";
             this.textBoxFTBPermissionLink.Size = new System.Drawing.Size(205, 20);
             this.textBoxFTBPermissionLink.TabIndex = 0;
+            this.textBoxFTBPermissionLink.TextChanged += new System.EventHandler(this.textBoxPermissionLink_TextChanged);
             // 
             // permissionFTBFTBExclusive
             // 
@@ -510,11 +513,22 @@ namespace TechnicSolderHelper
             this.getPermissions.UseVisualStyleBackColor = true;
             this.getPermissions.Click += new System.EventHandler(this.getPermissions_Click);
             // 
+            // Done
+            // 
+            this.Done.Location = new System.Drawing.Point(12, 492);
+            this.Done.Name = "Done";
+            this.Done.Size = new System.Drawing.Size(75, 23);
+            this.Done.TabIndex = 7;
+            this.Done.Text = "Done";
+            this.Done.UseVisualStyleBackColor = true;
+            this.Done.Click += new System.EventHandler(this.Done_Click);
+            // 
             // Modinfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(706, 527);
+            this.Controls.Add(this.Done);
             this.Controls.Add(this.getPermissions);
             this.Controls.Add(this.showDone);
             this.Controls.Add(this.label9);
@@ -581,5 +595,6 @@ namespace TechnicSolderHelper
         private ReadOnlyRadioButton permissionFTBFTBExclusive;
         private ReadOnlyRadioButton permissionFTBOpen;
         private System.Windows.Forms.Button getPermissions;
+        private System.Windows.Forms.Button Done;
     }
 }

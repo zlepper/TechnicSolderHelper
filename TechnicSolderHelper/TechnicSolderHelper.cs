@@ -66,7 +66,7 @@ namespace TechnicSolderHelper
             }
         }
 
-        public string GetAuthors(Mcmod mod)
+        public string GetAuthors(Mcmod mod, Boolean listview = false)
         {
             string authorString = "";
             bool isFirst = true;
@@ -111,6 +111,10 @@ namespace TechnicSolderHelper
                         authorString = _ownPermsSqLhelper.GetAuthor(mod.Modid);
                         if (String.IsNullOrWhiteSpace(authorString))
                         {
+                            if (listview)
+                            {
+                                return null;
+                            }
                             authorString = Prompt.ShowDialog("Who is the author of " + mod.Name + "?" + Environment.NewLine + "If you leave this empty the author list in the output will also be empty.", "Mod Author", false, Prompt.ModsLeftString(_totalMods, _currentMod));
 
                         }

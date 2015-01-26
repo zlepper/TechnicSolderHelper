@@ -56,6 +56,8 @@ namespace TechnicSolderHelper
         public String PermissionLink { get; set; }
 
         public String ModLink { get; set; }
+
+        public String LicenseLink { get; set; }
     }
 
     public class ModHelper

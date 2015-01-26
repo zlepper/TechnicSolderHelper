@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SQLite;
 using Mono.Data.Sqlite;
+using TechnicSolderHelper.Confighandler;
 
 namespace TechnicSolderHelper.SQL
 {
@@ -11,8 +12,37 @@ namespace TechnicSolderHelper.SQL
         public OwnPermissionsSqlHelper()
             : base("ownperm")
         {
-            _createTableString = String.Format("CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, PRIMARY KEY(ID));", TableName);
-            ExecuteDatabaseQuery(_createTableString);
+            ConfigHandler ch = new ConfigHandler();
+            try
+            {
+                if (Convert.ToInt32(ch.GetConfig("ownpermsversion")) < 2)
+                {
+                    _createTableString =
+                        String.Format(
+                            "DROP TABLE `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            TableName);
+                    ch.SetConfig("ownpermsversion", "2");
+                }
+                else
+                {
+                    _createTableString =
+                        String.Format(
+                            "CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            TableName);
+                }
+            }
+            catch (Exception e)
+            {
+                _createTableString =
+                        String.Format(
+                            "DROP TABLE `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            TableName);
+                ch.SetConfig("ownpermsversion", "2");
+            }
+            finally
+            {
+                ExecuteDatabaseQuery(_createTableString);
+            }
         }
 
         /// <summary>
@@ -44,6 +74,7 @@ namespace TechnicSolderHelper.SQL
                                 p.HasPermission = true;
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
+                                p.LicenseLink = reader["LicenseLink"].ToString();
                                 break;
                             }
                         }
@@ -66,6 +97,7 @@ namespace TechnicSolderHelper.SQL
                                 p.HasPermission = true;
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
+                                p.LicenseLink = reader["LicenseLink"].ToString();
                                 break;
                             }
                         }
@@ -124,10 +156,10 @@ namespace TechnicSolderHelper.SQL
             return "";
         }
 
-        public void AddOwnModPerm(String modName, String modId, String permissionLink, String modLink = "")
+        public void AddOwnModPerm(String modName, String modId, String permissionLink, String modLink = "", String licenseLink = "")
         {
 
-            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink, ModLink) VALUES (@modname, @modid, @permlink, @modlink);", TableName);
+            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink, ModLink, LicenseLink) VALUES (@modname, @modid, @permlink, @modlink, @license);", TableName);
             if (Globalfunctions.IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
@@ -139,6 +171,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@modid", modId);
                         cmd.Parameters.AddWithValue("@permlink", permissionLink);
                         cmd.Parameters.AddWithValue("@modlink", modLink);
+                        cmd.Parameters.AddWithValue("@license", licenseLink);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -154,6 +187,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@modid", modId);
                         cmd.Parameters.AddWithValue("@permlink", permissionLink);
                         cmd.Parameters.AddWithValue("@modlink", modLink);
+                        cmd.Parameters.AddWithValue("@license", licenseLink);
                         cmd.ExecuteNonQuery();
                     }
                 }

@@ -136,10 +136,7 @@ namespace TechnicSolderHelper.SQL
                                 }
                                 return mod;
                             }
-                            else
-                            {
-                                return null;
-                            }
+                            return null;
                         }
                     }
                 }
@@ -164,10 +161,7 @@ namespace TechnicSolderHelper.SQL
                             }
                             return mod;
                         }
-                        else
-                        {
-                            return null;
-                        }
+                        return null;
                     }
                 }
             }

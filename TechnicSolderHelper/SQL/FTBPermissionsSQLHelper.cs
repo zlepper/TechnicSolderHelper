@@ -112,9 +112,8 @@ namespace TechnicSolderHelper.SQL
 
         public String GetInfoFromModId(String modId, InfoType infoType)
         {
-            modId = modId.Replace("'", "`");
-
-            String sql = String.Format("SELECT {2} FROM {0} WHERE ModID LIKE '{1}' OR ShortName LIKE '{1}';", TableName, modId.ToLower(), infoType);
+            String sql = String.Format("SELECT {1} FROM {0} WHERE ModID LIKE @modid OR ShortName LIKE @shortname;", TableName, infoType);
+            Debug.WriteLine(sql);
 
             if (IsUnix())
             {
@@ -123,6 +122,8 @@ namespace TechnicSolderHelper.SQL
                     db.Open();
                     using (SqliteCommand cmd = new SqliteCommand(sql, db))
                     {
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@shortname", modId);
                         using (SqliteDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -140,6 +141,8 @@ namespace TechnicSolderHelper.SQL
                     db.Open();
                     using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                     {
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@shortname", modId);
                         using (SQLiteDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
