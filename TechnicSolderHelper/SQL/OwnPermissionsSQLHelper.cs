@@ -19,7 +19,7 @@ namespace TechnicSolderHelper.SQL
                 {
                     _createTableString =
                         String.Format(
-                            "DROP TABLE `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            "DROP TABLE IF EXISTS `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
                             TableName);
                     ch.SetConfig("ownpermsversion", "2");
                 }
@@ -27,7 +27,7 @@ namespace TechnicSolderHelper.SQL
                 {
                     _createTableString =
                         String.Format(
-                            "CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            "CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
                             TableName);
                 }
             }
@@ -35,7 +35,7 @@ namespace TechnicSolderHelper.SQL
             {
                 _createTableString =
                         String.Format(
-                            "DROP TABLE `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT NOT NULL, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            "DROP TABLE IF EXISTS `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
                             TableName);
                 ch.SetConfig("ownpermsversion", "2");
             }
@@ -56,7 +56,6 @@ namespace TechnicSolderHelper.SQL
 
             String sql = String.Format("SELECT * FROM {0} WHERE ModID LIKE @modid;", TableName);
 
-            bool didLoopRun = false;
             OwnPermissions p = new OwnPermissions();
             if (IsUnix())
             {
@@ -70,12 +69,11 @@ namespace TechnicSolderHelper.SQL
                         {
                             while (reader.Read())
                             {
-                                didLoopRun = true;
                                 p.HasPermission = true;
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
                                 p.LicenseLink = reader["LicenseLink"].ToString();
-                                break;
+                                return p;
                             }
                         }
                     }
@@ -93,21 +91,15 @@ namespace TechnicSolderHelper.SQL
                         {
                             while (reader.Read())
                             {
-                                didLoopRun = true;
                                 p.HasPermission = true;
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
                                 p.LicenseLink = reader["LicenseLink"].ToString();
-                                break;
+                                return p;
                             }
                         }
                     }
                 }
-            }
-
-            if (didLoopRun)
-            {
-                return p;
             }
             p.HasPermission = false;
             return p;
@@ -156,10 +148,141 @@ namespace TechnicSolderHelper.SQL
             return "";
         }
 
-        public void AddOwnModPerm(String modName, String modId, String permissionLink, String modLink = "", String licenseLink = "")
+        public void AddOwnModLicense(String modname, String modId, String licenseLink)
         {
+            String sql;
+            if (IsModInDatabase(modId))
+            {
+                sql = string.Format("UPDATE {0} SET LicenseLink = @license WHERE ModID LIKE @modid", TableName);
+            }
+            else
+            {
+                sql =
+                    String.Format(
+                        "INSERT OR REPLACE INTO {0}(ModName, ModID, LicenseLink) VALUES (@modname, @modid, @license);",
+                        TableName);
+            }
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modname", modname);
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@license", licenseLink);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modname", modname);
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@license", licenseLink);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
 
-            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink, ModLink, LicenseLink) VALUES (@modname, @modid, @permlink, @modlink, @license);", TableName);
+        public void AddOwnModLink(String modname, String modid, String modlink)
+        {
+            String sql;
+            if (IsModInDatabase(modid))
+            {
+                sql = string.Format("UPDATE {0} SET ModLink = @ModLink WHERE ModID LIKE @modid;", TableName);
+            }
+            else
+            {
+                sql =
+                    String.Format(
+                        "INSERT OR REPLACE INTO {0}(ModName, ModID, ModLink) VALUES (@modname, @modid, @ModLink);",
+                        TableName);
+            }
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modname", modname);
+                        cmd.Parameters.AddWithValue("@modid", modid);
+                        cmd.Parameters.AddWithValue("@ModLink", modlink);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modname", modname);
+                        cmd.Parameters.AddWithValue("@modid", modid);
+                        cmd.Parameters.AddWithValue("@ModLink", modlink);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        public void AddOwnModPerm(String modName, String modId, String permissionLink)
+        {
+            String sql;
+            if (IsModInDatabase(modId))
+            {
+                sql = string.Format("UPDATE {0} SET PermLink = @permlink WHERE ModID LIKE @modid;", TableName);
+            }
+            else
+            {
+                sql =
+                    String.Format(
+                        "INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink) VALUES (@modname, @modid, @permlink);",
+                        TableName);
+            }
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modname", modName);
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@permlink", permissionLink);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modname", modName);
+                        cmd.Parameters.AddWithValue("@modid", modId);
+                        cmd.Parameters.AddWithValue("@permlink", permissionLink);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        public void AddOwnModPerm(String modName, String modId, String permissionLink, String modLink)
+        {
+            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModID, PermLink, ModLink) VALUES (@modname, @modid, @permlink, @modlink);", TableName);
             if (Globalfunctions.IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
@@ -171,7 +294,6 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@modid", modId);
                         cmd.Parameters.AddWithValue("@permlink", permissionLink);
                         cmd.Parameters.AddWithValue("@modlink", modLink);
-                        cmd.Parameters.AddWithValue("@license", licenseLink);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -187,7 +309,6 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@modid", modId);
                         cmd.Parameters.AddWithValue("@permlink", permissionLink);
                         cmd.Parameters.AddWithValue("@modlink", modLink);
-                        cmd.Parameters.AddWithValue("@license", licenseLink);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -229,6 +350,55 @@ namespace TechnicSolderHelper.SQL
                     }
                 }
             }
+        }
+
+        private Boolean IsModInDatabase(String modid)
+        {
+            String sql = string.Format("SELECT ModID FROM {0} WHERE ModID LIKE @modid;", TableName);
+
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modid", modid);
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (reader["ModID"].ToString().Equals(modid))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        cmd.Parameters.AddWithValue("@modid", modid);
+                        using (SQLiteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (reader["ModID"].ToString().Equals(modid))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         public override void ResetTable()

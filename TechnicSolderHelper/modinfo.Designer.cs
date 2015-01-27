@@ -48,15 +48,9 @@ namespace TechnicSolderHelper
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.permissionTechnicUnknown = new TechnicSolderHelper.ReadOnlyRadioButton();
-            this.permissionTechnicRequest = new TechnicSolderHelper.ReadOnlyRadioButton();
-            this.permissionTechnicNotify = new TechnicSolderHelper.ReadOnlyRadioButton();
-            this.permissionTechnicClosed = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.textBoxTechnicLicenseLink = new System.Windows.Forms.TextBox();
             this.textBoxTechnicModLink = new System.Windows.Forms.TextBox();
             this.textBoxTechnicPermissionLink = new System.Windows.Forms.TextBox();
-            this.permissionTechnicFTBExclusive = new TechnicSolderHelper.ReadOnlyRadioButton();
-            this.permissionTechnicOpen = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.label9 = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.showDone = new System.Windows.Forms.CheckBox();
@@ -64,17 +58,24 @@ namespace TechnicSolderHelper
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.textBoxFTBLicenseLink = new System.Windows.Forms.TextBox();
+            this.textBoxFTBModLink = new System.Windows.Forms.TextBox();
+            this.textBoxFTBPermissionLink = new System.Windows.Forms.TextBox();
+            this.getPermissions = new System.Windows.Forms.Button();
+            this.Done = new System.Windows.Forms.Button();
+            this.skipmod = new System.Windows.Forms.CheckBox();
             this.permssionFTBUnknown = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.permissionFTBRequest = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.permissionFTBNotify = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.permissionFTBClosed = new TechnicSolderHelper.ReadOnlyRadioButton();
-            this.textBoxFTBLicenseLink = new System.Windows.Forms.TextBox();
-            this.textBoxFTBModLink = new System.Windows.Forms.TextBox();
-            this.textBoxFTBPermissionLink = new System.Windows.Forms.TextBox();
             this.permissionFTBFTBExclusive = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.permissionFTBOpen = new TechnicSolderHelper.ReadOnlyRadioButton();
-            this.getPermissions = new System.Windows.Forms.Button();
-            this.Done = new System.Windows.Forms.Button();
+            this.permissionTechnicUnknown = new TechnicSolderHelper.ReadOnlyRadioButton();
+            this.permissionTechnicRequest = new TechnicSolderHelper.ReadOnlyRadioButton();
+            this.permissionTechnicNotify = new TechnicSolderHelper.ReadOnlyRadioButton();
+            this.permissionTechnicClosed = new TechnicSolderHelper.ReadOnlyRadioButton();
+            this.permissionTechnicFTBExclusive = new TechnicSolderHelper.ReadOnlyRadioButton();
+            this.permissionTechnicOpen = new TechnicSolderHelper.ReadOnlyRadioButton();
             this.dataBox.SuspendLayout();
             this.technicPermissions.SuspendLayout();
             this.FTBPermissions.SuspendLayout();
@@ -85,7 +86,7 @@ namespace TechnicSolderHelper
             this.modlist.FormattingEnabled = true;
             this.modlist.Location = new System.Drawing.Point(12, 30);
             this.modlist.Name = "modlist";
-            this.modlist.Size = new System.Drawing.Size(163, 433);
+            this.modlist.Size = new System.Drawing.Size(163, 381);
             this.modlist.TabIndex = 0;
             this.modlist.SelectedIndexChanged += new System.EventHandler(this.modlist_SelectedIndexChanged);
             // 
@@ -159,14 +160,14 @@ namespace TechnicSolderHelper
             this.textBoxFileName.Name = "textBoxFileName";
             this.textBoxFileName.ReadOnly = true;
             this.textBoxFileName.Size = new System.Drawing.Size(205, 20);
-            this.textBoxFileName.TabIndex = 0;
+            this.textBoxFileName.TabIndex = 5;
             // 
             // textBoxAuthor
             // 
             this.textBoxAuthor.Location = new System.Drawing.Point(24, 167);
             this.textBoxAuthor.Name = "textBoxAuthor";
             this.textBoxAuthor.Size = new System.Drawing.Size(205, 20);
-            this.textBoxAuthor.TabIndex = 0;
+            this.textBoxAuthor.TabIndex = 4;
             this.textBoxAuthor.TextChanged += new System.EventHandler(this.textBoxAuthor_TextChanged);
             // 
             // textBoxModVersion
@@ -174,7 +175,7 @@ namespace TechnicSolderHelper
             this.textBoxModVersion.Location = new System.Drawing.Point(24, 124);
             this.textBoxModVersion.Name = "textBoxModVersion";
             this.textBoxModVersion.Size = new System.Drawing.Size(205, 20);
-            this.textBoxModVersion.TabIndex = 0;
+            this.textBoxModVersion.TabIndex = 3;
             this.textBoxModVersion.TextChanged += new System.EventHandler(this.textBoxModVersion_TextChanged);
             // 
             // textBoxModID
@@ -182,7 +183,7 @@ namespace TechnicSolderHelper
             this.textBoxModID.Location = new System.Drawing.Point(24, 80);
             this.textBoxModID.Name = "textBoxModID";
             this.textBoxModID.Size = new System.Drawing.Size(205, 20);
-            this.textBoxModID.TabIndex = 0;
+            this.textBoxModID.TabIndex = 2;
             this.textBoxModID.TextChanged += new System.EventHandler(this.textBoxModID_TextChanged);
             // 
             // textBoxModName
@@ -190,7 +191,7 @@ namespace TechnicSolderHelper
             this.textBoxModName.Location = new System.Drawing.Point(24, 36);
             this.textBoxModName.Name = "textBoxModName";
             this.textBoxModName.Size = new System.Drawing.Size(205, 20);
-            this.textBoxModName.TabIndex = 0;
+            this.textBoxModName.TabIndex = 1;
             this.textBoxModName.TextChanged += new System.EventHandler(this.textBoxModName_TextChanged);
             // 
             // technicPermissions
@@ -241,99 +242,29 @@ namespace TechnicSolderHelper
             this.label5.TabIndex = 1;
             this.label5.Text = "Permission Link";
             // 
-            // permissionTechnicUnknown
-            // 
-            this.permissionTechnicUnknown.AutoSize = true;
-            this.permissionTechnicUnknown.Location = new System.Drawing.Point(161, 66);
-            this.permissionTechnicUnknown.Name = "permissionTechnicUnknown";
-            this.permissionTechnicUnknown.ReadOnly = true;
-            this.permissionTechnicUnknown.Size = new System.Drawing.Size(71, 17);
-            this.permissionTechnicUnknown.TabIndex = 0;
-            this.permissionTechnicUnknown.TabStop = true;
-            this.permissionTechnicUnknown.Text = "Unknown";
-            this.permissionTechnicUnknown.UseVisualStyleBackColor = true;
-            // 
-            // permissionTechnicRequest
-            // 
-            this.permissionTechnicRequest.AutoSize = true;
-            this.permissionTechnicRequest.Location = new System.Drawing.Point(161, 43);
-            this.permissionTechnicRequest.Name = "permissionTechnicRequest";
-            this.permissionTechnicRequest.ReadOnly = true;
-            this.permissionTechnicRequest.Size = new System.Drawing.Size(65, 17);
-            this.permissionTechnicRequest.TabIndex = 0;
-            this.permissionTechnicRequest.TabStop = true;
-            this.permissionTechnicRequest.Text = "Request";
-            this.permissionTechnicRequest.UseVisualStyleBackColor = true;
-            // 
-            // permissionTechnicNotify
-            // 
-            this.permissionTechnicNotify.AutoSize = true;
-            this.permissionTechnicNotify.Location = new System.Drawing.Point(23, 66);
-            this.permissionTechnicNotify.Name = "permissionTechnicNotify";
-            this.permissionTechnicNotify.ReadOnly = true;
-            this.permissionTechnicNotify.Size = new System.Drawing.Size(52, 17);
-            this.permissionTechnicNotify.TabIndex = 0;
-            this.permissionTechnicNotify.TabStop = true;
-            this.permissionTechnicNotify.Text = "Notify";
-            this.permissionTechnicNotify.UseVisualStyleBackColor = true;
-            // 
-            // permissionTechnicClosed
-            // 
-            this.permissionTechnicClosed.AutoSize = true;
-            this.permissionTechnicClosed.Location = new System.Drawing.Point(161, 20);
-            this.permissionTechnicClosed.Name = "permissionTechnicClosed";
-            this.permissionTechnicClosed.ReadOnly = true;
-            this.permissionTechnicClosed.Size = new System.Drawing.Size(57, 17);
-            this.permissionTechnicClosed.TabIndex = 0;
-            this.permissionTechnicClosed.TabStop = true;
-            this.permissionTechnicClosed.Text = "Closed";
-            this.permissionTechnicClosed.UseVisualStyleBackColor = true;
-            // 
             // textBoxTechnicLicenseLink
             // 
             this.textBoxTechnicLicenseLink.Location = new System.Drawing.Point(23, 201);
             this.textBoxTechnicLicenseLink.Name = "textBoxTechnicLicenseLink";
             this.textBoxTechnicLicenseLink.Size = new System.Drawing.Size(205, 20);
-            this.textBoxTechnicLicenseLink.TabIndex = 0;
+            this.textBoxTechnicLicenseLink.TabIndex = 8;
+            this.textBoxTechnicLicenseLink.TextChanged += new System.EventHandler(this.textBoxLicenseLink_TextChanged);
             // 
             // textBoxTechnicModLink
             // 
             this.textBoxTechnicModLink.Location = new System.Drawing.Point(23, 154);
             this.textBoxTechnicModLink.Name = "textBoxTechnicModLink";
             this.textBoxTechnicModLink.Size = new System.Drawing.Size(205, 20);
-            this.textBoxTechnicModLink.TabIndex = 0;
+            this.textBoxTechnicModLink.TabIndex = 7;
+            this.textBoxTechnicModLink.TextChanged += new System.EventHandler(this.textBoxModLink_TextChanged);
             // 
             // textBoxTechnicPermissionLink
             // 
             this.textBoxTechnicPermissionLink.Location = new System.Drawing.Point(23, 112);
             this.textBoxTechnicPermissionLink.Name = "textBoxTechnicPermissionLink";
             this.textBoxTechnicPermissionLink.Size = new System.Drawing.Size(205, 20);
-            this.textBoxTechnicPermissionLink.TabIndex = 0;
+            this.textBoxTechnicPermissionLink.TabIndex = 6;
             this.textBoxTechnicPermissionLink.TextChanged += new System.EventHandler(this.textBoxPermissionLink_TextChanged);
-            // 
-            // permissionTechnicFTBExclusive
-            // 
-            this.permissionTechnicFTBExclusive.AutoSize = true;
-            this.permissionTechnicFTBExclusive.Location = new System.Drawing.Point(23, 43);
-            this.permissionTechnicFTBExclusive.Name = "permissionTechnicFTBExclusive";
-            this.permissionTechnicFTBExclusive.ReadOnly = true;
-            this.permissionTechnicFTBExclusive.Size = new System.Drawing.Size(93, 17);
-            this.permissionTechnicFTBExclusive.TabIndex = 0;
-            this.permissionTechnicFTBExclusive.TabStop = true;
-            this.permissionTechnicFTBExclusive.Text = "FTB Exclusive";
-            this.permissionTechnicFTBExclusive.UseVisualStyleBackColor = true;
-            // 
-            // permissionTechnicOpen
-            // 
-            this.permissionTechnicOpen.AutoSize = true;
-            this.permissionTechnicOpen.Location = new System.Drawing.Point(23, 20);
-            this.permissionTechnicOpen.Name = "permissionTechnicOpen";
-            this.permissionTechnicOpen.ReadOnly = true;
-            this.permissionTechnicOpen.Size = new System.Drawing.Size(51, 17);
-            this.permissionTechnicOpen.TabIndex = 0;
-            this.permissionTechnicOpen.TabStop = true;
-            this.permissionTechnicOpen.Text = "Open";
-            this.permissionTechnicOpen.UseVisualStyleBackColor = true;
             // 
             // label9
             // 
@@ -351,10 +282,10 @@ namespace TechnicSolderHelper
             // showDone
             // 
             this.showDone.AutoSize = true;
-            this.showDone.Location = new System.Drawing.Point(12, 469);
+            this.showDone.Location = new System.Drawing.Point(12, 417);
             this.showDone.Name = "showDone";
             this.showDone.Size = new System.Drawing.Size(82, 17);
-            this.showDone.TabIndex = 5;
+            this.showDone.TabIndex = 15;
             this.showDone.Text = "Show Done";
             this.toolTip1.SetToolTip(this.showDone, "Show all items, even the once without any issues.\r\nCurrently only showing files w" +
         "ith issues.");
@@ -409,6 +340,61 @@ namespace TechnicSolderHelper
             this.label12.TabIndex = 1;
             this.label12.Text = "Permission Link";
             // 
+            // textBoxFTBLicenseLink
+            // 
+            this.textBoxFTBLicenseLink.Location = new System.Drawing.Point(23, 201);
+            this.textBoxFTBLicenseLink.Name = "textBoxFTBLicenseLink";
+            this.textBoxFTBLicenseLink.Size = new System.Drawing.Size(205, 20);
+            this.textBoxFTBLicenseLink.TabIndex = 11;
+            this.textBoxFTBLicenseLink.TextChanged += new System.EventHandler(this.textBoxLicenseLink_TextChanged);
+            // 
+            // textBoxFTBModLink
+            // 
+            this.textBoxFTBModLink.Location = new System.Drawing.Point(23, 154);
+            this.textBoxFTBModLink.Name = "textBoxFTBModLink";
+            this.textBoxFTBModLink.Size = new System.Drawing.Size(205, 20);
+            this.textBoxFTBModLink.TabIndex = 10;
+            this.textBoxFTBModLink.TextChanged += new System.EventHandler(this.textBoxModLink_TextChanged);
+            // 
+            // textBoxFTBPermissionLink
+            // 
+            this.textBoxFTBPermissionLink.Location = new System.Drawing.Point(23, 112);
+            this.textBoxFTBPermissionLink.Name = "textBoxFTBPermissionLink";
+            this.textBoxFTBPermissionLink.Size = new System.Drawing.Size(205, 20);
+            this.textBoxFTBPermissionLink.TabIndex = 9;
+            this.textBoxFTBPermissionLink.TextChanged += new System.EventHandler(this.textBoxPermissionLink_TextChanged);
+            // 
+            // getPermissions
+            // 
+            this.getPermissions.Location = new System.Drawing.Point(101, 419);
+            this.getPermissions.Name = "getPermissions";
+            this.getPermissions.Size = new System.Drawing.Size(75, 44);
+            this.getPermissions.TabIndex = 13;
+            this.getPermissions.Text = "Get Permissions";
+            this.getPermissions.UseVisualStyleBackColor = true;
+            this.getPermissions.Click += new System.EventHandler(this.getPermissions_Click);
+            // 
+            // Done
+            // 
+            this.Done.Location = new System.Drawing.Point(12, 440);
+            this.Done.Name = "Done";
+            this.Done.Size = new System.Drawing.Size(75, 23);
+            this.Done.TabIndex = 14;
+            this.Done.Text = "Done";
+            this.Done.UseVisualStyleBackColor = true;
+            this.Done.Click += new System.EventHandler(this.Done_Click);
+            // 
+            // skipmod
+            // 
+            this.skipmod.AutoSize = true;
+            this.skipmod.Location = new System.Drawing.Point(101, 473);
+            this.skipmod.Name = "skipmod";
+            this.skipmod.Size = new System.Drawing.Size(71, 17);
+            this.skipmod.TabIndex = 12;
+            this.skipmod.Text = "Skip Mod";
+            this.skipmod.UseVisualStyleBackColor = true;
+            this.skipmod.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // permssionFTBUnknown
             // 
             this.permssionFTBUnknown.AutoSize = true;
@@ -417,7 +403,6 @@ namespace TechnicSolderHelper
             this.permssionFTBUnknown.ReadOnly = true;
             this.permssionFTBUnknown.Size = new System.Drawing.Size(71, 17);
             this.permssionFTBUnknown.TabIndex = 0;
-            this.permssionFTBUnknown.TabStop = true;
             this.permssionFTBUnknown.Text = "Unknown";
             this.permssionFTBUnknown.UseVisualStyleBackColor = true;
             // 
@@ -429,7 +414,6 @@ namespace TechnicSolderHelper
             this.permissionFTBRequest.ReadOnly = true;
             this.permissionFTBRequest.Size = new System.Drawing.Size(65, 17);
             this.permissionFTBRequest.TabIndex = 0;
-            this.permissionFTBRequest.TabStop = true;
             this.permissionFTBRequest.Text = "Request";
             this.permissionFTBRequest.UseVisualStyleBackColor = true;
             // 
@@ -441,7 +425,6 @@ namespace TechnicSolderHelper
             this.permissionFTBNotify.ReadOnly = true;
             this.permissionFTBNotify.Size = new System.Drawing.Size(52, 17);
             this.permissionFTBNotify.TabIndex = 0;
-            this.permissionFTBNotify.TabStop = true;
             this.permissionFTBNotify.Text = "Notify";
             this.permissionFTBNotify.UseVisualStyleBackColor = true;
             // 
@@ -453,31 +436,8 @@ namespace TechnicSolderHelper
             this.permissionFTBClosed.ReadOnly = true;
             this.permissionFTBClosed.Size = new System.Drawing.Size(57, 17);
             this.permissionFTBClosed.TabIndex = 0;
-            this.permissionFTBClosed.TabStop = true;
             this.permissionFTBClosed.Text = "Closed";
             this.permissionFTBClosed.UseVisualStyleBackColor = true;
-            // 
-            // textBoxFTBLicenseLink
-            // 
-            this.textBoxFTBLicenseLink.Location = new System.Drawing.Point(23, 201);
-            this.textBoxFTBLicenseLink.Name = "textBoxFTBLicenseLink";
-            this.textBoxFTBLicenseLink.Size = new System.Drawing.Size(205, 20);
-            this.textBoxFTBLicenseLink.TabIndex = 0;
-            // 
-            // textBoxFTBModLink
-            // 
-            this.textBoxFTBModLink.Location = new System.Drawing.Point(23, 154);
-            this.textBoxFTBModLink.Name = "textBoxFTBModLink";
-            this.textBoxFTBModLink.Size = new System.Drawing.Size(205, 20);
-            this.textBoxFTBModLink.TabIndex = 0;
-            // 
-            // textBoxFTBPermissionLink
-            // 
-            this.textBoxFTBPermissionLink.Location = new System.Drawing.Point(23, 112);
-            this.textBoxFTBPermissionLink.Name = "textBoxFTBPermissionLink";
-            this.textBoxFTBPermissionLink.Size = new System.Drawing.Size(205, 20);
-            this.textBoxFTBPermissionLink.TabIndex = 0;
-            this.textBoxFTBPermissionLink.TextChanged += new System.EventHandler(this.textBoxPermissionLink_TextChanged);
             // 
             // permissionFTBFTBExclusive
             // 
@@ -487,7 +447,6 @@ namespace TechnicSolderHelper
             this.permissionFTBFTBExclusive.ReadOnly = true;
             this.permissionFTBFTBExclusive.Size = new System.Drawing.Size(93, 17);
             this.permissionFTBFTBExclusive.TabIndex = 0;
-            this.permissionFTBFTBExclusive.TabStop = true;
             this.permissionFTBFTBExclusive.Text = "FTB Exclusive";
             this.permissionFTBFTBExclusive.UseVisualStyleBackColor = true;
             // 
@@ -499,35 +458,81 @@ namespace TechnicSolderHelper
             this.permissionFTBOpen.ReadOnly = true;
             this.permissionFTBOpen.Size = new System.Drawing.Size(51, 17);
             this.permissionFTBOpen.TabIndex = 0;
-            this.permissionFTBOpen.TabStop = true;
             this.permissionFTBOpen.Text = "Open";
             this.permissionFTBOpen.UseVisualStyleBackColor = true;
             // 
-            // getPermissions
+            // permissionTechnicUnknown
             // 
-            this.getPermissions.Location = new System.Drawing.Point(101, 471);
-            this.getPermissions.Name = "getPermissions";
-            this.getPermissions.Size = new System.Drawing.Size(75, 44);
-            this.getPermissions.TabIndex = 6;
-            this.getPermissions.Text = "Get Permissions";
-            this.getPermissions.UseVisualStyleBackColor = true;
-            this.getPermissions.Click += new System.EventHandler(this.getPermissions_Click);
+            this.permissionTechnicUnknown.AutoSize = true;
+            this.permissionTechnicUnknown.Location = new System.Drawing.Point(161, 66);
+            this.permissionTechnicUnknown.Name = "permissionTechnicUnknown";
+            this.permissionTechnicUnknown.ReadOnly = true;
+            this.permissionTechnicUnknown.Size = new System.Drawing.Size(71, 17);
+            this.permissionTechnicUnknown.TabIndex = 0;
+            this.permissionTechnicUnknown.Text = "Unknown";
+            this.permissionTechnicUnknown.UseVisualStyleBackColor = true;
             // 
-            // Done
+            // permissionTechnicRequest
             // 
-            this.Done.Location = new System.Drawing.Point(12, 492);
-            this.Done.Name = "Done";
-            this.Done.Size = new System.Drawing.Size(75, 23);
-            this.Done.TabIndex = 7;
-            this.Done.Text = "Done";
-            this.Done.UseVisualStyleBackColor = true;
-            this.Done.Click += new System.EventHandler(this.Done_Click);
+            this.permissionTechnicRequest.AutoSize = true;
+            this.permissionTechnicRequest.Location = new System.Drawing.Point(161, 43);
+            this.permissionTechnicRequest.Name = "permissionTechnicRequest";
+            this.permissionTechnicRequest.ReadOnly = true;
+            this.permissionTechnicRequest.Size = new System.Drawing.Size(65, 17);
+            this.permissionTechnicRequest.TabIndex = 0;
+            this.permissionTechnicRequest.Text = "Request";
+            this.permissionTechnicRequest.UseVisualStyleBackColor = true;
+            // 
+            // permissionTechnicNotify
+            // 
+            this.permissionTechnicNotify.AutoSize = true;
+            this.permissionTechnicNotify.Location = new System.Drawing.Point(23, 66);
+            this.permissionTechnicNotify.Name = "permissionTechnicNotify";
+            this.permissionTechnicNotify.ReadOnly = true;
+            this.permissionTechnicNotify.Size = new System.Drawing.Size(52, 17);
+            this.permissionTechnicNotify.TabIndex = 0;
+            this.permissionTechnicNotify.Text = "Notify";
+            this.permissionTechnicNotify.UseVisualStyleBackColor = true;
+            // 
+            // permissionTechnicClosed
+            // 
+            this.permissionTechnicClosed.AutoSize = true;
+            this.permissionTechnicClosed.Location = new System.Drawing.Point(161, 20);
+            this.permissionTechnicClosed.Name = "permissionTechnicClosed";
+            this.permissionTechnicClosed.ReadOnly = true;
+            this.permissionTechnicClosed.Size = new System.Drawing.Size(57, 17);
+            this.permissionTechnicClosed.TabIndex = 0;
+            this.permissionTechnicClosed.Text = "Closed";
+            this.permissionTechnicClosed.UseVisualStyleBackColor = true;
+            // 
+            // permissionTechnicFTBExclusive
+            // 
+            this.permissionTechnicFTBExclusive.AutoSize = true;
+            this.permissionTechnicFTBExclusive.Location = new System.Drawing.Point(23, 43);
+            this.permissionTechnicFTBExclusive.Name = "permissionTechnicFTBExclusive";
+            this.permissionTechnicFTBExclusive.ReadOnly = true;
+            this.permissionTechnicFTBExclusive.Size = new System.Drawing.Size(93, 17);
+            this.permissionTechnicFTBExclusive.TabIndex = 0;
+            this.permissionTechnicFTBExclusive.Text = "FTB Exclusive";
+            this.permissionTechnicFTBExclusive.UseVisualStyleBackColor = true;
+            // 
+            // permissionTechnicOpen
+            // 
+            this.permissionTechnicOpen.AutoSize = true;
+            this.permissionTechnicOpen.Location = new System.Drawing.Point(23, 20);
+            this.permissionTechnicOpen.Name = "permissionTechnicOpen";
+            this.permissionTechnicOpen.ReadOnly = true;
+            this.permissionTechnicOpen.Size = new System.Drawing.Size(51, 17);
+            this.permissionTechnicOpen.TabIndex = 0;
+            this.permissionTechnicOpen.Text = "Open";
+            this.permissionTechnicOpen.UseVisualStyleBackColor = true;
             // 
             // Modinfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(706, 527);
+            this.Controls.Add(this.skipmod);
             this.Controls.Add(this.Done);
             this.Controls.Add(this.getPermissions);
             this.Controls.Add(this.showDone);
@@ -596,5 +601,6 @@ namespace TechnicSolderHelper
         private ReadOnlyRadioButton permissionFTBOpen;
         private System.Windows.Forms.Button getPermissions;
         private System.Windows.Forms.Button Done;
+        private System.Windows.Forms.CheckBox skipmod;
     }
 }

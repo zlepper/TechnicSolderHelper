@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using TechnicSolderHelper.SQL;
+using TechnicSolderHelper.SQL.workTogether;
 
 namespace TechnicSolderHelper
 {
@@ -43,12 +44,9 @@ namespace TechnicSolderHelper
                 if (String.IsNullOrWhiteSpace(mcmod.Mcversion))
                     mcmod.Mcversion = solderHelper._currentMcVersion;
                 mcmod.Aredone = AreModDone(mcmod);
-                if (mcmod.Aredone)
+                if (!mcmod.Aredone)
                 {
-
-                }
-                else
-                {
+                    mcmod.FromUserInput = true;
                     ModListSqlHelper modListSqlHelper = new ModListSqlHelper();
                     Mcmod m = modListSqlHelper.GetModInfo(SqlHelper.CalculateMd5(mcmod.Path));
                     if (m == null)
@@ -110,6 +108,24 @@ namespace TechnicSolderHelper
                         }
                         else
                         {
+                            DataSuggest ds = new DataSuggest();
+                            m = ds.GetMcmod(SqlHelper.CalculateMd5(mcmod.Path));
+                            if (m != null)
+                            {
+                                if (String.IsNullOrWhiteSpace(mcmod.Name))
+                                {
+                                    mcmod.Name = m.Name;
+                                }
+                                if (String.IsNullOrWhiteSpace(mcmod.Modid))
+                                {
+                                    mcmod.Modid = m.Modid;
+                                }
+                                if (String.IsNullOrWhiteSpace(mcmod.Version))
+                                {
+                                    mcmod.Version = m.Version;
+                                }
+                                mcmod.FromSuggestion = true;
+                            }
                             _nonFinishedMods.Add(mcmod);
                             modlist.Items.Add(String.IsNullOrWhiteSpace(mcmod.Name) ? mcmod.Filename : mcmod.Name);
                         }
@@ -135,6 +151,12 @@ namespace TechnicSolderHelper
         private Boolean AreModDone(Mcmod mod)
         {
             if (!IsFullyInformed(mod)) return false;
+            OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();
+            bool b = ownPermissionsSqlHelper.DoUserHavePermission(mod.Modid).HasPermission;
+            if (b)
+            {
+                return true;
+            }
             if (_solderHelper.CreateTechnicPack.Checked && _solderHelper.TechnicPermissions.Checked)
             {
                 if (_ftbPermissionsSqlHelper.DoFtbHavePermission(mod.Modid,
@@ -152,7 +174,7 @@ namespace TechnicSolderHelper
             }
             else
             {
-                return true;
+                return false;
             }
         } 
 
@@ -161,20 +183,9 @@ namespace TechnicSolderHelper
             int index = modlist.SelectedIndex;
             if (index < 0) return;
             Mcmod m = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
+            skipmod.Checked = m.IsSkipping;
             textBoxFileName.Text = m.Filename;
-            OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();
             textBoxAuthor.Text = m.Authors != null ? _solderHelper.GetAuthors(m) : String.Empty;
-            /*if (String.IsNullOrWhiteSpace(textBoxAuthor.Text))
-            {
-                if (!String.IsNullOrWhiteSpace(m.Modid))
-                {
-                    string a = ownPermissionsSqlHelper.GetAuthor(m.Modid);
-                    if (!String.IsNullOrWhiteSpace(a))
-                    {
-                        textBoxAuthor.Text = a;
-                    }
-                }
-            }*/
             textBoxModName.Text = m.Name ?? String.Empty;
 
             textBoxModID.Text = m.Modid ?? String.Empty;
@@ -243,15 +254,12 @@ namespace TechnicSolderHelper
 
         private void ShowPermissions()
         {
-            if (String.IsNullOrWhiteSpace(textBoxModID.Text))
-            {
-                textBoxTechnicLicenseLink.Text = String.Empty;
-                textBoxTechnicModLink.Text = String.Empty;
-                textBoxTechnicPermissionLink.Text = String.Empty;
-                textBoxFTBLicenseLink.Text = String.Empty;
-                textBoxFTBModLink.Text = String.Empty;
-                textBoxFTBPermissionLink.Text = String.Empty;
-            }
+            textBoxTechnicLicenseLink.Text = String.Empty;
+            textBoxTechnicModLink.Text = String.Empty;
+            textBoxTechnicPermissionLink.Text = String.Empty;
+            textBoxFTBLicenseLink.Text = String.Empty;
+            textBoxFTBModLink.Text = String.Empty;
+            textBoxFTBPermissionLink.Text = String.Empty;
             if (technicPermissions.Visible)
             {
                 PermissionLevel technicPermissionLevel =
@@ -423,6 +431,8 @@ namespace TechnicSolderHelper
         {
             foreach (Mcmod mcmod in _mods)
             {
+                if(mcmod.IsSkipping)
+                    continue;
                 if (String.IsNullOrWhiteSpace(mcmod.Modid))
                 {
                     mcmod.Modid = mcmod.Name.Replace(" ", "").ToLower();
@@ -430,7 +440,7 @@ namespace TechnicSolderHelper
                 if (!AreModDone(mcmod))
                 {
                     e.Cancel = true;
-                    MessageBox.Show("Please check all mods and make sure the info is filled in.");
+                    MessageBox.Show("Please check all mods and make sure the info is filled in." + Environment.NewLine + "Issue with mod: " + mcmod.Filename);
                     return;
                 }
                 mcmod.Aredone = true;
@@ -439,10 +449,10 @@ namespace TechnicSolderHelper
             {
                 foreach (Mcmod mcmod in _mods)
                 {
-                    if (_solderHelper.CreateTechnicPack.Checked && _solderHelper.TechnicPermissions.Checked ||
-                        _solderHelper.CreateFTBPack.Checked)
+                    if (mcmod.FromUserInput && !mcmod.FromSuggestion)
                     {
-                        
+                        DataSuggest ds = new DataSuggest();
+                        ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version, SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name);
                     }
                     if (_solderHelper.CreateFTBPack.Checked)
                     {
@@ -481,28 +491,58 @@ namespace TechnicSolderHelper
                     {
                         String modid = textBoxModID.Text;
                         String modname = textBoxModName.Text;
-                        String modlink = "";
-                        if (!String.IsNullOrWhiteSpace(textBoxTechnicModLink.Text) ||
-                            !String.IsNullOrWhiteSpace(textBoxFTBModLink.Text))
-                        {
-                            modlink = !string.IsNullOrWhiteSpace(textBoxTechnicModLink.Text)
-                                ? textBoxTechnicModLink.Text
-                                : textBoxFTBModLink.Text;
-                        }
-                        String licenseLink = "";
-                        if (!String.IsNullOrWhiteSpace(textBoxTechnicPermissionLink.Text) ||
-                            !String.IsNullOrWhiteSpace(textBoxFTBLicenseLink.Text))
-                        {
-                            licenseLink = !String.IsNullOrWhiteSpace(textBoxTechnicLicenseLink.Text)
-                                ? textBoxTechnicLicenseLink.Text
-                                : textBoxFTBLicenseLink.Text;
-                        }
                         OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();
-                        ownPermissionsSqlHelper.AddOwnModPerm(modname, modid, box.Text, modlink, licenseLink);
+                        ownPermissionsSqlHelper.AddOwnModPerm(modname, modid, box.Text);
 
                     }
                 }
             }
+        }
+
+        private void textBoxModLink_TextChanged(object sender, EventArgs e)
+        {
+            Debug.WriteLine(e);
+            var box = sender as TextBox;
+            if (box != null)
+            {
+                if (!String.IsNullOrWhiteSpace(box.Text))
+                {
+                    if (Uri.IsWellFormedUriString(box.Text, UriKind.Absolute))
+                    {
+                        String modid = textBoxModID.Text;
+                        OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();
+                        String modname = textBoxModName.Text;
+                        ownPermissionsSqlHelper.AddOwnModLink(modname, modid, box.Text);
+                    }
+                }
+            }
+        }
+
+        private void textBoxLicenseLink_TextChanged(object sender, EventArgs e)
+        {
+            Debug.WriteLine(e);
+            var box = sender as TextBox;
+            if (box != null)
+            {
+                if (!String.IsNullOrWhiteSpace(box.Text))
+                {
+                    if (Uri.IsWellFormedUriString(box.Text, UriKind.Absolute))
+                    {
+                        String modid = textBoxModID.Text;
+                        String modname = textBoxModName.Text;
+                        OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();
+                        ownPermissionsSqlHelper.AddOwnModLicense(modname, modid, box.Text);
+
+                    }
+                }
+            }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            int index = modlist.SelectedIndex;
+            Mcmod mod = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
+            mod.IsSkipping = skipmod.Checked;
         }
     }
 }

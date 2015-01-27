@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
 namespace TechnicSolderHelper.SQL.workTogether
@@ -23,19 +18,22 @@ namespace TechnicSolderHelper.SQL.workTogether
 
         public void Suggest(String filename, String mcversion, String modversion, String md5, String modid, String modname)
         {
-            String sql = "INSERT INTO solderhelper.new(filename, mcversion, modversion, md5, modid, modname) VALUES(@filename, @mcversion, @modversion, @md5, @modid, @modname);";
-            using (MySqlConnection connection = new MySqlConnection(_connectionStringSuggest))
+            if (!IsModSuggested(md5))
             {
-                connection.OpenAsync();
-                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                const string sql = "INSERT INTO solderhelper.new(filename, mcversion, modversion, md5, modid, modname) VALUES(@filename, @mcversion, @modversion, @md5, @modid, @modname);";
+                using (MySqlConnection connection = new MySqlConnection(_connectionStringSuggest))
                 {
-                    command.Parameters.AddWithValue("@filename", filename);
-                    command.Parameters.AddWithValue("@mcversion", mcversion);
-                    command.Parameters.AddWithValue("@modversion", modversion);
-                    command.Parameters.AddWithValue("@md5", md5);
-                    command.Parameters.AddWithValue("@modid", modid);
-                    command.Parameters.AddWithValue("@modname", modname);
-                    command.ExecuteNonQueryAsync();
+                    connection.OpenAsync();
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.Parameters.AddWithValue("@filename", filename);
+                        command.Parameters.AddWithValue("@mcversion", mcversion);
+                        command.Parameters.AddWithValue("@modversion", modversion);
+                        command.Parameters.AddWithValue("@md5", md5);
+                        command.Parameters.AddWithValue("@modid", modid);
+                        command.Parameters.AddWithValue("@modname", modname);
+                        command.ExecuteNonQueryAsync();
+                    }
                 }
             }
         }
