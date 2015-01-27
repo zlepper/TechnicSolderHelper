@@ -54,7 +54,7 @@ namespace TechnicSolderHelper.SQL
         public OwnPermissions DoUserHavePermission(String modId)
         {
 
-            String sql = String.Format("SELECT PermLink, ModLink FROM {0} WHERE ModID LIKE @modid;", TableName);
+            String sql = String.Format("SELECT * FROM {0} WHERE ModID LIKE @modid;", TableName);
 
             bool didLoopRun = false;
             OwnPermissions p = new OwnPermissions();
@@ -200,7 +200,6 @@ namespace TechnicSolderHelper.SQL
             {
                 return;
             }
-            modId = modId.Replace("'", "`");
 
             String sql = String.Format("UPDATE {0} SET ModAuthor = @author WHERE ModID LIKE @modid;", TableName);
 

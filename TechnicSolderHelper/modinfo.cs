@@ -81,8 +81,11 @@ namespace TechnicSolderHelper
                         if (mcmod.Authors == null || mcmod.AuthorList == null)
                         {
                             String a = _solderHelper.GetAuthors(mcmod, true);
-                            List<String> s = a.Replace(" ", "").Split(',').ToList();
-                            mcmod.Authors = s;
+                            if (a != null)
+                            {
+                                List<String> s = a.Replace(" ", "").Split(',').ToList();
+                                mcmod.Authors = s;
+                            }
                         }
 
                         if (String.IsNullOrWhiteSpace(mcmod.Name))
@@ -159,9 +162,19 @@ namespace TechnicSolderHelper
             if (index < 0) return;
             Mcmod m = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
             textBoxFileName.Text = m.Filename;
-
+            OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();
             textBoxAuthor.Text = m.Authors != null ? _solderHelper.GetAuthors(m) : String.Empty;
-
+            /*if (String.IsNullOrWhiteSpace(textBoxAuthor.Text))
+            {
+                if (!String.IsNullOrWhiteSpace(m.Modid))
+                {
+                    string a = ownPermissionsSqlHelper.GetAuthor(m.Modid);
+                    if (!String.IsNullOrWhiteSpace(a))
+                    {
+                        textBoxAuthor.Text = a;
+                    }
+                }
+            }*/
             textBoxModName.Text = m.Name ?? String.Empty;
 
             textBoxModID.Text = m.Modid ?? String.Empty;
@@ -398,6 +411,11 @@ namespace TechnicSolderHelper
                 String a = textBoxAuthor.Text;
                 List<String> s = a.Replace(" ", "").Split(',').ToList();
                 mod.Authors = s;
+                if (!String.IsNullOrWhiteSpace(textBoxModID.Text))
+                {
+                    OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();
+                    ownPermissionsSqlHelper.AddAuthor(textBoxModID.Text, a);
+                }
             }
         }
 
