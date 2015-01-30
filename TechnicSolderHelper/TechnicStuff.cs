@@ -1,25 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
-using Newtonsoft.Json;
 using TechnicSolderHelper.SQL;
-using TechnicSolderHelper.Confighandler;
-using TechnicSolderHelper.SQL.forge;
-using TechnicSolderHelper.FileUpload;
-using TechnicSolderHelper.s3;
-using FileInfo = System.IO.FileInfo;
-using TechnicSolderHelper.SQL.liteloader;
 
 namespace TechnicSolderHelper
 {
-    public partial class SolderHelper : Form
+    public partial class SolderHelper
     {
         private void CreateOwnPermissionInfo(String modname, String modid, String modauthor, String linkToPermission, String modLink)
         {
@@ -323,7 +308,6 @@ namespace TechnicSolderHelper
                         int id = _solderSqlHandler.GetModId(modid);
                         int modVersionId = _solderSqlHandler.GetModversionId(id, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
                         _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
-                        return;
                     }
                 }
                 if (!_modsSqLhelper.IsFileInSolder(modfile))
@@ -363,19 +347,31 @@ namespace TechnicSolderHelper
 
                     if (useSolder.Checked)
                     {
-                        int id = _solderSqlHandler.GetModId(modid);
-                        if (id == -1)
-                        {
-                            _solderSqlHandler.AddModToSolder(modid, mod.Description, GetAuthors(mod), mod.Url, mod.Name);
-                            // ReSharper disable once RedundantAssignment
-                            id = _solderSqlHandler.GetModId(modid);
-                        }
                         string archive = Path.Combine(_outputDirectory, "mods", modArchive);
-                        _solderSqlHandler.AddNewModversionToSolder(modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(), SqlHelper.CalculateMd5(archive).ToLower());
+                        if (_solderSqlHandler.IsModversionOnline(modid,
+                            mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
+                        {
+                            _solderSqlHandler.UpdateModversionMd5(modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(), SqlHelper.CalculateMd5(archive).ToLower());
+                        }
+                        else
+                        {
+                            int id = _solderSqlHandler.GetModId(modid);
+                            if (id == -1)
+                            {
+                                _solderSqlHandler.AddModToSolder(modid, mod.Description, GetAuthors(mod), mod.Url,
+                                    mod.Name);
+                                // ReSharper disable once RedundantAssignment
+                                id = _solderSqlHandler.GetModId(modid);
+                            }
+                            _solderSqlHandler.AddNewModversionToSolder(modid,
+                                mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(),
+                                SqlHelper.CalculateMd5(archive).ToLower());
 
-                        id = _solderSqlHandler.GetModId(modid);
-                        int modVersionId = _solderSqlHandler.GetModversionId(id, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
-                        _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
+                            id = _solderSqlHandler.GetModId(modid);
+                            int modVersionId = _solderSqlHandler.GetModversionId(id,
+                                mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
+                            _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
+                        }
                     }
 
                     Directory.Delete(modDir, true);
