@@ -15,7 +15,6 @@ namespace TechnicSolderHelper
         private readonly List<Mcmod> _mods;
         private readonly List<Mcmod> _nonFinishedMods; 
         private readonly FtbPermissionsSqlHelper _ftbPermissionsSqlHelper = new FtbPermissionsSqlHelper();
-        private Boolean _updatingModID;
 
         public Modinfo(SolderHelper solderHelper)
         {
@@ -46,7 +45,6 @@ namespace TechnicSolderHelper
                 mcmod.Aredone = AreModDone(mcmod);
                 if (!mcmod.Aredone)
                 {
-                    mcmod.FromUserInput = true;
                     ModListSqlHelper modListSqlHelper = new ModListSqlHelper();
                     Mcmod m = modListSqlHelper.GetModInfo(SqlHelper.CalculateMd5(mcmod.Path));
                     if (m == null)
@@ -189,7 +187,7 @@ namespace TechnicSolderHelper
             textBoxModName.Text = m.Name ?? String.Empty;
 
             textBoxModID.Text = m.Modid ?? String.Empty;
-            _updatingModID = String.IsNullOrWhiteSpace(textBoxModID.Text);
+            //_updatingModID = String.IsNullOrWhiteSpace(textBoxModID.Text);
             textBoxModID.ReadOnly = !String.IsNullOrWhiteSpace(textBoxModID.Text);
 
             textBoxModVersion.Text = m.Version ?? String.Empty;
@@ -404,6 +402,7 @@ namespace TechnicSolderHelper
             int index = modlist.SelectedIndex;
             Mcmod mod = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
             mod.Version = !String.IsNullOrWhiteSpace(textBoxModVersion.Text) ? textBoxModVersion.Text : String.Empty;
+            mod.FromUserInput = true;
         }
 
         private void textBoxAuthor_TextChanged(object sender, EventArgs e)
@@ -425,6 +424,7 @@ namespace TechnicSolderHelper
                     ownPermissionsSqlHelper.AddAuthor(textBoxModID.Text, a);
                 }
             }
+            mod.FromUserInput = true;
         }
 
         private void modinfo_Closing(object sender, CancelEventArgs e)
@@ -471,6 +471,7 @@ namespace TechnicSolderHelper
             int index = modlist.SelectedIndex;
             Mcmod mod = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
             mod.Modid = !String.IsNullOrWhiteSpace(textBoxModID.Text) ? textBoxModID.Text : String.Empty;
+            mod.FromUserInput = true;
 
         }
 
