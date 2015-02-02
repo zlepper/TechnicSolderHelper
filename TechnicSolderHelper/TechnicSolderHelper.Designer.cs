@@ -50,8 +50,6 @@ namespace TechnicSolderHelper
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
             this.CreateFTBPack = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.ProgressLabel = new System.Windows.Forms.Label();
             this.CreateTechnicPack = new System.Windows.Forms.CheckBox();
             this.OutputFolder = new System.Windows.Forms.TextBox();
             this.InputFolder = new System.Windows.Forms.ComboBox();
@@ -193,24 +191,6 @@ namespace TechnicSolderHelper
             this.CreateFTBPack.UseVisualStyleBackColor = true;
             this.CreateFTBPack.CheckedChanged += new System.EventHandler(this.CreateFTBPack_CheckedChanged);
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(467, 124);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(80, 13);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Currently doing:";
-            // 
-            // ProgressLabel
-            // 
-            this.ProgressLabel.AutoSize = true;
-            this.ProgressLabel.Location = new System.Drawing.Point(467, 142);
-            this.ProgressLabel.Name = "ProgressLabel";
-            this.ProgressLabel.Size = new System.Drawing.Size(52, 13);
-            this.ProgressLabel.TabIndex = 0;
-            this.ProgressLabel.Text = "Waiting...";
-            // 
             // CreateTechnicPack
             // 
             this.CreateTechnicPack.AutoSize = true;
@@ -267,7 +247,7 @@ namespace TechnicSolderHelper
             // 
             this.missingInfoAction.Controls.Add(this.missingInfoActionCreateList);
             this.missingInfoAction.Controls.Add(this.missingInfoActionOnTheRun);
-            this.missingInfoAction.Location = new System.Drawing.Point(510, 186);
+            this.missingInfoAction.Location = new System.Drawing.Point(510, 127);
             this.missingInfoAction.Name = "missingInfoAction";
             this.missingInfoAction.Size = new System.Drawing.Size(110, 69);
             this.missingInfoAction.TabIndex = 0;
@@ -371,11 +351,11 @@ namespace TechnicSolderHelper
             // labelmcversion
             // 
             this.labelmcversion.AutoSize = true;
-            this.labelmcversion.Location = new System.Drawing.Point(172, 148);
+            this.labelmcversion.Location = new System.Drawing.Point(504, 215);
             this.labelmcversion.Name = "labelmcversion";
-            this.labelmcversion.Size = new System.Drawing.Size(57, 13);
+            this.labelmcversion.Size = new System.Drawing.Size(89, 13);
             this.labelmcversion.TabIndex = 15;
-            this.labelmcversion.Text = "MCversion";
+            this.labelmcversion.Text = "Minecraft Version";
             this.labelmcversion.Click += new System.EventHandler(this.labelmcversion_Click);
             // 
             // TechnicDistributionLevel
@@ -597,7 +577,7 @@ namespace TechnicSolderHelper
             // 
             this.MCversion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.MCversion.FormattingEnabled = true;
-            this.MCversion.Location = new System.Drawing.Point(250, 145);
+            this.MCversion.Location = new System.Drawing.Point(507, 234);
             this.MCversion.Name = "MCversion";
             this.MCversion.Size = new System.Drawing.Size(121, 21);
             this.MCversion.TabIndex = 32;
@@ -644,8 +624,6 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.DistributionLevel);
             this.Controls.Add(this.SolderPackType);
             this.Controls.Add(this.CreateTechnicPack);
-            this.Controls.Add(this.ProgressLabel);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.CreateFTBPack);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.checkBox1);
@@ -688,8 +666,6 @@ namespace TechnicSolderHelper
         private CheckBox checkBox1;
         private CheckBox IncludeConfigZip;
         private Button button3;
-        private Label label3;
-        public Label ProgressLabel;
         private GroupBox SolderPackType;
         private RadioButton ZipPack;
         private RadioButton SolderPack;
@@ -954,15 +930,11 @@ namespace TechnicSolderHelper
             IncludeForgeVersion.Checked = includeForgeVersion;
             if (includeForgeVersion)
             {
-                MCversion.Show();
-                labelmcversion.Show();
                 labelforgeversion.Show();
                 ForgeBuild.Show();
             }
             else
             {
-                MCversion.Hide();
-                labelmcversion.Hide();
                 labelforgeversion.Hide();
                 ForgeBuild.Hide();
             }
@@ -993,9 +965,7 @@ namespace TechnicSolderHelper
 
             if (!CreateTechnicPack.Checked)
             {
-                MCversion.Hide();
                 ForgeBuild.Hide();
-                labelmcversion.Hide();
                 labelforgeversion.Hide();
             }
 

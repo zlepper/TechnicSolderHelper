@@ -15,6 +15,7 @@ using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.SQL.forge;
 using TechnicSolderHelper.FileUpload;
 using TechnicSolderHelper.s3;
+using TechnicSolderHelper.SmallInterfaces;
 using FileInfo = System.IO.FileInfo;
 using TechnicSolderHelper.SQL.liteloader;
 using TechnicSolderHelper.SQL.workTogether;
@@ -347,7 +348,8 @@ namespace TechnicSolderHelper
 
             if (String.IsNullOrWhiteSpace(_currentMcVersion))
             {
-                _currentMcVersion = Prompt.ShowDialog("What is the Minecraft Version for the modpack?", "Minecraft Version");
+                Mcselector selector = new Mcselector(this);
+                selector.ShowDialog();
             }
 
             if (useSolder.Checked)
@@ -368,7 +370,6 @@ namespace TechnicSolderHelper
                 }
                 // ReSharper disable once InconsistentNaming
                 var FileName = file.Substring(file.LastIndexOf(Globalfunctions.PathSeperator) + 1);
-                ProgressLabel.Text = FileName;
                 //Check for mcmod.info
                 Directory.CreateDirectory(_outputDirectory);
                 String arguments;
@@ -1085,7 +1086,6 @@ namespace TechnicSolderHelper
             }
             if (CreateTechnicPack.Checked && SolderPack.Checked && UploadToFTPServer.Checked)
             {
-                ProgressLabel.Text = "Start Uploading to FTP Server";
                 if (_ftp == null)
                 {
                     _ftp = new Ftp();
@@ -1101,13 +1101,9 @@ namespace TechnicSolderHelper
 
             if (CreateTechnicPack.Checked && SolderPack.Checked && UseS3.Checked)
             {
-                ProgressLabel.Text = "Uploading to s3.";
                 S3 s3Client = new S3();
                 s3Client.UploadFolder(Path.Combine(_outputDirectory, "mods"));
             }
-
-
-            ProgressLabel.Text = @"Waiting...";
 
             InputFolder.Items.Clear();
             try
@@ -1308,13 +1304,8 @@ namespace TechnicSolderHelper
                 else if (mod.Mcversion == null && (String.IsNullOrWhiteSpace(currentData.Mcversion) || currentData.Mcversion.Contains("${")))
                 if (_currentMcVersion == null)
                 {
-                    String a =
-                        String.Format(
-                            "Minecraft Version of {0}" + Environment.NewLine +
-                            "Go bug the mod author to include an mcmod.info file!", fileName);
-                    mod.Mcversion = Prompt.ShowDialog(a, "Minecraft Version", false,
-                        Prompt.ModsLeftString(_totalMods, _currentMod));
-                    _currentMcVersion = mod.Mcversion;
+                    Mcselector selector = new Mcselector(this);
+                    selector.ShowDialog();
                     currentData.Mcversion = _currentMcVersion;
                 }
                 else
@@ -1494,16 +1485,12 @@ namespace TechnicSolderHelper
                 if (IncludeForgeVersion.Checked)
                 {
                     labelforgeversion.Show();
-                    labelmcversion.Show();
                     ForgeBuild.Show();
-                    MCversion.Show();
                 }
                 else
                 {
                     labelforgeversion.Hide();
-                    labelmcversion.Hide();
                     ForgeBuild.Hide();
-                    MCversion.Hide();
                 }
             }
             else
@@ -1513,9 +1500,7 @@ namespace TechnicSolderHelper
                 CreateFTBPack.Location = new Point(CreateFTBPack.Location.X, CreateFTBPack.Location.Y - SolderPackType.Height);
                 TechnicDistributionLevel.Hide();
                 labelforgeversion.Hide();
-                labelmcversion.Hide();
                 ForgeBuild.Hide();
-                MCversion.Hide();
             }
         }
 
@@ -1624,16 +1609,12 @@ namespace TechnicSolderHelper
             if (IncludeForgeVersion.Checked)
             {
                 labelforgeversion.Show();
-                labelmcversion.Show();
                 ForgeBuild.Show();
-                MCversion.Show();
             }
             else
             {
                 labelforgeversion.Hide();
-                labelmcversion.Hide();
                 ForgeBuild.Hide();
-                MCversion.Hide();
             }
         }
 

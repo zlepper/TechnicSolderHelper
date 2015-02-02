@@ -197,6 +197,12 @@
     <Compile Include="s3\S3Info.Designer.cs">
       <DependentUpon>S3Info.cs</DependentUpon>
     </Compile>
+    <Compile Include="SmallInterfaces\mcselector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SmallInterfaces\mcselector.Designer.cs">
+      <DependentUpon>mcselector.cs</DependentUpon>
+    </Compile>
     <Compile Include="SQL\DatabaseEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -314,6 +320,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="s3\S3Info.resx">
       <DependentUpon>S3Info.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SmallInterfaces\mcselector.resx">
+      <DependentUpon>mcselector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SQL\DatabaseEditor.resx">
       <DependentUpon>DatabaseEditor.cs</DependentUpon>
