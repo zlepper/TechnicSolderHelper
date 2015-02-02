@@ -29,7 +29,7 @@ namespace TechnicSolderHelper.SQL.forge
 
         public List<String> GetMcVersions()
         {
-            String sql = String.Format("SELECT DISTINCT mcversion FROM {0} ORDER BY mcversion ASC;", TableName);
+            String sql = String.Format("SELECT DISTINCT mcversion FROM {0} WHERE mcversion NOT LIKE '1.7.10_pre4' ORDER BY mcversion ASC;", TableName);
             List<String> mcversion = new List<string>();
             if (IsUnix())
             {
