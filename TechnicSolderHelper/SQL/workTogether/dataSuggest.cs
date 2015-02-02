@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using MySql.Data.MySqlClient;
 
 namespace TechnicSolderHelper.SQL.workTogether
@@ -16,11 +18,11 @@ namespace TechnicSolderHelper.SQL.workTogether
             _connectionStringGet = String.Format("address=zlepper.dk;username=dataSuggester;password=suggest;database={0}", GetDatabase); 
         }
 
-        public void Suggest(String filename, String mcversion, String modversion, String md5, String modid, String modname)
+        public void Suggest(String filename, String mcversion, String modversion, String md5, String modid, String modname, String author = "")
         {
             if (!IsModSuggested(md5))
             {
-                const string sql = "INSERT INTO solderhelper.new(filename, mcversion, modversion, md5, modid, modname) VALUES(@filename, @mcversion, @modversion, @md5, @modid, @modname);";
+                const string sql = "INSERT INTO solderhelper.new(filename, mcversion, modversion, md5, modid, modname, author) VALUES(@filename, @mcversion, @modversion, @md5, @modid, @modname, @author);";
                 using (MySqlConnection connection = new MySqlConnection(_connectionStringSuggest))
                 {
                     connection.OpenAsync();
@@ -32,6 +34,7 @@ namespace TechnicSolderHelper.SQL.workTogether
                         command.Parameters.AddWithValue("@md5", md5);
                         command.Parameters.AddWithValue("@modid", modid);
                         command.Parameters.AddWithValue("@modname", modname);
+                        command.Parameters.AddWithValue("@author", author);
                         command.ExecuteNonQueryAsync();
                     }
                 }
@@ -63,7 +66,7 @@ namespace TechnicSolderHelper.SQL.workTogether
 
         public Mcmod GetMcmod(String md5)
         {
-            String sql = "SELECT modname, modid, mcversion, modversion, md5 FROM helpersolder.mods WHERE md5 LIKE @md5;";
+            String sql = "SELECT modname, modid, mcversion, modversion, md5, author FROM helpersolder.mods WHERE md5 LIKE @md5;";
             using (MySqlConnection connection = new MySqlConnection(_connectionStringGet))
             {
                 connection.Open();
@@ -76,12 +79,17 @@ namespace TechnicSolderHelper.SQL.workTogether
                         {
                             if (reader["md5"].Equals(md5))
                             {
+                                List<String> a = reader["author"].ToString().Split(',').ToList();
+
                                 Mcmod mod = new Mcmod
                                 {
                                     Version = reader["modversion"].ToString(),
                                     Name = reader["modname"].ToString(),
                                     Modid = reader["modid"].ToString(),
-                                    Mcversion = reader["mcversion"].ToString()
+                                    Mcversion = reader["mcversion"].ToString(),
+                                    Authors = a,
+                                    AuthorList = a
+                                    
                                 };
                                 return mod;
                             }

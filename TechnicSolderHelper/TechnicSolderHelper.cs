@@ -1327,7 +1327,8 @@ namespace TechnicSolderHelper
                 string md5 = SqlHelper.CalculateMd5(file);
                 if (mod.FromUserInput && !mod.FromSuggestion && !suggest.IsModSuggested(md5))
                 {
-                    suggest.Suggest(fileName, mod.Mcversion, mod.Version, md5, mod.Modid, mod.Name);
+                    String a = GetAuthors(mod);
+                    suggest.Suggest(fileName, mod.Mcversion, mod.Version, md5, mod.Modid, mod.Name, a);
                 }
 
                 if (CreateTechnicPack.Checked)

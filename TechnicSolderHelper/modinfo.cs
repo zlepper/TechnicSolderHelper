@@ -68,11 +68,36 @@ namespace TechnicSolderHelper
                         }
                         else
                         {
-                            _nonFinishedMods.Add(mcmod);
-                            modlist.Items.Add(String.IsNullOrWhiteSpace(mcmod.Name) ? mcmod.Filename : mcmod.Name);
+                            DataSuggest ds = new DataSuggest();
+                            m = ds.GetMcmod(SqlHelper.CalculateMd5(mcmod.Path));
+                            if (m != null)
+                            {
+                                if (String.IsNullOrWhiteSpace(mcmod.Name))
+                                {
+                                    mcmod.Name = m.Name;
+                                }
+                                if (String.IsNullOrWhiteSpace(mcmod.Modid))
+                                {
+                                    mcmod.Modid = m.Modid;
+                                }
+                                if (String.IsNullOrWhiteSpace(mcmod.Version) || mcmod.Version.Contains("@") || mcmod.Version.Contains("${"))
+                                {
+                                    mcmod.Version = m.Version;
+                                }
+                                mcmod.FromSuggestion = true;
+                            }
+                            if (AreModDone(mcmod))
+                            {
+                                mcmod.Aredone = true;
+                            }
+                            else
+                            {
+                                _nonFinishedMods.Add(mcmod);
+                                modlist.Items.Add(String.IsNullOrWhiteSpace(mcmod.Name) ? mcmod.Filename : mcmod.Name);
+                            }
                         }
                     }
-                    else
+                    if(mcmod.Aredone)
                     {
                         if (mcmod.Authors == null || mcmod.AuthorList == null)
                         {
@@ -118,14 +143,21 @@ namespace TechnicSolderHelper
                                 {
                                     mcmod.Modid = m.Modid;
                                 }
-                                if (String.IsNullOrWhiteSpace(mcmod.Version))
+                                if (String.IsNullOrWhiteSpace(mcmod.Version) || mcmod.Version.Contains("@") || mcmod.Version.Contains("${"))
                                 {
                                     mcmod.Version = m.Version;
                                 }
                                 mcmod.FromSuggestion = true;
                             }
-                            _nonFinishedMods.Add(mcmod);
-                            modlist.Items.Add(String.IsNullOrWhiteSpace(mcmod.Name) ? mcmod.Filename : mcmod.Name);
+                            if (AreModDone(mcmod))
+                            {
+                                mcmod.Aredone = true;
+                            }
+                            else
+                            {
+                                _nonFinishedMods.Add(mcmod);
+                                modlist.Items.Add(String.IsNullOrWhiteSpace(mcmod.Name) ? mcmod.Filename : mcmod.Name);
+                            }
                         }
                     }
                 }
@@ -449,10 +481,11 @@ namespace TechnicSolderHelper
             {
                 foreach (Mcmod mcmod in _mods)
                 {
-                    if (mcmod.FromUserInput && !mcmod.FromSuggestion)
+                    if (mcmod.FromUserInput)
                     {
                         DataSuggest ds = new DataSuggest();
-                        ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version, SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name);
+                        String a = _solderHelper.GetAuthors(mcmod, true);
+                        ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version, SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name, a);
                     }
                     if (_solderHelper.CreateFTBPack.Checked)
                     {
