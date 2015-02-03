@@ -88,10 +88,15 @@ namespace TechnicSolderHelper
             this.button4 = new System.Windows.Forms.Button();
             this.MCversion = new System.Windows.Forms.ComboBox();
             this.ForgeBuild = new System.Windows.Forms.ComboBox();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.SolderPackType.SuspendLayout();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -593,12 +598,42 @@ namespace TechnicSolderHelper
             this.ForgeBuild.TabIndex = 33;
             this.ForgeBuild.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripProgressBar,
+            this.toolStripStatusLabel1,
+            this.StatusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 461);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(784, 22);
+            this.statusStrip.TabIndex = 34;
+            this.statusStrip.Text = "statusStrip1";
+            // 
+            // toolStripProgressBar
+            // 
+            this.toolStripProgressBar.Name = "toolStripProgressBar";
+            this.toolStripProgressBar.Size = new System.Drawing.Size(100, 16);
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(94, 17);
+            this.toolStripStatusLabel1.Text = "Currently Doing:";
+            // 
+            // StatusLabel
+            // 
+            this.StatusLabel.Name = "StatusLabel";
+            this.StatusLabel.Size = new System.Drawing.Size(57, 17);
+            this.StatusLabel.Text = "Waiting...";
+            // 
             // SolderHelper
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(784, 464);
+            this.ClientSize = new System.Drawing.Size(784, 483);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.ForgeBuild);
             this.Controls.Add(this.MCversion);
             this.Controls.Add(this.button4);
@@ -647,6 +682,8 @@ namespace TechnicSolderHelper
             this.DistributionLevel.PerformLayout();
             this.SolderPackType.ResumeLayout(false);
             this.SolderPackType.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1020,5 +1057,9 @@ namespace TechnicSolderHelper
         public RadioButton TechnicPublicPermissions;
         public RadioButton TechnicPrivatePermissions;
         public CheckBox CreateTechnicPack;
+        private StatusStrip statusStrip;
+        private ToolStripProgressBar toolStripProgressBar;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel StatusLabel;
     }
 }

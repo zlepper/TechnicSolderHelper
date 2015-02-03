@@ -162,7 +162,14 @@ namespace TechnicSolderHelper
                     }
                 }
             }
-            modlist.SelectedIndex = 0;
+            if (modlist.Items.Count >= 0)
+            {
+                Close();
+            }
+            else
+            {
+                modlist.SelectedIndex = 0;
+            }
         }
 
         private static Boolean IsFullyInformed(Mcmod mod)

@@ -331,7 +331,7 @@ namespace TechnicSolderHelper
             }
 
             List<String> files = GetModFiles();
-
+            StatusLabel.Text = "Finding Files";
             while (String.IsNullOrWhiteSpace(_modpackName))
             {
                 _modpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
@@ -358,12 +358,15 @@ namespace TechnicSolderHelper
             }
 
             List<Mcmod> modsList = new List<Mcmod>(_totalMods);
+            toolStripProgressBar.Value = 0;
+            toolStripProgressBar.Maximum = _totalMods;
             
             //Check if files have already been added
             foreach (String file in files)
             {
                 Debug.WriteLine("");
                 _currentMod++;
+                toolStripProgressBar.Increment(1);
                 if (IsWierdMod(file) == 0)
                 {
                     continue;
@@ -371,6 +374,7 @@ namespace TechnicSolderHelper
                 // ReSharper disable once InconsistentNaming
                 var FileName = file.Substring(file.LastIndexOf(Globalfunctions.PathSeperator) + 1);
                 //Check for mcmod.info
+                StatusLabel.Text = FileName;
                 Directory.CreateDirectory(_outputDirectory);
                 String arguments;
                 if (Globalfunctions.IsUnix())
@@ -683,7 +687,10 @@ namespace TechnicSolderHelper
             if (missingInfoActionCreateList.Checked)
             {
                 Form modinfo = new Modinfo(modsList, this);
-                modinfo.ShowDialog();
+                if (!modinfo.IsDisposed)
+                {
+                    modinfo.ShowDialog();
+                }
             }
 
             Environment.CurrentDirectory = _inputDirectory;
@@ -1061,23 +1068,23 @@ namespace TechnicSolderHelper
                 {
                     try
                     {
-                        Process.Start("chrome.exe", _path);
+                        Process.Start("chrome.exe", "\"" + _path + "\"");
                     }
                     catch (Exception)
                     {
                         try
                         {
-                            Process.Start("iexplore", _path);
+                            Process.Start("iexplore", "\"" + _path + "\"");
                         }
                         catch (Exception)
                         {
                             try
                             {
-                                Process.Start("firefox.exe", _path);
+                                Process.Start("firefox.exe", "\"" + _path + "\"");
                             }
                             catch (Exception)
                             {
-                                Process.Start(_path);
+                                Process.Start("\"" + _path + "\"");
                             }
                         }
                     }
@@ -1114,6 +1121,8 @@ namespace TechnicSolderHelper
             {
                 // ignored
             }
+            toolStripProgressBar.Value = 0;
+            StatusLabel.Text = "Waiting...";
         }
 
         #region Technic Pack Function
@@ -1724,6 +1733,12 @@ namespace TechnicSolderHelper
         private void missingInfoActionOnTheRun_CheckedChanged(object sender, EventArgs e)
         {
             _confighandler.SetConfig("missingInfoAction", missingInfoActionOnTheRun.Checked);
+        }
+
+        private void StatusLabel_TextChanged(object sender, EventArgs e)
+        {
+            statusStrip.Refresh();
+            Debug.WriteLine("changed");
         }
     }
 }
