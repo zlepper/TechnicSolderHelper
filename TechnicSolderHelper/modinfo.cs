@@ -162,7 +162,7 @@ namespace TechnicSolderHelper
                     }
                 }
             }
-            if (modlist.Items.Count >= 0)
+            if (modlist.Items.Count <= 0)
             {
                 Close();
             }
