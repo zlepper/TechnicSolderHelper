@@ -72,15 +72,15 @@ namespace TechnicSolderHelper
                             m = ds.GetMcmod(SqlHelper.CalculateMd5(mcmod.Path));
                             if (m != null)
                             {
-                                if (String.IsNullOrWhiteSpace(mcmod.Name))
+                                if (!IsValid(mcmod.Name))
                                 {
                                     mcmod.Name = m.Name;
                                 }
-                                if (String.IsNullOrWhiteSpace(mcmod.Modid))
+                                if (!IsValid(mcmod.Modid))
                                 {
                                     mcmod.Modid = m.Modid;
                                 }
-                                if (String.IsNullOrWhiteSpace(mcmod.Version) || mcmod.Version.Contains("@") || mcmod.Version.Contains("${"))
+                                if (!IsValid(mcmod.Version))
                                 {
                                     mcmod.Version = m.Version;
                                 }
@@ -97,8 +97,26 @@ namespace TechnicSolderHelper
                             }
                         }
                     }
-                    if(mcmod.Aredone)
+                    if(!mcmod.Aredone)
                     {
+                        
+
+                        if (!IsValid(mcmod.Name) && !String.IsNullOrWhiteSpace(m.Name))
+                        {
+                            mcmod.Name = m.Name;
+                        }
+                        if (!IsValid(mcmod.Modid) && !String.IsNullOrWhiteSpace(m.Modid))
+                        {
+                            mcmod.Modid = m.Modid;
+                        }
+                        if (!IsValid(mcmod.Version) && !String.IsNullOrWhiteSpace(m.Version))
+                        {
+                            mcmod.Version = m.Version;
+                        }
+                        if (String.IsNullOrWhiteSpace(mcmod.Mcversion))
+                        {
+                            mcmod.Mcversion = _solderHelper._currentMcVersion;
+                        }
                         if (mcmod.Authors == null || mcmod.AuthorList == null)
                         {
                             String a = _solderHelper.GetAuthors(mcmod, true);
@@ -107,23 +125,6 @@ namespace TechnicSolderHelper
                                 List<String> s = a.Replace(" ", "").Split(',').ToList();
                                 mcmod.Authors = s;
                             }
-                        }
-
-                        if (String.IsNullOrWhiteSpace(mcmod.Name))
-                        {
-                            mcmod.Name = m.Name;
-                        }
-                        if (String.IsNullOrWhiteSpace(mcmod.Modid))
-                        {
-                            mcmod.Modid = m.Modid;
-                        }
-                        if (String.IsNullOrWhiteSpace(mcmod.Version))
-                        {
-                            mcmod.Version = m.Version;
-                        }
-                        if (String.IsNullOrWhiteSpace(mcmod.Mcversion))
-                        {
-                            mcmod.Mcversion = _solderHelper._currentMcVersion;
                         }
                         if (AreModDone(mcmod))
                         {
@@ -135,15 +136,15 @@ namespace TechnicSolderHelper
                             m = ds.GetMcmod(SqlHelper.CalculateMd5(mcmod.Path));
                             if (m != null)
                             {
-                                if (String.IsNullOrWhiteSpace(mcmod.Name))
+                                if (!IsValid(mcmod.Name))
                                 {
                                     mcmod.Name = m.Name;
                                 }
-                                if (String.IsNullOrWhiteSpace(mcmod.Modid))
+                                if (!IsValid(mcmod.Modid))
                                 {
                                     mcmod.Modid = m.Modid;
                                 }
-                                if (String.IsNullOrWhiteSpace(mcmod.Version) || mcmod.Version.Contains("@") || mcmod.Version.Contains("${"))
+                                if (!IsValid(mcmod.Version))
                                 {
                                     mcmod.Version = m.Version;
                                 }
@@ -164,12 +165,20 @@ namespace TechnicSolderHelper
             }
             if (modlist.Items.Count <= 0)
             {
-                Close();
             }
             else
             {
                 modlist.SelectedIndex = 0;
             }
+        }
+
+        private Boolean IsValid(String s)
+        {
+            if (String.IsNullOrWhiteSpace(s) || s.Contains("@") || s.Contains("${") || s.ToLower().Contains("example"))
+            {
+                return false;
+            }
+            return true;
         }
 
         private static Boolean IsFullyInformed(Mcmod mod)
@@ -178,7 +187,7 @@ namespace TechnicSolderHelper
                 String.IsNullOrWhiteSpace(mod.Mcversion) || String.IsNullOrWhiteSpace(mod.Modid) || (mod.AuthorList == null && mod.Authors == null))
                 return false;
             Debug.WriteLine(mod.Version);
-            if (mod.Name.Contains("${") || mod.Version.Contains("${") || mod.Mcversion.Contains("${") || mod.Modid.Contains("${") || mod.Version.ToLower().Contains("@version@"))
+            if (mod.Name.Contains("${") || mod.Version.Contains("${") || mod.Mcversion.Contains("${") || mod.Modid.Contains("${") || mod.Version.ToLower().Contains("@version@") || mod.Modid.ToLower().Contains("example") || mod.Version.ToLower().Contains("example") || mod.Name.ToLower().Contains("example"))
             {
                 return false;
             }

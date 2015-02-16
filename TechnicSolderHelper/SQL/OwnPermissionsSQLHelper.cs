@@ -15,19 +15,19 @@ namespace TechnicSolderHelper.SQL
             ConfigHandler ch = new ConfigHandler();
             try
             {
-                if (Convert.ToInt32(ch.GetConfig("ownpermsversion")) < 2)
+                if (Convert.ToInt32(ch.GetConfig("ownpermsversion")) < 3)
                 {
                     _createTableString =
                         String.Format(
-                            "DROP TABLE IF EXISTS `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            "DROP TABLE IF EXISTS `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
                             TableName);
-                    ch.SetConfig("ownpermsversion", "2");
+                    ch.SetConfig("ownpermsversion", "3");
                 }
                 else
                 {
                     _createTableString =
                         String.Format(
-                            "CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            "CREATE TABLE IF NOT EXISTS `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
                             TableName);
                 }
             }
@@ -35,9 +35,9 @@ namespace TechnicSolderHelper.SQL
             {
                 _createTableString =
                         String.Format(
-                            "DROP TABLE IF EXISTS `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT NOT NULL, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
+                            "DROP TABLE IF EXISTS `{0}`; CREATE TABLE `{0}` ( `ID` INTEGER NOT NULL, `ModName` TEXT, `ModID` TEXT NOT NULL UNIQUE, `ModAuthor` TEXT, `PermLink` TEXT, `ModLink` TEXT, `LicenseLink` TEXT, PRIMARY KEY(ID));",
                             TableName);
-                ch.SetConfig("ownpermsversion", "2");
+                ch.SetConfig("ownpermsversion", "3");
             }
             finally
             {
@@ -107,7 +107,7 @@ namespace TechnicSolderHelper.SQL
 
         public String GetAuthor(String modId)
         {
-            String sql = String.Format("SELECT ModAuthor FROM {0} WHERE ModID LIKE @modid;", TableName);
+            String sql = String.Format("SELECT ModAuthor FROM {0} WHERE ModID LIKE \"{1}\";", TableName, modId);
 
             if (IsUnix())
             {
@@ -116,7 +116,6 @@ namespace TechnicSolderHelper.SQL
                     db.Open();
                     using (SqliteCommand cmd = new SqliteCommand(sql, db))
                     {
-                        cmd.Parameters.AddWithValue("@modid", modId);
                         using (SqliteDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -134,12 +133,11 @@ namespace TechnicSolderHelper.SQL
                     db.Open();
                     using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                     {
-                        cmd.Parameters.AddWithValue("@modid", modId);
                         using (SQLiteDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                return reader["ModAuthor"].ToString();
+                                return reader.GetValue(0).ToString();
                             }
                         }
                     }
@@ -322,7 +320,7 @@ namespace TechnicSolderHelper.SQL
                 return;
             }
 
-            String sql = String.Format("UPDATE {0} SET ModAuthor = @author WHERE ModID LIKE @modid;", TableName);
+            String sql = String.Format(IsModInDatabase(modId) ? "UPDATE {0} SET ModAuthor = @author WHERE ModID LIKE @modid;" : "INSERT INTO {0}(ModAuthor, ModID) VALUES(@author, @modid);", TableName);
 
             if (Globalfunctions.IsUnix())
             {

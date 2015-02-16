@@ -34,7 +34,7 @@
     <PublisherName>Rasmus Hansen</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>1.0.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -178,6 +178,12 @@
     <Compile Include="confighandler\confighandler.cs" />
     <Compile Include="cryptography\crypto.cs" />
     <Compile Include="cryptography\KeyHandler.cs" />
+    <Compile Include="FileUpload\UploadProgression.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileUpload\UploadProgression.Designer.cs">
+      <DependentUpon>UploadProgression.cs</DependentUpon>
+    </Compile>
     <Compile Include="Litemod.cs" />
     <Compile Include="modinfo.cs">
       <SubType>Form</SubType>
@@ -267,7 +273,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="TechnicSolderHelper_1_TemporaryKey.pfx" />
     <None Include="TechnicSolderHelper_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -315,6 +320,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FileUpload\UploadProgression.resx">
+      <DependentUpon>UploadProgression.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="modinfo.resx">
       <DependentUpon>modinfo.cs</DependentUpon>
     </EmbeddedResource>

@@ -261,7 +261,7 @@ namespace TechnicSolderHelper.SQL
             Debug.WriteLine(fileVersion);
             String sql =
                 String.Format(
-                    "UPDATE {0} SET ModName = @modname, ModID = @modid, ModVersion = @modversion, MinecraftVersion = @minecraftversion, FileName = @filename, FileVersion = @fileversion WHERE ID = @id;",
+                    "UPDATE {0} SET ModName = @modname, ModID = @modid, ModVersion = @modversion, MinecraftVersion = @minecraftversion, FileName = @filename, FileVersion = @fileversion, OnSolder = 0 WHERE ID = @id;",
                     TableName);
             if (Globalfunctions.IsUnix())
             {

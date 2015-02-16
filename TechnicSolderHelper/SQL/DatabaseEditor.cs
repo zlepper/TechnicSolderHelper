@@ -21,18 +21,6 @@ namespace TechnicSolderHelper.SQL
             {
                 data.Columns["ID"].Visible = false;
             }
-            Shown += DatabaseEditor_Shown;
-        }
-
-        private void DatabaseEditor_Shown(object sender, EventArgs e)
-        {
-            int col1 = data.Columns["ModName"].Width;
-            int col2 = data.Columns["ModID"].Width; 
-            int col3 = data.Columns["ModVersion"].Width;
-            int col4 = data.Columns["MinecraftVersion"].Width;
-            int col5 = data.Columns["FileName"].Width;
-            int allCol = col1 + col2 + col3 + col4 + col5;
-            //this.Size = new System.Drawing.Size(allCol + 95, this.Height);
         }
 
         private void Save_Click(object sender, EventArgs e)
@@ -43,7 +31,6 @@ namespace TechnicSolderHelper.SQL
 
         private void Cancel_Click(object sender, EventArgs e)
         {
-            
             Close();
         }
 
@@ -60,20 +47,17 @@ namespace TechnicSolderHelper.SQL
 
         private void highLightVerBtn_Click(object sender, EventArgs e)
         {
-            int ModVersionIndex = data.Columns["ModVersion"].Index;
-            int MinecraftVersionIndex = data.Columns["MinecraftVersion"].Index;
-            foreach (DataGridViewRow Myrow in data.Rows)
-            {            //Here 2 cell is target value and 1 cell is Volume
-                string wtf = Myrow.Cells[ModVersionIndex].Value.ToString();
-                if (Myrow.Cells[ModVersionIndex].Value.ToString().Contains(Myrow.Cells[MinecraftVersionIndex].Value.ToString()))
-                {
-                    data.Rows[Myrow.Index].Cells[ModVersionIndex].Style.BackColor = Color.Red;
-
-                }
-                else
-                {
-                    data.Rows[Myrow.Index].Cells[ModVersionIndex].Style.BackColor = Color.White;
-                }
+            var dataGridViewColumn = data.Columns["ModVersion"];
+            if (dataGridViewColumn == null) return;
+            int modVersionIndex = dataGridViewColumn.Index;
+            var gridViewColumn = data.Columns["MinecraftVersion"];
+            if (gridViewColumn == null) return;
+            int minecraftVersionIndex = gridViewColumn.Index;
+            foreach (DataGridViewRow row in data.Rows)
+            {
+                //Here 2 cell is target value and 1 cell is Volume
+                string wtf = row.Cells[modVersionIndex].Value.ToString();
+                data.Rows[row.Index].Cells[modVersionIndex].Style.BackColor = row.Cells[modVersionIndex].Value.ToString().Contains(row.Cells[minecraftVersionIndex].Value.ToString()) ? Color.Red : Color.White;
             }
         }
     }

@@ -1,22 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
-using TechnicSolderHelper.Confighandler;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Web;
 using TechnicSolderHelper.cryptography;
-using TechnicSolderHelper.Properties;
+using TechnicSolderHelper.Confighandler;
 
 namespace TechnicSolderHelper.FileUpload
 {
-    public class Ftp
+    public partial class UploadProgression : Form
     {
+        private BackgroundWorker _uploadWorker = new BackgroundWorker();
+        private string _uploadFrom;
+        private bool _areUploading = false;
         private String _userName;
         private String _password;
         private String _url;
 
-        public Ftp()
+        public UploadProgression(string uploadFrom)
         {
+            _uploadFrom = uploadFrom;
+            _uploadWorker.WorkerReportsProgress = true;
+            _uploadWorker.DoWork += _uploadWorker_DoWork;
+            _uploadWorker.ProgressChanged += _uploadWorker_ProgressChanged;
+            InitializeComponent(); 
             Crypto crypto = new Crypto();
             ConfigHandler ch = new ConfigHandler();
             _url = ch.GetConfig("ftpUrl");
@@ -37,9 +52,20 @@ namespace TechnicSolderHelper.FileUpload
             {
                 _url = "ftp://" + _url;
             }
+            _uploadWorker.RunWorkerAsync();
         }
 
-        public void UploadFolder(String folderPath)
+        void _uploadWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void _uploadWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            UploadFolder(_uploadFrom);
+        }
+
+        private void UploadFolder(String folderPath)
         {
             String[] files;
             try
@@ -60,49 +86,6 @@ namespace TechnicSolderHelper.FileUpload
                 UploadFile(file, file.Replace(folderPath + Globalfunctions.PathSeperator, ""), "mods");
             }
 
-        }
-
-        private List<String> GetDirectoryContent(String location)
-        {
-            List<String> folderContent = new List<string>();
-            FtpWebRequest request;
-            if (location == null)
-            {
-                request = (FtpWebRequest)WebRequest.Create(_url);
-            }
-            else
-            {
-                request = (FtpWebRequest)WebRequest.Create(location);
-            }
-            request.Method = WebRequestMethods.Ftp.ListDirectory;
-
-            request.Credentials = new NetworkCredential(_userName, _password);
-
-            using (FtpWebResponse responce = (FtpWebResponse)request.GetResponse())
-            {
-                Stream responceStream = responce.GetResponseStream();
-                using (StreamReader reader = new StreamReader(responceStream))
-                {
-                    while (true)
-                    {
-                        try
-                        {
-                            String s = reader.ReadLine();
-                            if (s.Contains("/"))
-                            {
-                                s = s.Substring(s.LastIndexOf("/") + 1);
-                            }
-                            folderContent.Add(s);
-                        }
-                        catch (Exception)
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return folderContent;
         }
 
         private void UploadFile(String fullyQualifiedPathName, String destinationOnServer, String constant)
@@ -168,20 +151,22 @@ namespace TechnicSolderHelper.FileUpload
             {
                 Debug.WriteLine("Uploading file: " + fileToUpload);
                 request = WebRequest.Create(request.RequestUri + "/" + fileToUpload) as FtpWebRequest;
+                if (request == null) return;
                 request.Credentials = new NetworkCredential(_userName, _password);
                 request.Method = WebRequestMethods.Ftp.UploadFile;
-                request.UseBinary = true;
-                request.UsePassive = true;
-                request.KeepAlive = true;
-                using (FileStream fs = File.OpenRead(fullyQualifiedPathName))
+                using (var inputStream = File.OpenRead(fullyQualifiedPathName))
+                using (var outputStream = request.GetRequestStream())
                 {
-                    byte[] buffer = new byte[fs.Length];
-                    fs.Read(buffer, 0, buffer.Length);
-                    fs.Close();
-                    Stream requestStream = request.GetRequestStream();
-                    requestStream.Write(buffer, 0, buffer.Length);
-                    requestStream.Close();
-                    requestStream.Flush();
+                    var buffer = new byte[1024 * 50];
+                    int totalReadBytesCount = 0;
+                    int readBytesCount;
+                    while ((readBytesCount = inputStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        outputStream.Write(buffer, 0, readBytesCount);
+                        totalReadBytesCount += readBytesCount;
+                        var progress = totalReadBytesCount * 100.0 / inputStream.Length;
+                        uploadWorker.ReportProgress((int)progress);
+                    }
                 }
             }
             catch (WebException e)
@@ -191,6 +176,47 @@ namespace TechnicSolderHelper.FileUpload
             }
         }
 
+        private List<String> GetDirectoryContent(String location)
+        {
+            List<String> folderContent = new List<string>();
+            FtpWebRequest request;
+            if (location == null)
+            {
+                request = (FtpWebRequest)WebRequest.Create(_url);
+            }
+            else
+            {
+                request = (FtpWebRequest)WebRequest.Create(location);
+            }
+            request.Method = WebRequestMethods.Ftp.ListDirectory;
+
+            request.Credentials = new NetworkCredential(_userName, _password);
+
+            using (FtpWebResponse responce = (FtpWebResponse)request.GetResponse())
+            {
+                Stream responceStream = responce.GetResponseStream();
+                using (StreamReader reader = new StreamReader(responceStream))
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            String s = reader.ReadLine();
+                            if (s.Contains("/"))
+                            {
+                                s = s.Substring(s.LastIndexOf("/") + 1);
+                            }
+                            folderContent.Add(s);
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return folderContent;
+        }
     }
 }
-
