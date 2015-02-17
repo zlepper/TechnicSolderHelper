@@ -92,6 +92,7 @@ namespace TechnicSolderHelper
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.button5 = new System.Windows.Forms.Button();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
@@ -627,12 +628,23 @@ namespace TechnicSolderHelper
             this.StatusLabel.Size = new System.Drawing.Size(57, 17);
             this.StatusLabel.Text = "Waiting...";
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(348, 414);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 37);
+            this.button5.TabIndex = 35;
+            this.button5.Text = "Generate Permissions";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // SolderHelper
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(784, 483);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.ForgeBuild);
             this.Controls.Add(this.MCversion);
@@ -1061,5 +1073,6 @@ namespace TechnicSolderHelper
         private ToolStripProgressBar toolStripProgressBar;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel StatusLabel;
+        private Button button5;
     }
 }

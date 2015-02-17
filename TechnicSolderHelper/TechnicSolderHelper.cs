@@ -1783,5 +1783,100 @@ namespace TechnicSolderHelper
             statusStrip.Refresh();
             Debug.WriteLine("changed");
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            _inputDirectory = InputFolder.Text;
+            _outputDirectory = OutputFolder.Text;
+            _ftbOwnPermissionList = Path.Combine(_outputDirectory, "Own Permission List.txt");
+            _ftbPermissionList = Path.Combine(_outputDirectory, "FTB Permission List.txt");
+            _technicPermissionList = Path.Combine(_outputDirectory, "Technic Permission List.txt");
+            List<string> files = GetModFiles();
+            foreach (string file in files)
+            {
+                Mcmod mod = _modsSqLhelper.GetModInfo(SqlHelper.CalculateMd5(file));
+                if (mod == null)
+                {
+                    continue;
+                }
+
+                // Output Technic Permissions
+                if (CreateTechnicPack.Checked)
+                {
+                    PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid,
+                        PublicFTBPack.Checked);
+                    OwnPermissions ownPermissions;
+                    switch (permissionLevel)
+                    {
+                        case PermissionLevel.Open:
+                            CreateTechnicPermissionInfo(mod, permissionLevel);
+                            break;
+                        case PermissionLevel.Notify:
+                            ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                            if (ownPermissions.HasPermission)
+                            {
+                                string customPermissionText = "Proof of notitification: " +
+                                                              ownPermissions.PermissionLink;
+                                CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText);
+                            }
+                            break;
+                        case PermissionLevel.Ftb:
+                            ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                            if (ownPermissions.HasPermission)
+                            {
+                                string customPermissionText = "Proof of permission outside of FTB: " +
+                                                              ownPermissions.PermissionLink;
+                                CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText,
+                                    ownPermissions.ModLink);
+                            }
+                            break;
+                        case PermissionLevel.Request:
+                        case PermissionLevel.Closed:
+                        case PermissionLevel.Unknown:
+                            ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                            if (ownPermissions.HasPermission)
+                            {
+                                string customPermissionText = GetAuthors(mod) + " has given permission as seen here: " +
+                                                              ownPermissions.PermissionLink;
+                                CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText,
+                                    ownPermissions.ModLink);
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                // Output FTB permissions
+                if (CreateFTBPack.Checked)
+                {
+                    PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid,
+                        PublicFTBPack.Checked);
+                    switch (permissionLevel)
+                    {
+                        case PermissionLevel.Open:
+                        case PermissionLevel.Ftb:
+                            CreateFtbPermissionInfo(mod, permissionLevel);
+                            break;
+                        case PermissionLevel.Notify:
+                        case PermissionLevel.Request:
+                        case PermissionLevel.Closed:
+                        case PermissionLevel.Unknown: 
+                            var ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                            if (ownPermissions.HasPermission)
+                            {
+                                //Get Author
+                                String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                CreateFtbPermissionInfo(mod.Name, mod.Modid, a, ownPermissions.PermissionLink);
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+
+            }
+        }
     }
 }

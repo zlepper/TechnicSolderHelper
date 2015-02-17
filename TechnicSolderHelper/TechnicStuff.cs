@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Forms;
 using TechnicSolderHelper.SQL;
 
 namespace TechnicSolderHelper
@@ -104,6 +105,10 @@ namespace TechnicSolderHelper
             while (String.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
             {
                 modlink = Prompt.ShowDialog("What is the link to " + mod.Name + "?", "Mod link", false, Prompt.ModsLeftString(_totalMods, _currentMod));
+                if (!Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
+                {
+                    MessageBox.Show("Not a proper url");
+                }
             }
             CreateTechnicPermissionInfo(mod, pl, customPermissionText, modlink);
         }
@@ -129,18 +134,18 @@ namespace TechnicSolderHelper
             _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, false);
             if (TechnicPermissions.Checked)
             {
-                PermissionLevel permLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid, PublicFTBPack.Checked);
+                PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid, TechnicPublicPermissions.Checked);
                 String overwritelink;
-                OwnPermissions op;
+                OwnPermissions ownPermissions;
                 String customPermissionText;
-                switch (permLevel)
+                switch (permissionLevel)
                 {
                     case PermissionLevel.Open:
-                        CreateTechnicPermissionInfo(mod, permLevel);
+                        CreateTechnicPermissionInfo(mod, permissionLevel);
                         break;
                     case PermissionLevel.Notify:
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        if (!op.HasPermission)
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        if (!ownPermissions.HasPermission)
                         {
                             overwritelink = Prompt.ShowDialog(mod.Name + " requires that you notify the author of inclusion." + Environment.NewLine + "Please provide proof(an imgur link) that you have done this:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
@@ -156,7 +161,7 @@ namespace TechnicSolderHelper
                                     {
                                         _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink);
                                         customPermissionText = "Proof of notitification: " + overwritelink;
-                                        CreateTechnicPermissionInfo(mod, permLevel, customPermissionText, _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink));
+                                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink));
                                         break;
                                     }
                                 }
@@ -165,13 +170,13 @@ namespace TechnicSolderHelper
                         }
                         else
                         {
-                            customPermissionText = "Proof of notitification: " + op.PermissionLink;
-                            CreateTechnicPermissionInfo(mod, permLevel, customPermissionText);
+                            customPermissionText = "Proof of notitification: " + ownPermissions.PermissionLink;
+                            CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText);
                         }
                         break;
                     case PermissionLevel.Ftb:
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        if (!op.HasPermission)
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        if (!ownPermissions.HasPermission)
                         {
                             overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is FTB exclusive" + Environment.NewLine + "Please provide proof(an imgur link) of things being otherwise:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
@@ -192,13 +197,13 @@ namespace TechnicSolderHelper
                                 overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is FTB exclusive" + Environment.NewLine + "Please provide proof(an imgur link) of things being otherwise:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
                         }
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        customPermissionText = "Proof of permission outside of FTB: " + op.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permLevel, customPermissionText, op.ModLink);
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        customPermissionText = "Proof of permission outside of FTB: " + ownPermissions.PermissionLink;
+                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
                         break;
                     case PermissionLevel.Request:
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        if (!op.HasPermission)
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        if (!ownPermissions.HasPermission)
                         {
                             overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.Name + Environment.NewLine + "Please provide proof(an imgur link) that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name);
                             while (true)
@@ -219,13 +224,13 @@ namespace TechnicSolderHelper
                                 overwritelink = Prompt.ShowDialog("This mod requires that you request permissions from the Mod Author of " + mod.Name + Environment.NewLine + "Please provide proof(an imgur link) that you have this permission:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
                         }
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + op.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permLevel, customPermissionText, op.ModLink);
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + ownPermissions.PermissionLink;
+                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
                         break;
                     case PermissionLevel.Closed:
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        if (!op.HasPermission)
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        if (!ownPermissions.HasPermission)
                         {
                             overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.Name + " is closed." + Environment.NewLine + "Please provide proof(an imgur link) that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
@@ -246,14 +251,14 @@ namespace TechnicSolderHelper
                                 overwritelink = Prompt.ShowDialog("The FTB permissionsheet states that permissions for " + mod.Name + " is closed." + Environment.NewLine + "Please provide proof(an imgur link) that this is not the case:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name);
                             }
                         }
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + op.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permLevel, customPermissionText, op.ModLink);
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + ownPermissions.PermissionLink;
+                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
                         break;
                     case PermissionLevel.Unknown:
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        var modLink = op.ModLink;
-                        if (!op.HasPermission)
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        var modLink = ownPermissions.ModLink;
+                        if (!ownPermissions.HasPermission)
                         {
                             overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is unknown" + Environment.NewLine + "Please provide proof(an imgur link) of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             while (true)
@@ -292,9 +297,9 @@ namespace TechnicSolderHelper
                             CreateOwnPermissionInfo(mod.Name, mod.Modid, a, overwritelink, modLink);
 
                         }
-                        op = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
-                        customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + op.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permLevel, customPermissionText, op.ModLink);
+                        ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
+                        customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + ownPermissions.PermissionLink;
+                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
                         break;
                 }
             }
