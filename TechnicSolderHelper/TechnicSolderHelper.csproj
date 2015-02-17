@@ -23,7 +23,7 @@
     <NuGetPackageImportStamp>1dbb3d9f</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <PublishUrl>C:\wwwroot\solderhelper\</PublishUrl>
+    <PublishUrl>ftp://zlepper.dk/solderhelper/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
