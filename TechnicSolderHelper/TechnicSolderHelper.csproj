@@ -23,8 +23,8 @@
     <NuGetPackageImportStamp>1dbb3d9f</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <PublishUrl>ftp://zlepper.dk/solderhelper/</PublishUrl>
-	<AssemblyOriginatorKeyFile>TechnicSolderHelper.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>TechnicSolderHelper.pfx</AssemblyOriginatorKeyFile>
+    <PublishUrl>ftp://zlepper.dk/ci/solderhelper/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -34,17 +34,16 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://zlepper.dk/solderhelper/</InstallUrl>
+    <InstallUrl>http://zlepper.dk/ci/solderhelper/</InstallUrl>
     <ProductName>Technic Solder Helper</ProductName>
     <PublisherName>Rasmus Hansen</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.5.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <BootstrapperComponentsUrl>http://cloud.zlepper.dk/prereq/sqlite3.dll</BootstrapperComponentsUrl>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -93,7 +92,7 @@
     <ManifestCertificateThumbprint>BB4329E8602B8E21AAA92E980690679A12C501CB</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>TechnicSolderHelper_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>TechnicSolderHelper.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -176,7 +175,7 @@
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Mono\lib\mono\4.5\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>SQL\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +277,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="TechnicSolderHelper.pfx" />
     <None Include="TechnicSolderHelper_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
