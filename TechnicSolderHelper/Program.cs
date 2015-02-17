@@ -13,10 +13,10 @@ namespace TechnicSolderHelper
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            try
-            {
+            /*try
+            {*/
                 Application.Run(new SolderHelper());
-            }
+            /*}
             catch (Exception e)
             {
                 String errorLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "errorFromTechnicSolderHelper.txt");
@@ -32,7 +32,7 @@ namespace TechnicSolderHelper
                 }
                 Process.Start(errorLocation);
                 MessageBox.Show("An unknown error occured  Please check the error log on you desktop" + Environment.NewLine + "It should have opened by itself");
-            }
+            }*/
 
         }
 
