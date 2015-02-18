@@ -73,6 +73,10 @@ namespace TechnicSolderHelper.SQL
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
                                 p.LicenseLink = reader["LicenseLink"].ToString();
+                                if (String.IsNullOrWhiteSpace(p.PermissionLink) || String.IsNullOrWhiteSpace(p.ModLink))
+                                {
+                                    p.HasPermission = false;
+                                }
                                 return p;
                             }
                         }
@@ -95,6 +99,10 @@ namespace TechnicSolderHelper.SQL
                                 p.PermissionLink = reader["PermLink"].ToString();
                                 p.ModLink = reader["ModLink"].ToString();
                                 p.LicenseLink = reader["LicenseLink"].ToString();
+                                if (String.IsNullOrWhiteSpace(p.PermissionLink) || String.IsNullOrWhiteSpace(p.ModLink))
+                                {
+                                    p.HasPermission = false;
+                                }
                                 return p;
                             }
                         }

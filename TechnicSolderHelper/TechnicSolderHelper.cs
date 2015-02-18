@@ -1791,12 +1791,41 @@ namespace TechnicSolderHelper
             _ftbOwnPermissionList = Path.Combine(_outputDirectory, "Own Permission List.txt");
             _ftbPermissionList = Path.Combine(_outputDirectory, "FTB Permission List.txt");
             _technicPermissionList = Path.Combine(_outputDirectory, "Technic Permission List.txt");
+            string unknownFilesList = Path.Combine(_outputDirectory, "Unknown Files.txt");
+            string errorPermissionListTechnic = Path.Combine(_outputDirectory, "missing permissionsTechnic.txt");
+            string errorPermissionListFtb = Path.Combine(_outputDirectory, "missing permissionsFtb.txt");
+            if (File.Exists(_ftbOwnPermissionList))
+            {
+                File.Delete(_ftbOwnPermissionList);
+            }
+            if (File.Exists(_ftbPermissionList))
+            {
+                File.Delete(_ftbPermissionList);
+            }
+            if (File.Exists(_technicPermissionList))
+            {
+                File.Delete(_technicPermissionList);
+            }
+            if (File.Exists(unknownFilesList))
+            {
+                File.Delete(unknownFilesList);
+            }
+            if (File.Exists(errorPermissionListTechnic))
+            {
+                File.Delete(errorPermissionListTechnic);
+            }
+            if (File.Exists(errorPermissionListFtb))
+            {
+                File.Delete(errorPermissionListFtb);
+            }
             List<string> files = GetModFiles();
             foreach (string file in files)
             {
                 Mcmod mod = _modsSqLhelper.GetModInfo(SqlHelper.CalculateMd5(file));
                 if (mod == null)
                 {
+                    var errorFile = new FileInfo(file);
+                    File.AppendAllText(unknownFilesList, errorFile.Name + Environment.NewLine);
                     continue;
                 }
 
@@ -1819,6 +1848,13 @@ namespace TechnicSolderHelper
                                                               ownPermissions.PermissionLink;
                                 CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText);
                             }
+                            else
+                            {
+                                String error = String.Format("{0} with id {1}{2}By {3}{2}PermissionState is {4}{2}{2}",
+                                    mod.Name, mod.Modid, Environment.NewLine, GetAuthors(mod, true),
+                                    permissionLevel.ToString());
+                                File.AppendAllText(errorPermissionListTechnic, error);
+                            }
                             break;
                         case PermissionLevel.Ftb:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
@@ -1828,6 +1864,13 @@ namespace TechnicSolderHelper
                                                               ownPermissions.PermissionLink;
                                 CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText,
                                     ownPermissions.ModLink);
+                            }
+                            else
+                            {
+                                String error = String.Format("{0} with id {1}{2}By {3}{2}PermissionState is {4}{2}{2}",
+                                    mod.Name, mod.Modid, Environment.NewLine, GetAuthors(mod, true),
+                                    permissionLevel.ToString());
+                                File.AppendAllText(errorPermissionListTechnic, error);
                             }
                             break;
                         case PermissionLevel.Request:
@@ -1840,6 +1883,13 @@ namespace TechnicSolderHelper
                                                               ownPermissions.PermissionLink;
                                 CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText,
                                     ownPermissions.ModLink);
+                            }
+                            else
+                            {
+                                String error = String.Format("{0} with id {1}{2}By {3}{2}PermissionState is {4}{2}{2}",
+                                    mod.Name, mod.Modid, Environment.NewLine, GetAuthors(mod, true),
+                                    permissionLevel.ToString());
+                                File.AppendAllText(errorPermissionListTechnic, error);
                             }
                             break;
                         default:
@@ -1866,8 +1916,16 @@ namespace TechnicSolderHelper
                             if (ownPermissions.HasPermission)
                             {
                                 //Get Author
-                                String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid,
+                                    FtbPermissionsSqlHelper.InfoType.ModAuthor);
                                 CreateFtbPermissionInfo(mod.Name, mod.Modid, a, ownPermissions.PermissionLink);
+                            }
+                            else
+                            {
+                                String error = String.Format("{0} with id {1}{2}By {3}{2}PermissionState is {4}{2}{2}",
+                                    mod.Name, mod.Modid, Environment.NewLine, GetAuthors(mod, true),
+                                    permissionLevel.ToString());
+                                File.AppendAllText(errorPermissionListFtb, error);
                             }
                             break;
                         default:
