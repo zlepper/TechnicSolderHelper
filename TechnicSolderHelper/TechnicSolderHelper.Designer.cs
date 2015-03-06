@@ -191,7 +191,7 @@ namespace TechnicSolderHelper
             this.button3.TabIndex = 6;
             this.button3.Text = "Update Stored FTB permissions";
             this.toolTip1.SetToolTip(this.button3, "Update the stored information about mod permissions. WARNING: This will take a long ti" +
-        "me, during which Modpack Helper will be unresponsive.");
+        "me, during which Modpack Helper will be unable to pack your mods.");
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -249,7 +249,7 @@ namespace TechnicSolderHelper
             this.UploadToFTPServer.Size = new System.Drawing.Size(135, 17);
             this.UploadToFTPServer.TabIndex = 12;
             this.UploadToFTPServer.Text = "Upload to FTP address";
-            this.toolTip1.SetToolTip(this.UploadToFTPServer, "Should Modpack Helper automatically upload your mods to a server? (Only works for Solder" +
+            this.toolTip1.SetToolTip(this.UploadToFTPServer, "Automatically upload your mods to a server? (Only works for Solder" +
         " Packs)");
             this.UploadToFTPServer.UseVisualStyleBackColor = true;
             this.UploadToFTPServer.CheckedChanged += new System.EventHandler(this.UploadToFTPServer_CheckedChanged);
@@ -262,7 +262,7 @@ namespace TechnicSolderHelper
             this.GetForgeVersions.TabIndex = 14;
             this.GetForgeVersions.Text = "Get Forge versions";
             this.toolTip1.SetToolTip(this.GetForgeVersions, "Update the stored Forge version. WARNING: This will take a while," +
-        " during which Modpack Helper will be unresponsive.");
+        " during which Modpack Helper will be unable to pack your mods.");
             this.GetForgeVersions.UseVisualStyleBackColor = true;
             this.GetForgeVersions.Click += new System.EventHandler(this.GetForgeVersions_Click);
             // 
@@ -484,7 +484,7 @@ namespace TechnicSolderHelper
             this.IncludeForgeVersion.Size = new System.Drawing.Size(109, 17);
             this.IncludeForgeVersion.TabIndex = 13;
             this.IncludeForgeVersion.Text = "Include Forge Zip";
-            this.toolTip1.SetToolTip(this.IncludeForgeVersion, "Should Forge be automatically downloaded and included in the pack?");
+            this.toolTip1.SetToolTip(this.IncludeForgeVersion, "Automatically download Forge and include it in the pack");
             this.IncludeForgeVersion.UseVisualStyleBackColor = true;
             this.IncludeForgeVersion.CheckedChanged += new System.EventHandler(this.IncludeForgeVersion_CheckedChanged);
             // 
@@ -535,7 +535,7 @@ namespace TechnicSolderHelper
             this.IncludeConfigZip.Size = new System.Drawing.Size(108, 17);
             this.IncludeConfigZip.TabIndex = 5;
             this.IncludeConfigZip.Text = "Create Config Zip";
-            this.toolTip1.SetToolTip(this.IncludeConfigZip, "Should the modpack's config files be packed with the modpack?");
+            this.toolTip1.SetToolTip(this.IncludeConfigZip, "Pack the modpack's config files with the modpack");
             this.IncludeConfigZip.UseVisualStyleBackColor = true;
             this.IncludeConfigZip.CheckedChanged += new System.EventHandler(this.IncludeConfigZip_CheckedChanged);
             // 
@@ -558,7 +558,7 @@ namespace TechnicSolderHelper
             this.useSolder.Size = new System.Drawing.Size(128, 17);
             this.useSolder.TabIndex = 26;
             this.useSolder.Text = "Use Solder installation";
-            this.toolTip1.SetToolTip(this.useSolder, "Should the modpack info automatically be entered into Solder?");
+            this.toolTip1.SetToolTip(this.useSolder, "Automatically enter modpack info into Solder");
             this.useSolder.UseVisualStyleBackColor = true;
             this.useSolder.CheckedChanged += new System.EventHandler(this.useSolder_CheckedChanged);
             // 
