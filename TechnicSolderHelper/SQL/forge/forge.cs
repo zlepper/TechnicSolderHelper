@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using Mono.Data.Sqlite;
 using Newtonsoft.Json;
@@ -17,15 +18,6 @@ namespace TechnicSolderHelper.SQL.forge
         {
             const string createTableString = "CREATE TABLE IF NOT EXISTS 'forge' ('totalversion' TEXT,'build' INTEGER UNIQUE, 'mcversion' TEXT, 'version' TEXT, 'downloadurl' TEXT, 'type' TEXT, PRIMARY KEY(totalversion));";
             ExecuteDatabaseQuery(createTableString);
-        }
-
-        private void AddVersion(String build, String mcversion, String version, String type, String downloadUrl)
-        {
-            String totalversion = mcversion + "-" + version + "-" + build + "-" + type;
-
-            String sql = String.Format("INSERT OR REPLACE INTO {0}('totalversion', 'build', 'mcversion', 'version', 'downloadurl', 'type') VALUES('{1}','{2}','{3}','{4}', '{5}','{6}');", TableName, totalversion, build, mcversion, version, downloadUrl, type);
-            //Debug.WriteLine(sql);
-            ExecuteDatabaseQuery(sql);
         }
 
         private void AddVersions(List<string> builds, List<string> mcversions, List<string> versions, List<string> types,
@@ -57,7 +49,6 @@ namespace TechnicSolderHelper.SQL.forge
                             cmd.Parameters.AddWithValue("@version", versions[i]);
                             cmd.Parameters.AddWithValue("@downloadurl", downloadUrls[i]);
                             cmd.Parameters.AddWithValue("@type", types[i]);
-                            Debug.WriteLine(sb.ToString());
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -87,7 +78,6 @@ namespace TechnicSolderHelper.SQL.forge
                             cmd.Parameters.AddWithValue("@version", versions[i]);
                             cmd.Parameters.AddWithValue("@downloadurl", downloadUrls[i]);
                             cmd.Parameters.AddWithValue("@type", types[i]);
-                            Debug.WriteLine(sb.ToString());
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -180,7 +170,6 @@ namespace TechnicSolderHelper.SQL.forge
         public Number GetForgeInfo(String forgebuild)
         {
             String sql = String.Format("SELECT * FROM {0} WHERE build LIKE '{1}';", TableName, forgebuild);
-            Debug.WriteLine(sql);
             if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
@@ -232,34 +221,29 @@ namespace TechnicSolderHelper.SQL.forge
 
         public void FindAllForgeVersion()
         {
-            WebClient wb = new WebClient();
-            String forgejsonweb = "http://files.minecraftforge.net/minecraftforge/json";
-            String jsonfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "forge.json");
-
-            wb.DownloadFile(forgejsonweb, jsonfile);
-            Debug.WriteLine("Downloaded json file");
-            String json;
-
-            forgejsonweb = "http://files.minecraftforge.net/maven/net/minecraftforge/forge/json";
-            wb.DownloadFile(forgejsonweb, jsonfile);
-            using (StreamReader r = new StreamReader(jsonfile))
-            {
-                json = r.ReadToEnd();
-            }
             List<string> builds = new List<string>(); 
             List<string> mcversions = new List<string>();
             List<string> versions = new List<string>();
             List<string> types = new List<string>();
             List<string> downloadUrls = new List<string>();
-            Debug.WriteLine("readjson");
-            Forgemaven mavenunjsonend = JsonConvert.DeserializeObject<Forgemaven>(json);
+            Forgemaven mavenunjsonend;
+            HttpClient client = new HttpClient();
+            using (Stream s = client.GetStreamAsync("http://files.minecraftforge.net/maven/net/minecraftforge/forge/json").Result)
+            using (StreamReader sr = new StreamReader(s))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+
+                // read the json from a stream
+                // json size doesn't matter because only a small piece is read at a time from the HTTP request
+                mavenunjsonend = serializer.Deserialize<Forgemaven>(reader);
+            }
             int concurrentgone = 0;
             int i = 1;
             while (concurrentgone <= 100)
             {
                 if (mavenunjsonend.Number.ContainsKey(i))
                 {
-                    Debug.WriteLine(mavenunjsonend.Number[i].Build.ToString());
                     String mcversion = mavenunjsonend.Number[i].Mcversion;
                     String build = mavenunjsonend.Number[i].Build.ToString();
                     String version = mavenunjsonend.Number[i].Version;
@@ -280,7 +264,6 @@ namespace TechnicSolderHelper.SQL.forge
                     {
                         downloadUrl += "jar";
                     }
-                    //AddVersion(build, mcversion, version, "universal", downloadUrl);
                     mcversions.Add(mcversion);
                     builds.Add(build);
                     versions.Add(version);

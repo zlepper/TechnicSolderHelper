@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TechnicSolderHelper.SQL
 {
-    class ftbPermissions
+    public class ftbPermissions
     {
         public string shortName { get; set; }
         public string modName { get; set; }

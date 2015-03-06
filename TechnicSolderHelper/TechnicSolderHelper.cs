@@ -1573,7 +1573,8 @@ namespace TechnicSolderHelper
             bw.DoWork += (s, args) =>
             {
                 UpdatingPermissions = true;
-                ExcelReader.AddFtbPermissions();
+                FtbPermissionsSqlHelper f = new FtbPermissionsSqlHelper();
+                f.LoadOnlinePermissions();
             };
             bw.RunWorkerCompleted += (s, a) =>
             {
