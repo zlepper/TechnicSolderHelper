@@ -145,7 +145,7 @@ namespace TechnicSolderHelper
             // 
             // FolderBrowser
             // 
-            this.FolderBrowser.Description = "Select the directory which contains the modpack's mods";
+            this.FolderBrowser.Description = "Select the directory which contains the modpack\'s mods";
             this.FolderBrowser.ShowNewFolderButton = false;
             // 
             // button1
@@ -180,7 +180,8 @@ namespace TechnicSolderHelper
             this.checkBox1.Size = new System.Drawing.Size(159, 17);
             this.checkBox1.TabIndex = 4;
             this.checkBox1.Text = "Clear output directory on run";
-            this.toolTip1.SetToolTip(this.checkBox1, "Have Modpack Helper clear the output directory when it runs, so you only have new stuff there");
+            this.toolTip1.SetToolTip(this.checkBox1, "Have Modpack Helper clear the output directory when it runs, so you only have new" +
+        " stuff there");
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // button3
@@ -190,8 +191,8 @@ namespace TechnicSolderHelper
             this.button3.Size = new System.Drawing.Size(119, 47);
             this.button3.TabIndex = 6;
             this.button3.Text = "Update Stored FTB permissions";
-            this.toolTip1.SetToolTip(this.button3, "Update the stored information about mod permissions. WARNING: This will take a long ti" +
-        "me, during which Modpack Helper will be unresponsive.");
+            this.toolTip1.SetToolTip(this.button3, "Update the stored information about mod permissions. WARNING: You can\'t pack mods" +
+        " while this is running.");
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -249,8 +250,8 @@ namespace TechnicSolderHelper
             this.UploadToFTPServer.Size = new System.Drawing.Size(135, 17);
             this.UploadToFTPServer.TabIndex = 12;
             this.UploadToFTPServer.Text = "Upload to FTP address";
-            this.toolTip1.SetToolTip(this.UploadToFTPServer, "Should Modpack Helper automatically upload your mods to a server? (Only works for Solder" +
-        " Packs)");
+            this.toolTip1.SetToolTip(this.UploadToFTPServer, "Should Modpack Helper automatically upload your mods to a server? (Only works for" +
+        " Solder Packs)");
             this.UploadToFTPServer.UseVisualStyleBackColor = true;
             this.UploadToFTPServer.CheckedChanged += new System.EventHandler(this.UploadToFTPServer_CheckedChanged);
             // 
@@ -261,8 +262,8 @@ namespace TechnicSolderHelper
             this.GetForgeVersions.Size = new System.Drawing.Size(119, 27);
             this.GetForgeVersions.TabIndex = 14;
             this.GetForgeVersions.Text = "Get Forge versions";
-            this.toolTip1.SetToolTip(this.GetForgeVersions, "Update the stored Forge version. WARNING: This will take a while," +
-        " during which Modpack Helper will be unresponsive.");
+            this.toolTip1.SetToolTip(this.GetForgeVersions, "Update the stored Forge version. WARNING: You can\'t pack mods while this is runni" +
+        "ng.\r\n");
             this.GetForgeVersions.UseVisualStyleBackColor = true;
             this.GetForgeVersions.Click += new System.EventHandler(this.GetForgeVersions_Click);
             // 
@@ -496,7 +497,8 @@ namespace TechnicSolderHelper
             this.TechnicPermissions.Size = new System.Drawing.Size(114, 17);
             this.TechnicPermissions.TabIndex = 6;
             this.TechnicPermissions.Text = "Check permissions";
-            this.toolTip1.SetToolTip(this.TechnicPermissions, "Should Modpack Helper check to see if you have permission to distribute the mods?");
+            this.toolTip1.SetToolTip(this.TechnicPermissions, "Should Modpack Helper check to see if you have permission to distribute the mods?" +
+        "");
             this.TechnicPermissions.UseVisualStyleBackColor = true;
             this.TechnicPermissions.CheckedChanged += new System.EventHandler(this.CheckPermissions_CheckedChanged);
             // 
@@ -535,7 +537,7 @@ namespace TechnicSolderHelper
             this.IncludeConfigZip.Size = new System.Drawing.Size(108, 17);
             this.IncludeConfigZip.TabIndex = 5;
             this.IncludeConfigZip.Text = "Create Config Zip";
-            this.toolTip1.SetToolTip(this.IncludeConfigZip, "Should the modpack's config files be packed with the modpack?");
+            this.toolTip1.SetToolTip(this.IncludeConfigZip, "Should the modpack\'s config files be packed with the modpack?");
             this.IncludeConfigZip.UseVisualStyleBackColor = true;
             this.IncludeConfigZip.CheckedChanged += new System.EventHandler(this.IncludeConfigZip_CheckedChanged);
             // 
@@ -555,7 +557,7 @@ namespace TechnicSolderHelper
             this.useSolder.AutoSize = true;
             this.useSolder.Location = new System.Drawing.Point(168, 298);
             this.useSolder.Name = "useSolder";
-            this.useSolder.Size = new System.Drawing.Size(128, 17);
+            this.useSolder.Size = new System.Drawing.Size(130, 17);
             this.useSolder.TabIndex = 26;
             this.useSolder.Text = "Use Solder installation";
             this.toolTip1.SetToolTip(this.useSolder, "Should the modpack info automatically be entered into Solder?");
@@ -578,7 +580,7 @@ namespace TechnicSolderHelper
             this.savesqlcommands.AutoSize = true;
             this.savesqlcommands.Location = new System.Drawing.Point(168, 351);
             this.savesqlcommands.Name = "savesqlcommands";
-            this.savesqlcommands.Size = new System.Drawing.Size(132, 17);
+            this.savesqlcommands.Size = new System.Drawing.Size(129, 17);
             this.savesqlcommands.TabIndex = 28;
             this.savesqlcommands.Text = "Save SQL commands";
             this.savesqlcommands.UseVisualStyleBackColor = true;
@@ -590,7 +592,7 @@ namespace TechnicSolderHelper
             this.UseS3.AutoSize = true;
             this.UseS3.Location = new System.Drawing.Point(168, 375);
             this.UseS3.Name = "UseS3";
-            this.UseS3.Size = new System.Drawing.Size(61, 17);
+            this.UseS3.Size = new System.Drawing.Size(102, 17);
             this.UseS3.TabIndex = 29;
             this.UseS3.Text = "Use Amazon S3";
             this.toolTip1.SetToolTip(this.UseS3, "Automatically upload your mods to Amazon S3 (Only works for Solder Packs)");

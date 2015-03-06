@@ -123,9 +123,6 @@
   <metadata name="FolderBrowser.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>255, 17</value>
-  </metadata>
   <data name="TechnicPrivatePermissions.ToolTip" xml:space="preserve">
     <value>These are packs used only on one specific server. Their intention is to allow servers to customize their server experience without compromising the ease of installation offered by the Technic launcher. </value>
   </data>

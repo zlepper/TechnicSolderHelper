@@ -226,6 +226,7 @@
     <Compile Include="SQL\forge\ForgeVersionSelector.Designer.cs">
       <DependentUpon>ForgeVersionSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="SQL\ftbPermissions.cs" />
     <Compile Include="SQL\FTBPermissionsSQLHelper.cs" />
     <Compile Include="SQL\liteloader\liteloader.cs" />
     <Compile Include="SQL\ModListSQLHelper.cs" />

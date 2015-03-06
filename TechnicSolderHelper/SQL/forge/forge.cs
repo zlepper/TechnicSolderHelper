@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Text;
 using Mono.Data.Sqlite;
 using Newtonsoft.Json;
 
@@ -25,6 +26,73 @@ namespace TechnicSolderHelper.SQL.forge
             String sql = String.Format("INSERT OR REPLACE INTO {0}('totalversion', 'build', 'mcversion', 'version', 'downloadurl', 'type') VALUES('{1}','{2}','{3}','{4}', '{5}','{6}');", TableName, totalversion, build, mcversion, version, downloadUrl, type);
             //Debug.WriteLine(sql);
             ExecuteDatabaseQuery(sql);
+        }
+
+        private void AddVersions(List<string> builds, List<string> mcversions, List<string> versions, List<string> types,
+            List<string> downloadUrls)
+        {
+            String sql = String.Format("INSERT OR REPLACE INTO {0}('totalversion', 'build', 'mcversion', 'version', 'downloadurl', 'type') VALUES(@totalversion, @build, @mcversion, @version, @downloadurl, @type);", TableName);
+
+            if (IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < builds.Count; i++)
+                        {
+                            sb.Clear();
+                            sb.Append(mcversions[i])
+                                .Append("-")
+                                .Append(versions[i])
+                                .Append("-")
+                                .Append(builds[i])
+                                .Append("-")
+                                .Append(types[i]);
+                            cmd.Parameters.AddWithValue("@totalversion", sb.ToString());
+                            cmd.Parameters.AddWithValue("@build", builds[i]);
+                            cmd.Parameters.AddWithValue("@mcversion", mcversions[i]);
+                            cmd.Parameters.AddWithValue("@version", versions[i]);
+                            cmd.Parameters.AddWithValue("@downloadurl", downloadUrls[i]);
+                            cmd.Parameters.AddWithValue("@type", types[i]);
+                            Debug.WriteLine(sb.ToString());
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < builds.Count; i++)
+                        {
+                            sb.Clear();
+                            sb.Append(mcversions[i])
+                                .Append("-")
+                                .Append(versions[i])
+                                .Append("-")
+                                .Append(builds[i])
+                                .Append("-")
+                                .Append(types[i]);
+                            cmd.Parameters.AddWithValue("@totalversion", sb.ToString());
+                            cmd.Parameters.AddWithValue("@build", builds[i]);
+                            cmd.Parameters.AddWithValue("@mcversion", mcversions[i]);
+                            cmd.Parameters.AddWithValue("@version", versions[i]);
+                            cmd.Parameters.AddWithValue("@downloadurl", downloadUrls[i]);
+                            cmd.Parameters.AddWithValue("@type", types[i]);
+                            Debug.WriteLine(sb.ToString());
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
         }
 
         public List<String> GetMcVersions()
@@ -178,6 +246,11 @@ namespace TechnicSolderHelper.SQL.forge
             {
                 json = r.ReadToEnd();
             }
+            List<string> builds = new List<string>(); 
+            List<string> mcversions = new List<string>();
+            List<string> versions = new List<string>();
+            List<string> types = new List<string>();
+            List<string> downloadUrls = new List<string>();
             Debug.WriteLine("readjson");
             Forgemaven mavenunjsonend = JsonConvert.DeserializeObject<Forgemaven>(json);
             int concurrentgone = 0;
@@ -202,14 +275,17 @@ namespace TechnicSolderHelper.SQL.forge
                     if (i < 752)
                     {
                         downloadUrl += "zip";
-
                     }
                     else
                     {
                         downloadUrl += "jar";
                     }
-                    Debug.WriteLine(downloadUrl);
-                    AddVersion(build, mcversion, version, "universal", downloadUrl);
+                    //AddVersion(build, mcversion, version, "universal", downloadUrl);
+                    mcversions.Add(mcversion);
+                    builds.Add(build);
+                    versions.Add(version);
+                    downloadUrls.Add(downloadUrl);
+                    types.Add("universal");
                     concurrentgone = 0;
                 }
                 else
@@ -219,6 +295,7 @@ namespace TechnicSolderHelper.SQL.forge
                 i++;
 
             }
+            AddVersions(builds, mcversions, versions, types, downloadUrls);
 
         }
 

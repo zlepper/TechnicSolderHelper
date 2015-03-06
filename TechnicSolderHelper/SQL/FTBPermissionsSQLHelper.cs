@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
 using Mono.Data.Sqlite;
+using Newtonsoft.Json;
 
 namespace TechnicSolderHelper.SQL
 {
@@ -266,6 +270,61 @@ namespace TechnicSolderHelper.SQL
             ExecuteDatabaseQuery(sql);
         }
 
+        public void AddFtbModPerms(List<string> modName, List<string> modAuthor, List<string> modId, List<string> publicPermissions,
+            List<string> privatePermissions, List<string> modLink, List<string> permLink, List<string> custPrivate, List<string> custFtb,
+            List<string> shortname)
+        {
+            String sql = String.Format("INSERT OR REPLACE INTO {0}(ModName, ModAuthor, ModID, PublicPerm, PrivatePerm, ModLink, PermLink, CustPrivate, CustFTB, ShortName) VALUES (@modname,@modauthor,@modid,@publicperm,@privateperm,@modlink,@permlink,@custprivate,@custftb, @shortname);", TableName);
+            if (IsUnix())
+            {
+                using (SqliteConnection db = new SqliteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
+                    {
+                        for (int i = 0; i < modName.Count; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@modname", modName[i]);
+                            cmd.Parameters.AddWithValue("@modauthor", modAuthor[i]);
+                            cmd.Parameters.AddWithValue("@modid", modId[i]);
+                            cmd.Parameters.AddWithValue("@publicperm", publicPermissions[i]);
+                            cmd.Parameters.AddWithValue("@privateperm", privatePermissions[i]);
+                            cmd.Parameters.AddWithValue("@modlink", modLink[i]);
+                            cmd.Parameters.AddWithValue("@permlink", permLink[i]);
+                            cmd.Parameters.AddWithValue("@custprivate", custPrivate[i]);
+                            cmd.Parameters.AddWithValue("@custftb", custFtb[i]);
+                            cmd.Parameters.AddWithValue("@shortname", shortname[i]);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
+                {
+                    db.Open();
+                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
+                    {
+                        for (int i = 0; i < modName.Count; i++)
+                        {
+                            cmd.Parameters.AddWithValue("@modname", modName[i]);
+                            cmd.Parameters.AddWithValue("@modauthor", modAuthor[i]);
+                            cmd.Parameters.AddWithValue("@modid", modId[i]);
+                            cmd.Parameters.AddWithValue("@publicperm", publicPermissions[i]);
+                            cmd.Parameters.AddWithValue("@privateperm", privatePermissions[i]);
+                            cmd.Parameters.AddWithValue("@modlink", modLink[i]);
+                            cmd.Parameters.AddWithValue("@permlink", permLink[i]);
+                            cmd.Parameters.AddWithValue("@custprivate", custPrivate[i]);
+                            cmd.Parameters.AddWithValue("@custftb", custFtb[i]);
+                            cmd.Parameters.AddWithValue("@shortname", shortname[i]);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+        }
+
         public void AddFtbModPerm(String modId, String shortName)
         {
             modId = modId.Replace("'", "`");
@@ -279,6 +338,24 @@ namespace TechnicSolderHelper.SQL
         {
             base.ResetTable();
             ExecuteDatabaseQuery(_createTableString);
+        }
+
+        public void LoadOnlinePermissions()
+        {
+            HttpClient client = new HttpClient();
+            List<ftbPermissions> ftbPermissionses = new List<ftbPermissions>();
+            using (Stream s = client.GetStreamAsync("http://ftb.cursecdn.com/FTB2/static/permissions/permissions.json").Result)
+            using (StreamReader sr = new StreamReader(s))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+
+                // read the json from a stream
+                // json size doesn't matter because only a small piece is read at a time from the HTTP request
+                ftbPermissions p = serializer.Deserialize<ftbPermissions>(reader);
+                ftbPermissionses.Add(p);
+            }
+            Debug.WriteLine("");
         }
     }
 }
