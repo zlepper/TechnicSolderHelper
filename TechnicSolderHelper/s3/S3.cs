@@ -17,36 +17,33 @@ namespace TechnicSolderHelper.s3
 {
     class S3
     {
-        private readonly string _accessKey;
-        private readonly string _secretKey;
-        private readonly AmazonS3Client client;
-        public String Bucket;
+        private readonly AmazonS3Client _client;
+        private readonly String _bucket;
 
         public S3()
         {
             ConfigHandler ch = new ConfigHandler();
             Crypto crypto = new Crypto();
-            _accessKey = crypto.DecryptString(ch.GetConfig("S3accessKey"));
-            _secretKey = crypto.DecryptString(ch.GetConfig("S3secretKey"));
+            var accessKey = crypto.DecryptString(ch.GetConfig("S3accessKey"));
+            var secretKey = crypto.DecryptString(ch.GetConfig("S3secretKey"));
             String url = ch.GetConfig("S3url");
-            Bucket = ch.GetConfig("S3Bucket");
+            _bucket = ch.GetConfig("S3Bucket");
             var config = new AmazonS3Config {ServiceURL = url};
-            client = AWSClientFactory.CreateAmazonS3Client(_accessKey, _secretKey, config) as AmazonS3Client;
+            _client = AWSClientFactory.CreateAmazonS3Client(accessKey, secretKey, config) as AmazonS3Client;
         }
 
         public S3(string accessKey, string secretKey, String serviceUrl)
         {
-            _accessKey = accessKey;
-            _secretKey = secretKey;
             var config = new AmazonS3Config(){ServiceURL = serviceUrl};
-            client = AWSClientFactory.CreateAmazonS3Client(_accessKey, _secretKey, config) as AmazonS3Client;
+            _client = AWSClientFactory.CreateAmazonS3Client(accessKey, secretKey, config) as AmazonS3Client;
         }
 
         public List<String> GetBucketList()
         {
             try
             {
-                ListBucketsResponse responce = client.ListBuckets();
+                
+                ListBucketsResponse responce = _client.ListBuckets();
                 return responce.Buckets.Select(bucket => bucket.BucketName).ToList();
             }
             catch
@@ -60,7 +57,7 @@ namespace TechnicSolderHelper.s3
             try
             {
                 PutBucketRequest request = new PutBucketRequest {BucketName = bucketName};
-                client.PutBucket(request);
+                _client.PutBucket(request);
             }
             catch (Exception exception)
             {
@@ -75,13 +72,13 @@ namespace TechnicSolderHelper.s3
             startingThread.Start();
             TransferUtilityUploadDirectoryRequest request = new TransferUtilityUploadDirectoryRequest()
             {
-                BucketName = Bucket,
+                BucketName = _bucket,
                 Directory = folderPath,
                 SearchOption = SearchOption.AllDirectories,
                 SearchPattern = "*.zip",
                 KeyPrefix = "mods"
             };
-            TransferUtility directorytTransferUtility = new TransferUtility(client);
+            TransferUtility directorytTransferUtility = new TransferUtility(_client);
             directorytTransferUtility.UploadDirectory(request);
             MessageBox.Show("Done uploading files to s3");
         }

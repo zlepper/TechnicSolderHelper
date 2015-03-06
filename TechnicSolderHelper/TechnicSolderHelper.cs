@@ -710,6 +710,8 @@ namespace TechnicSolderHelper
             }
             if (missingInfoActionCreateList.Checked)
             {
+                StatusLabel.Text = "Showing modlistpane.";
+                toolStripProgressBar.Value = toolStripProgressBar.Maximum;
                 Form modinfo = new Modinfo(modsList, this);
                 if (!modinfo.IsDisposed)
                 {
@@ -722,6 +724,8 @@ namespace TechnicSolderHelper
             const string minecraftVersionPattern = @"^[0-9]{1}\.[0-9]{1}\.[0-9]{1,2}$";
             foreach (String dir in directories)
             {
+                StatusLabel.Text = "Packing additional folders";
+
                 String dirName = dir.Substring(dir.LastIndexOf(Globalfunctions.PathSeperator) + 1);
                 if (Regex.IsMatch(dirName, minecraftVersionPattern, RegexOptions.Multiline))
                 {
@@ -870,6 +874,8 @@ namespace TechnicSolderHelper
             // Pack additional folders if they are marked
             if (CreateTechnicPack.Checked)
             {
+
+                StatusLabel.Text = "Packing additional selected folders.";
                 Environment.CurrentDirectory = _inputDirectory.Remove(_inputDirectory.LastIndexOf(Globalfunctions.PathSeperator));
                 foreach (KeyValuePair<String, CheckBox> cb in _additionalDirectories)
                 {
@@ -1056,6 +1062,7 @@ namespace TechnicSolderHelper
             }
             if (CreateTechnicPack.Checked && SolderPack.Checked && UploadToFTPServer.Checked)
             {
+                StatusLabel.Text = "Uploading to FTP";
                 if (_ftp == null)
                 {
                     _ftp = new Ftp();
@@ -1071,6 +1078,7 @@ namespace TechnicSolderHelper
 
             if (CreateTechnicPack.Checked && SolderPack.Checked && UseS3.Checked)
             {
+                StatusLabel.Text = "Uploading to S3";
                 S3 s3Client = new S3();
                 s3Client.UploadFolder(Path.Combine(_outputDirectory, "mods"));
             }

@@ -49,6 +49,7 @@
             this.serviceURL.Name = "serviceURL";
             this.serviceURL.Size = new System.Drawing.Size(156, 20);
             this.serviceURL.TabIndex = 0;
+            this.serviceURL.Text = "http://s3.amazonaws.com/";
             // 
             // label1
             // 
