@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -47,6 +48,42 @@ namespace TechnicSolderHelper
         private Ftp _ftp;
         private readonly List<String> _inputDirectories = new List<String>();
         private int _buildId, _modpackId;
+        //private bool UpdatingForge, updatingPermissions;
+        private bool _updatingForge;
+        private bool _updatingPermissions;
+
+        private bool UpdatingForge
+        {
+            get { return _updatingForge; }
+            set
+            {
+                _updatingForge = value;
+                AsyncBlockingProcessUpdated();
+            }
+
+        }
+
+        private bool UpdatingPermissions
+        {
+            get { return _updatingPermissions; }
+            set
+            {
+                _updatingPermissions = value;
+                AsyncBlockingProcessUpdated();
+            }
+        }
+
+        private void AsyncBlockingProcessUpdated()
+        {
+            if (button1.InvokeRequired)
+            {
+                button1.Invoke((Action) (AsyncBlockingProcessUpdated));
+            }
+            else
+            {
+                button1.Enabled = !UpdatingForge && !UpdatingPermissions;
+            }
+        }
 
         #endregion
 
@@ -128,6 +165,10 @@ namespace TechnicSolderHelper
 
         private Boolean Prepare()
         {
+            /*if (!UpdatingForge && !UpdatingPermissions)
+            {
+                MessageBox.Show("Currently doing work in the background, please wait for it to finish before proceding")
+            }*/
             _inputDirectory = InputFolder.Text;
             _outputDirectory = OutputFolder.Text;
             _ftbOwnPermissionList = Path.Combine(_outputDirectory, "Own Permission List.txt");
@@ -1523,7 +1564,22 @@ namespace TechnicSolderHelper
 
         private void button3_Click(object sender, EventArgs e)
         {
-            ExcelReader.AddFtbPermissions();
+            UpdateFtbPermissions();
+        }
+
+        private void UpdateFtbPermissions()
+        {
+            var bw = new BackgroundWorker();
+            bw.DoWork += (s, args) =>
+            {
+                UpdatingPermissions = true;
+                ExcelReader.AddFtbPermissions();
+            };
+            bw.RunWorkerCompleted += (s, a) =>
+            {
+                UpdatingPermissions = false;
+            };
+            bw.RunWorkerAsync();
         }
 
         private void CreateFTBPack_CheckedChanged(object sender, EventArgs e)
@@ -1671,14 +1727,30 @@ namespace TechnicSolderHelper
 
         private void GetForgeVersions_Click(object sender, EventArgs e)
         {
-            MCversion.Items.Clear();
+            UpdateForgeVersions();
+        }
 
-            _forgeSqlHelper.FindAllForgeVersion();
-            List<String> mcversions = _forgeSqlHelper.GetMcVersions();
-            foreach (String mcversion in mcversions)
+        private void UpdateForgeVersions()
+        {
+            var bw = new BackgroundWorker();
+            bw.DoWork += (s, args) =>
             {
-                MCversion.Items.Add(mcversion);
-            }
+                
+                UpdatingForge = true;
+                ForgeSqlHelper forgeSqlHelper = new ForgeSqlHelper();
+                forgeSqlHelper.FindAllForgeVersion();
+            };
+            bw.RunWorkerCompleted += (s, a) =>
+            {
+                UpdatingForge = false;
+                List<String> mcversions = _forgeSqlHelper.GetMcVersions();
+                foreach (String mcversion in mcversions)
+                {
+                    MCversion.Items.Add(mcversion);
+                }
+            };
+            MCversion.Items.Clear();
+            bw.RunWorkerAsync();
         }
 
         private void IncludeForgeVersion_CheckedChanged(object sender, EventArgs e)

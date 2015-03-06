@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using TechnicSolderHelper.Properties;
+using TechnicSolderHelper.SQL.forge;
 
 namespace TechnicSolderHelper
 {
@@ -19,6 +20,14 @@ namespace TechnicSolderHelper
         public void UploadToS3()
         {
             MessageBox.Show("Uploading files to s3");
+        }
+    }
+
+    public class LongRunningFunctions
+    {
+        public void UpdateForgeVersions()
+        {
+            
         }
     }
 }

@@ -257,7 +257,7 @@
     <Compile Include="globalfunctions.cs" />
     <Compile Include="SQL\forge\forge.cs" />
     <Compile Include="SQL\forge\forgemaven.cs" />
-    <Compile Include="messageToUser.cs" />
+    <Compile Include="AsyncOperations.cs" />
     <Compile Include="modpacks.cs" />
     <Compile Include="FileUpload\ftpInfo.cs">
       <SubType>Form</SubType>

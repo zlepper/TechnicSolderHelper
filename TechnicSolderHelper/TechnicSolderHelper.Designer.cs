@@ -822,14 +822,15 @@ namespace TechnicSolderHelper
 
                 #region Find MC versions
 
-                MCversion.Items.Clear();
+                /*MCversion.Items.Clear();
 
                 _forgeSqlHelper.FindAllForgeVersion();
                 List<String> mcversions = _forgeSqlHelper.GetMcVersions();
                 foreach (String mcversion in mcversions)
                 {
                     MCversion.Items.Add(mcversion);
-                }
+                }*/
+                UpdateForgeVersions();
 
                 #endregion
                 ExcelReader.AddFtbPermissions();
