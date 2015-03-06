@@ -815,20 +815,8 @@ namespace TechnicSolderHelper
                 _confighandler.SetConfig("OutputDirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "SolderHelper"));
                 _confighandler.SetConfig("FirstRun", "false");
 
-                #region Find MC versions
-
-                /*MCversion.Items.Clear();
-
-                _forgeSqlHelper.FindAllForgeVersion();
-                List<String> mcversions = _forgeSqlHelper.GetMcVersions();
-                foreach (String mcversion in mcversions)
-                {
-                    MCversion.Items.Add(mcversion);
-                }*/
                 UpdateForgeVersions();
-
-                #endregion
-                ExcelReader.AddFtbPermissions();
+                UpdateFtbPermissions();
 
             }
             #region Reload Interface
