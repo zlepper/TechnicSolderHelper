@@ -253,7 +253,7 @@ namespace TechnicSolderHelper
         {
             int index = modlist.SelectedIndex;
             var mod = showDone.Checked ? _mods[index] : _nonFinishedMods[index];
-
+            mod.FromUserInput = true;
             if (String.IsNullOrWhiteSpace(textBoxModName.Text))
             {
                 mod.Name = String.Empty;
@@ -503,8 +503,9 @@ namespace TechnicSolderHelper
             {
                 foreach (Mcmod mcmod in _mods)
                 {
-                    if (mcmod.FromUserInput)
+                    if (mcmod.FromUserInput && !mcmod.FromSuggestion)
                     {
+                        Debug.WriteLine(mcmod.Modid);
                         DataSuggest ds = new DataSuggest();
                         String a = _solderHelper.GetAuthors(mcmod, true);
                         ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version, SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name, a);
