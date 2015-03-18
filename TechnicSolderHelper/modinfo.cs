@@ -13,7 +13,7 @@ namespace TechnicSolderHelper
     {
         private readonly SolderHelper _solderHelper;
         private readonly List<Mcmod> _mods;
-        private readonly List<Mcmod> _nonFinishedMods; 
+        private readonly List<Mcmod> _nonFinishedMods;
         private readonly FtbPermissionsSqlHelper _ftbPermissionsSqlHelper = new FtbPermissionsSqlHelper();
 
         public Modinfo(SolderHelper solderHelper)
@@ -27,15 +27,15 @@ namespace TechnicSolderHelper
             _nonFinishedMods = new List<Mcmod>();
             _solderHelper = solderHelper;
             var tmp = from mcmod1 in modsList
-                where mcmod1.Name != null
-                orderby mcmod1.Name
-                select mcmod1;
+                      where mcmod1.Name != null
+                      orderby mcmod1.Name
+                      select mcmod1;
             _mods = new List<Mcmod>();
             _mods.AddRange(tmp.ToList());
             tmp = from mcmod1 in modsList
-                where mcmod1.Name == null
-                orderby mcmod1.Filename
-                select mcmod1;
+                  where mcmod1.Name == null
+                  orderby mcmod1.Filename
+                  select mcmod1;
             _mods.AddRange(tmp.ToList());
             InitializeComponent();
             foreach (Mcmod mcmod in _mods)
@@ -97,7 +97,7 @@ namespace TechnicSolderHelper
                             }
                         }
                     }
-                    if(!mcmod.Aredone)
+                    if (!mcmod.Aredone)
                     {
 
                         if (m != null)
@@ -228,7 +228,7 @@ namespace TechnicSolderHelper
             {
                 return false;
             }
-        } 
+        }
 
         private void modlist_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -342,7 +342,8 @@ namespace TechnicSolderHelper
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            if (FTBPermissions.Visible) {
+            if (FTBPermissions.Visible)
+            {
                 PermissionLevel ftbPermissionLevel = _ftbPermissionsSqlHelper.DoFtbHavePermission(textBoxModID.Text,
                     _solderHelper.PublicFTBPack.Checked);
                 Debug.WriteLine(ftbPermissionLevel);
@@ -444,7 +445,7 @@ namespace TechnicSolderHelper
                 }
             }
         }
-        
+
 
         private void getPermissions_Click(object sender, EventArgs e)
         {
@@ -485,7 +486,7 @@ namespace TechnicSolderHelper
         {
             foreach (Mcmod mcmod in _mods)
             {
-                if(mcmod.IsSkipping)
+                if (mcmod.IsSkipping)
                     continue;
                 if (String.IsNullOrWhiteSpace(mcmod.Modid))
                 {
@@ -494,7 +495,8 @@ namespace TechnicSolderHelper
                 if (!AreModDone(mcmod))
                 {
                     e.Cancel = true;
-                    MessageBox.Show("Please check all mods and make sure the info is filled in." + Environment.NewLine + "Issue with mod: " + mcmod.Filename);
+                    MessageBox.Show("Please check all mods and make sure the info is filled in." +
+                                    Environment.NewLine + "Issue with mod: " + mcmod.Filename);
                     return;
                 }
                 mcmod.Aredone = true;
@@ -508,7 +510,8 @@ namespace TechnicSolderHelper
                         Debug.WriteLine(mcmod.Modid);
                         DataSuggest ds = new DataSuggest();
                         String a = _solderHelper.GetAuthors(mcmod, true);
-                        ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version, SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name, a);
+                        ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version,
+                            SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name, a);
                     }
                     if (_solderHelper.CreateFTBPack.Checked)
                     {

@@ -165,10 +165,6 @@ namespace TechnicSolderHelper
 
         private Boolean Prepare()
         {
-            /*if (!UpdatingForge && !UpdatingPermissions)
-            {
-                MessageBox.Show("Currently doing work in the background, please wait for it to finish before proceding")
-            }*/
             _inputDirectory = InputFolder.Text;
             _outputDirectory = OutputFolder.Text;
             _ftbOwnPermissionList = Path.Combine(_outputDirectory, "Own Permission List.txt");
@@ -401,7 +397,6 @@ namespace TechnicSolderHelper
             List<Mcmod> modsList = new List<Mcmod>(_totalMods);
             toolStripProgressBar.Value = 0;
             toolStripProgressBar.Maximum = _totalMods;
-            
             //Check if files have already been added
             foreach (String file in files)
             {
@@ -1245,8 +1240,7 @@ namespace TechnicSolderHelper
         {
             String[] skipMods =
                 {"CarpentersBlocksCachedResources", 
-                    "CodeChickenLib", 
-                    "ForgeMultipart", 
+                    "CodeChickenLib",
                     "ejml-",
                     "commons-codec",
                     "commons-compress",
