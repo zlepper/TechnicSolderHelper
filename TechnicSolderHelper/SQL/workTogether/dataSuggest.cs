@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using MySql.Data.MySqlClient;
 
@@ -20,45 +21,74 @@ namespace TechnicSolderHelper.SQL.workTogether
 
         public void Suggest(String filename, String mcversion, String modversion, String md5, String modid, String modname, String author = "")
         {
-            if (!IsModSuggested(md5))
+            try
             {
-                const string sql = "INSERT INTO solderhelper.new(filename, mcversion, modversion, md5, modid, modname, author) VALUES(@filename, @mcversion, @modversion, @md5, @modid, @modname, @author);";
-                using (MySqlConnection connection = new MySqlConnection(_connectionStringSuggest))
+                if (!IsModSuggested(md5))
                 {
-                    connection.OpenAsync();
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    const string sql =
+                        "INSERT INTO solderhelper.new(filename, mcversion, modversion, md5, modid, modname, author) VALUES(@filename, @mcversion, @modversion, @md5, @modid, @modname, @author);";
+                    using (MySqlConnection connection = new MySqlConnection(_connectionStringSuggest))
                     {
-                        command.Parameters.AddWithValue("@filename", filename);
-                        command.Parameters.AddWithValue("@mcversion", mcversion);
-                        command.Parameters.AddWithValue("@modversion", modversion);
-                        command.Parameters.AddWithValue("@md5", md5);
-                        command.Parameters.AddWithValue("@modid", modid);
-                        command.Parameters.AddWithValue("@modname", modname);
-                        command.Parameters.AddWithValue("@author", author);
-                        command.ExecuteNonQueryAsync();
+                        connection.OpenAsync();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.Parameters.AddWithValue("@filename", filename);
+                            command.Parameters.AddWithValue("@mcversion", mcversion);
+                            command.Parameters.AddWithValue("@modversion", modversion);
+                            command.Parameters.AddWithValue("@md5", md5);
+                            command.Parameters.AddWithValue("@modid", modid);
+                            command.Parameters.AddWithValue("@modname", modname);
+                            command.Parameters.AddWithValue("@author", author);
+                            command.ExecuteNonQueryAsync();
+                        }
                     }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+                if (e.InnerException != null)
+                {
+                    Debug.WriteLine(e.InnerException.Message);
+                    Debug.WriteLine(e.InnerException.StackTrace);
+
                 }
             }
         }
 
         public bool IsModSuggested(String md5)
         {
-            String sql = "SELECT md5 FROM solderhelper.new WHERE md5 LIKE @md5;";
-            using (MySqlConnection connection = new MySqlConnection(_connectionStringSuggest))
+            try
             {
-                connection.OpenAsync();
-                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                String sql = "SELECT md5 FROM solderhelper.new WHERE md5 LIKE @md5;";
+                using (MySqlConnection connection = new MySqlConnection(_connectionStringSuggest))
                 {
-                    command.Parameters.AddWithValue("@md5", md5);
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    connection.OpenAsync();
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        while (reader.Read())
+                        command.Parameters.AddWithValue("@md5", md5);
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            if (reader["md5"].Equals(md5))
-                                return true;
-                            return false;
+                            while (reader.Read())
+                            {
+                                if (reader["md5"].Equals(md5))
+                                    return true;
+                                return false;
+                            }
                         }
                     }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+                if (e.InnerException != null)
+                {
+                    Debug.WriteLine(e.InnerException.Message);
+                    Debug.WriteLine(e.InnerException.StackTrace);
+
                 }
             }
             return false;
@@ -66,35 +96,50 @@ namespace TechnicSolderHelper.SQL.workTogether
 
         public Mcmod GetMcmod(String md5)
         {
-            String sql = "SELECT modname, modid, mcversion, modversion, md5, author FROM helpersolder.mods WHERE md5 LIKE @md5;";
-            using (MySqlConnection connection = new MySqlConnection(_connectionStringGet))
+            try
             {
-                connection.Open();
-                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                String sql =
+                    "SELECT modname, modid, mcversion, modversion, md5, author FROM helpersolder.mods WHERE md5 LIKE @md5;";
+                using (MySqlConnection connection = new MySqlConnection(_connectionStringGet))
                 {
-                    command.Parameters.AddWithValue("@md5", md5);
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    connection.Open();
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        while (reader.Read())
+                        command.Parameters.AddWithValue("@md5", md5);
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            if (reader["md5"].Equals(md5))
+                            while (reader.Read())
                             {
-                                List<String> a = reader["author"].ToString().Split(',').ToList();
-
-                                Mcmod mod = new Mcmod
+                                if (reader["md5"].Equals(md5))
                                 {
-                                    Version = reader["modversion"].ToString(),
-                                    Name = reader["modname"].ToString(),
-                                    Modid = reader["modid"].ToString(),
-                                    Mcversion = reader["mcversion"].ToString(),
-                                    Authors = a,
-                                    AuthorList = a
-                                    
-                                };
-                                return mod;
+                                    List<String> a = reader["author"].ToString().Split(',').ToList();
+
+                                    Mcmod mod = new Mcmod
+                                    {
+                                        Version = reader["modversion"].ToString(),
+                                        Name = reader["modname"].ToString(),
+                                        Modid = reader["modid"].ToString(),
+                                        Mcversion = reader["mcversion"].ToString(),
+                                        Authors = a,
+                                        AuthorList = a
+
+                                    };
+                                    return mod;
+                                }
                             }
                         }
                     }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+                if (e.InnerException != null)
+                {
+                    Debug.WriteLine(e.InnerException.Message);
+                    Debug.WriteLine(e.InnerException.StackTrace);
+
                 }
             }
             return null;
