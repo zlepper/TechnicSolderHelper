@@ -113,7 +113,6 @@ namespace TechnicSolderHelper.SQL
         public Mcmod GetModInfo(String md5Value)
         {
             String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE @md5;", TableName);
-            Debug.WriteLine(sql);
             if (IsUnix())
             {
                 using (SqliteConnection db = new SqliteConnection(ConnectionString))
@@ -258,7 +257,6 @@ namespace TechnicSolderHelper.SQL
         private void UpdateRow(String id, String modName, String modId, String modVersion, String minecraftVersion, String fileName)
         {
             String fileVersion = minecraftVersion + "-" + modVersion;
-            Debug.WriteLine(fileVersion);
             String sql =
                 String.Format(
                     "UPDATE {0} SET ModName = @modname, ModID = @modid, ModVersion = @modversion, MinecraftVersion = @minecraftversion, FileName = @filename, FileVersion = @fileversion, OnSolder = 0 WHERE ID = @id;",

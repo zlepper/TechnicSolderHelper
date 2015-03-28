@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using TechnicSolderHelper.SQL;
@@ -306,62 +307,103 @@ namespace TechnicSolderHelper
             }
             if (SolderPack.Checked)
             {
-                var modid = mod.Modid.Contains("|") ? mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal)).Replace(".", String.Empty).ToLower() : mod.Modid.Replace(".", string.Empty).ToLower();
-                if (useSolder.Checked)
+                bool useSolderBool = useSolder.Checked;
+                BackgroundWorker bw = new BackgroundWorker();
+                _runningProcess++;
+                bw.DoWork += (o, arg) =>
                 {
-                    if (_solderSqlHandler.IsModversionOnline(modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
+                    var modid = mod.Modid.Contains("|")
+                        ? mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal))
+                            .Replace(".", String.Empty)
+                            .ToLower()
+                        : mod.Modid.Replace(".", string.Empty).ToLower();
+                    if (useSolderBool)
                     {
-                        int id = _solderSqlHandler.GetModId(modid);
-                        int modVersionId = _solderSqlHandler.GetModversionId(id, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
-                        _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
-                    }
-                }
-                if (!_modsSqLhelper.IsFileInSolder(modfile))
-                {
-                    var modDir = Path.Combine(_outputDirectory, "mods", mod.Modid.Contains("|") ? mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal)).Replace(".", string.Empty).ToLower().Replace(Globalfunctions.PathSeperator.ToString(), String.Empty) : mod.Modid.Replace(".", string.Empty).ToLower().Replace(Globalfunctions.PathSeperator.ToString(), String.Empty), "mods");
-                    Directory.CreateDirectory(modDir);
-
-                    String tempModFile = Path.Combine(modDir, fileName);
-
-                    String tempFileDirectory = tempModFile.Remove(tempModFile.LastIndexOf(Globalfunctions.PathSeperator));
-
-                    Directory.CreateDirectory(tempFileDirectory);
-                    File.Copy(modfile, tempModFile, true);
-
-                    var modArchive = mod.Modid.Contains("|") ? Path.Combine(_outputDirectory, "mods", mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal)).Replace(".", string.Empty).ToLower(), mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal)).Replace(".", string.Empty).ToLower() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip") : Path.Combine(_outputDirectory, "mods", mod.Modid.Replace(".", string.Empty).ToLower(), mod.Modid.Replace(".", string.Empty).ToLower() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip");
-                    if (Globalfunctions.IsUnix())
-                    {
-                        Environment.CurrentDirectory = Path.Combine(_outputDirectory, "mods", mod.Modid.Contains("|") ? mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal)).Replace(".", string.Empty).ToLower() : mod.Modid.Replace(".", string.Empty).ToLower());
-                        modDir = "mods";
-                        _startInfo.FileName = "zip";
-                        _startInfo.Arguments = "-r \"" + modArchive + "\" \"" + modDir + "\" ";
-                    }
-                    else
-                    {
-                        _startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" ";
-                    }
-                    _process.StartInfo = _startInfo;
-                    _process.Start();
-
-                    //Save mod to database
-                    _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, true);
-
-                    // Add mod info to a html file
-                    CreateTableRow(mod.Name.Replace("|", ""), modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
-
-                    _process.WaitForExit();
-
-                    if (useSolder.Checked)
-                    {
-                        BackgroundWorker bw = new BackgroundWorker();
-                        string archive = Path.Combine(_outputDirectory, "mods", modArchive);
-                        bw.DoWork += (o, arg) =>
+                        if (_solderSqlHandler.IsModversionOnline(modid,
+                            mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
                         {
+                            int id = _solderSqlHandler.GetModId(modid);
+                            int modVersionId = _solderSqlHandler.GetModversionId(id,
+                                mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
+                            _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
+                        }
+                    }
+                    if (!_modsSqLhelper.IsFileInSolder(modfile))
+                    {
+                        var modDir = Path.Combine(_outputDirectory, "mods",
+                            mod.Modid.Contains("|")
+                                ? mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal))
+                                    .Replace(".", string.Empty)
+                                    .ToLower()
+                                    .Replace(Globalfunctions.PathSeperator.ToString(), String.Empty)
+                                : mod.Modid.Replace(".", string.Empty)
+                                    .ToLower()
+                                    .Replace(Globalfunctions.PathSeperator.ToString(), String.Empty), "mods");
+                        Directory.CreateDirectory(modDir);
+                        if (_processesUsingFolder.ContainsKey(modDir))
+                        {
+                            _processesUsingFolder[modDir]++;
+                        }
+                        else
+                        {
+                            _processesUsingFolder.Add(modDir, 1);
+                        }
+                        String tempModFile = Path.Combine(modDir, fileName);
+
+                        String tempFileDirectory =
+                            tempModFile.Remove(tempModFile.LastIndexOf(Globalfunctions.PathSeperator));
+
+                        Directory.CreateDirectory(tempFileDirectory);
+                        File.Copy(modfile, tempModFile, true);
+
+                        var modArchive = mod.Modid.Contains("|")
+                            ? Path.Combine(_outputDirectory, "mods",
+                                mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal))
+                                    .Replace(".", string.Empty)
+                                    .ToLower(),
+                                mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal))
+                                    .Replace(".", string.Empty)
+                                    .ToLower() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip")
+                            : Path.Combine(_outputDirectory, "mods", mod.Modid.Replace(".", string.Empty).ToLower(),
+                                mod.Modid.Replace(".", string.Empty).ToLower() + "-" + mod.Mcversion.ToLower() + "-" +
+                                mod.Version.ToLower() + ".zip");
+                        if (Globalfunctions.IsUnix())
+                        {
+                            Environment.CurrentDirectory = Path.Combine(_outputDirectory, "mods",
+                                mod.Modid.Contains("|")
+                                    ? mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal))
+                                        .Replace(".", string.Empty)
+                                        .ToLower()
+                                    : mod.Modid.Replace(".", string.Empty).ToLower());
+                            modDir = "mods";
+                            _startInfo.FileName = "zip";
+                            _startInfo.Arguments = "-r \"" + modArchive + "\" \"" + modDir + "\" ";
+                        }
+                        else
+                        {
+                            _startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" ";
+                        }
+                        Process process = new Process {StartInfo = _startInfo};
+                        process.Start();
+
+                        //Save mod to database
+                        _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, true);
+
+                        // Add mod info to a html file
+                        CreateTableRow(mod.Name.Replace("|", ""), modid,
+                            mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
+
+                        process.WaitForExit();
+
+                        if (useSolderBool)
+                        {
+                            string archive = Path.Combine(_outputDirectory, "mods", modArchive);
                             SolderSqlHandler sqh = new SolderSqlHandler();
                             if (sqh.IsModversionOnline(modid,
-                            mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
+                                mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
                             {
-                                sqh.UpdateModversionMd5(modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(), SqlHelper.CalculateMd5(archive).ToLower());
+                                sqh.UpdateModversionMd5(modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(),
+                                    SqlHelper.CalculateMd5(archive).ToLower());
                             }
                             else
                             {
@@ -382,12 +424,17 @@ namespace TechnicSolderHelper
                                     mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
                                 sqh.AddModversionToBuild(_buildId, modVersionId);
                             }
-                        };
-                        bw.RunWorkerAsync();
+                        }
+                        _processesUsingFolder[modDir]--;
+                        if (Directory.Exists(modDir) && _processesUsingFolder[modDir] == 0)
+                        {
+                            Directory.Delete(modDir, true);
+                            _processesUsingFolder.Remove(modDir);
+                        }
                     }
-
-                    Directory.Delete(modDir, true);
-                }
+                    _runningProcess--;
+                };
+                bw.RunWorkerAsync();
             }
             else
             {

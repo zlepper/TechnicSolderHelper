@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading;
 using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.cryptography;
 using TechnicSolderHelper.Properties;
@@ -42,21 +43,21 @@ namespace TechnicSolderHelper.FileUpload
         public void UploadFolder(String folderPath)
         {
             String[] files;
-            try
-            {
+            if (Directory.Exists(folderPath)) { 
+            
                 files = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories);
             }
-            catch (DirectoryNotFoundException)
+            else
             {
                 Debug.WriteLine("No files was created, so no reason to upload anything");
                 return;
             }
+            MessageToUser m = new MessageToUser();
+            Thread startingThread = new Thread(m.UploadingToFtp);
+            startingThread.Start();
 
             foreach (String file in files)
             {
-                Debug.WriteLine("");
-                Debug.WriteLine(file);
-                Debug.WriteLine(file.Replace(folderPath + Globalfunctions.PathSeperator, ""));
                 UploadFile(file, file.Replace(folderPath + Globalfunctions.PathSeperator, ""), "mods");
             }
 
@@ -122,10 +123,8 @@ namespace TechnicSolderHelper.FileUpload
             }
             FtpWebRequest request = WebRequest.Create(_url) as FtpWebRequest;
             request.Credentials = new NetworkCredential(_userName, _password);
-            Debug.WriteLine(request.RequestUri);
             foreach (String folder in folders)
             {
-                Debug.WriteLine(folder);
                 List<String> directoryContent = GetDirectoryContent(request.RequestUri.ToString());
                 if (directoryContent.Contains(folder))
                 {
@@ -137,7 +136,6 @@ namespace TechnicSolderHelper.FileUpload
                     {
                         request = WebRequest.Create(request.RequestUri + "/" + folder) as FtpWebRequest;
                     }
-                    Debug.WriteLine(request.RequestUri);
                 }
                 else
                 {
@@ -149,24 +147,21 @@ namespace TechnicSolderHelper.FileUpload
                     {
                         request = WebRequest.Create(request.RequestUri + "/" + folder) as FtpWebRequest;
                     }
-                    Debug.WriteLine(request.RequestUri);
                     request.Credentials = new NetworkCredential(_userName, _password);
                     request.Method = WebRequestMethods.Ftp.MakeDirectory;
                     try
                     {
                         FtpWebResponse responce = (FtpWebResponse)request.GetResponse();
-                        Debug.WriteLine(responce.StatusDescription);
                     }
                     catch (WebException e)
                     {
-                        Debug.WriteLine(e.Message);
+                        
                     }
                 }
             }
 
             try
             {
-                Debug.WriteLine("Uploading file: " + fileToUpload);
                 request = WebRequest.Create(request.RequestUri + "/" + fileToUpload) as FtpWebRequest;
                 request.Credentials = new NetworkCredential(_userName, _password);
                 request.Method = WebRequestMethods.Ftp.UploadFile;
@@ -187,7 +182,6 @@ namespace TechnicSolderHelper.FileUpload
             catch (WebException e)
             {
                 //Console.WriteLine("error getting responce");
-                Debug.WriteLine(e.Message);
             }
         }
 

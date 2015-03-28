@@ -117,7 +117,6 @@ namespace TechnicSolderHelper.SQL
         public String GetInfoFromModId(String modId, InfoType infoType)
         {
             String sql = String.Format("SELECT {1} FROM {0} WHERE ModID LIKE @modid OR ShortName LIKE @shortname;", TableName, infoType);
-            Debug.WriteLine(sql);
 
             if (IsUnix())
             {
@@ -356,7 +355,6 @@ namespace TechnicSolderHelper.SQL
             modId = modId.Replace("'", "`");
 
             String sql = String.Format("INSERT OR IGNORE INTO {0}(ShortName, ModID) VALUES ('{1}', '{2}');", TableName, shortName, modId);
-            Debug.WriteLine(sql);
             ExecuteDatabaseQuery(sql);
         }
 

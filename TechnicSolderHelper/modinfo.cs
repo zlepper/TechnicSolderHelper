@@ -488,6 +488,13 @@ namespace TechnicSolderHelper
             {
                 if (mcmod.IsSkipping)
                     continue;
+                if (String.IsNullOrWhiteSpace(mcmod.Name))
+                {
+                    e.Cancel = true;
+                    MessageBox.Show("Please check all mods and make sure the info is filled in." +
+                                    Environment.NewLine + "Issue with mod: " + mcmod.Filename);
+                    return;
+                }
                 if (String.IsNullOrWhiteSpace(mcmod.Modid))
                 {
                     mcmod.Modid = mcmod.Name.Replace(" ", "").ToLower();

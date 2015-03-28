@@ -18,7 +18,6 @@ namespace TechnicSolderHelper.SQL
         public SolderSqlHandler(String address, String username, String password, String database, String prefix = "")
         {
             _connectionString = String.Format("address={0};username={1};password={2};database={3}", address, username, password, database);
-            Debug.WriteLine(_connectionString);
             _database = database;
             _prefix = prefix;
         }
@@ -46,9 +45,7 @@ namespace TechnicSolderHelper.SQL
             var address = ch.GetConfig("mysqlAddress");
             _database = ch.GetConfig("mysqlDatabase");
             _prefix = ch.GetConfig("mysqlPrefix");
-            Debug.WriteLine(_prefix);
             _connectionString = String.Format("address={0};username={1};password={2};database={3}", address, username, password, _database);
-            Debug.WriteLine(_connectionString);
         }
 
         /// <summary>
@@ -77,14 +74,11 @@ namespace TechnicSolderHelper.SQL
                     {
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
-                            Debug.WriteLine("Connection succesful");
                             string s = "Tables_in_" + _database;
                             while (reader.Read())
                             {
-                                Debug.WriteLine(reader[s].ToString());
                                 tables.Remove(reader[s].ToString());
                             }
-                            Debug.WriteLine(tables.Count);
                             if (tables.Count == 0)
                             {
                                 MessageBox.Show("The database is alright");
@@ -139,7 +133,6 @@ namespace TechnicSolderHelper.SQL
                     {
                         while (reader.Read())
                         {
-                            Debug.WriteLine(Convert.ToInt32(reader["id"]));
                             return Convert.ToInt32(reader["id"]);
                         }
                     }
@@ -165,7 +158,6 @@ namespace TechnicSolderHelper.SQL
             sql = !String.IsNullOrWhiteSpace(author) ? sql.Replace("authorValue", "\"" + author + "\"") : sql.Replace(" authorValue,", String.Empty).Replace(" author,", String.Empty);
 
             sql = !String.IsNullOrWhiteSpace(link) ? sql.Replace("linkValue", "\"" + link + "\"") : sql.Replace(" linkValue,", String.Empty).Replace(" link,", String.Empty);
-            Debug.WriteLine(sql);
 
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
@@ -199,13 +191,11 @@ namespace TechnicSolderHelper.SQL
                     {
                         while (reader.Read())
                         {
-                            Debug.WriteLine(Convert.ToInt32(reader["id"]));
                             return Convert.ToInt32(reader["id"]);
                         }
                     }
                 }
             }
-            Debug.WriteLine("Couldn't find mod " + slug);
             return -1;
         }
 
@@ -229,8 +219,6 @@ namespace TechnicSolderHelper.SQL
                     {
                         while (reader.Read())
                         {
-                            Debug.WriteLine("Mod version is already online.");
-                            Debug.WriteLine(Convert.ToInt32(reader["id"]));
                             return true;
                         }
                     }
@@ -345,7 +333,6 @@ namespace TechnicSolderHelper.SQL
                     {
                         while (reader.Read())
                         {
-                            Debug.WriteLine(reader["id"].ToString());
                             return Convert.ToInt32(reader["id"].ToString());
                         }
                     }
@@ -368,7 +355,6 @@ namespace TechnicSolderHelper.SQL
                     {
                         while (reader.Read())
                         {
-                            Debug.WriteLine(reader["id"].ToString());
                             return Convert.ToInt32(reader["id"].ToString());
                         }
                     }

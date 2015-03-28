@@ -53,7 +53,6 @@ namespace TechnicSolderHelper.SQL
 
         protected void ExecuteDatabaseQuery(String sql, Boolean async = false)
         {
-            Debug.WriteLine(sql);
             if (IsUnix())
             {
                 try

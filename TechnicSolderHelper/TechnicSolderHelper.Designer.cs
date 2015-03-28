@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Security.AccessControl;
 using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -672,6 +673,7 @@ namespace TechnicSolderHelper
             this.StatusLabel.Name = "StatusLabel";
             this.StatusLabel.Size = new System.Drawing.Size(57, 17);
             this.StatusLabel.Text = "Waiting...";
+            this.StatusLabel.TextChanged += new System.EventHandler(this.StatusLabel_TextChanged);
             // 
             // button5
             // 

@@ -51,6 +51,9 @@ namespace TechnicSolderHelper
         //private bool UpdatingForge, updatingPermissions;
         private bool _updatingForge;
         private bool _updatingPermissions;
+        private bool _uploadingToFtp, _uploadingToS3;
+        private int _runningProcess;
+        private readonly Dictionary<string, int> _processesUsingFolder = new Dictionary<string, int>();
 
         private bool UpdatingForge
         {
@@ -73,6 +76,26 @@ namespace TechnicSolderHelper
             }
         }
 
+        private bool UploadingToFTP
+        {
+            get { return _uploadingToFtp; }
+            set
+            {
+                _uploadingToFtp = value;
+                AsyncLockInterface();
+            }
+        }
+
+        private bool UploadingToS3
+        {
+            get { return _uploadingToS3; }
+            set
+            {
+                _uploadingToS3 = value;
+                AsyncLockInterface();
+            }
+        }
+
         private void AsyncBlockingProcessUpdated()
         {
             if (button1.InvokeRequired)
@@ -82,6 +105,19 @@ namespace TechnicSolderHelper
             else
             {
                 button1.Enabled = !UpdatingForge && !UpdatingPermissions;
+            }
+        }
+
+        private void AsyncLockInterface()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((Action) (AsyncLockInterface));
+            }
+            else
+            {
+                this.Enabled = !UploadingToFTP && !UploadingToS3;
+
             }
         }
 
@@ -1096,27 +1132,45 @@ namespace TechnicSolderHelper
                 }
 
             }
+            while (_runningProcess > 0)
+            {
+                StatusLabel.Text = "Waiting for " + _runningProcess + " mods to finsh packing";
+                Thread.Sleep(100);
+            }
             if (CreateTechnicPack.Checked && SolderPack.Checked && UploadToFTPServer.Checked)
             {
                 StatusLabel.Text = "Uploading to FTP";
-                if (_ftp == null)
+                UploadingToFTP = true;
+                BackgroundWorker bwFtp = new BackgroundWorker();
+                bwFtp.DoWork += (s, a) =>
                 {
-                    _ftp = new Ftp();
-                }
-
-                MessageToUser m = new MessageToUser();
-                Thread startingThread = new Thread(m.UploadingToFtp);
-                startingThread.Start();
-
-                _ftp.UploadFolder(Path.Combine(_outputDirectory, "mods"));
-
+                    if (_ftp == null)
+                    {
+                        _ftp = new Ftp();
+                    }
+                    _ftp.UploadFolder(Path.Combine(_outputDirectory, "mods"));
+                };
+                bwFtp.RunWorkerCompleted += (s, a) =>
+                {
+                    UploadingToFTP = false;
+                };
+                bwFtp.RunWorkerAsync();
             }
 
             if (CreateTechnicPack.Checked && SolderPack.Checked && UseS3.Checked)
             {
                 StatusLabel.Text = "Uploading to S3";
-                S3 s3Client = new S3();
-                s3Client.UploadFolder(Path.Combine(_outputDirectory, "mods"));
+                UploadingToS3 = true;
+                BackgroundWorker bwS3 = new BackgroundWorker();
+                bwS3.DoWork += (s, a) =>
+                {
+                    S3 s3Client = new S3();
+                    s3Client.UploadFolder(Path.Combine(_outputDirectory, "mods"));
+                };
+                bwS3.RunWorkerCompleted += (s, a) =>
+                {
+                    UploadingToS3 = false;
+                };
             }
 
             InputFolder.Items.Clear();
