@@ -326,6 +326,8 @@ namespace TechnicSolderHelper
                             int modVersionId = _solderSqlHandler.GetModversionId(id,
                                 mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
                             _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
+                            _runningProcess--;
+                            return;
                         }
                     }
                     if (!_modsSqLhelper.IsFileInSolder(modfile))

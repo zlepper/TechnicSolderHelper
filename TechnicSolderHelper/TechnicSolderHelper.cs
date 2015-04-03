@@ -1166,11 +1166,13 @@ namespace TechnicSolderHelper
                 {
                     S3 s3Client = new S3();
                     s3Client.UploadFolder(Path.Combine(_outputDirectory, "mods"));
+                    UploadingToS3 = false;
                 };
                 bwS3.RunWorkerCompleted += (s, a) =>
                 {
                     UploadingToS3 = false;
                 };
+                bwS3.RunWorkerAsync();
             }
 
             InputFolder.Items.Clear();
