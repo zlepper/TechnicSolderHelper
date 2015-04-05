@@ -16,6 +16,7 @@ Developing TechnicSolderHelper
 If you want to contribute to TechnicSolderHelper you need the following things on your machine:
 
 If you are using Windows to develop i would recommend getting visualstudio: https://www.visualstudio.com/
+
 Or if you are using linux or mac monodevelop: http://www.monodevelop.com/download/ (Will also work for Windows)
 
 Then download the code using your prefered git tool and open the TechnicSolderHelper.sln file with the IDE you just installed. Then tell you IDE to restore packages and you should be good to go. 
