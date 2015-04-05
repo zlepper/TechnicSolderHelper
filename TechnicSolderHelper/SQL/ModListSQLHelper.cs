@@ -48,7 +48,7 @@ namespace TechnicSolderHelper.SQL
             String fileVersion = minecraftVersion + "-" + modVersion;
             var sql = String.Format(onSolder ? "INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '1');" : "INSERT OR IGNORE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');", TableName, modName, modId, modVersion, minecraftVersion, fileName, fileVersion, md5Value);
 
-            ExecuteDatabaseQuery(sql);
+            ExecuteDatabaseQuery(sql, true);
         }
 
         public Boolean IsFileInSolder(String filePath)
@@ -169,7 +169,7 @@ namespace TechnicSolderHelper.SQL
         public override void ResetTable()
         {
             String sql = String.Format("UPDATE {0} SET OnSolder = '0'", TableName);
-            ExecuteDatabaseQuery(sql);
+            ExecuteDatabaseQuery(sql, true);
         }
 
         public DataTable GetTableInfoForEditing()
@@ -236,7 +236,7 @@ namespace TechnicSolderHelper.SQL
                     using (SqliteCommand cmd = new SqliteCommand(sql, db))
                     {
                         cmd.Parameters.AddWithValue("@id", id);
-                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQueryAsync();
                     }
                 }
             }
@@ -248,7 +248,7 @@ namespace TechnicSolderHelper.SQL
                     using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                     {
                         cmd.Parameters.AddWithValue("@id", id);
-                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQueryAsync();
                     }
                 }
             }
@@ -275,7 +275,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@minecraftversion", minecraftVersion);
                         cmd.Parameters.AddWithValue("@filename", fileName);
                         cmd.Parameters.AddWithValue("@fileversion", fileVersion);
-                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQueryAsync();
                     }
                 }
             }
@@ -293,7 +293,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@minecraftversion", minecraftVersion);
                         cmd.Parameters.AddWithValue("@filename", fileName);
                         cmd.Parameters.AddWithValue("@fileversion", fileVersion);
-                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQueryAsync();
                     }
                 }
             }

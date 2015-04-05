@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using TechnicSolderHelper.SQL;
 
@@ -9,6 +12,9 @@ namespace TechnicSolderHelper
 {
     public partial class SolderHelper
     {
+        public StringBuilder AddedModStringBuilder = new StringBuilder();
+        private readonly Dictionary<string, int> _processesUsingModID = new Dictionary<string, int>();
+
         private void CreateOwnPermissionInfo(String modname, String modid, String modauthor, String linkToPermission, String modLink)
         {
             String output = String.Format("{0}({1}) by {2} {3}Permission: {4} {3}Link to mod: {5}{3}{3}", modname, modid, modauthor, Environment.NewLine, linkToPermission, modLink);
@@ -21,8 +27,9 @@ namespace TechnicSolderHelper
             addedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", firstColumn);
             addedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", secondColumn);
             addedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", thirdColumn);
-            addedMod += "<td><button class=\"Hide\" type=\"button\">Hide</button></td></tr>";
-            File.AppendAllText(_path, addedMod + Environment.NewLine);
+            addedMod += "<td><button class=\"Hide\" type=\"button\">Hide</button></td></tr>" + Environment.NewLine;
+            AddedModStringBuilder.Append(addedMod);
+            //File.AppendAllText(_path, addedMod + Environment.NewLine);
         }
 
         private void CreateConfigZip()
@@ -312,11 +319,26 @@ namespace TechnicSolderHelper
                 _runningProcess++;
                 bw.DoWork += (o, arg) =>
                 {
+
                     var modid = mod.Modid.Contains("|")
                         ? mod.Modid.Remove(mod.Modid.LastIndexOf("|", StringComparison.Ordinal))
                             .Replace(".", String.Empty)
                             .ToLower()
                         : mod.Modid.Replace(".", string.Empty).ToLower();
+
+                    while (true)
+                    {
+                        if (_processesUsingModID.ContainsKey(mod.Modid))
+                        {
+                            Thread.Sleep(100);
+                            Debug.WriteLine("Sleeping with id: " + mod.Modid);
+                        }
+                        else
+                        {
+                            _processesUsingModID.Add(mod.Modid, 1);
+                            break;
+                        }
+                    }
                     if (useSolderBool)
                     {
                         if (_solderSqlHandler.IsModversionOnline(modid,
@@ -385,7 +407,8 @@ namespace TechnicSolderHelper
                         {
                             _startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" ";
                         }
-                        Process process = new Process {StartInfo = _startInfo};
+                        Process process = new Process { StartInfo = _startInfo };
+                        
                         process.Start();
 
                         //Save mod to database
@@ -396,16 +419,17 @@ namespace TechnicSolderHelper
                             mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
 
                         process.WaitForExit();
-
+                        
                         if (useSolderBool)
                         {
                             string archive = Path.Combine(_outputDirectory, "mods", modArchive);
                             SolderSqlHandler sqh = new SolderSqlHandler();
+                            string md5Value = SqlHelper.CalculateMd5(archive).ToLower();
                             if (sqh.IsModversionOnline(modid,
                                 mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
                             {
                                 sqh.UpdateModversionMd5(modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(),
-                                    SqlHelper.CalculateMd5(archive).ToLower());
+                                    md5Value);
                             }
                             else
                             {
@@ -419,7 +443,7 @@ namespace TechnicSolderHelper
                                 }
                                 sqh.AddNewModversionToSolder(modid,
                                     mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(),
-                                    SqlHelper.CalculateMd5(archive).ToLower());
+                                    md5Value);
 
                                 id = sqh.GetModId(modid);
                                 int modVersionId = sqh.GetModversionId(id,
@@ -433,6 +457,14 @@ namespace TechnicSolderHelper
                             Directory.Delete(modDir, true);
                             _processesUsingFolder.Remove(modDir);
                         }
+                    }
+                    if (_processesUsingModID[mod.Modid] > 1)
+                    {
+                        _processesUsingModID[mod.Modid]--;
+                    }
+                    else
+                    {
+                        _processesUsingModID.Remove(mod.Modid);
                     }
                     _runningProcess--;
                 };

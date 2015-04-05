@@ -3,6 +3,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
 using Mono.Data.Sqlite;
 
 namespace TechnicSolderHelper.SQL
@@ -115,9 +116,19 @@ namespace TechnicSolderHelper.SQL
         {
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead(file))
+                while (true)
                 {
-                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                    try
+                    {
+                        using (var stream = File.OpenRead(file))
+                        {
+                            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                        }
+                    }
+                    catch
+                    {
+                        Thread.Sleep(100);
+                    }
                 }
             }
         }
