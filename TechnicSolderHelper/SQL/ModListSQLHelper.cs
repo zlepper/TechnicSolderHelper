@@ -132,31 +132,59 @@ namespace TechnicSolderHelper.SQL
 
         public void SaveData()
         {
-            using (SqliteConnection conn = new SqliteConnection(ConnectionString))
-            {
-                conn.Open();
-                string sql = string.Format("DELETE FROM {0};", TableName);
-                using (SqliteCommand cmd = new SqliteCommand(sql, conn))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                sql =
-                    String.Format(
+            string sqlDelete = string.Format("DELETE FROM {0};", TableName);
+            string sqlInsert = String.Format(
                         "INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') VALUES(@modname, @modid, @modversion, @minecraftversion, @filename, @fileversion, @md5, @onsolder);",
                         TableName);
-                using (SqliteCommand cmd = new SqliteCommand(sql, conn))
+            if (Globalfunctions.IsUnix())
+            {
+                using (var conn = new SqliteConnection(ConnectionString))
                 {
-                    foreach (var modInfo in _modInfo)
+                    conn.Open();
+                    using (var cmd = new SqliteCommand(sqlDelete, conn))
                     {
-                        cmd.Parameters.AddWithValue("@modname", modInfo.ModName);
-                        cmd.Parameters.AddWithValue("@modid", modInfo.ModID);
-                        cmd.Parameters.AddWithValue("@modversion", modInfo.ModVersion);
-                        cmd.Parameters.AddWithValue("@minecraftversion", modInfo.MinecraftVersion);
-                        cmd.Parameters.AddWithValue("@filename", modInfo.FileName);
-                        cmd.Parameters.AddWithValue("@fileversion", modInfo.FileVersion);
-                        cmd.Parameters.AddWithValue("@md5", modInfo.MD5);
-                        cmd.Parameters.AddWithValue("@onsolder", modInfo.OnSolder);
                         cmd.ExecuteNonQuery();
+                    }
+                    using (var cmd = new SqliteCommand(sqlInsert, conn))
+                    {
+                        foreach (var modInfo in _modInfo)
+                        {
+                            cmd.Parameters.AddWithValue("@modname", modInfo.ModName);
+                            cmd.Parameters.AddWithValue("@modid", modInfo.ModID);
+                            cmd.Parameters.AddWithValue("@modversion", modInfo.ModVersion);
+                            cmd.Parameters.AddWithValue("@minecraftversion", modInfo.MinecraftVersion);
+                            cmd.Parameters.AddWithValue("@filename", modInfo.FileName);
+                            cmd.Parameters.AddWithValue("@fileversion", modInfo.FileVersion);
+                            cmd.Parameters.AddWithValue("@md5", modInfo.MD5);
+                            cmd.Parameters.AddWithValue("@onsolder", modInfo.OnSolder);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (var conn = new SQLiteConnection(ConnectionString))
+                {
+                    conn.Open();
+                    using (var cmd = new SQLiteCommand(sqlDelete, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    using (var cmd = new SQLiteCommand(sqlInsert, conn))
+                    {
+                        foreach (var modInfo in _modInfo)
+                        {
+                            cmd.Parameters.AddWithValue("@modname", modInfo.ModName);
+                            cmd.Parameters.AddWithValue("@modid", modInfo.ModID);
+                            cmd.Parameters.AddWithValue("@modversion", modInfo.ModVersion);
+                            cmd.Parameters.AddWithValue("@minecraftversion", modInfo.MinecraftVersion);
+                            cmd.Parameters.AddWithValue("@filename", modInfo.FileName);
+                            cmd.Parameters.AddWithValue("@fileversion", modInfo.FileVersion);
+                            cmd.Parameters.AddWithValue("@md5", modInfo.MD5);
+                            cmd.Parameters.AddWithValue("@onsolder", modInfo.OnSolder);
+                            cmd.ExecuteNonQuery();
+                        }
                     }
                 }
             }
@@ -196,29 +224,45 @@ namespace TechnicSolderHelper.SQL
             //var sql = String.Format(onSolder ? "INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '1');" : "INSERT OR IGNORE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');", TableName, modName, modId, modVersion, minecraftVersion, fileName, fileVersion, md5Value);
 
             //ExecuteDatabaseQuery(sql, true);
-            int newid = _modInfo.Last().ID + 1;
-            var modinfo = new ModInfo
+            if (_modInfo.Count(m => m.MD5.Equals(md5Value)) != 0)
             {
-                ID = newid,
-                ModName = modName,
-                ModID = modId,
-                ModVersion = modVersion,
-                MinecraftVersion = minecraftVersion,
-                FileName = fileName,
-                FileVersion = fileVersion,
-                MD5 = md5Value,
-                OnSolder = onSolder ? 1 : 0
-            };
-            _modInfo.Add(modinfo);
+                var mod = _modInfo.SingleOrDefault(m => m.MD5.Equals(md5Value));
+                if (mod.OnSolder != (onSolder ? 1 : 0))
+                {
+                    mod.OnSolder = onSolder ? 1 : 0;
+                }
+            }
+            else
+            {
+                int newid = _modInfo.Last().ID + 1;
+                var modinfo = new ModInfo
+                {
+                    ID = newid,
+                    ModName = modName,
+                    ModID = modId,
+                    ModVersion = modVersion,
+                    MinecraftVersion = minecraftVersion,
+                    FileName = fileName,
+                    FileVersion = fileVersion,
+                    MD5 = md5Value,
+                    OnSolder = onSolder ? 1 : 0
+                };
+                _modInfo.Add(modinfo);
+            }
         }
 
         public Boolean IsFileInSolder(String filePath)
         {
             String md5Value = CalculateMd5(filePath);
-            var tmp = _modInfo.Where(m => m.MD5.Equals(md5Value));
             var mod = _modInfo.SingleOrDefault(m => m.MD5.Equals(md5Value));
-            Debug.WriteLine(tmp);
-            return mod != null;
+            if (mod != null)
+            {
+                return mod.OnSolder == 1;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public Mcmod GetModInfo(String md5Value)
