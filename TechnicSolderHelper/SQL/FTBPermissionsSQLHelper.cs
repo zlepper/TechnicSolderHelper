@@ -378,6 +378,16 @@ namespace TechnicSolderHelper.SQL
                 // json size doesn't matter because only a small piece is read at a time from the HTTP request
                 ftbPermissionses = serializer.Deserialize<List<ftbPermissions>>(reader);
             }
+            foreach (ftbPermissions permissions in ftbPermissionses)
+            {
+                for (int i = 0; i < permissions.modIDs.Count; i++)
+                {
+                    if (permissions.modIDs[i].Contains("|"))
+                    {
+                        permissions.modIDs[i] = permissions.modIDs[i].Replace("|", "+");
+                    }
+                }
+            }
             AddFtbModPerms(ftbPermissionses);
         }
     }

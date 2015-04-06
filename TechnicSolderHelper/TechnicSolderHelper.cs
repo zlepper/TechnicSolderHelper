@@ -1086,7 +1086,7 @@ namespace TechnicSolderHelper
                 _process.WaitForExit();
                 Directory.Delete(Path.Combine(_outputDirectory, "minecraft"), true);
             }
-
+            _modsSqLhelper.SaveData();
             if (CreateTechnicPack.Checked && IncludeForgeVersion.Checked)
             {
                 string selectedBuild = ForgeBuild.SelectedItem.ToString();

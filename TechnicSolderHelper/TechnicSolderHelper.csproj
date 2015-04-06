@@ -214,6 +214,7 @@
       <DependentUpon>modinfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Modlist.cs" />
+    <Compile Include="MoreLinq\MoreEnumerable.DistinctBy.cs" />
     <Compile Include="PermLevel.cs" />
     <Compile Include="ReadOnlyRadioButton.cs">
       <SubType>Component</SubType>

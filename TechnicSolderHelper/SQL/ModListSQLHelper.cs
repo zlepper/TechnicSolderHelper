@@ -1,18 +1,165 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using Mono.Data.Sqlite;
 using System.Diagnostics;
+using System.Linq;
+using Mono.Data.Sqlite;
 
 namespace TechnicSolderHelper.SQL
 {
+    public class ModInfo : IEquatable<ModInfo>
+    {
+        public int ID { get; set; }
+        public string ModName { get; set; }
+        public string ModID { get; set; }
+        public string ModVersion { get; set; }
+        public string MinecraftVersion { get; set; }
+        public string FileName { get; set; }
+        public string FileVersion { get; set; }
+        public string MD5 { get; set; }
+        public int OnSolder { get; set; }
+
+
+        public bool Equals(ModInfo other)
+        {
+            if (other == null) return false;
+            return (this.MD5.Equals(other.MD5));
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 13;
+                hash = (hash * 7) + MD5.GetHashCode();
+                return hash;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            ModInfo other = obj as ModInfo;
+            if (other != null)
+            {
+                return Equals(other);
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
     public class ModListSqlHelper : SqlHelper
     {
+        private static List<ModInfo> _modInfo;
         public ModListSqlHelper()
             : base("modlist")
         {
             var createTableString = String.Format("CREATE TABLE IF NOT EXISTS '{0}'('ID' INTEGER, 'ModName' TEXT, 'ModID' TEXT, 'ModVersion' TEXT, 'MinecraftVersion' TEXT, 'FileName' TEXT, 'FileVersion' TEXT, 'MD5' TEXT UNIQUE, 'OnSolder' NUMERIC, PRIMARY KEY(ID));", TableName);
             ExecuteDatabaseQuery(createTableString);
+            if (_modInfo == null)
+            {
+                ReloadEverything();
+            }
+        }
+
+        private void ReloadEverything()
+        {
+            string sql = String.Format("SELECT * FROM {0};", TableName);
+            var beforeSort = new List<ModInfo>();
+            if (Globalfunctions.IsUnix())
+            {
+                using (SqliteConnection conn = new SqliteConnection(ConnectionString))
+                {
+                    conn.Open();
+                    using (var cmd = new SqliteCommand(sql, conn))
+                    {
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var modinfo = new ModInfo
+                                {
+                                    ID = Convert.ToInt32(reader["ID"]),
+                                    ModName = reader["ModName"].ToString(),
+                                    ModID = reader["ModID"].ToString(),
+                                    ModVersion = reader["ModVersion"].ToString(),
+                                    MinecraftVersion = reader["MinecraftVersion"].ToString(),
+                                    FileName = reader["FileName"].ToString(),
+                                    FileVersion = reader["FileVersion"].ToString(),
+                                    MD5 = reader["MD5"].ToString(),
+                                    OnSolder = Convert.ToInt32(reader["OnSolder"])
+                                };
+                                beforeSort.Add(modinfo);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (var conn = new SQLiteConnection(ConnectionString))
+                {
+                    conn.Open();
+                    using (var cmd = new SQLiteCommand(sql, conn))
+                    {
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var modinfo = new ModInfo
+                                {
+                                    ID = Convert.ToInt32(reader["ID"]),
+                                    ModName = reader["ModName"].ToString(),
+                                    ModID = reader["ModID"].ToString(),
+                                    ModVersion = reader["ModVersion"].ToString(),
+                                    MinecraftVersion = reader["MinecraftVersion"].ToString(),
+                                    FileName = reader["FileName"].ToString(),
+                                    FileVersion = reader["FileVersion"].ToString(),
+                                    MD5 = reader["MD5"].ToString(),
+                                    OnSolder = Convert.ToInt32(reader["OnSolder"])
+                                };
+                                beforeSort.Add(modinfo);
+                            }
+                        }
+                    }
+                }
+            }
+            _modInfo = beforeSort.OrderBy(m => m.ID).Distinct().ToList();
+        }
+
+        public void SaveData()
+        {
+            using (SqliteConnection conn = new SqliteConnection(ConnectionString))
+            {
+                conn.Open();
+                string sql = string.Format("DELETE FROM {0};", TableName);
+                using (SqliteCommand cmd = new SqliteCommand(sql, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                sql =
+                    String.Format(
+                        "INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') VALUES(@modname, @modid, @modversion, @minecraftversion, @filename, @fileversion, @md5, @onsolder);",
+                        TableName);
+                using (SqliteCommand cmd = new SqliteCommand(sql, conn))
+                {
+                    foreach (var modInfo in _modInfo)
+                    {
+                        cmd.Parameters.AddWithValue("@modname", modInfo.ModName);
+                        cmd.Parameters.AddWithValue("@modid", modInfo.ModID);
+                        cmd.Parameters.AddWithValue("@modversion", modInfo.ModVersion);
+                        cmd.Parameters.AddWithValue("@minecraftversion", modInfo.MinecraftVersion);
+                        cmd.Parameters.AddWithValue("@filename", modInfo.FileName);
+                        cmd.Parameters.AddWithValue("@fileversion", modInfo.FileVersion);
+                        cmd.Parameters.AddWithValue("@md5", modInfo.MD5);
+                        cmd.Parameters.AddWithValue("@onsolder", modInfo.OnSolder);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -40,136 +187,58 @@ namespace TechnicSolderHelper.SQL
         /// </param>
         public void AddMod(String modName, String modId, String modVersion, String minecraftVersion, String fileName, String md5Value, Boolean onSolder)
         {
-            modName = modName.Replace("'", "`");
-            modVersion = modVersion.Replace("'", "`");
-            modId = modId.Replace("'", "`");
-            minecraftVersion = minecraftVersion.Replace("'", "`");
-            fileName = fileName.Replace("'", "`");
+            //modName = modName.Replace("'", "`");
+            //modVersion = modVersion.Replace("'", "`");
+            //modId = modId.Replace("'", "`");
+            //minecraftVersion = minecraftVersion.Replace("'", "`");
+            //fileName = fileName.Replace("'", "`");
             String fileVersion = minecraftVersion + "-" + modVersion;
-            var sql = String.Format(onSolder ? "INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '1');" : "INSERT OR IGNORE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');", TableName, modName, modId, modVersion, minecraftVersion, fileName, fileVersion, md5Value);
+            //var sql = String.Format(onSolder ? "INSERT OR REPLACE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '1');" : "INSERT OR IGNORE INTO {0} ('ModName', 'ModID', 'ModVersion', 'MinecraftVersion', 'FileName', 'FileVersion', 'MD5', 'OnSolder') values ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '0');", TableName, modName, modId, modVersion, minecraftVersion, fileName, fileVersion, md5Value);
 
-            ExecuteDatabaseQuery(sql, true);
+            //ExecuteDatabaseQuery(sql, true);
+            int newid = _modInfo.Last().ID + 1;
+            var modinfo = new ModInfo
+            {
+                ID = newid,
+                ModName = modName,
+                ModID = modId,
+                ModVersion = modVersion,
+                MinecraftVersion = minecraftVersion,
+                FileName = fileName,
+                FileVersion = fileVersion,
+                MD5 = md5Value,
+                OnSolder = onSolder ? 1 : 0
+            };
+            _modInfo.Add(modinfo);
         }
 
         public Boolean IsFileInSolder(String filePath)
         {
             String md5Value = CalculateMd5(filePath);
-            String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE '{1}';", TableName, md5Value);
-            if (IsUnix())
-            {
-                using (SqliteConnection db = new SqliteConnection(ConnectionString))
-                {
-                    db.Open();
-                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
-                    {
-                        using (SqliteDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                if (reader["MD5"].ToString().Equals(md5Value))
-                                {
-                                    if (reader["OnSolder"].ToString().Equals("1"))
-                                    {
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-                {
-                    db.Open();
-                    using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                    {
-                        using (SQLiteDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                if (reader["MD5"].ToString().Equals(md5Value))
-                                {
-                                    if (reader["OnSolder"].ToString().Equals("1"))
-                                    {
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
-
+            var tmp = _modInfo.Where(m => m.MD5.Equals(md5Value));
+            var mod = _modInfo.SingleOrDefault(m => m.MD5.Equals(md5Value));
+            Debug.WriteLine(tmp);
+            return mod != null;
         }
 
         public Mcmod GetModInfo(String md5Value)
         {
-            String sql = String.Format("SELECT * FROM {0} WHERE MD5 LIKE @md5;", TableName);
-            if (IsUnix())
+            var mod = _modInfo.SingleOrDefault(m => m.MD5.Equals(md5Value));
+            if (mod == null) return null;
+            return new Mcmod
             {
-                using (SqliteConnection db = new SqliteConnection(ConnectionString))
-                {
-                    db.Open();
-                    using (SqliteCommand cmd = new SqliteCommand(sql, db))
-                    {
-                        cmd.Parameters.AddWithValue("@md5", md5Value);
-                        using (SqliteDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                Mcmod mod = new Mcmod();
-                                while (reader.Read())
-                                {
-                                    mod.Name = reader["ModName"].ToString();
-                                    mod.Mcversion = reader["MinecraftVersion"].ToString();
-                                    mod.Modid = reader["ModID"].ToString();
-                                    mod.Version = reader["ModVersion"].ToString();
-                                }
-                                return mod;
-                            }
-                            return null;
-                        }
-                    }
-                }
-            }
-            using (SQLiteConnection db = new SQLiteConnection(ConnectionString))
-            {
-                db.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
-                {
-                    cmd.Parameters.AddWithValue("@md5", md5Value);
-                    using (SQLiteDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            Mcmod mod = new Mcmod();
-                            while (reader.Read())
-                            {
-                                mod.Name = reader["ModName"].ToString();
-                                mod.Mcversion = reader["MinecraftVersion"].ToString();
-                                mod.Modid = reader["ModID"].ToString();
-                                mod.Version = reader["ModVersion"].ToString();
-                            }
-                            return mod;
-                        }
-                        return null;
-                    }
-                }
-            }
+                Name = mod.ModName,
+                Mcversion = mod.MinecraftVersion,
+                Modid = mod.ModID,
+                Version = mod.ModVersion
+            };
         }
 
         public override void ResetTable()
         {
             String sql = String.Format("UPDATE {0} SET OnSolder = '0'", TableName);
-            ExecuteDatabaseQuery(sql, true);
+            ExecuteDatabaseQuery(sql);
+            ReloadEverything();
         }
 
         public DataTable GetTableInfoForEditing()
@@ -186,7 +255,7 @@ namespace TechnicSolderHelper.SQL
                     using (SqliteCommand cmd = new SqliteCommand(sql, db))
                     {
                         using (SqliteDataReader reader = cmd.ExecuteReader())
-                        table.Load(reader);
+                            table.Load(reader);
                     }
                 }
             }
@@ -198,7 +267,7 @@ namespace TechnicSolderHelper.SQL
                     using (SQLiteCommand cmd = new SQLiteCommand(sql, db))
                     {
                         using (SQLiteDataReader reader = cmd.ExecuteReader())
-                        table.Load(reader);
+                            table.Load(reader);
                     }
                 }
             }
@@ -223,10 +292,12 @@ namespace TechnicSolderHelper.SQL
                         break;
                 }
             }
+            ReloadEverything();
         }
 
         private void DeleteRow(String id)
         {
+
             String sql = String.Format("DELETE FROM {0} WHERE ID = @id;", TableName);
             if (Globalfunctions.IsUnix())
             {
