@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -389,9 +388,28 @@ namespace TechnicSolderHelper
                 _modpackId = _solderSqlHandler.GetModpackId(_modpackName);
             }
             _buildId = _solderSqlHandler.GetBuildId(_modpackId, _modpackVersion);
+            string javaVersion = "";
+            switch (comboBox1.Text)
+            {
+                case "Java 1.7":
+                    javaVersion = "1.7";
+                    break;
+                case "Java 1.8":
+                    javaVersion = "1.8";
+                    break;
+                case "Java 1.6":
+                    javaVersion = "1.6";
+                    break;
+            }
+            int memory;
+            bool parsed = Int32.TryParse(minimumMemoryTextBox.Text, out memory);
+            if (!parsed)
+            {
+                memory = 0;
+            }
             if (_buildId == -1)
             {
-                _solderSqlHandler.CreateModpackBuild(_modpackId, _modpackVersion, _currentMcVersion);
+                _solderSqlHandler.CreateModpackBuild(_modpackId, _modpackVersion, _currentMcVersion, javaVersion, memory);
                 _buildId = _solderSqlHandler.GetBuildId(_modpackId, _modpackVersion);
             }
         }
@@ -1873,16 +1891,19 @@ namespace TechnicSolderHelper
             if (useSolder.Checked)
             {
                 configureSolder.Show();
+                label3.Show();
+                label6.Show();
+                minimumMemoryTextBox.Show();
+                comboBox1.Show();
             }
             else
             {
                 configureSolder.Hide();
+                label3.Hide();
+                label6.Hide();
+                minimumMemoryTextBox.Hide();
+                comboBox1.Hide();
             }
-        }
-
-        private void savesqlcommands_CheckedChanged(object sender, EventArgs e)
-        {
-            _confighandler.SetConfig("saveSQL", savesqlcommands.Checked);
         }
 
         private void UseS3_CheckedChanged(object sender, EventArgs e)
@@ -2082,8 +2103,6 @@ namespace TechnicSolderHelper
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-
-
             }
         }
     }

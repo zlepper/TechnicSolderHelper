@@ -234,7 +234,11 @@ namespace TechnicSolderHelper.SQL
             }
             else
             {
-                int newid = _modInfo.Last().ID + 1;
+                int newid = 0;
+                if (_modInfo.Count > 0)
+                {
+                     newid = _modInfo.Last().ID + 1;
+                }
                 var modinfo = new ModInfo
                 {
                     ID = newid,

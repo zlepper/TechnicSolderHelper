@@ -82,10 +82,8 @@ namespace TechnicSolderHelper
             this.ZipPack = new System.Windows.Forms.RadioButton();
             this.SolderPack = new System.Windows.Forms.RadioButton();
             this.IncludeConfigZip = new System.Windows.Forms.CheckBox();
-            this.testButton = new System.Windows.Forms.Button();
             this.useSolder = new System.Windows.Forms.CheckBox();
             this.configureSolder = new System.Windows.Forms.Button();
-            this.savesqlcommands = new System.Windows.Forms.CheckBox();
             this.UseS3 = new System.Windows.Forms.CheckBox();
             this.ConfigureS3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -97,6 +95,10 @@ namespace TechnicSolderHelper
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.button5 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.minimumMemoryTextBox = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
@@ -192,8 +194,8 @@ namespace TechnicSolderHelper
             this.button3.Size = new System.Drawing.Size(119, 47);
             this.button3.TabIndex = 6;
             this.button3.Text = "Update Stored FTB permissions";
-            this.toolTip1.SetToolTip(this.button3, "Update the stored information about mod permissions. WARNING: This will take a long ti" +
-        "me, during which Modpack Helper will be unable to pack your mods.");
+            this.toolTip1.SetToolTip(this.button3, "Update the stored information about mod permissions. WARNING: This will take a lo" +
+        "ng time, during which Modpack Helper will be unable to pack your mods.");
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -251,8 +253,7 @@ namespace TechnicSolderHelper
             this.UploadToFTPServer.Size = new System.Drawing.Size(135, 17);
             this.UploadToFTPServer.TabIndex = 12;
             this.UploadToFTPServer.Text = "Upload to FTP address";
-            this.toolTip1.SetToolTip(this.UploadToFTPServer, "Automatically upload your mods to a server? (Only works for Solder" +
-        " Packs)");
+            this.toolTip1.SetToolTip(this.UploadToFTPServer, "Automatically upload your mods to a server? (Only works for Solder Packs)");
             this.UploadToFTPServer.UseVisualStyleBackColor = true;
             this.UploadToFTPServer.CheckedChanged += new System.EventHandler(this.UploadToFTPServer_CheckedChanged);
             // 
@@ -263,8 +264,8 @@ namespace TechnicSolderHelper
             this.GetForgeVersions.Size = new System.Drawing.Size(119, 27);
             this.GetForgeVersions.TabIndex = 14;
             this.GetForgeVersions.Text = "Get Forge versions";
-            this.toolTip1.SetToolTip(this.GetForgeVersions, "Update the stored Forge version. WARNING: This will take a while," +
-        " during which Modpack Helper will be unable to pack your mods.");
+            this.toolTip1.SetToolTip(this.GetForgeVersions, "Update the stored Forge version. WARNING: This will take a while, during which Mo" +
+        "dpack Helper will be unable to pack your mods.");
             this.GetForgeVersions.UseVisualStyleBackColor = true;
             this.GetForgeVersions.Click += new System.EventHandler(this.GetForgeVersions_Click);
             // 
@@ -538,20 +539,9 @@ namespace TechnicSolderHelper
             this.IncludeConfigZip.Size = new System.Drawing.Size(108, 17);
             this.IncludeConfigZip.TabIndex = 5;
             this.IncludeConfigZip.Text = "Create Config Zip";
-            this.toolTip1.SetToolTip(this.IncludeConfigZip, "Pack the modpack's config files with the modpack");
+            this.toolTip1.SetToolTip(this.IncludeConfigZip, "Pack the modpack\'s config files with the modpack");
             this.IncludeConfigZip.UseVisualStyleBackColor = true;
             this.IncludeConfigZip.CheckedChanged += new System.EventHandler(this.IncludeConfigZip_CheckedChanged);
-            // 
-            // testButton
-            // 
-            this.testButton.Location = new System.Drawing.Point(429, 371);
-            this.testButton.Name = "testButton";
-            this.testButton.Size = new System.Drawing.Size(75, 23);
-            this.testButton.TabIndex = 25;
-            this.testButton.Text = "Test";
-            this.testButton.UseVisualStyleBackColor = true;
-            this.testButton.Visible = false;
-            this.testButton.Click += new System.EventHandler(this.testmysql_Click);
             // 
             // useSolder
             // 
@@ -576,22 +566,10 @@ namespace TechnicSolderHelper
             this.configureSolder.UseVisualStyleBackColor = true;
             this.configureSolder.Click += new System.EventHandler(this.configureSolder_Click);
             // 
-            // savesqlcommands
-            // 
-            this.savesqlcommands.AutoSize = true;
-            this.savesqlcommands.Location = new System.Drawing.Point(168, 351);
-            this.savesqlcommands.Name = "savesqlcommands";
-            this.savesqlcommands.Size = new System.Drawing.Size(129, 17);
-            this.savesqlcommands.TabIndex = 28;
-            this.savesqlcommands.Text = "Save SQL commands";
-            this.savesqlcommands.UseVisualStyleBackColor = true;
-            this.savesqlcommands.Visible = false;
-            this.savesqlcommands.CheckedChanged += new System.EventHandler(this.savesqlcommands_CheckedChanged);
-            // 
             // UseS3
             // 
             this.UseS3.AutoSize = true;
-            this.UseS3.Location = new System.Drawing.Point(168, 375);
+            this.UseS3.Location = new System.Drawing.Point(152, 399);
             this.UseS3.Name = "UseS3";
             this.UseS3.Size = new System.Drawing.Size(102, 17);
             this.UseS3.TabIndex = 29;
@@ -602,7 +580,7 @@ namespace TechnicSolderHelper
             // 
             // ConfigureS3
             // 
-            this.ConfigureS3.Location = new System.Drawing.Point(168, 399);
+            this.ConfigureS3.Location = new System.Drawing.Point(152, 422);
             this.ConfigureS3.Name = "ConfigureS3";
             this.ConfigureS3.Size = new System.Drawing.Size(103, 23);
             this.ConfigureS3.TabIndex = 30;
@@ -613,7 +591,7 @@ namespace TechnicSolderHelper
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(428, 342);
+            this.button4.Location = new System.Drawing.Point(429, 371);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 31;
@@ -693,11 +671,55 @@ namespace TechnicSolderHelper
             this.toolTip1.InitialDelay = 100;
             this.toolTip1.ReshowDelay = 20;
             // 
+            // minimumMemoryTextBox
+            // 
+            this.minimumMemoryTextBox.Location = new System.Drawing.Point(330, 323);
+            this.minimumMemoryTextBox.Name = "minimumMemoryTextBox";
+            this.minimumMemoryTextBox.Size = new System.Drawing.Size(124, 20);
+            this.minimumMemoryTextBox.TabIndex = 36;
+            this.toolTip1.SetToolTip(this.minimumMemoryTextBox, "Specify a minimum memory requirement for the pack.");
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Java 1.8",
+            "Java 1.7",
+            "Java 1.6",
+            "No requirement"});
+            this.comboBox1.Location = new System.Drawing.Point(168, 363);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 37;
+            this.toolTip1.SetToolTip(this.comboBox1, "The minimum required java version to play the pack. ");
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(165, 350);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(112, 13);
+            this.label3.TabIndex = 38;
+            this.label3.Text = "Minimum Java Version";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(330, 307);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(124, 13);
+            this.label6.TabIndex = 39;
+            this.label6.Text = "Minimum Memory (in MB)";
+            // 
             // SolderHelper
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(784, 483);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.minimumMemoryTextBox);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.ForgeBuild);
@@ -705,10 +727,8 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.button4);
             this.Controls.Add(this.ConfigureS3);
             this.Controls.Add(this.UseS3);
-            this.Controls.Add(this.savesqlcommands);
             this.Controls.Add(this.configureSolder);
             this.Controls.Add(this.useSolder);
-            this.Controls.Add(this.testButton);
             this.Controls.Add(this.configureFTP);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.getliteloaderversions);
@@ -791,10 +811,8 @@ namespace TechnicSolderHelper
         private Button getliteloaderversions;
         private GroupBox groupBox1;
         private Button configureFTP;
-        private Button testButton;
         private CheckBox useSolder;
         private Button configureSolder;
-        private CheckBox savesqlcommands;
 
         public SolderHelper()
         {
@@ -879,10 +897,18 @@ namespace TechnicSolderHelper
             if (useSolder.Checked)
             {
                 configureSolder.Show();
+                label3.Show();
+                label6.Show();
+                minimumMemoryTextBox.Show();
+                comboBox1.Show();
             }
             else
             {
                 configureSolder.Hide();
+                label3.Hide();
+                label6.Hide();
+                minimumMemoryTextBox.Hide();
+                comboBox1.Hide();
             }
             try
             {
@@ -1089,17 +1115,6 @@ namespace TechnicSolderHelper
             {
                 this.MinimumSize = new Size(800, 503);
             }
-            Debug.WriteLine(this.Width);
-            Debug.WriteLine(this.Height);
-            Debug.WriteLine(groupBox1.Width);
-            if (Debugger.IsAttached)
-            {
-                testButton.Show();
-            }
-            else
-            {
-                testButton.Hide();
-            }
         }
 
         private CheckBox UseS3;
@@ -1120,5 +1135,9 @@ namespace TechnicSolderHelper
         private ToolStripStatusLabel StatusLabel;
         private Button button5;
         private ToolTip toolTip1;
+        private TextBox minimumMemoryTextBox;
+        private ComboBox comboBox1;
+        private Label label3;
+        private Label label6;
     }
 }

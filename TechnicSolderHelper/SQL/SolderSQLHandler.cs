@@ -293,9 +293,9 @@ namespace TechnicSolderHelper.SQL
             }
         }
 
-        public void CreateModpackBuild(int modpackId, String version, String mcVersion)
+        public void CreateModpackBuild(int modpackId, String version, String mcVersion, String javaVersion, int memory)
         {
-            String sql = string.Format("INSERT INTO {0}.{1}(modpack_id, version, minecraft, is_published, private, created_at, updated_at, minecraft_md5) VALUES(@modpack, @version, @mcVersion, 0, 0, @create, @update, 0);", _database, _prefix + "builds");
+            String sql = string.Format("INSERT INTO {0}.{1}(modpack_id, version, minecraft, is_published, private, created_at, updated_at, minecraft_md5, min_java, min_memory) VALUES(@modpack, @version, @mcVersion, 0, 0, @create, @update, 0, @minJava, @minMemory);", _database, _prefix + "builds");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
@@ -306,6 +306,8 @@ namespace TechnicSolderHelper.SQL
                     cmd.Parameters.AddWithValue("@mcVersion", mcVersion);
                     cmd.Parameters.AddWithValue("@create", DateTime.Now);
                     cmd.Parameters.AddWithValue("@update", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@minJava", String.IsNullOrWhiteSpace(javaVersion) ? "" : javaVersion);
+                    cmd.Parameters.AddWithValue("@minMemory", memory);
                     cmd.ExecuteNonQuery();
                 }
                 sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @id;", _database, _prefix + "modpacks");
