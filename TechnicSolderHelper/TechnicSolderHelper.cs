@@ -10,13 +10,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using TechnicSolderHelper.SQL;
 using TechnicSolderHelper.Confighandler;
-using TechnicSolderHelper.SQL.forge;
 using TechnicSolderHelper.FileUpload;
 using TechnicSolderHelper.s3;
 using TechnicSolderHelper.SmallInterfaces;
-using FileInfo = System.IO.FileInfo;
+using TechnicSolderHelper.SQL;
+using TechnicSolderHelper.SQL.forge;
 using TechnicSolderHelper.SQL.liteloader;
 using TechnicSolderHelper.SQL.workTogether;
 

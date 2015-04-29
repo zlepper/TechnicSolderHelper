@@ -1,11 +1,14 @@
-﻿namespace TechnicSolderHelper.s3
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace TechnicSolderHelper.s3
 {
     partial class S3Info
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -187,18 +190,18 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox serviceURL;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox accessKey;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox secretKey;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button Save;
-        private System.Windows.Forms.Button test;
-        private System.Windows.Forms.Button cancel;
-        private System.Windows.Forms.ListBox buckets;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox newBucketName;
-        private System.Windows.Forms.Label label4;
+        private TextBox serviceURL;
+        private Label label1;
+        private TextBox accessKey;
+        private Label label2;
+        private TextBox secretKey;
+        private Label label3;
+        private Button Save;
+        private Button test;
+        private Button cancel;
+        private ListBox buckets;
+        private Button button1;
+        private TextBox newBucketName;
+        private Label label4;
     }
 }

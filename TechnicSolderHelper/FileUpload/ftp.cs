@@ -4,9 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
-using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.cryptography;
-using TechnicSolderHelper.Properties;
+using TechnicSolderHelper.Confighandler;
 
 namespace TechnicSolderHelper.FileUpload
 {

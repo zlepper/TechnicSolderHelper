@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.cryptography;
-using TechnicSolderHelper.Properties;
+using TechnicSolderHelper.Confighandler;
 
 namespace TechnicSolderHelper.SQL
 {

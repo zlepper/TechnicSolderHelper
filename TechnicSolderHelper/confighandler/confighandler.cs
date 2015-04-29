@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mono.Data.Sqlite;
+using TechnicSolderHelper.SQL;
 
 namespace TechnicSolderHelper.Confighandler
 {
-    public class ConfigHandler : TechnicSolderHelper.SQL.SqlHelper
+    public class ConfigHandler : SqlHelper
     {
         private readonly String _createTableString;
 

@@ -1,11 +1,14 @@
-﻿namespace TechnicSolderHelper.SQL
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace TechnicSolderHelper.SQL
 {
     partial class DatabaseEditor
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -116,10 +119,10 @@
 
         #endregion
 
-        private System.Windows.Forms.DataGridView data;
-        private System.Windows.Forms.Button Save;
-        private System.Windows.Forms.Button Cancel;
-        private System.Windows.Forms.Button SaveAndExit;
-        private System.Windows.Forms.Button highLightVerBtn;
+        private DataGridView data;
+        private Button Save;
+        private Button Cancel;
+        private Button SaveAndExit;
+        private Button highLightVerBtn;
     }
 }

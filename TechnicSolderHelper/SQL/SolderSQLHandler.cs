@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
-using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.cryptography;
+using TechnicSolderHelper.Confighandler;
 
 namespace TechnicSolderHelper.SQL
 {

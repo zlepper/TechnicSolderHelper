@@ -4,12 +4,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Security.AccessControl;
 using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using TechnicSolderHelper.SQL;
-using TechnicSolderHelper.Properties;
 
 namespace TechnicSolderHelper
 {
@@ -1109,7 +1106,7 @@ namespace TechnicSolderHelper
             }
             if (Globalfunctions.IsUnix())
             {
-                this.MinimumSize = new System.Drawing.Size(923, 527);
+                this.MinimumSize = new Size(923, 527);
             }
             else
             {

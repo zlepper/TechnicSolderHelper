@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TechnicSolderHelper.cryptography;
 using TechnicSolderHelper.Confighandler;
@@ -125,7 +119,7 @@ namespace TechnicSolderHelper.s3
                 {
                     String bucket = buckets.SelectedItem.ToString();
                     ConfigHandler ch = new ConfigHandler();
-                    cryptography.Crypto crypto = new Crypto();
+                    Crypto crypto = new Crypto();
                     ch.SetConfig("S3url", serviceURL.Text);
                     ch.SetConfig("S3accessKey", crypto.EncryptToString(accessKey.Text));
                     ch.SetConfig("S3secretKey", crypto.EncryptToString(secretKey.Text));

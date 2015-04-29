@@ -1,21 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 using TechnicSolderHelper.SQL;
-using TechnicSolderHelper.Confighandler;
-using TechnicSolderHelper.SQL.forge;
-using TechnicSolderHelper.FileUpload;
-using TechnicSolderHelper.s3;
-using FileInfo = System.IO.FileInfo;
-using TechnicSolderHelper.SQL.liteloader;
 
 namespace TechnicSolderHelper
 {

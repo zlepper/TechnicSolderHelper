@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using TechnicSolderHelper.Confighandler;
 using TechnicSolderHelper.cryptography;
+using TechnicSolderHelper.Confighandler;
 
 namespace TechnicSolderHelper.s3
 {

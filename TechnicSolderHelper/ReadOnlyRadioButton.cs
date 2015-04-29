@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace TechnicSolderHelper
 {
-    public class ReadOnlyRadioButton : System.Windows.Forms.RadioButton
+    public class ReadOnlyRadioButton : RadioButton
     {
         protected override void OnClick(EventArgs e)
         {

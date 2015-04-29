@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using Mono.Data.Sqlite;
-using TechnicSolderHelper.SQL;
 
 namespace TechnicSolderHelper.SQL.liteloader
 {

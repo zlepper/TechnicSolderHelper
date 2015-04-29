@@ -1,5 +1,5 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace TechnicSolderHelper
 {
@@ -8,7 +8,7 @@ namespace TechnicSolderHelper
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -558,49 +558,49 @@ namespace TechnicSolderHelper
 
         #endregion
 
-        private System.Windows.Forms.ListBox modlist;
-        private System.Windows.Forms.GroupBox dataBox;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBoxModVersion;
-        private System.Windows.Forms.TextBox textBoxModID;
-        private System.Windows.Forms.TextBox textBoxModName;
-        private System.Windows.Forms.GroupBox technicPermissions;
+        private ListBox modlist;
+        private GroupBox dataBox;
+        private Label label3;
+        private Label label2;
+        private Label label1;
+        private TextBox textBoxModVersion;
+        private TextBox textBoxModID;
+        private TextBox textBoxModName;
+        private GroupBox technicPermissions;
         private ReadOnlyRadioButton permissionTechnicUnknown;
         private ReadOnlyRadioButton permissionTechnicRequest;
         private ReadOnlyRadioButton permissionTechnicNotify;
         private ReadOnlyRadioButton permissionTechnicClosed;
         private ReadOnlyRadioButton permissionTechnicFTBExclusive;
         private ReadOnlyRadioButton permissionTechnicOpen;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBoxAuthor;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBoxTechnicModLink;
-        private System.Windows.Forms.TextBox textBoxTechnicPermissionLink;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBoxTechnicLicenseLink;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox textBoxFileName;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.CheckBox showDone;
-        private System.Windows.Forms.GroupBox FTBPermissions;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
+        private Label label4;
+        private TextBox textBoxAuthor;
+        private Label label6;
+        private Label label5;
+        private TextBox textBoxTechnicModLink;
+        private TextBox textBoxTechnicPermissionLink;
+        private Label label7;
+        private TextBox textBoxTechnicLicenseLink;
+        private Label label8;
+        private TextBox textBoxFileName;
+        private Label label9;
+        private ToolTip toolTip1;
+        private CheckBox showDone;
+        private GroupBox FTBPermissions;
+        private Label label10;
+        private Label label11;
+        private Label label12;
         private ReadOnlyRadioButton permssionFTBUnknown;
         private ReadOnlyRadioButton permissionFTBRequest;
         private ReadOnlyRadioButton permissionFTBNotify;
         private ReadOnlyRadioButton permissionFTBClosed;
-        private System.Windows.Forms.TextBox textBoxFTBLicenseLink;
-        private System.Windows.Forms.TextBox textBoxFTBModLink;
-        private System.Windows.Forms.TextBox textBoxFTBPermissionLink;
+        private TextBox textBoxFTBLicenseLink;
+        private TextBox textBoxFTBModLink;
+        private TextBox textBoxFTBPermissionLink;
         private ReadOnlyRadioButton permissionFTBFTBExclusive;
         private ReadOnlyRadioButton permissionFTBOpen;
-        private System.Windows.Forms.Button getPermissions;
-        private System.Windows.Forms.Button Done;
-        private System.Windows.Forms.CheckBox skipmod;
+        private Button getPermissions;
+        private Button Done;
+        private CheckBox skipmod;
     }
 }
