@@ -81,6 +81,8 @@ namespace TechnicSolderHelper.FileUpload
             this.Host.Name = "Host";
             this.Host.Size = new System.Drawing.Size(179, 20);
             this.Host.TabIndex = 2;
+            this.Host.Text = "ftp://";
+            this.Host.TextChanged += new System.EventHandler(this.Host_TextChanged);
             // 
             // label3
             // 
@@ -121,7 +123,7 @@ namespace TechnicSolderHelper.FileUpload
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // ftpInfo
+            // FtpInfo
             // 
             this.AcceptButton = this.Acceptbutton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -137,7 +139,7 @@ namespace TechnicSolderHelper.FileUpload
             this.Controls.Add(this.Password);
             this.Controls.Add(this.Username);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Name = "ftpInfo";
+            this.Name = "FtpInfo";
             this.Text = "ftpInfo";
             this.ResumeLayout(false);
             this.PerformLayout();

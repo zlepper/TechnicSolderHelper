@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using Mono.Data.Sqlite;
@@ -31,7 +32,8 @@ namespace TechnicSolderHelper.SQL
         /// If no level found, return PermissionLevel.Unknown</returns>
         public PermissionLevel DoFtbHavePermission(String toCheck, Boolean isPublic)
         {
-            toCheck = toCheck.Replace("'", "`");
+            toCheck = toCheck.Replace("'", "`").Replace("|", "+");
+            Debug.WriteLine(toCheck);
 
             var sql = String.Format("SELECT PublicPerm, PrivatePerm FROM {0} WHERE ShortName LIKE '{1}' OR ModID LIKE '{1}';", TableName, toCheck.ToLower());
             if (IsUnix())
@@ -115,6 +117,8 @@ namespace TechnicSolderHelper.SQL
 
         public String GetInfoFromModId(String modId, InfoType infoType)
         {
+            modId = modId.Replace("|", "+");
+            Debug.WriteLine(modId);
             String sql = String.Format("SELECT {1} FROM {0} WHERE ModID LIKE @modid OR ShortName LIKE @shortname;", TableName, infoType);
 
             if (IsUnix())

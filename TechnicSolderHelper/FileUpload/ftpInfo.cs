@@ -90,5 +90,13 @@ namespace TechnicSolderHelper.FileUpload
         {
             Close();
         }
+
+        private void Host_TextChanged(object sender, EventArgs e)
+        {
+            if (!Host.Text.StartsWith("ftp://"))
+            {
+                Host.Text = "ftp://" + Host.Text;
+            }
+        }
     }
 }
