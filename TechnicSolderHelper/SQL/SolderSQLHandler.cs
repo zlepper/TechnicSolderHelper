@@ -235,6 +235,7 @@ namespace TechnicSolderHelper.SQL
         public Boolean IsModversionOnline(String modid, String version)
         {
             int id = GetModId(modid);
+            if (id == -1) return false;
             return IsModversionOnline(id, version);
         }
 

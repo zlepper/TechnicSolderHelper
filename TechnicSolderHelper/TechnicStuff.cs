@@ -15,18 +15,18 @@ namespace TechnicSolderHelper
         public StringBuilder AddedModStringBuilder = new StringBuilder();
         private readonly Dictionary<string, int> _processesUsingModID = new Dictionary<string, int>();
 
-        private void CreateOwnPermissionInfo(String modname, String modid, String modauthor, String linkToPermission, String modLink)
+        private void CreateOwnPermissionInfo(string modname, string modid, string modauthor, string linkToPermission, string modLink)
         {
-            String output = String.Format("{0}({1}) by {2} {3}Permission: {4} {3}Link to mod: {5}{3}{3}", modname, modid, modauthor, Environment.NewLine, linkToPermission, modLink);
+            string output = string.Format("{0}({1}) by {2} {3}Permission: {4} {3}Link to mod: {5}{3}{3}", modname, modid, modauthor, Environment.NewLine, linkToPermission, modLink);
             File.AppendAllText(_ftbOwnPermissionList, output);
         }
 
-        private void CreateTableRow(String firstColumn, String secondColumn, String thirdColumn)
+        private void CreateTableRow(string firstColumn, string secondColumn, string thirdColumn)
         {
-            String addedMod = "<tr>";
-            addedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", firstColumn);
-            addedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", secondColumn);
-            addedMod += String.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", thirdColumn);
+            string addedMod = "<tr>";
+            addedMod += string.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", firstColumn);
+            addedMod += string.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", secondColumn);
+            addedMod += string.Format("<td><input readonly class=\"containsInfo\" value=\"{0}\"></td>", thirdColumn);
             addedMod += "<td><button class=\"Hide\" type=\"button\">Hide</button></td></tr>" + Environment.NewLine;
             AddedModStringBuilder.Append(addedMod);
             //File.AppendAllText(_path, addedMod + Environment.NewLine);
@@ -36,11 +36,11 @@ namespace TechnicSolderHelper
         {
             if (SolderPack.Checked)
             {
-                String inputDirectory = InputFolder.Text;
+                string inputDirectory = InputFolder.Text;
                 inputDirectory = inputDirectory.Replace(Globalfunctions.PathSeperator + "mods", "");
 
                 _outputDirectory = OutputFolder.Text;
-                String configFileName;
+                string configFileName;
                 if (_modpackName == null)
                     configFileName =
                         MakeUrlFriendly(
@@ -50,7 +50,7 @@ namespace TechnicSolderHelper
                 else
                     configFileName = MakeUrlFriendly(_modpackName) + "-configs";
                 var configVersion = _modpackVersion ?? Prompt.ShowDialog("What is the config version?", "Config Version");
-                String configFileZipName = configFileName + "-" + configVersion;
+                string configFileZipName = configFileName + "-" + configVersion;
                 if (!(configFileZipName.EndsWith(".zip")))
                 {
                     configFileZipName = configFileZipName.ToLower().Replace(" ", "-") + ".zip";
@@ -81,7 +81,7 @@ namespace TechnicSolderHelper
                     _solderSqlHandler.AddModToSolder(configFileName.ToLower(), null, null, null, configFileName);
                     id = _solderSqlHandler.GetModId(configFileName.ToLower());
                 }
-                String outputFile = Path.Combine(_outputDirectory, "mods", configFileName.ToLower(), configFileZipName.ToLower());
+                string outputFile = Path.Combine(_outputDirectory, "mods", configFileName.ToLower(), configFileZipName.ToLower());
                 _solderSqlHandler.AddNewModversionToSolder(id, _modpackVersion, SqlHelper.CalculateMd5(outputFile).ToLower());
 
                 int modVersionId = _solderSqlHandler.GetModversionId(_solderSqlHandler.GetModId(configFileName.ToLower()), _modpackVersion);
@@ -93,7 +93,7 @@ namespace TechnicSolderHelper
                 {
                     Environment.CurrentDirectory = _inputDirectory.Remove(_inputDirectory.LastIndexOf(Globalfunctions.PathSeperator));
                     _startInfo.FileName = "zip";
-                    _startInfo.Arguments = String.Format("-r \"{0}\" \"config\" -x config/YAMPST.nbt", _modpackArchive);
+                    _startInfo.Arguments = string.Format("-r \"{0}\" \"config\" -x config/YAMPST.nbt", _modpackArchive);
                 }
                 else
                 {
@@ -108,10 +108,10 @@ namespace TechnicSolderHelper
 
         }
 
-        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionLevel pl, String customPermissionText = null)
+        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionLevel pl, string customPermissionText = null)
         {
-            String modlink = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink);
-            while (String.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
+            string modlink = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink);
+            while (string.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
             {
                 modlink = Prompt.ShowDialog("What is the link to " + mod.Name + "?", "Mod link", false, Prompt.ModsLeftString(_totalMods, _currentMod));
                 if (!Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
@@ -122,31 +122,31 @@ namespace TechnicSolderHelper
             CreateTechnicPermissionInfo(mod, pl, customPermissionText, modlink);
         }
 
-        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionLevel pl, String customPermissionText, String modlink)
+        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionLevel pl, string customPermissionText, string modlink)
         {
-            String ps = String.Format("{0}({1}) by {2}{3}At {4}{3}Permissions are {5}{3}", mod.Name, mod.Modid, GetAuthors(mod), Environment.NewLine, modlink, pl);
-            if (!String.IsNullOrWhiteSpace(customPermissionText))
+            string ps = string.Format("{0}({1}) by {2}{3}At {4}{3}Permissions are {5}{3}", mod.Name, mod.Modid, GetAuthors(mod), Environment.NewLine, modlink, pl);
+            if (!string.IsNullOrWhiteSpace(customPermissionText))
             {
                 ps += customPermissionText + Environment.NewLine;
             }
             File.AppendAllText(_technicPermissionList, ps + Environment.NewLine);
         }
 
-        public void CreateTechnicModZip(Mcmod mod, String modfile)
+        public void CreateTechnicModZip(Mcmod mod, string modfile)
         {
             if (mod.IsSkipping)
             {
                 return;
             }
-            String fileName = modfile.Substring(modfile.LastIndexOf(Globalfunctions.PathSeperator) + 1);
-            String modMd5 = SqlHelper.CalculateMd5(modfile);
+            string fileName = modfile.Substring(modfile.LastIndexOf(Globalfunctions.PathSeperator) + 1);
+            string modMd5 = SqlHelper.CalculateMd5(modfile);
             _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, false);
             if (TechnicPermissions.Checked)
             {
                 PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid, TechnicPublicPermissions.Checked);
-                String overwritelink;
+                string overwritelink;
                 OwnPermissions ownPermissions;
-                String customPermissionText;
+                string customPermissionText;
                 switch (permissionLevel)
                 {
                     case PermissionLevel.Open:
@@ -286,7 +286,7 @@ namespace TechnicSolderHelper
                                 }
                                 overwritelink = Prompt.ShowDialog("Permissions for " + mod.Name + " is unknown" + Environment.NewLine + "Please provide proof(an imgur link) of permissions:" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
-                            while (String.IsNullOrWhiteSpace(modLink))
+                            while (string.IsNullOrWhiteSpace(modLink))
                             {
                                 if (modLink != null && modLink.ToLower().Equals("skip".ToLower()))
                                 {
@@ -301,7 +301,7 @@ namespace TechnicSolderHelper
                                 }
                                 modLink = Prompt.ShowDialog("Please provide a link to " + mod.Name + ":" + Environment.NewLine + "Enter \"skip\" to skip the mod.", mod.Name, true, Prompt.ModsLeftString(_totalMods, _currentMod));
                             }
-                            String a = GetAuthors(mod);
+                            string a = GetAuthors(mod);
                             _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink, modLink);
                             CreateOwnPermissionInfo(mod.Name, mod.Modid, a, overwritelink, modLink);
 
@@ -322,7 +322,7 @@ namespace TechnicSolderHelper
 
                     var modid = mod.Modid.Contains("|")
                         ? mod.Modid.Replace("|", "+")
-                            .Replace(".", String.Empty)
+                            .Replace(".", string.Empty)
                             .ToLower()
                         : mod.Modid.Replace(".", string.Empty).ToLower();
 
@@ -330,8 +330,8 @@ namespace TechnicSolderHelper
                     {
                         if (_processesUsingModID.ContainsKey(mod.Modid))
                         {
-                            Thread.Sleep(100);
                             Debug.WriteLine("Sleeping with id: " + mod.Modid);
+                            Thread.Sleep(100);
                         }
                         else
                         {
@@ -339,14 +339,13 @@ namespace TechnicSolderHelper
                             break;
                         }
                     }
+                    string modversion = mod.Mcversion.ToLower() + "-" + mod.Version.ToLower();
                     if (useSolderBool)
                     {
-                        if (_solderSqlHandler.IsModversionOnline(modid,
-                            mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
+                        if (_solderSqlHandler.IsModversionOnline(modid, modversion))
                         {
                             int id = _solderSqlHandler.GetModId(modid);
-                            int modVersionId = _solderSqlHandler.GetModversionId(id,
-                                mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
+                            int modVersionId = _solderSqlHandler.GetModversionId(id, modversion);
                             _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
                             _runningProcess--;
                             return;
@@ -359,10 +358,10 @@ namespace TechnicSolderHelper
                                 ? mod.Modid.Replace("|", "+")
                                     .Replace(".", string.Empty)
                                     .ToLower()
-                                    .Replace(Globalfunctions.PathSeperator.ToString(), String.Empty)
+                                    .Replace(Globalfunctions.PathSeperator.ToString(), string.Empty)
                                 : mod.Modid.Replace(".", string.Empty)
                                     .ToLower()
-                                    .Replace(Globalfunctions.PathSeperator.ToString(), String.Empty), "mods");
+                                    .Replace(Globalfunctions.PathSeperator.ToString(), string.Empty), "mods");
                         Directory.CreateDirectory(modDir);
                         if (_processesUsingFolder.ContainsKey(modDir))
                         {
@@ -372,9 +371,9 @@ namespace TechnicSolderHelper
                         {
                             _processesUsingFolder.Add(modDir, 1);
                         }
-                        String tempModFile = Path.Combine(modDir, fileName);
+                        string tempModFile = Path.Combine(modDir, fileName);
 
-                        String tempFileDirectory =
+                        string tempFileDirectory =
                             tempModFile.Remove(tempModFile.LastIndexOf(Globalfunctions.PathSeperator));
 
                         Directory.CreateDirectory(tempFileDirectory);
@@ -408,28 +407,25 @@ namespace TechnicSolderHelper
                             _startInfo.Arguments = "a -y \"" + modArchive + "\" \"" + modDir + "\" ";
                         }
                         Process process = new Process { StartInfo = _startInfo };
-                        
+
                         process.Start();
 
                         //Save mod to database
                         _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, true);
 
                         // Add mod info to a html file
-                        CreateTableRow(mod.Name.Replace("|", "+"), modid,
-                            mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
+                        CreateTableRow(mod.Name.Replace("|", "+"), modid, modversion);
 
                         process.WaitForExit();
-                        
+
                         if (useSolderBool)
                         {
                             string archive = Path.Combine(_outputDirectory, "mods", modArchive);
                             SolderSqlHandler sqh = new SolderSqlHandler();
                             string md5Value = SqlHelper.CalculateMd5(archive).ToLower();
-                            if (sqh.IsModversionOnline(modid,
-                                mod.Mcversion.ToLower() + "-" + mod.Version.ToLower()))
+                            if (sqh.IsModversionOnline(modid, modversion))
                             {
-                                sqh.UpdateModversionMd5(modid, mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(),
-                                    md5Value);
+                                sqh.UpdateModversionMd5(modid, modversion, md5Value);
                             }
                             else
                             {
@@ -441,13 +437,10 @@ namespace TechnicSolderHelper
                                     // ReSharper disable once RedundantAssignment
                                     id = sqh.GetModId(modid);
                                 }
-                                sqh.AddNewModversionToSolder(modid,
-                                    mod.Mcversion.ToLower() + "-" + mod.Version.ToLower(),
-                                    md5Value);
+                                sqh.AddNewModversionToSolder(modid, modversion, md5Value);
 
                                 id = sqh.GetModId(modid);
-                                int modVersionId = sqh.GetModversionId(id,
-                                    mod.Mcversion.ToLower() + "-" + mod.Version.ToLower());
+                                int modVersionId = sqh.GetModversionId(id, modversion);
                                 sqh.AddModversionToBuild(_buildId, modVersionId);
                             }
                         }
@@ -473,36 +466,36 @@ namespace TechnicSolderHelper
             else
             {
                 _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, false);
-                while (String.IsNullOrWhiteSpace(_modpackName))
+                while (string.IsNullOrWhiteSpace(_modpackName))
                 {
                     _modpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
                 }
-                while (String.IsNullOrWhiteSpace(_modpackVersion))
+                while (string.IsNullOrWhiteSpace(_modpackVersion))
                 {
                     _modpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
                 }
 
-                String tempDirectory = Path.Combine(_outputDirectory, "tmp");
-                String tempModDirectory = Path.Combine(tempDirectory, "mods");
+                string tempDirectory = Path.Combine(_outputDirectory, "tmp");
+                string tempModDirectory = Path.Combine(tempDirectory, "mods");
                 Directory.CreateDirectory(tempModDirectory);
-                String tempFile = Path.Combine(tempModDirectory, fileName);
+                string tempFile = Path.Combine(tempModDirectory, fileName);
 
                 int index = tempFile.LastIndexOf(Globalfunctions.PathSeperator);
 
-                String tempFileDirectory = tempFile.Remove(index);
+                string tempFileDirectory = tempFile.Remove(index);
                 Directory.CreateDirectory(tempFileDirectory);
                 File.Copy(modfile, tempFile, true);
 
-                _modpackArchive = Path.Combine(_outputDirectory, String.Format("{0}-{1}.zip", _modpackName, _modpackVersion));
+                _modpackArchive = Path.Combine(_outputDirectory, string.Format("{0}-{1}.zip", _modpackName, _modpackVersion));
 
                 if (Globalfunctions.IsUnix())
                 {
                     Environment.CurrentDirectory = tempDirectory;
-                    _startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", _modpackArchive, "mods");
+                    _startInfo.Arguments = string.Format("-r \"{0}\" \"{1}\"", _modpackArchive, "mods");
                 }
                 else
                 {
-                    _startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", _modpackArchive, tempModDirectory);
+                    _startInfo.Arguments = string.Format("a -y \"{0}\" \"{1}\"", _modpackArchive, tempModDirectory);
                 }
                 if (Globalfunctions.IsUnix())
                 {
