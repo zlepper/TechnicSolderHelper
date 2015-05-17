@@ -356,6 +356,13 @@ namespace TechnicSolderHelper
             // Add the different mod files to the files array
             foreach (String file in Directory.GetFiles(_inputDirectory, "*.zip", SearchOption.AllDirectories))
             {
+                FileInfo f = new FileInfo(file);
+                string name = f.Name;
+                if (Regex.IsMatch(name, @"-?[0-9]+,-?[0-9]+.zip"))
+                {
+                    Debug.WriteLine("Skipped " + name);
+                    continue;
+                }
                 files.Add(file);
                 _totalMods++;
             }
