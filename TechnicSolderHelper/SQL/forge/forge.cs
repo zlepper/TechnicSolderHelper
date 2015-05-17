@@ -245,17 +245,9 @@ namespace TechnicSolderHelper.SQL.forge
                     String mcversion = mavenunjsonend.Number[i].Mcversion;
                     String build = mavenunjsonend.Number[i].Build.ToString();
                     String version = mavenunjsonend.Number[i].Version;
+                    String branch = mavenunjsonend.Number[i].Branch;
                     String downloadUrl = null;
-                    if (i > 1300 && mcversion.Equals("1.7.10"))
-                    {
-                        downloadUrl = mavenunjsonend.Webpath + "/" + mcversion + "-" + version + "-" + mcversion +
-                                      "/forge-" + mcversion + "-" + version + "-" + mcversion + "-";
-                    }
-                    else
-                    {
-                        downloadUrl = mavenunjsonend.Webpath + "/" + mcversion + "-" + version + "/forge-" + mcversion +
-                                      "-" + version + "-";
-                    }
+                    downloadUrl = string.Format("{0}/{1}-{2}{3}/forge-{1}-{2}{3}-", mavenunjsonend.Webpath, mcversion, version, String.IsNullOrWhiteSpace(branch) ? "" : "-" + branch);
                     if (i < 183)
                     {
                         downloadUrl += "client.";

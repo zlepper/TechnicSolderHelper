@@ -22,6 +22,8 @@ namespace TechnicSolderHelper.SQL.forge
         public string Version { get; set; }
 
         public string Downloadurl { get; set; }
+
+        public string Branch { get; set; }
     }
 
 }
