@@ -447,18 +447,30 @@ namespace TechnicSolderHelper
                         _processesUsingFolder[modDir]--;
                         if (Directory.Exists(modDir) && _processesUsingFolder[modDir] == 0)
                         {
-                            Directory.Delete(modDir, true);
+                            while (true)
+                            {
+                                try
+                                {
+                                    Directory.Delete(modDir, true);
+                                    break;
+                                }
+                                catch (IOException)
+                                {
+                                    Thread.Sleep(100);
+                                }
+                            }
                             _processesUsingFolder.Remove(modDir);
                         }
                     }
-                    if (_processesUsingModID[mod.Modid] > 1)
-                    {
-                        _processesUsingModID[mod.Modid]--;
-                    }
-                    else
-                    {
-                        _processesUsingModID.Remove(mod.Modid);
-                    }
+                    if (_processesUsingModID.ContainsKey(mod.Modid))
+                        if (_processesUsingModID[mod.Modid] > 1)
+                        {
+                            _processesUsingModID[mod.Modid]--;
+                        }
+                        else
+                        {
+                            _processesUsingModID.Remove(mod.Modid);
+                        }
                     _runningProcess--;
                 };
                 bw.RunWorkerAsync();

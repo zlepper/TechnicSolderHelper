@@ -411,7 +411,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@update", DateTime.Now);
                         cmd.ExecuteNonQuery();
                     }
-                    int modpackid;
+                    int modpackid = 0;
                     sql = string.Format("SELECT modpack_id FROM {0}.{1} WHERE id LIKE @buildid;", _database, _prefix + "builds");
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
@@ -419,7 +419,9 @@ namespace TechnicSolderHelper.SQL
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
                             reader.Read();
-                            modpackid = Convert.ToInt32(reader["modpack_id"].ToString());
+                            
+                                modpackid = Convert.ToInt32(reader["modpack_id"].ToString());
+                            
                         }
                     }
                     sql = string.Format("UPDATE {0}.{1} SET updated_at=@update WHERE id LIKE @modpackid;", _database, _prefix + "modpacks");

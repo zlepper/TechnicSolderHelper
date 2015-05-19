@@ -24,7 +24,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <AssemblyOriginatorKeyFile>TechnicSolderHelper.pfx</AssemblyOriginatorKeyFile>
-    <PublishUrl>C:\wwwroot\solderhelper\</PublishUrl>
+    <PublishUrl>ftp://zlepper.dk/solderhelper/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
