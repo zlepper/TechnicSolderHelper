@@ -134,7 +134,10 @@ namespace TechnicSolderHelper
                 {
                     groupBox1.Width = Width - 800 + 136;
                 }
-                Debug.WriteLine(groupBox1.Width);
+            }
+            if(!Globalfunctions.IsUnix() && Height > 522)
+            {
+                groupBox1.Height = Height - 522 + 427;
             }
         }
 
