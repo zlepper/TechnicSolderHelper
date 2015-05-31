@@ -141,6 +141,7 @@ namespace TechnicSolderHelper
             string fileName = modfile.Substring(modfile.LastIndexOf(Globalfunctions.PathSeperator) + 1);
             string modMd5 = SqlHelper.CalculateMd5(modfile);
             _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, false);
+            # region permissions
             if (TechnicPermissions.Checked)
             {
                 PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid, TechnicPublicPermissions.Checked);
@@ -312,8 +313,10 @@ namespace TechnicSolderHelper
                         break;
                 }
             }
+            # endregion 
             if (SolderPack.Checked)
             {
+                bool force = forcesolder.Checked;
                 bool useSolderBool = useSolder.Checked;
                 BackgroundWorker bw = new BackgroundWorker();
                 _runningProcess++;
@@ -340,7 +343,7 @@ namespace TechnicSolderHelper
                         }
                     }
                     string modversion = mod.Mcversion.ToLower() + "-" + mod.Version.ToLower();
-                    if (useSolderBool)
+                    if (useSolderBool && !force)
                     {
                         if (_solderSqlHandler.IsModversionOnline(modid, modversion))
                         {
@@ -351,7 +354,7 @@ namespace TechnicSolderHelper
                             return;
                         }
                     }
-                    if (!_modsSqLhelper.IsFileInSolder(modfile))
+                    if (!_modsSqLhelper.IsFileInSolder(modfile) || force)
                     {
                         var modDir = Path.Combine(_outputDirectory, "mods",
                             mod.Modid.Contains("|")

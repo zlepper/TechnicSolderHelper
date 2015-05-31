@@ -96,6 +96,7 @@ namespace TechnicSolderHelper
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.forcesolder = new System.Windows.Forms.CheckBox();
             this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
@@ -708,11 +709,23 @@ namespace TechnicSolderHelper
             this.label6.TabIndex = 39;
             this.label6.Text = "Minimum Memory (in MB)";
             // 
+            // forcesolder
+            // 
+            this.forcesolder.AutoSize = true;
+            this.forcesolder.Location = new System.Drawing.Point(295, 363);
+            this.forcesolder.Name = "forcesolder";
+            this.forcesolder.Size = new System.Drawing.Size(120, 17);
+            this.forcesolder.TabIndex = 40;
+            this.forcesolder.Text = "Force solder update";
+            this.toolTip1.SetToolTip(this.forcesolder, "Will force Modpack Helper to update all data on Solder and create all mods");
+            this.forcesolder.UseVisualStyleBackColor = true;
+            // 
             // SolderHelper
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(784, 483);
+            this.Controls.Add(this.forcesolder);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.comboBox1);
@@ -1136,5 +1149,6 @@ namespace TechnicSolderHelper
         private ComboBox comboBox1;
         private Label label3;
         private Label label6;
+        private CheckBox forcesolder;
     }
 }
