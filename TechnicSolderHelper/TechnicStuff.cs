@@ -423,6 +423,7 @@ namespace TechnicSolderHelper
 
                         if (useSolderBool)
                         {
+                            int id = -1;
                             string archive = Path.Combine(_outputDirectory, "mods", modArchive);
                             SolderSqlHandler sqh = new SolderSqlHandler();
                             string md5Value = SqlHelper.CalculateMd5(archive).ToLower();
@@ -432,7 +433,7 @@ namespace TechnicSolderHelper
                             }
                             else
                             {
-                                int id = sqh.GetModId(modid);
+                                id = sqh.GetModId(modid);
                                 if (id == -1)
                                 {
                                     sqh.AddModToSolder(modid, mod.Description, GetAuthors(mod), mod.Url,
@@ -441,11 +442,10 @@ namespace TechnicSolderHelper
                                     id = sqh.GetModId(modid);
                                 }
                                 sqh.AddNewModversionToSolder(modid, modversion, md5Value);
-
-                                id = sqh.GetModId(modid);
-                                int modVersionId = sqh.GetModversionId(id, modversion);
-                                sqh.AddModversionToBuild(_buildId, modVersionId);
                             }
+                            id = sqh.GetModId(modid);
+                            int modVersionId = sqh.GetModversionId(id, modversion);
+                            sqh.AddModversionToBuild(_buildId, modVersionId);
                         }
                         _processesUsingFolder[modDir]--;
                         if (Directory.Exists(modDir) && _processesUsingFolder[modDir] == 0)
