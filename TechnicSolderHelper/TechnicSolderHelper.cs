@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -210,6 +211,12 @@ namespace TechnicSolderHelper
             _technicPermissionList = Path.Combine(_outputDirectory, "Technic Permission List.txt");
             //_sqlCommandPath = Path.Combine(_outputDirectory, "commands.sql");
             _currentMcVersion = string.IsNullOrEmpty(MCversion.Text) ? null : MCversion.SelectedItem.ToString();
+
+            if (!_inputDirectory.EndsWith(Globalfunctions.PathSeperator + "mods", true, CultureInfo.CurrentCulture))
+            {
+                MessageBox.Show(string.Format("You need to point Modpack Helper at a {0}mods directory", Globalfunctions.PathSeperator));
+                return true;
+            }
 
             Environment.CurrentDirectory = Globalfunctions.IsUnix() ? "/" : "C:\\";
             if (!Directory.Exists(InputFolder.Text))
