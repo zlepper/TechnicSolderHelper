@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -1131,6 +1132,15 @@ namespace TechnicSolderHelper
             while (_runningProcess > 0)
             {
                 StatusLabel.Text = "Waiting for " + _runningProcess + " mod" + (_runningProcess == 1 ? "" : "s") + " to finsh packing";
+                if (doDebug.Checked)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string pros in _processesUsingFolder.Keys)
+                    {
+                        sb.AppendLine(pros);
+                    }
+                    File.AppendAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "DebugFromModpackHelper.txt"), sb.ToString());
+                }
                 Thread.Sleep(100);
             }
             StatusLabel.Text = "Saving mod data";
@@ -1231,9 +1241,9 @@ namespace TechnicSolderHelper
 
         public void PackForge(string forgeversion)
         {
-            var worker = new BackgroundWorker();
-            var uploadToSolder = useSolder.Checked && SolderPack.Checked;
-            var solderpack = SolderPack.Checked;
+            BackgroundWorker worker = new BackgroundWorker();
+            bool uploadToSolder = useSolder.Checked && SolderPack.Checked;
+            bool solderpack = SolderPack.Checked;
             worker.DoWork += (sender, args) =>
             {
                 _runningProcess++;
@@ -1302,7 +1312,7 @@ namespace TechnicSolderHelper
                     _process.Start();
                     _process.WaitForExit();
 
-                    if (solderpack)
+                    if (solderpack && uploadToSolder)
                     {
                         int id = _solderSqlHandler.GetModId("forge");
                         if (id == -1)
