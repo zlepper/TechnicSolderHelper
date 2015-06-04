@@ -1151,6 +1151,10 @@ namespace TechnicSolderHelper
                 Directory.Delete(Path.Combine(_outputDirectory, "assets"), true);
             if (Directory.Exists(Path.Combine(_outputDirectory, "example")))
                 Directory.Delete(Path.Combine(_outputDirectory, "example"), true);
+            foreach (String file in Directory.GetFiles(_outputDirectory, "*.info", SearchOption.TopDirectoryOnly))
+            {
+                File.Delete(file);
+            }
 
             if (CreateTechnicPack.Checked && SolderPack.Checked && !useSolder.Checked)
             {
