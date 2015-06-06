@@ -152,7 +152,7 @@ namespace TechnicSolderHelper.FileUpload
                     {
                         FtpWebResponse responce = (FtpWebResponse)request.GetResponse();
                     }
-                    catch (WebException e)
+                    catch (WebException)
                     {
                         
                     }
@@ -178,7 +178,7 @@ namespace TechnicSolderHelper.FileUpload
                     requestStream.Flush();
                 }
             }
-            catch (WebException e)
+            catch (WebException)
             {
                 //Console.WriteLine("error getting responce");
             }

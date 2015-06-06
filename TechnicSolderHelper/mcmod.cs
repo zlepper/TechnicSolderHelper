@@ -29,10 +29,6 @@ namespace TechnicSolderHelper
 
         public PermissionLevel PrivatePerms { get; set; }
 
-        public String PermissionLink { get; set; }
-
-        public String LicenseLink { get; set; }
-
         public Boolean IsIgnore { get; set; }
 
         public Boolean UseShortName { get; set; }

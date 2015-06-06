@@ -14,7 +14,6 @@ namespace TechnicSolderHelper.FileUpload
     {
         private BackgroundWorker _uploadWorker = new BackgroundWorker();
         private string _uploadFrom;
-        private bool _areUploading = false;
         private String _userName;
         private String _password;
         private String _url;
@@ -159,7 +158,7 @@ namespace TechnicSolderHelper.FileUpload
                         outputStream.Write(buffer, 0, readBytesCount);
                         totalReadBytesCount += readBytesCount;
                         var progress = totalReadBytesCount * 100.0 / inputStream.Length;
-                        uploadWorker.ReportProgress((int)progress);
+                        //uploadWorker.ReportProgress((int)progress);
                     }
                 }
             }

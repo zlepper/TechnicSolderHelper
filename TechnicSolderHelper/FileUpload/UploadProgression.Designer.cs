@@ -128,6 +128,5 @@ namespace TechnicSolderHelper.FileUpload
         private Label label3;
         private Label CurrentFileName;
         private Label ProgressPercentage;
-        private BackgroundWorker uploadWorker;
     }
 }
