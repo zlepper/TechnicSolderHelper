@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ModpackHelper.IO;
 using Newtonsoft.Json;
 
 namespace ModpackHelper.mods
@@ -62,41 +61,22 @@ namespace ModpackHelper.mods
             };
         }
 
-
-
-        public Litemod GetLitemod(string path)
+        public static Litemod GetLitemod(string json)
         {
-            string json = new IOHandler().ReadJson(path);
             try
             {
-                return JsonConvert.DeserializeObject<Litemod>(json);
+                Litemod m = JsonConvert.DeserializeObject<Litemod>(json);
+                return m;
+            }
+            catch (JsonSerializationException)
+            {
+                return null;
             }
             catch (JsonReaderException)
             {
-                throw new NotLitemodException();
+                return null;
             }
         }
     }
 
-    [Serializable]
-    public class NotLitemodException : Exception
-    {
-        public NotLitemodException()
-        {
-        }
-
-        public NotLitemodException(string message) : base(message)
-        {
-        }
-
-        public NotLitemodException(string message, Exception inner) : base(message, inner)
-        {
-        }
-
-        protected NotLitemodException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
-    }
 }

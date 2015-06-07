@@ -15,7 +15,7 @@ namespace ModpackHelper.IO
         // Method required for testing
         public IOHandler(IFileSystem fileSystem)
         {
-            this.fileSystem = fileSystem;
+            this.fileSystem = fileSystem ?? new FileSystem();
         }
 
         public IOHandler() : this(fileSystem: new FileSystem())

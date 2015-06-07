@@ -197,102 +197,102 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="confighandler\confighandler.cs" />
-    <Compile Include="cryptography\crypto.cs" />
-    <Compile Include="cryptography\KeyHandler.cs" />
-    <Compile Include="FileUpload\UploadProgression.cs">
+    <Compile Include="OLD\confighandler\confighandler.cs" />
+    <Compile Include="OLD\cryptography\crypto.cs" />
+    <Compile Include="OLD\cryptography\KeyHandler.cs" />
+    <Compile Include="OLD\FileUpload\UploadProgression.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileUpload\UploadProgression.Designer.cs">
+    <Compile Include="OLD\FileUpload\UploadProgression.Designer.cs">
       <DependentUpon>UploadProgression.cs</DependentUpon>
     </Compile>
-    <Compile Include="Litemod.cs" />
-    <Compile Include="modinfo.cs">
+    <Compile Include="OLD\Litemod.cs" />
+    <Compile Include="OLD\modinfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="modinfo.Designer.cs">
+    <Compile Include="OLD\modinfo.Designer.cs">
       <DependentUpon>modinfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="Modlist.cs" />
-    <Compile Include="MoreLinq\MoreEnumerable.DistinctBy.cs" />
-    <Compile Include="PermLevel.cs" />
-    <Compile Include="ReadOnlyRadioButton.cs">
+    <Compile Include="OLD\Modlist.cs" />
+    <Compile Include="OLD\MoreLinq\MoreEnumerable.DistinctBy.cs" />
+    <Compile Include="OLD\PermLevel.cs" />
+    <Compile Include="OLD\ReadOnlyRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="s3\S3.cs" />
-    <Compile Include="s3\S3Info.cs">
+    <Compile Include="OLD\s3\S3.cs" />
+    <Compile Include="OLD\s3\S3Info.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="s3\S3Info.Designer.cs">
+    <Compile Include="OLD\s3\S3Info.Designer.cs">
       <DependentUpon>S3Info.cs</DependentUpon>
     </Compile>
-    <Compile Include="SmallInterfaces\mcselector.cs">
+    <Compile Include="OLD\SmallInterfaces\mcselector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SmallInterfaces\mcselector.Designer.cs">
+    <Compile Include="OLD\SmallInterfaces\mcselector.Designer.cs">
       <DependentUpon>mcselector.cs</DependentUpon>
     </Compile>
-    <Compile Include="SQL\DatabaseEditor.cs">
+    <Compile Include="OLD\SQL\DatabaseEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SQL\DatabaseEditor.Designer.cs">
+    <Compile Include="OLD\SQL\DatabaseEditor.Designer.cs">
       <DependentUpon>DatabaseEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="SQL\excelReader.cs" />
-    <Compile Include="SQL\forge\ForgeVersionSelector.cs">
+    <Compile Include="OLD\SQL\excelReader.cs" />
+    <Compile Include="OLD\SQL\forge\ForgeVersionSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SQL\forge\ForgeVersionSelector.Designer.cs">
+    <Compile Include="OLD\SQL\forge\ForgeVersionSelector.Designer.cs">
       <DependentUpon>ForgeVersionSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="SQL\ftbPermissions.cs" />
-    <Compile Include="SQL\FTBPermissionsSQLHelper.cs" />
-    <Compile Include="SQL\liteloader\liteloader.cs" />
-    <Compile Include="SQL\ModListSQLHelper.cs" />
-    <Compile Include="SQL\OwnPermissionsSQLHelper.cs" />
-    <Compile Include="SQL\SolderSQLHandler.cs" />
-    <Compile Include="SQL\sqlInfo.cs">
+    <Compile Include="OLD\SQL\ftbPermissions.cs" />
+    <Compile Include="OLD\SQL\FTBPermissionsSQLHelper.cs" />
+    <Compile Include="OLD\SQL\liteloader\liteloader.cs" />
+    <Compile Include="OLD\SQL\ModListSQLHelper.cs" />
+    <Compile Include="OLD\SQL\OwnPermissionsSQLHelper.cs" />
+    <Compile Include="OLD\SQL\SolderSQLHandler.cs" />
+    <Compile Include="OLD\SQL\sqlInfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SQL\sqlInfo.Designer.cs">
+    <Compile Include="OLD\SQL\sqlInfo.Designer.cs">
       <DependentUpon>sqlInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="TechnicSolderHelper.cs">
+    <Compile Include="OLD\TechnicSolderHelper.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TechnicSolderHelper.Designer.cs">
+    <Compile Include="OLD\TechnicSolderHelper.Designer.cs">
       <DependentUpon>TechnicSolderHelper.cs</DependentUpon>
     </Compile>
-    <Compile Include="mcmod.cs" />
+    <Compile Include="OLD\mcmod.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Prompt.cs" />
+    <Compile Include="OLD\Prompt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Settings.cs" />
-    <Compile Include="SQL\SQLhelper.cs" />
-    <Compile Include="globalfunctions.cs" />
-    <Compile Include="SQL\forge\forge.cs" />
-    <Compile Include="SQL\forge\forgemaven.cs" />
-    <Compile Include="AsyncOperations.cs" />
-    <Compile Include="modpacks.cs" />
-    <Compile Include="FileUpload\ftpInfo.cs">
+    <Compile Include="OLD\Settings.cs" />
+    <Compile Include="OLD\SQL\SQLhelper.cs" />
+    <Compile Include="OLD\globalfunctions.cs" />
+    <Compile Include="OLD\SQL\forge\forge.cs" />
+    <Compile Include="OLD\SQL\forge\forgemaven.cs" />
+    <Compile Include="OLD\AsyncOperations.cs" />
+    <Compile Include="OLD\modpacks.cs" />
+    <Compile Include="OLD\FileUpload\ftpInfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileUpload\ftpInfo.Designer.cs">
+    <Compile Include="OLD\FileUpload\ftpInfo.Designer.cs">
       <DependentUpon>ftpInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="FileUpload\ftp.cs" />
-    <Compile Include="FtbStuff.cs">
+    <Compile Include="OLD\FileUpload\ftp.cs" />
+    <Compile Include="OLD\FtbStuff.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TechnicStuff.cs">
+    <Compile Include="OLD\TechnicStuff.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SQL\workTogether\dataSuggest.cs" />
+    <Compile Include="OLD\SQL\workTogether\dataSuggest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -306,22 +306,22 @@
     <None Include="TechnicSolderHelper.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="output\jquery.min.js">
+    <Content Include="OLD\output\jquery.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="output\technicsolderhelper.js">
+    <Content Include="OLD\output\technicsolderhelper.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="SQL\forge\ForgeVersionSelector.resx">
+    <EmbeddedResource Include="OLD\SQL\forge\ForgeVersionSelector.resx">
       <DependentUpon>ForgeVersionSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SQL\Mono.Data.Sqlite.dll">
+    <EmbeddedResource Include="OLD\SQL\Mono.Data.Sqlite.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Content Include="x64\SQLite.Interop.dll">
+    <Content Include="OLD\x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="x86\SQLite.Interop.dll">
+    <Content Include="OLD\x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="SolderHelper.desktop">
@@ -353,35 +353,37 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="FileUpload\UploadProgression.resx">
+    <EmbeddedResource Include="OLD\FileUpload\UploadProgression.resx">
       <DependentUpon>UploadProgression.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="modinfo.resx">
+    <EmbeddedResource Include="OLD\modinfo.resx">
       <DependentUpon>modinfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="s3\S3Info.resx">
+    <EmbeddedResource Include="OLD\s3\S3Info.resx">
       <DependentUpon>S3Info.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SmallInterfaces\mcselector.resx">
+    <EmbeddedResource Include="OLD\SmallInterfaces\mcselector.resx">
       <DependentUpon>mcselector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SQL\DatabaseEditor.resx">
+    <EmbeddedResource Include="OLD\SQL\DatabaseEditor.resx">
       <DependentUpon>DatabaseEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SQL\sqlInfo.resx">
+    <EmbeddedResource Include="OLD\SQL\sqlInfo.resx">
       <DependentUpon>sqlInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TechnicSolderHelper.resx">
+    <EmbeddedResource Include="OLD\TechnicSolderHelper.resx">
       <DependentUpon>TechnicSolderHelper.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FileUpload\ftpInfo.resx">
+    <EmbeddedResource Include="OLD\FileUpload\ftpInfo.resx">
       <DependentUpon>ftpInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ModpackHelper\ModpackHelper.Shared.csproj">
+      <Project>{8896fb95-831f-4e2e-9f73-f871b650e747}</Project>
+      <Name>ModpackHelper.Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

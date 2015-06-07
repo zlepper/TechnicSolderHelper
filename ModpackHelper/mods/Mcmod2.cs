@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ModpackHelper.mods
 {
@@ -12,7 +13,7 @@ namespace ModpackHelper.mods
     /// </summary>
     public class Mcmod2
     {
-        public int Modinfoversion { get; set; }
+        //public int Modinfoversion { get; set; }
 
         public int ModListVersion { get; set; }
 
@@ -26,14 +27,31 @@ namespace ModpackHelper.mods
         {
             if (Modlist.Count == 0)
             {
-                throw new NoModsStoredException();
+                throw new ArgumentOutOfRangeException();
             }
-            return this.Modlist[0];
+            return Modlist[0];
         }
-    }
 
-    public class NoModsStoredException : Exception
-    {
-
+        /// <summary>
+        /// Get a mod of the mcmod2 format
+        /// </summary>
+        /// <param name="json">The json to parse</param>
+        /// <returns></returns>
+        public static Mcmod2 GetMcmod2(string json)
+        {
+            try
+            {
+                Mcmod2 m = JsonConvert.DeserializeObject<Mcmod2>(json);
+                return m.ModListVersion == 2 ? m : null;
+            }
+            catch (JsonReaderException)
+            {
+                return null;
+            }
+            catch (JsonSerializationException)
+            {
+                return null;
+            }
+        }
     }
 }

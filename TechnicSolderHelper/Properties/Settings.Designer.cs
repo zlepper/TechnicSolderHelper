@@ -19,9 +19,9 @@ namespace TechnicSolderHelper.Properties {
     [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
     internal sealed partial class Settings : ApplicationSettingsBase {
         
-        private static Settings defaultInstance = ((Settings)(Synchronized(new Settings())));
+        private static OLD.Settings defaultInstance = ((OLD.Settings)(Synchronized(new OLD.Settings())));
         
-        public static Settings Default {
+        public static OLD.Settings Default {
             get {
                 return defaultInstance;
             }

@@ -1,4 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using ModpackHelper.Utils;
+using Newtonsoft.Json;
 
 namespace ModpackHelper.mods
 {
@@ -8,6 +12,56 @@ namespace ModpackHelper.mods
     /// </summary>
     public class Mcmod
     {
+        public bool Equals(Mcmod other)
+        {
+            return string.Equals(Modid, other.Modid) && 
+                string.Equals(Name, other.Name) && 
+                string.Equals(Version, other.Version) && 
+                string.Equals(Mcversion, other.Mcversion) && 
+                string.Equals(Url, other.Url) && 
+                string.Equals(Description, other.Description) && 
+                HasBeenWritenToModlist == other.HasBeenWritenToModlist && 
+                IsSkipping == other.IsSkipping && 
+                Lists.AreEqual(AuthorList, other.AuthorList) && 
+                Lists.AreEqual(Authors, other.Authors) && 
+                PublicPerms == other.PublicPerms && 
+                PrivatePerms == other.PrivatePerms && 
+                IsIgnore == other.IsIgnore && 
+                UseShortName == other.UseShortName && 
+                FromSuggestion == other.FromSuggestion && 
+                FromUserInput == other.FromUserInput && 
+                string.Equals(Filename, other.Filename) && 
+                string.Equals(Path, other.Path) && 
+                Aredone == other.Aredone;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (Modid != null ? Modid.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Version != null ? Version.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Mcversion != null ? Mcversion.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Url != null ? Url.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Description != null ? Description.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ HasBeenWritenToModlist.GetHashCode();
+                hashCode = (hashCode*397) ^ IsSkipping.GetHashCode();
+                hashCode = (hashCode*397) ^ (AuthorList != null ? AuthorList.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Authors != null ? Authors.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (int) PublicPerms;
+                hashCode = (hashCode*397) ^ (int) PrivatePerms;
+                hashCode = (hashCode*397) ^ IsIgnore.GetHashCode();
+                hashCode = (hashCode*397) ^ UseShortName.GetHashCode();
+                hashCode = (hashCode*397) ^ FromSuggestion.GetHashCode();
+                hashCode = (hashCode*397) ^ FromUserInput.GetHashCode();
+                hashCode = (hashCode*397) ^ (Filename != null ? Filename.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Path != null ? Path.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ Aredone.GetHashCode();
+                return hashCode;
+            }
+        }
+
         /// <summary>
         /// The modid of the mod
         /// </summary>
@@ -106,5 +160,29 @@ namespace ModpackHelper.mods
         /// Indicates that all informatio has been entered for the mod
         /// </summary>
         public bool Aredone { get; set; }
+
+        public static Mcmod GetMcmod(string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<List<Mcmod>>(json)[0];
+            }
+            catch (JsonSerializationException)
+            {
+                return null;
+            }
+            catch (JsonReaderException)
+            {
+                return null;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Mcmod) obj);
+        }
     }
 }

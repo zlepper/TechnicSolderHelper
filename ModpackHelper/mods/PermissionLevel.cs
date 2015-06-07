@@ -11,11 +11,12 @@ namespace ModpackHelper.mods
     /// </summary>
     public enum PermissionLevel
     {
+        Unknown,
         Open,
         Notify,
         Ftb,
         Request,
-        Closed,
-        Unknown
+        Closed
+        
     }
 }
