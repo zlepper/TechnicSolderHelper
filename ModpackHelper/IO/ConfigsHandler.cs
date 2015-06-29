@@ -3,90 +3,92 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Caching;
 using Newtonsoft.Json;
 
 namespace ModpackHelper.IO
 {
-    public class ConfigsHandler
+    public class ConfigsHandler : IDisposable
     {
-        private readonly IFileSystem fileSystem;
-        private static Dictionary<string, object> configsDictionary; 
+        private readonly IFileSystem _fileSystem;
+        private readonly Dictionary<string, object> _configsDictionary;
+        private readonly string _configFilePath;
         public ConfigsHandler(IFileSystem fileSystem)
         {
-            this.fileSystem = fileSystem;
+            _fileSystem = fileSystem;
+            _configFilePath =
+                _fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "SolderHelper", "settings.json");
+            string fileContens;
+            try
+            {
+                fileContens = _fileSystem.File.ReadAllText(_configFilePath);
+            }
+            catch (FileNotFoundException)
+            {
+                fileContens = "";
+            }
+            _configsDictionary = Load(fileContens);
         }
 
-        public ConfigsHandler() : this(fileSystem: new FileSystem())
+        // ReSharper disable once UnusedMember.Global
+        public ConfigsHandler()
+            : this(fileSystem: new FileSystem())
         {
-            
+
         }
 
         private void Save(Dictionary<string, object> info)
         {
             if (info == null) return;
-            string json = JsonConvert.SerializeObject(configsDictionary);
-            fileSystem.File.WriteAllText(
-                fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "config.json"), json);
+            string json = JsonConvert.SerializeObject(info);
+            _fileSystem.File.WriteAllText(_configFilePath, json);
         }
 
-        private Dictionary<string, object> Load()
+        private Dictionary<string, object> Load(string fileContent)
         {
             string json = "{}";
-            try
+            if (!String.IsNullOrWhiteSpace(fileContent))
             {
-                json =
-                    fileSystem.File.ReadAllText(
-                        Path.Combine(
-                            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                            "config.json"));
-            }
-            catch (FileNotFoundException)
-            {
+                json = fileContent;
             }
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
         }
 
         public object SetProperty(string key, object value)
         {
-            if (configsDictionary == null)
+            if (_configsDictionary == null)
             {
-                configsDictionary = Load();
+                throw new Exception("Invalid state: ConfigDictionary not initialized");
             }
-            if (configsDictionary.ContainsKey(key))
+            if (_configsDictionary.ContainsKey(key))
             {
-                configsDictionary[key] = value;
+                _configsDictionary[key] = value;
             }
             else
             {
-                configsDictionary.Add(key, value);
+                _configsDictionary.Add(key, value);
             }
-            Save(configsDictionary);
+            Save(_configsDictionary);
             return value;
         }
 
         public object GetProperty(string key)
         {
-            if (configsDictionary == null)
+            if (_configsDictionary == null)
             {
-                configsDictionary = Load();
+                throw new Exception("Invalid state: ConfigDictionary not initialized");
             }
-            if (!configsDictionary.ContainsKey(key))
+            if (!_configsDictionary.ContainsKey(key))
             {
                 throw new IndexOutOfRangeException("Key not found in dictionary");
             }
-            return configsDictionary[key];
+            return _configsDictionary[key];
         }
 
-        /// <summary>
-        /// Should never ever fucking ever be called in productions code inless abosolute necesarry. 
-        /// Will cause the confighandler to drop any cached data. 
-        /// </summary>
-        public static void Teardown()
+        public void Dispose()
         {
-            configsDictionary = null;
+            Save(_configsDictionary);
         }
     }
 }

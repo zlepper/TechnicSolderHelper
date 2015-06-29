@@ -12,12 +12,6 @@ namespace ModpackHelper.Tests.IO
 {
     class ConfigHandlerTests
     {
-        [TearDown]
-        public void Cleanup()
-        {
-            ConfigsHandler.Teardown();
-        }
-
         [Test]
         public void ConfigHandler_Save_SetNonExistirngProperty()
         {
@@ -54,8 +48,8 @@ namespace ModpackHelper.Tests.IO
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
             {
-                {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "config.json"), new MockFileData("{\"TestKey\":\"TestValue\"}")}
+                {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "SolderHelper", "settings.json"), new MockFileData("{\"TestKey\":\"TestValue\"}")}
             });
             ConfigsHandler handler = new ConfigsHandler(fileSystem);
 
