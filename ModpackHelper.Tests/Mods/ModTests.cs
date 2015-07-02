@@ -24,9 +24,7 @@ namespace ModpackHelper.Tests.Mods
         [TestCase("{\"modListVersion\": 2,\"modList\": [{\"modid\": \"bspkrsCore\",\"name\": \"bspkrsCore\",\"description\": \"Shared classes used in the mods maintained by bspkrs.\",\"version\": \"6.15\",\"mcversion\": \"1.7.10\",\"url\": \"http://www.minecraftforum.net/topic/1114612-/\",\"updateUrl\": \"\",\"authorList\": [ \"DaftPVF\", \"bspkrs\" ],\"credits\": \"Much of this code was originally part of DaftPVF's mods that I maintain.\",\"logoFile\": \"\",\"screenshots\": [],\"parent\": \"\",\"requiredMods\": [\"Forge@[10.13.2.1230,)\"],\"dependencies\": [\"Forge@[10.13.2.1230,)\"],\"dependants\": [],\"useDependencyInformation\": \"true\"}]}")]
         public void Litemod_GetLitemod_ShouldReturnNull(string json)
         {
-            string invalidJson = "{[[[]}";
-
-            Litemod litemod = Litemod.GetLitemod(invalidJson);
+            Litemod litemod = Litemod.GetLitemod(json);
 
             Assert.IsNull(litemod);
         }

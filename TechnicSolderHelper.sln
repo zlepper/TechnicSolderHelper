@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModpackHelper.Shared", "Mod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModpackHelper.Tests", "ModpackHelper.Tests\ModpackHelper.Tests.csproj", "{0FCF1266-CC4C-4DAA-A7DD-85AD871B573E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModpackHelper.GUI", "..\ModpackHelper.GUI\ModpackHelper.GUI.csproj", "{C1405245-FB51-4489-8CC7-777B6BF966F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModpackHelper.GUI", "ModpackHelper.GUI\ModpackHelper.GUI.csproj", "{C1405245-FB51-4489-8CC7-777B6BF966F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

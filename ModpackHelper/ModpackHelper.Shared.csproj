@@ -71,6 +71,7 @@
     <Compile Include="Mods\PermissionLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInteraction\IDirectoryFinder.cs" />
+    <Compile Include="UserInteraction\IForgeVersionSelector.cs" />
     <Compile Include="Utils\Lists.cs" />
     <Compile Include="Utils\ZipUtils.cs" />
   </ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
@@ -12,13 +13,15 @@ namespace ModpackHelper.Tests.IO
 {
     class ConfigHandlerTests
     {
+        private readonly string configJsonFilePath =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "SolderHelper", "settings.json");
         [Test]
         public void ConfigHandler_Save_SetNonExistirngProperty()
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
             {
-                {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "config.json"), new MockFileData("{}")}
+                {configJsonFilePath, new MockFileData("{}")}
             });
             ConfigsHandler handler = new ConfigsHandler(fileSystem);
             string inputValue = "TestValue";
@@ -32,8 +35,7 @@ namespace ModpackHelper.Tests.IO
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
             {
-                {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "config.json"), new MockFileData("{\"TestKey\":\"TestValue\"}")}
+                {configJsonFilePath, new MockFileData("{\"TestKey\":\"TestValue\"}")}
             });
             ConfigsHandler handler = new ConfigsHandler(fileSystem);
             string inputValue = "NEw test value";
@@ -48,8 +50,7 @@ namespace ModpackHelper.Tests.IO
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
             {
-                {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "SolderHelper", "settings.json"), new MockFileData("{\"TestKey\":\"TestValue\"}")}
+                {configJsonFilePath, new MockFileData("{\"TestKey\":\"TestValue\"}")}
             });
             ConfigsHandler handler = new ConfigsHandler(fileSystem);
 
@@ -64,8 +65,7 @@ namespace ModpackHelper.Tests.IO
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
             {
-                {Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "config.json"), new MockFileData("{\"TestKey\":\"TestValue\"}")}
+                {configJsonFilePath, new MockFileData("{\"TestKey\":\"TestValue\"}")}
             });
             ConfigsHandler handler = new ConfigsHandler(fileSystem);
             handler.GetProperty("Someotherkey");

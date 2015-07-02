@@ -66,6 +66,7 @@
     <Compile Include="Mods\ModTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IO\IOHandlerTests.cs" />
+    <Compile Include="MinecraftForge\ForgeHandlerTests.cs" />
     <Compile Include="Utils\ListsTest.cs" />
     <Compile Include="Utils\ZipTests.cs" />
   </ItemGroup>

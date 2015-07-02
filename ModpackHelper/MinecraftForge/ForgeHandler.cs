@@ -30,7 +30,7 @@ namespace ModpackHelper.MinecraftForge
 
         public ForgeHandler() : this(new FileSystem()) {}
 
-        public string SaveForgeVErsions(List<ForgeVersion> forgeVersions)
+        public string SaveForgeVersions(List<ForgeVersion> forgeVersions)
         {
             _forgeVersions = forgeVersions;
             return SaveForgeVersions();
@@ -46,13 +46,21 @@ namespace ModpackHelper.MinecraftForge
         public List<ForgeVersion> LoadForgeVersions()
         {
             if (!_fileSystem.File.Exists(_forgeVersionFilePath)) return new List<ForgeVersion>();
-            using (Stream s = _fileSystem.File.OpenRead(_forgeVersionFilePath))
-            using (StreamReader sr = new StreamReader(s))
-            using (JsonReader reader = new JsonTextReader(sr))
+            try
             {
-                JsonSerializer serializer = new JsonSerializer();
-
-                return serializer.Deserialize<List<ForgeVersion>>(reader);
+                using (Stream s = _fileSystem.File.OpenRead(_forgeVersionFilePath))
+                using (StreamReader sr = new StreamReader(s))
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    
+                    List<ForgeVersion> fv = serializer.Deserialize<List<ForgeVersion>>(reader);
+                    return fv ?? new List<ForgeVersion>();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<ForgeVersion>();
             }
         }
 
@@ -71,7 +79,7 @@ namespace ModpackHelper.MinecraftForge
             return _forgeVersions.Single(f => f.Build == build).DownloadUrl;
         } 
 
-        public void DownloadForgeVersions()
+        public List<ForgeVersion> DownloadForgeVersions()
         {
             List<ForgeVersion> forgeVersions = new List<ForgeVersion>();
             Forgemaven mavenunjsonend;
@@ -132,6 +140,8 @@ namespace ModpackHelper.MinecraftForge
             }
 
             SaveForgeVersions(forgeVersions);
+
+            return _forgeVersions;
         }
 
         public void Dispose()

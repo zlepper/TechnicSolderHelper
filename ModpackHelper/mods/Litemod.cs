@@ -66,7 +66,7 @@ namespace ModpackHelper.mods
             try
             {
                 Litemod m = JsonConvert.DeserializeObject<Litemod>(json);
-                return m;
+                return isNull(m) ? null : m;
             }
             catch (JsonSerializationException)
             {
@@ -76,6 +76,12 @@ namespace ModpackHelper.mods
             {
                 return null;
             }
+        }
+
+        public static bool isNull(Litemod m)
+        {
+            return m.Author == null && m.Description == null && m.Mcversion == null && m.Name == null &&
+                   m.Revision == null && m.Version == null;
         }
     }
 
