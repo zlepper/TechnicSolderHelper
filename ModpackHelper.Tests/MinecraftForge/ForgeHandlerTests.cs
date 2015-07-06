@@ -81,6 +81,19 @@ namespace ModpackHelper.Tests.MinecraftForge
         }
 
         [Test]
+        public void ForgeHandler_Dispose_DataInList()
+        {
+            MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+
+            using (ForgeHandler forgeHandler = new ForgeHandler(fileSystem))
+            {
+                string data = forgeHandler.SaveForgeVersions();
+
+                Assert.AreEqual("[]", data);
+            }
+        }
+
+        [Test]
         public void ForgeHandler_GetMinecraftVersions_shouldReturnOnly1DestinctVersion()
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
@@ -151,6 +164,14 @@ namespace ModpackHelper.Tests.MinecraftForge
 
             Assert.Greater(fv.Count, 1000);
             Assert.True(fileSystem.FileExists(forgeJsonFilePath));
+        }
+
+        [Test]
+        public void ForgeHandler_initialize_Normally()
+        {
+            ForgeHandler forgeHandler = new ForgeHandler();
+
+            Assert.NotNull(forgeHandler);
         }
     }
 }

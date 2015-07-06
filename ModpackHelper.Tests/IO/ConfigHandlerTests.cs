@@ -91,5 +91,14 @@ namespace ModpackHelper.Tests.IO
 
             handler.GetProperty("SomeKey");
         }
+
+        [Test]
+        public void ConfigHandler_initalize_NormallyAndDispose()
+        {
+            using (ConfigsHandler handler = new ConfigsHandler())
+            {
+                Assert.NotNull(handler);
+            }
+        }
     }
 }

@@ -32,6 +32,10 @@ namespace ModpackHelper.Utils
             {
                 throw new FileNotFoundException();
             }
+            if(!fileSystem.Directory.Exists(directoryToExtractInto))
+            {
+                fileSystem.Directory.CreateDirectory(directoryToExtractInto);
+            }
             using (Stream filestream = zipFile.OpenRead())
             {
                 using (ZipArchive archive = new ZipArchive(filestream))

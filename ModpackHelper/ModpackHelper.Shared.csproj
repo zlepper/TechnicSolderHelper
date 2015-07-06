@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IO\ConfigsHandler.cs" />
+    <Compile Include="IO\Finder.cs" />
     <Compile Include="IO\IOhandler.cs" />
     <Compile Include="MinecraftForge\ForgeHandler.cs" />
     <Compile Include="MinecraftForge\Forgemaven.cs" />

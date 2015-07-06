@@ -30,9 +30,15 @@ namespace ModpackHelper.Tests.IO
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             IOHandler iohandler = new IOHandler(fileSystem);
 
-            string results = iohandler.ReadJson(@"C:\file.json");
+            iohandler.ReadJson(@"C:\file.json");
         }
 
+        [Test]
+        public void IOHandler_initialize_Normally()
+        {
+            IOHandler ioHandler = new IOHandler();
+            Assert.NotNull(ioHandler);
+        }
         
     }
 }

@@ -80,7 +80,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TechnicSolderHelper\ModpackHelper\ModpackHelper.Shared.csproj">
+    <ProjectReference Include="..\ModpackHelper\ModpackHelper.Shared.csproj">
       <Project>{8896fb95-831f-4e2e-9f73-f871b650e747}</Project>
       <Name>ModpackHelper.Shared</Name>
     </ProjectReference>

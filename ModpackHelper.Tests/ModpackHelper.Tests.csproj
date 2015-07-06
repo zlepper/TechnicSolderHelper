@@ -62,6 +62,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="IO\ConfigHandlerTests.cs" />
+    <Compile Include="IO\FinderTests.cs" />
     <Compile Include="ModExtractorTests.cs" />
     <Compile Include="Mods\ModTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

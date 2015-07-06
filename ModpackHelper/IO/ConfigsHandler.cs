@@ -40,7 +40,6 @@ namespace ModpackHelper.IO
 
         private void Save(Dictionary<string, object> info)
         {
-            if (info == null) return;
             string json = JsonConvert.SerializeObject(info);
             _fileSystem.File.WriteAllText(_configFilePath, json);
         }
@@ -57,10 +56,6 @@ namespace ModpackHelper.IO
 
         public object SetProperty(string key, object value)
         {
-            if (_configsDictionary == null)
-            {
-                throw new Exception("Invalid state: ConfigDictionary not initialized");
-            }
             if (_configsDictionary.ContainsKey(key))
             {
                 _configsDictionary[key] = value;
@@ -75,10 +70,6 @@ namespace ModpackHelper.IO
 
         public object GetProperty(string key)
         {
-            if (_configsDictionary == null)
-            {
-                throw new Exception("Invalid state: ConfigDictionary not initialized");
-            }
             if (!_configsDictionary.ContainsKey(key))
             {
                 throw new IndexOutOfRangeException("Key not found in dictionary");

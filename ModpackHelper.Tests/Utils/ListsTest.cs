@@ -37,6 +37,27 @@ namespace ModpackHelper.Tests
         }
 
         [Test]
+        public void Lists_AreEqual_DifferentTypesOfLists()
+        {
+            List<string> list1 = new List<string>()
+            {
+                "test",
+                "geg",
+                "zlepper",
+                "bochen",
+                "notch"
+            };
+            List<int> list2 = new List<int>()
+            {
+                1,2,3,4,5
+            };
+
+            bool eq = Lists.AreEqual(list1, list2);
+
+            Assert.IsFalse(eq);
+        }
+
+        [Test]
         public void Lists_AreEqual_DifferentContentInListsButLengthIsTheSame()
         {
             List<string> list1 = new List<string>()
