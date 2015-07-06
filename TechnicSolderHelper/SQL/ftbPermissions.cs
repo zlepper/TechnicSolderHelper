@@ -4,18 +4,29 @@
 
 namespace TechnicSolderHelper.SQL
 {
-    public class ftbPermissions
+    public class Permission
     {
-        public string shortName { get; set; }
         public string modName { get; set; }
-        public string modAuthor { get; set; }
-        public string modLink { get; set; }
+        public string modAuthors { get; set; }
         public string licenseLink { get; set; }
-        public string licenseImage { get; set; }
-        public string privateLicenseLink { get; set; }
-        public string privateLicenseImage { get; set; }
-        public int publicPolicy { get; set; }
-        public int privatePolicy { get; set; }
-        public List<string> modIDs { get; set; }
+        public string modLink { get; set; }
+        public string privateLicenceLink { get; set; }
+        public string privateStringPolicy { get; set; }
+        public PermissionPolicy privatePolicy { get; set; }
+        public string publicStringPolicy { get; set; }
+        public PermissionPolicy publicPolicy { get; set; }
+        public string modids { get; set; }
+        public string customData { get; set; }
+        public string shortName { get; set; }
+    }
+
+    public enum PermissionPolicy
+    {
+        Open,
+        Notify,
+        Request,
+        Unknown,
+        FTB,
+        Closed
     }
 }

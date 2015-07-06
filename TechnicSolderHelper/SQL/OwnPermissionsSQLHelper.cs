@@ -31,7 +31,7 @@ namespace TechnicSolderHelper.SQL
                             TableName);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _createTableString =
                         String.Format(

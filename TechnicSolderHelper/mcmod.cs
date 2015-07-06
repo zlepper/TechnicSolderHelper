@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TechnicSolderHelper.SQL;
 
 namespace TechnicSolderHelper
 {
@@ -25,9 +26,9 @@ namespace TechnicSolderHelper
 
         public List<string> Authors { get; set; }
 
-        public PermissionLevel PublicPerms { get; set; }
+        public PermissionPolicy PublicPerms { get; set; }
 
-        public PermissionLevel PrivatePerms { get; set; }
+        public PermissionPolicy PrivatePerms { get; set; }
 
         public String PermissionLink { get; set; }
 

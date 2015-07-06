@@ -211,16 +211,16 @@ namespace TechnicSolderHelper
             }
             if (_solderHelper.CreateTechnicPack.Checked && _solderHelper.TechnicPermissions.Checked)
             {
-                if (_ftbPermissionsSqlHelper.DoFtbHavePermission(mod.Modid,
-                    _solderHelper.TechnicPublicPermissions.Checked) != PermissionLevel.Open)
+                if (_ftbPermissionsSqlHelper.FindPermissionPolicy(mod.Modid,
+                    _solderHelper.TechnicPublicPermissions.Checked) != PermissionPolicy.Open)
                 {
                     return false;
                 }
             }
             if (!_solderHelper.CreateFTBPack.Checked) return true;
-            PermissionLevel p = _ftbPermissionsSqlHelper.DoFtbHavePermission(mod.Modid,
+            PermissionPolicy p = _ftbPermissionsSqlHelper.FindPermissionPolicy(mod.Modid,
                 _solderHelper.PublicFTBPack.Checked);
-            if (p == PermissionLevel.Open || p == PermissionLevel.Ftb)
+            if (p == PermissionPolicy.Open || p == PermissionPolicy.FTB)
             {
                 return true;
             }
@@ -314,28 +314,28 @@ namespace TechnicSolderHelper
             textBoxFTBPermissionLink.Text = String.Empty;
             if (technicPermissions.Visible)
             {
-                PermissionLevel technicPermissionLevel =
-                    _ftbPermissionsSqlHelper.DoFtbHavePermission(textBoxModID.Text,
+                PermissionPolicy technicPermissionLevel =
+                    _ftbPermissionsSqlHelper.FindPermissionPolicy(textBoxModID.Text,
                         _solderHelper.TechnicPublicPermissions.Checked);
                 Debug.WriteLine(technicPermissionLevel);
                 switch (technicPermissionLevel)
                 {
-                    case PermissionLevel.Open:
+                    case PermissionPolicy.Open:
                         permissionTechnicOpen.Checked = true;
                         break;
-                    case PermissionLevel.Notify:
+                    case PermissionPolicy.Notify:
                         permissionTechnicNotify.Checked = true;
                         break;
-                    case PermissionLevel.Ftb:
+                    case PermissionPolicy.FTB:
                         permissionTechnicFTBExclusive.Checked = true;
                         break;
-                    case PermissionLevel.Request:
+                    case PermissionPolicy.Request:
                         permissionTechnicRequest.Checked = true;
                         break;
-                    case PermissionLevel.Closed:
+                    case PermissionPolicy.Closed:
                         permissionTechnicClosed.Checked = true;
                         break;
-                    case PermissionLevel.Unknown:
+                    case PermissionPolicy.Unknown:
                         permissionTechnicUnknown.Checked = true;
                         break;
                     default:
@@ -344,35 +344,34 @@ namespace TechnicSolderHelper
             }
             if (FTBPermissions.Visible)
             {
-                PermissionLevel ftbPermissionLevel = _ftbPermissionsSqlHelper.DoFtbHavePermission(textBoxModID.Text,
+                PermissionPolicy ftbPermissionLevel = _ftbPermissionsSqlHelper.FindPermissionPolicy(textBoxModID.Text,
                     _solderHelper.PublicFTBPack.Checked);
                 Debug.WriteLine(ftbPermissionLevel);
                 switch (ftbPermissionLevel)
                 {
-                    case PermissionLevel.Open:
+                    case PermissionPolicy.Open:
                         permissionFTBOpen.Checked = true;
                         break;
-                    case PermissionLevel.Notify:
+                    case PermissionPolicy.Notify:
                         permissionFTBNotify.Checked = true;
                         break;
-                    case PermissionLevel.Ftb:
+                    case PermissionPolicy.FTB:
                         permissionFTBFTBExclusive.Checked = true;
                         break;
-                    case PermissionLevel.Request:
+                    case PermissionPolicy.Request:
                         permissionFTBRequest.Checked = true;
                         break;
-                    case PermissionLevel.Closed:
+                    case PermissionPolicy.Closed:
                         permissionFTBClosed.Checked = true;
                         break;
-                    case PermissionLevel.Unknown:
+                    case PermissionPolicy.Unknown:
                         permssionFTBUnknown.Checked = true;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            String modlink = _ftbPermissionsSqlHelper.GetInfoFromModId(textBoxModID.Text,
-                FtbPermissionsSqlHelper.InfoType.ModLink);
+            String modlink = _ftbPermissionsSqlHelper.GetPermissionFromModId(textBoxModID.Text).modLink;
             if (String.IsNullOrWhiteSpace(modlink))
             {
                 if (technicPermissions.Visible)
@@ -395,8 +394,7 @@ namespace TechnicSolderHelper
                     textBoxFTBModLink.Text = modlink;
                 }
             }
-            String licenseLink = _ftbPermissionsSqlHelper.GetInfoFromModId(textBoxModID.Text,
-                FtbPermissionsSqlHelper.InfoType.PermLink);
+            String licenseLink = _ftbPermissionsSqlHelper.GetPermissionFromModId(textBoxModID.Text).privateLicenceLink;
             if (String.IsNullOrWhiteSpace(licenseLink))
             {
                 if (technicPermissions.Visible)

@@ -175,6 +175,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Abstractions, Version=2.0.0.115, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.115\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Transactions" />
@@ -215,7 +219,6 @@
     </Compile>
     <Compile Include="Modlist.cs" />
     <Compile Include="MoreLinq\MoreEnumerable.DistinctBy.cs" />
-    <Compile Include="PermLevel.cs" />
     <Compile Include="ReadOnlyRadioButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -238,7 +241,6 @@
     <Compile Include="SQL\DatabaseEditor.Designer.cs">
       <DependentUpon>DatabaseEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="SQL\excelReader.cs" />
     <Compile Include="SQL\forge\ForgeVersionSelector.cs">
       <SubType>Form</SubType>
     </Compile>

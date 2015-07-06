@@ -7,16 +7,16 @@ namespace TechnicSolderHelper
 {
     public partial class SolderHelper : Form
     {
-        private void CreateFtbPermissionInfo(String modname, String modid, String modauthor, String linkToPermission)
+        private void CreateFtbPermissionInfo(string modname, string modid, string modauthor, string linkToPermission)
         {
-            String output = String.Format("{0}({1}) by {2} {3}Permission: {4} {3}{3}", modname, modid, modauthor, Environment.NewLine, linkToPermission);
+            string output = string.Format("{0}({1}) by {2} {3}Permission: {4} {3}{3}", modname, modid, modauthor, Environment.NewLine, linkToPermission);
             File.AppendAllText(_ftbPermissionList, output);
         }
 
-        private void CreateFtbPermissionInfo(Mcmod mod, PermissionLevel pl, String customPermissionText = null)
+        private void CreateFtbPermissionInfo(Mcmod mod, PermissionPolicy pl, string customPermissionText = null)
         {
-            String modlink = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink);
-            while (String.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
+            string modlink = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modLink;
+            while (string.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
             {
                 modlink = Prompt.ShowDialog("What is the link to " + mod.Name + "?", "Mod link", false, Prompt.ModsLeftString(_totalMods, _currentMod));
                 if (!Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
@@ -27,10 +27,10 @@ namespace TechnicSolderHelper
             CreateFtbPermissionInfo(mod, pl, customPermissionText, modlink);
         }
 
-        private void CreateFtbPermissionInfo(Mcmod mod, PermissionLevel pl, String customPermissionText, String modlink)
+        private void CreateFtbPermissionInfo(Mcmod mod, PermissionPolicy pl, string customPermissionText, string modlink)
         {
-            String ps = String.Format("{0}({1}) by {2}{3}At {4}{3}Permissions are {5}{3}", mod.Name, mod.Modid, GetAuthors(mod), Environment.NewLine, modlink, pl);
-            if (!String.IsNullOrWhiteSpace(customPermissionText))
+            string ps = string.Format("{0}({1}) by {2}{3}At {4}{3}Permissions are {5}{3}", mod.Name, mod.Modid, GetAuthors(mod), Environment.NewLine, modlink, pl);
+            if (!string.IsNullOrWhiteSpace(customPermissionText))
             {
                 ps += customPermissionText + Environment.NewLine;
             }
@@ -43,12 +43,12 @@ namespace TechnicSolderHelper
             {
                 return;
             }
-            String fileName = modfile.Substring(modfile.LastIndexOf(Globalfunctions.PathSeperator) + 1);
+            string fileName = modfile.Substring(modfile.LastIndexOf(Globalfunctions.PathSeperator) + 1);
             if (IsWierdMod(fileName) == 0)
             {
                 return;
             }
-            String modMd5 = SqlHelper.CalculateMd5(modfile);
+            string modMd5 = SqlHelper.CalculateMd5(modfile);
             if (!mod.IsIgnore)
             {
                 if (!mod.UseShortName)
@@ -58,15 +58,15 @@ namespace TechnicSolderHelper
                 if (true)
                 {
                     #region Permissions checking
-                    PermissionLevel permLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid, PublicFTBPack.Checked);
+                    PermissionPolicy permLevel = _ftbPermsSqLhelper.FindPermissionPolicy(mod.Modid, PublicFTBPack.Checked);
 
-                    String overwritelink;
+                    string overwritelink;
                     OwnPermissions ownPermissions;
                     switch (permLevel)
                     {
-                        case PermissionLevel.Open:
+                        case PermissionPolicy.Open:
                             break;
-                        case PermissionLevel.Notify:
+                        case PermissionPolicy.Notify:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!ownPermissions.HasPermission)
                             {
@@ -84,7 +84,7 @@ namespace TechnicSolderHelper
                                         {
                                             _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink);
                                             //Get Author
-                                            String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                            string a = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
                                             CreateFtbPermissionInfo(mod.Name, mod.Modid, a, overwritelink);
                                             break;
                                         }
@@ -100,13 +100,13 @@ namespace TechnicSolderHelper
                             else
                             {
                                 //Get Author
-                                String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                string a = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
                                 CreateFtbPermissionInfo(mod.Name, mod.Modid, a, ownPermissions.PermissionLink);
                             }
                             break;
-                        case PermissionLevel.Ftb:
+                        case PermissionPolicy.FTB:
                             break;
-                        case PermissionLevel.Request:
+                        case PermissionPolicy.Request:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!ownPermissions.HasPermission)
                             {
@@ -124,7 +124,7 @@ namespace TechnicSolderHelper
                                         {
                                             _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink);
                                             //Get Author
-                                            String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                            string a = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
                                             CreateFtbPermissionInfo(mod.Name, mod.Modid, a, overwritelink);
                                             break;
                                         }
@@ -140,11 +140,11 @@ namespace TechnicSolderHelper
                             else
                             {
                                 //Get Author
-                                String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                string a = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
                                 CreateFtbPermissionInfo(mod.Name, mod.Modid, a, ownPermissions.PermissionLink);
                             }
                             break;
-                        case PermissionLevel.Closed:
+                        case PermissionPolicy.Closed:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!ownPermissions.HasPermission)
                             {
@@ -162,7 +162,7 @@ namespace TechnicSolderHelper
                                         {
                                             _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink);
                                             //Get Author
-                                            String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                            string a = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
                                             CreateFtbPermissionInfo(mod.Name, mod.Modid, a, overwritelink);
                                             break;
                                         }
@@ -178,11 +178,11 @@ namespace TechnicSolderHelper
                             else
                             {
                                 //Get Author
-                                String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                string a = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
                                 CreateFtbPermissionInfo(mod.Name, mod.Modid, a, ownPermissions.PermissionLink);
                             }
                             break;
-                        case PermissionLevel.Unknown:
+                        case PermissionPolicy.Unknown:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (!ownPermissions.HasPermission)
                             {
@@ -226,13 +226,13 @@ namespace TechnicSolderHelper
                                     MessageBox.Show("Invalid url");
 
                                 }
-                                String a = GetAuthors(mod);
+                                string a = GetAuthors(mod);
                                 CreateOwnPermissionInfo(mod.Name, mod.Modid, a, overwritelink, modLink);
 
                             }
                             else
                             {
-                                String a = GetAuthors(mod);
+                                string a = GetAuthors(mod);
                                 CreateOwnPermissionInfo(mod.Name, mod.Modid, a, ownPermissions.PermissionLink, ownPermissions.ModLink);
                             }
                             break;
@@ -241,30 +241,30 @@ namespace TechnicSolderHelper
                 }
             }
 
-            if (String.IsNullOrWhiteSpace(_ftbModpackArchive))
+            if (string.IsNullOrWhiteSpace(_ftbModpackArchive))
             {
-                while (String.IsNullOrWhiteSpace(_modpackName))
+                while (string.IsNullOrWhiteSpace(_modpackName))
                 {
                     _modpackName = Prompt.ShowDialog("What is the Modpack Name?", "Modpack Name");
                 }
-                while (String.IsNullOrWhiteSpace(_modpackVersion))
+                while (string.IsNullOrWhiteSpace(_modpackVersion))
                 {
                     _modpackVersion = Prompt.ShowDialog("What Version is the modpack?", "Modpack Version");
                 }
-                if (String.IsNullOrWhiteSpace(_modpackArchive))
+                if (string.IsNullOrWhiteSpace(_modpackArchive))
                 {
-                    _modpackArchive = Path.Combine(_outputDirectory, String.Format("{0}-{1}.zip", _modpackName, _modpackVersion));
+                    _modpackArchive = Path.Combine(_outputDirectory, string.Format("{0}-{1}.zip", _modpackName, _modpackVersion));
                     _ftbModpackArchive = Path.Combine(_outputDirectory, _modpackName + "-" + _modpackVersion + "-FTB" + ".zip");
                 }
 
             }
 
 
-            String tempModDirectory = Path.Combine(_outputDirectory, "minecraft", "mods");
+            string tempModDirectory = Path.Combine(_outputDirectory, "minecraft", "mods");
             Directory.CreateDirectory(tempModDirectory);
-            String tempFile = Path.Combine(tempModDirectory, fileName);
+            string tempFile = Path.Combine(tempModDirectory, fileName);
             int index = tempFile.LastIndexOf(Globalfunctions.PathSeperator);
-            String tempFileDirectory = tempFile.Remove(index);
+            string tempFileDirectory = tempFile.Remove(index);
             Directory.CreateDirectory(tempFileDirectory);
             File.Copy(modfile, tempFile, true);
 
@@ -272,12 +272,12 @@ namespace TechnicSolderHelper
             {
                 Environment.CurrentDirectory = _outputDirectory;
                 _startInfo.FileName = "zip";
-                _startInfo.Arguments = String.Format("-r \"{0}\" \"{1}\"", _ftbModpackArchive, "minecraft");
+                _startInfo.Arguments = string.Format("-r \"{0}\" \"{1}\"", _ftbModpackArchive, "minecraft");
             }
             else
             {
                 Environment.CurrentDirectory = _outputDirectory;
-                _startInfo.Arguments = String.Format("a -y \"{0}\" \"{1}\"", _ftbModpackArchive, "minecraft");
+                _startInfo.Arguments = string.Format("a -y \"{0}\" \"{1}\"", _ftbModpackArchive, "minecraft");
             }
 
             _process.StartInfo = _startInfo;

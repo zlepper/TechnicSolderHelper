@@ -181,7 +181,7 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    authorString = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                    authorString = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
 
                     if (String.IsNullOrWhiteSpace(authorString))
                     {
@@ -786,14 +786,14 @@ namespace TechnicSolderHelper
                             mod.IsIgnore = false;
                             mod.UseShortName = true;
                             mod.Modid = shortname;
-                            mod.Name = _ftbPermsSqLhelper.GetInfoFromShortName(shortname, FtbPermissionsSqlHelper.InfoType.ModName);
+                            mod.Name = _ftbPermsSqLhelper.GetPermissionFromModId(shortname).modName;
                             mod.Authors = new List<string>
                             {
-                                _ftbPermsSqLhelper.GetInfoFromModId(shortname, FtbPermissionsSqlHelper.InfoType.ModAuthor)
+                                _ftbPermsSqLhelper.GetPermissionFromModId(shortname).modAuthors
                             };
                             mod.AuthorList = mod.Authors;
-                            mod.PrivatePerms = _ftbPermsSqLhelper.DoFtbHavePermission(shortname, false);
-                            mod.PublicPerms = _ftbPermsSqLhelper.DoFtbHavePermission(shortname, true);
+                            mod.PrivatePerms = _ftbPermsSqLhelper.FindPermissionPolicy(shortname, false);
+                            mod.PublicPerms = _ftbPermsSqLhelper.FindPermissionPolicy(shortname, true);
                         }
 
                         if (missingInfoActionOnTheRun.Checked)
@@ -2054,15 +2054,15 @@ namespace TechnicSolderHelper
                 // Output Technic Permissions
                 if (CreateTechnicPack.Checked)
                 {
-                    PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid,
+                    PermissionPolicy permissionLevel = _ftbPermsSqLhelper.FindPermissionPolicy(mod.Modid,
                         PublicFTBPack.Checked);
                     OwnPermissions ownPermissions;
                     switch (permissionLevel)
                     {
-                        case PermissionLevel.Open:
+                        case PermissionPolicy.Open:
                             CreateTechnicPermissionInfo(mod, permissionLevel);
                             break;
-                        case PermissionLevel.Notify:
+                        case PermissionPolicy.Notify:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (ownPermissions.HasPermission)
                             {
@@ -2078,7 +2078,7 @@ namespace TechnicSolderHelper
                                 File.AppendAllText(errorPermissionListTechnic, error);
                             }
                             break;
-                        case PermissionLevel.Ftb:
+                        case PermissionPolicy.FTB:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (ownPermissions.HasPermission)
                             {
@@ -2095,9 +2095,9 @@ namespace TechnicSolderHelper
                                 File.AppendAllText(errorPermissionListTechnic, error);
                             }
                             break;
-                        case PermissionLevel.Request:
-                        case PermissionLevel.Closed:
-                        case PermissionLevel.Unknown:
+                        case PermissionPolicy.Request:
+                        case PermissionPolicy.Closed:
+                        case PermissionPolicy.Unknown:
                             ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (ownPermissions.HasPermission)
                             {
@@ -2122,24 +2122,23 @@ namespace TechnicSolderHelper
                 // Output FTB permissions
                 if (CreateFTBPack.Checked)
                 {
-                    PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid,
+                    PermissionPolicy permissionLevel = _ftbPermsSqLhelper.FindPermissionPolicy(mod.Modid,
                         PublicFTBPack.Checked);
                     switch (permissionLevel)
                     {
-                        case PermissionLevel.Open:
-                        case PermissionLevel.Ftb:
+                        case PermissionPolicy.Open:
+                        case PermissionPolicy.FTB:
                             CreateFtbPermissionInfo(mod, permissionLevel);
                             break;
-                        case PermissionLevel.Notify:
-                        case PermissionLevel.Request:
-                        case PermissionLevel.Closed:
-                        case PermissionLevel.Unknown:
+                        case PermissionPolicy.Notify:
+                        case PermissionPolicy.Request:
+                        case PermissionPolicy.Closed:
+                        case PermissionPolicy.Unknown:
                             var ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                             if (ownPermissions.HasPermission)
                             {
                                 //Get Author
-                                String a = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid,
-                                    FtbPermissionsSqlHelper.InfoType.ModAuthor);
+                                String a = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
                                 CreateFtbPermissionInfo(mod.Name, mod.Modid, a, ownPermissions.PermissionLink);
                             }
                             else

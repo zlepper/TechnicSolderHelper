@@ -108,9 +108,9 @@ namespace TechnicSolderHelper
 
         }
 
-        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionLevel pl, string customPermissionText = null)
+        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionPolicy pl, string customPermissionText = null)
         {
-            string modlink = _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink);
+            string modlink = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
             while (string.IsNullOrWhiteSpace(modlink) || !Uri.IsWellFormedUriString(modlink, UriKind.Absolute))
             {
                 modlink = Prompt.ShowDialog("What is the link to " + mod.Name + "?", "Mod link", false, Prompt.ModsLeftString(_totalMods, _currentMod));
@@ -122,7 +122,7 @@ namespace TechnicSolderHelper
             CreateTechnicPermissionInfo(mod, pl, customPermissionText, modlink);
         }
 
-        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionLevel pl, string customPermissionText, string modlink)
+        private void CreateTechnicPermissionInfo(Mcmod mod, PermissionPolicy pl, string customPermissionText, string modlink)
         {
             string ps = string.Format("{0}({1}) by {2}{3}At {4}{3}Permissions are {5}{3}", mod.Name, mod.Modid, GetAuthors(mod), Environment.NewLine, modlink, pl);
             if (!string.IsNullOrWhiteSpace(customPermissionText))
@@ -144,16 +144,16 @@ namespace TechnicSolderHelper
             # region permissions
             if (TechnicPermissions.Checked)
             {
-                PermissionLevel permissionLevel = _ftbPermsSqLhelper.DoFtbHavePermission(mod.Modid, TechnicPublicPermissions.Checked);
+                PermissionPolicy permissionPolicy = _ftbPermsSqLhelper.FindPermissionPolicy(mod.Modid, TechnicPublicPermissions.Checked);
                 string overwritelink;
                 OwnPermissions ownPermissions;
                 string customPermissionText;
-                switch (permissionLevel)
+                switch (permissionPolicy)
                 {
-                    case PermissionLevel.Open:
-                        CreateTechnicPermissionInfo(mod, permissionLevel);
+                    case PermissionPolicy.Open:
+                        CreateTechnicPermissionInfo(mod, permissionPolicy);
                         break;
-                    case PermissionLevel.Notify:
+                    case PermissionPolicy.Notify:
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!ownPermissions.HasPermission)
                         {
@@ -171,7 +171,7 @@ namespace TechnicSolderHelper
                                     {
                                         _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink);
                                         customPermissionText = "Proof of notitification: " + overwritelink;
-                                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink));
+                                        CreateTechnicPermissionInfo(mod, permissionPolicy, customPermissionText, _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modLink);
                                         break;
                                     }
                                 }
@@ -181,10 +181,10 @@ namespace TechnicSolderHelper
                         else
                         {
                             customPermissionText = "Proof of notitification: " + ownPermissions.PermissionLink;
-                            CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText);
+                            CreateTechnicPermissionInfo(mod, permissionPolicy, customPermissionText);
                         }
                         break;
-                    case PermissionLevel.Ftb:
+                    case PermissionPolicy.FTB:
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!ownPermissions.HasPermission)
                         {
@@ -200,7 +200,7 @@ namespace TechnicSolderHelper
                                 {
                                     if (overwritelink.ToLower().Contains("imgur"))
                                     {
-                                        _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink, _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink));
+                                        _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink, _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modLink);
                                         break;
                                     }
                                 }
@@ -209,9 +209,9 @@ namespace TechnicSolderHelper
                         }
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         customPermissionText = "Proof of permission outside of FTB: " + ownPermissions.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
+                        CreateTechnicPermissionInfo(mod, permissionPolicy, customPermissionText, ownPermissions.ModLink);
                         break;
-                    case PermissionLevel.Request:
+                    case PermissionPolicy.Request:
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!ownPermissions.HasPermission)
                         {
@@ -227,7 +227,7 @@ namespace TechnicSolderHelper
                                 {
                                     if (overwritelink.ToLower().Contains("imgur"))
                                     {
-                                        _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink, _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink));
+                                        _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink, _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modLink);
                                         break;
                                     }
                                 }
@@ -236,9 +236,9 @@ namespace TechnicSolderHelper
                         }
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + ownPermissions.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
+                        CreateTechnicPermissionInfo(mod, permissionPolicy, customPermissionText, ownPermissions.ModLink);
                         break;
-                    case PermissionLevel.Closed:
+                    case PermissionPolicy.Closed:
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         if (!ownPermissions.HasPermission)
                         {
@@ -254,7 +254,7 @@ namespace TechnicSolderHelper
                                 {
                                     if (overwritelink.ToLower().Contains("imgur"))
                                     {
-                                        _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink, _ftbPermsSqLhelper.GetInfoFromModId(mod.Modid, FtbPermissionsSqlHelper.InfoType.ModLink));
+                                        _ownPermsSqLhelper.AddOwnModPerm(mod.Name, mod.Modid, overwritelink, _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modLink);
                                         break;
                                     }
                                 }
@@ -263,9 +263,9 @@ namespace TechnicSolderHelper
                         }
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + ownPermissions.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
+                        CreateTechnicPermissionInfo(mod, permissionPolicy, customPermissionText, ownPermissions.ModLink);
                         break;
-                    case PermissionLevel.Unknown:
+                    case PermissionPolicy.Unknown:
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         var modLink = ownPermissions.ModLink;
                         if (!ownPermissions.HasPermission)
@@ -309,7 +309,7 @@ namespace TechnicSolderHelper
                         }
                         ownPermissions = _ownPermsSqLhelper.DoUserHavePermission(mod.Modid);
                         customPermissionText = GetAuthors(mod) + " has given permission as seen here: " + ownPermissions.PermissionLink;
-                        CreateTechnicPermissionInfo(mod, permissionLevel, customPermissionText, ownPermissions.ModLink);
+                        CreateTechnicPermissionInfo(mod, permissionPolicy, customPermissionText, ownPermissions.ModLink);
                         break;
                 }
             }
