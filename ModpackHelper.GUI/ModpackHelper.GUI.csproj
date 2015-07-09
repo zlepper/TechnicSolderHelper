@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DirectoryFinder.cs" />
+    <Compile Include="UserInteraction\DirectoryFinder.cs" />
     <Compile Include="ModpackHelper.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserInteraction\MessageShower.cs" />
     <EmbeddedResource Include="ModpackHelper.resx">
       <DependentUpon>ModpackHelper.cs</DependentUpon>
     </EmbeddedResource>

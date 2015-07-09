@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ModpackHelper.UserInteraction
 {
-    public interface IDirectoryFinder
+    public interface IMessageShower
     {
-        string GetDirectory(string whereTo);
+        void ShowMessage(string message);
     }
 }

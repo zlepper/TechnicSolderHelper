@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ModpackHelper.UserInteraction
 {
-    interface IForgeVersionSelector
+    public interface IForgeVersionSelector
     {
     }
 }

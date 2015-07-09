@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ModpackHelper;
-using ModpackHelper.UserInteraction;
+﻿using System.Windows.Forms;
 
-namespace ModpackHelper.GUI
+namespace ModpackHelper.GUI.UserInteraction
 {
-    public class DirectoryFinder : IDirectoryFinder
+    public class DirectoryFinder 
     {
         public string GetDirectory(string whereTo)
         {
