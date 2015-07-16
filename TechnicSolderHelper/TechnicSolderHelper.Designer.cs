@@ -778,6 +778,7 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.label1);
             this.Controls.Add(this.OutputFolder);
             this.Controls.Add(this.InputFolder);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(800, 522);
             this.Name = "SolderHelper";

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TechnicSolderHelper")]
-[assembly: AssemblyCopyright("Copyright © Rasmus Hansen 2014")]
+[assembly: AssemblyCopyright("Copyright © Rasmus Hansen 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
