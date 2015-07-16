@@ -28,6 +28,10 @@ namespace ModpackHelper.IO
             {
                 fileContens = "";
             }
+            catch (DirectoryNotFoundException)
+            {
+                fileContens = "";
+            }
             _configsDictionary = Load(fileContens);
         }
 
@@ -41,6 +45,7 @@ namespace ModpackHelper.IO
         private void Save(Dictionary<string, object> info)
         {
             string json = JsonConvert.SerializeObject(info);
+            _fileSystem.FileInfo.FromFileName(_configFilePath).Directory.Create();
             _fileSystem.File.WriteAllText(_configFilePath, json);
         }
 

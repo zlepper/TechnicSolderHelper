@@ -71,6 +71,7 @@ namespace ModpackHelper.Permissions
         private void Save()
         {
             string json = JsonConvert.SerializeObject(_permissions);
+            _fileSystem.FileInfo.FromFileName(PermissionsFile).Directory.Create();
             _fileSystem.File.WriteAllText(PermissionsFile, json);
         }
 

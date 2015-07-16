@@ -40,7 +40,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Abstractions">
-      <HintPath>D:\github\TechnicSolderHelper\packages\System.IO.Abstractions.2.0.0.115\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.115\lib\net40\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -69,7 +69,8 @@
     <Compile Include="Mods\Mcmod.cs" />
     <Compile Include="ModExtractor.cs" />
     <Compile Include="Mods\Mcmod2.cs" />
-    <Compile Include="Mods\PermissionLevel.cs" />
+    <Compile Include="Mods\ModsDBContext.cs" />
+    <Compile Include="Permissions\PermissionLevel.cs" />
     <Compile Include="Permissions\Permission.cs" />
     <Compile Include="Permissions\PermissionGetter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

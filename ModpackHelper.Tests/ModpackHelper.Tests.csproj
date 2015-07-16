@@ -39,17 +39,17 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Moq">
-      <HintPath>..\TechnicSolderHelper\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
+      <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\TechnicSolderHelper\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO.Abstractions">
-      <HintPath>..\TechnicSolderHelper\packages\System.IO.Abstractions.2.0.0.115\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.115\lib\net40\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Abstractions.TestingHelpers">
-      <HintPath>..\TechnicSolderHelper\packages\System.IO.Abstractions.TestingHelpers.2.0.0.115\lib\net40\System.IO.Abstractions.TestingHelpers.dll</HintPath>
+      <HintPath>..\packages\System.IO.Abstractions.TestingHelpers.2.0.0.115\lib\net40\System.IO.Abstractions.TestingHelpers.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -61,6 +61,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="CLI\HandlerArgsTests.cs" />
     <Compile Include="IO\ConfigHandlerTests.cs" />
     <Compile Include="IO\FinderTests.cs" />
     <Compile Include="ModExtractorTests.cs" />
@@ -76,11 +77,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ModpackHelper.CLI\ModpackHelper.CLI.csproj">
+      <Project>{7E303B9F-6144-4667-A099-55D6B9CB4CFC}</Project>
+      <Name>ModpackHelper.CLI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ModpackHelper\ModpackHelper.Shared.csproj">
       <Project>{8896fb95-831f-4e2e-9f73-f871b650e747}</Project>
       <Name>ModpackHelper.Shared</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

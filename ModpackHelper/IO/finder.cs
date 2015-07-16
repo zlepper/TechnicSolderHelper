@@ -11,7 +11,7 @@ namespace ModpackHelper.IO
 {
     public class Finder
     {
-        private IFileSystem _fileSystem;
+        private readonly IFileSystem _fileSystem;
 
         public Finder(IFileSystem fileSystem)
         {

@@ -125,19 +125,9 @@ namespace ModpackHelper.mods
         public PermissionLevel PrivatePerms { get; set; }
 
         /// <summary>
-        /// Indicates if the mod should be ignore
-        /// TODO figure out exactly what i'm using this for
-        /// </summary>
-        public bool IsIgnore { get; set; }
-
-        /// <summary>
-        /// TODO figure out exactly what i'm using this for
-        /// </summary>
-        public bool UseShortName { get; set; }
-
-        /// <summary>
         /// Indicates if this info was fetched from my remote database
         /// and therefor should not be put back into the databasee
+        /// TODO write a json api instead of the direct db interaction
         /// </summary>
         public bool FromSuggestion { get; set; }
 
@@ -160,6 +150,8 @@ namespace ModpackHelper.mods
         /// Indicates that all informatio has been entered for the mod
         /// </summary>
         public bool Aredone { get; set; }
+
+
 
         public static Mcmod GetMcmod(string json)
         {
