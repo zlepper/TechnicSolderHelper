@@ -371,8 +371,8 @@ namespace TechnicSolderHelper
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            String modlink = _ftbPermissionsSqlHelper.GetPermissionFromModId(textBoxModID.Text).modLink;
-            if (String.IsNullOrWhiteSpace(modlink))
+            Permission modlinkPerm = _ftbPermissionsSqlHelper.GetPermissionFromModId(textBoxModID.Text);
+            if (modlinkPerm == null)
             {
                 if (technicPermissions.Visible)
                 {
@@ -387,15 +387,15 @@ namespace TechnicSolderHelper
             {
                 if (technicPermissions.Visible)
                 {
-                    textBoxTechnicModLink.Text = modlink;
+                    textBoxTechnicModLink.Text = modlinkPerm.modLink;
                 }
                 if (FTBPermissions.Visible)
                 {
-                    textBoxFTBModLink.Text = modlink;
+                    textBoxFTBModLink.Text = modlinkPerm.modLink;
                 }
             }
-            String licenseLink = _ftbPermissionsSqlHelper.GetPermissionFromModId(textBoxModID.Text).privateLicenceLink;
-            if (String.IsNullOrWhiteSpace(licenseLink))
+            Permission licenseLinkPerm = _ftbPermissionsSqlHelper.GetPermissionFromModId(textBoxModID.Text);
+            if (licenseLinkPerm == null)
             {
                 if (technicPermissions.Visible)
                 {
@@ -410,11 +410,11 @@ namespace TechnicSolderHelper
             {
                 if (technicPermissions.Visible)
                 {
-                    textBoxTechnicLicenseLink.Text = licenseLink;
+                    textBoxTechnicLicenseLink.Text = licenseLinkPerm.licenseLink;
                 }
                 if (FTBPermissions.Visible)
                 {
-                    textBoxFTBLicenseLink.Text = licenseLink;
+                    textBoxFTBLicenseLink.Text = licenseLinkPerm.licenseLink;
                 }
             }
             OwnPermissionsSqlHelper ownPermissionsSqlHelper = new OwnPermissionsSqlHelper();

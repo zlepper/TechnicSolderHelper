@@ -181,7 +181,21 @@ namespace TechnicSolderHelper
                 }
                 else
                 {
-                    authorString = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid).modAuthors;
+                    if (String.IsNullOrWhiteSpace(mod.Modid))
+                    {
+                        return "";
+                    }
+
+                    Permission temp = _ftbPermsSqLhelper.GetPermissionFromModId(mod.Modid);
+
+                    if (temp == null)
+                    {
+                        authorString = "";
+                    }
+                    else
+                    {
+                        authorString = temp.modAuthors;
+                    }
 
                     if (String.IsNullOrWhiteSpace(authorString))
                     {
@@ -583,7 +597,7 @@ namespace TechnicSolderHelper
 
                             Mcmod mod = new Mcmod();
 
-                            if (modinfo2.Modinfoversion != 0 && modinfo2.Modinfoversion == 2 || modinfo2.ModListVersion != 0 && modinfo2.ModListVersion == 2)
+                            if (modinfo2.Modinfoversion != 0 && modinfo2.Modinfoversion > 1 || modinfo2.ModListVersion != 0 && modinfo2.ModListVersion > 1)
                             {
                                 mod.Mcversion = modinfo2.Modlist[0].Mcversion;
                                 mod.Modid = modinfo2.Modlist[0].Modid;

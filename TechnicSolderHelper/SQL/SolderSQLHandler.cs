@@ -411,7 +411,7 @@ namespace TechnicSolderHelper.SQL
                         cmd.Parameters.AddWithValue("@update", DateTime.Now);
                         cmd.ExecuteNonQuery();
                     }
-                    int modpackid = 0;
+                    int modpackid;
                     sql = string.Format("SELECT modpack_id FROM {0}.{1} WHERE id LIKE @buildid;", _database, _prefix + "builds");
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {

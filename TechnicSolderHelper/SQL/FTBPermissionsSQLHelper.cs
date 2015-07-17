@@ -44,7 +44,7 @@ namespace TechnicSolderHelper.SQL
 
         public Permission GetPermissionFromModId(string modId)
         {
-            return _permissions.SingleOrDefault(p => p.modids.Contains(modId));
+            return _permissions.FirstOrDefault(p => p.modids.Contains(modId));
         }
 
         public PermissionPolicy FindPermissionPolicy(string toCheck, bool isPublic)
