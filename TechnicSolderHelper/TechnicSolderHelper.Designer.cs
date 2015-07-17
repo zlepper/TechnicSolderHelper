@@ -258,11 +258,11 @@ namespace TechnicSolderHelper
             // 
             // GetForgeVersions
             // 
-            this.GetForgeVersions.Location = new System.Drawing.Point(510, 343);
+            this.GetForgeVersions.Location = new System.Drawing.Point(470, 343);
             this.GetForgeVersions.Name = "GetForgeVersions";
-            this.GetForgeVersions.Size = new System.Drawing.Size(119, 27);
+            this.GetForgeVersions.Size = new System.Drawing.Size(159, 27);
             this.GetForgeVersions.TabIndex = 14;
-            this.GetForgeVersions.Text = "Get Forge versions";
+            this.GetForgeVersions.Text = "Get Forge/Minecraft versions";
             this.toolTip1.SetToolTip(this.GetForgeVersions, "Update the stored Forge version. WARNING: This will take a while, during which Mo" +
         "dpack Helper will be unable to pack your mods.");
             this.GetForgeVersions.UseVisualStyleBackColor = true;
@@ -590,7 +590,7 @@ namespace TechnicSolderHelper
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(429, 371);
+            this.button4.Location = new System.Drawing.Point(348, 388);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 31;
