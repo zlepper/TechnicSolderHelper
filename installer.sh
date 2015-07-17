@@ -1,16 +1,11 @@
 #!/bin/sh
 
-sudo apt-get -y install zip unzip
-wget -c "http://download.mono-project.com/repo/xamarin.gpg"
-sudo apt-key add xamarin.gpg
-rm xamarin.gpg
-sudo echo "deb http://download.mono-project.com/repo/debian wheezy main" > /etc/apt/sources.list.d/mono-xamarin.list
-sudo echo "deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main" >> /etc/apt/sources.list.d/mono-xamarin.list
-sudo apt-get -y update
-sudo apt-get -y install mono-complete
+command -v mono >/dev/null 2>&1 || { echo >&2 "I require mono but it's not installed. Install it using your distros package manager!  Aborting."; exit 1; }
 cd $HOME
-wget -c "http://zlepper.dk/solderhelper/TechnicSolderHelper.zip"
-mkdir "SolderHelper"
-unzip -o "TechnicSolderHelper.zip" -d "SolderHelper"
-rm "TechnicSolderHelper.zip"
-chmod 777 "SolderHelper/TechnicSolderHelper/SolderHelper.desktop"
+echo "Downloading SolderHelper..."
+wget -c "http://zlepper.dk/solderhelper/TechnicSolderHelper.zip" #Download archive
+trap "echo 'Cleaning up...'; rm 'TechnicSolderHelper.zip'" EXIT #Set up trap to clean up temporary file
+echo "Extracting Archive..."
+unzip -o "TechnicSolderHelper.zip" #Extract (Will be in "TechnicSolderHelper")
+echo "Making shortcut executable..."
+chmod +x "TechnicSolderHelper/SolderHelper.desktop" #Setting executable bit on the shortcut file
