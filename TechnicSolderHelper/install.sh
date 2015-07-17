@@ -1,11 +1,8 @@
-﻿#!/bin/sh
+#!/bin/sh
 
 DISTRO=$(lsb_release -a | sed -n -e 's/^.*ID://p')
 DISTRO=${DISTRO//[[:blank:]]/}
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-echo "Updating SolderHelper..."
-cd "$DIR/.."
 echo "$DISTRO detected."
 
 function dl() {
@@ -59,4 +56,4 @@ trap "rm 'TechnicSolderHelper.zip'" EXIT
 extract "TechnicSolderHelper.zip"
 makexec "TechnicSolderHelper/SolderHelper.desktop"
 
-echo "Successfully updated SolderHelper if no errors occured!"
+echo "Successfully installed SolderHelper if no errors occured!"
