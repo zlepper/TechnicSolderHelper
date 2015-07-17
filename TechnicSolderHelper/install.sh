@@ -44,6 +44,7 @@ function install() {
 			;;
 		*)
 			echo "Your package manager is not yet supported! Please install $1 yourself."
+			;;
 	esac
 }
 
