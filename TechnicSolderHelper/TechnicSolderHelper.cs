@@ -479,6 +479,8 @@ namespace TechnicSolderHelper
                 initializeSolderSqlHandler();
             }
 
+            _processesUsingModID.Clear();
+
             List<Mcmod> modsList = new List<Mcmod>(_totalMods);
             toolStripProgressBar.Value = 0;
             toolStripProgressBar.Maximum = _totalMods;

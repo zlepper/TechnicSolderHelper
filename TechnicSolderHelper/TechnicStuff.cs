@@ -457,8 +457,9 @@ namespace TechnicSolderHelper
                                     Directory.Delete(modDir, true);
                                     break;
                                 }
-                                catch (IOException)
+                                catch (IOException e)
                                 {
+                                    Debug.WriteLine(e.Message);
                                     Thread.Sleep(100);
                                 }
                             }
