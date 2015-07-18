@@ -1157,6 +1157,10 @@ namespace TechnicSolderHelper
             while (_runningProcess > 0)
             {
                 StatusLabel.Text = "Waiting for " + _runningProcess + " mod" + (_runningProcess == 1 ? "" : "s") + " to finsh packing";
+				if (Globalfunctions.IsUnix ()) {
+					statusStrip.Refresh ();
+					this.Refresh ();
+				}
                 if (doDebug.Checked)
                 {
                     StringBuilder sb = new StringBuilder();
@@ -1233,6 +1237,7 @@ namespace TechnicSolderHelper
                 bwFtp.RunWorkerCompleted += (s, a) =>
                 {
                     UploadingToFTP = false;
+					MessageBox.Show("Done uploading to FTP");
                 };
                 bwFtp.RunWorkerAsync();
             }

@@ -403,9 +403,8 @@ namespace TechnicSolderHelper
                                         .Replace(".", string.Empty)
                                         .ToLower()
                                     : mod.Modid.Replace(".", string.Empty).ToLower());
-                            modDir = "mods";
                             _startInfo.FileName = "zip";
-                            _startInfo.Arguments = "-r \"" + modArchive + "\" \"" + modDir + "\" ";
+                            _startInfo.Arguments = "-r \"" + modArchive + "\" \"mods\" ";
                         }
                         else
                         {
@@ -433,6 +432,7 @@ namespace TechnicSolderHelper
                             {
                                 Debug.WriteLine(string.Format("Updating mod on solder with Modid: {0} modversion: {1} md5value: {2}", modid, modversion, md5Value), doDebug.Checked);
                                 sqh.UpdateModversionMd5(modid, modversion, md5Value);
+								Debug.WriteLine(string.Format("Done updating mod on solder with modid: {0}", modid));
                             }
                             else
                             {
@@ -448,15 +448,20 @@ namespace TechnicSolderHelper
                             id = sqh.GetModId(modid);
                             int modVersionId = sqh.GetModversionId(id, modversion);
                             sqh.AddModversionToBuild(_buildId, modVersionId);
+							Debug.WriteLine(string.Format("Done addong mod {0} to build", modid));
                         }
+						Debug.WriteLine("Decrementing " + modDir);
                         _processesUsingFolder[modDir]--;
+						Debug.WriteLine("Decremented " + modDir);
                         if (Directory.Exists(modDir) && _processesUsingFolder[modDir] == 0)
                         {
                             while (true)
                             {
                                 try
                                 {
+									Debug.WriteLine("Attempting to delete directory " + modDir);
                                     Directory.Delete(modDir, true);
+									Debug.WriteLine("Done deleting directory " + modDir);
                                     break;
                                 }
                                 catch (IOException e)
@@ -478,6 +483,7 @@ namespace TechnicSolderHelper
                             _processesUsingModID.Remove(mod.Modid);
                         }
                     _runningProcess--;
+					Debug.WriteLine("Decremented _runningProcess");
                 };
                 bw.RunWorkerAsync();
             }
