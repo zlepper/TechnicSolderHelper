@@ -328,6 +328,19 @@ namespace TechnicSolderHelper
                             .Replace(".", string.Empty)
                             .ToLower()
                         : mod.Modid.Replace(".", string.Empty).ToLower();
+                    string modversion = mod.Mcversion.ToLower() + "-" + mod.Version.ToLower();
+                    if (useSolderBool && !force)
+                    {
+                        if (_solderSqlHandler.IsModversionOnline(modid, modversion))
+                        {
+                            Debug.WriteLine(modid + " is already online with version " + modversion);
+                            int id = _solderSqlHandler.GetModId(modid);
+                            int modVersionId = _solderSqlHandler.GetModversionId(id, modversion);
+                            _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
+                            _runningProcess--;
+                            return;
+                        }
+                    }
 
                     while (true)
                     {
@@ -342,18 +355,7 @@ namespace TechnicSolderHelper
                             break;
                         }
                     }
-                    string modversion = mod.Mcversion.ToLower() + "-" + mod.Version.ToLower();
-                    if (useSolderBool && !force)
-                    {
-                        if (_solderSqlHandler.IsModversionOnline(modid, modversion))
-                        {
-                            int id = _solderSqlHandler.GetModId(modid);
-                            int modVersionId = _solderSqlHandler.GetModversionId(id, modversion);
-                            _solderSqlHandler.AddModversionToBuild(_buildId, modVersionId);
-                            _runningProcess--;
-                            return;
-                        }
-                    }
+                    
                     if (!_modsSqLhelper.IsFileInSolder(modfile) || force)
                     {
                         var modDir = Path.Combine(_outputDirectory, "mods",
@@ -429,6 +431,7 @@ namespace TechnicSolderHelper
                             string md5Value = SqlHelper.CalculateMd5(archive).ToLower();
                             if (sqh.IsModversionOnline(modid, modversion))
                             {
+                                Debug.WriteLine(string.Format("Updating mod on solder with Modid: {0} modversion: {1} md5value: {2}", modid, modversion, md5Value), doDebug.Checked);
                                 sqh.UpdateModversionMd5(modid, modversion, md5Value);
                             }
                             else
@@ -438,9 +441,8 @@ namespace TechnicSolderHelper
                                 {
                                     sqh.AddModToSolder(modid, mod.Description, GetAuthors(mod), mod.Url,
                                         mod.Name);
-                                    // ReSharper disable once RedundantAssignment
-                                    id = sqh.GetModId(modid);
                                 }
+                                Debug.WriteLine(string.Format("Adding mod to solder with Modid: {0} modversion: {1} md5value: {2}", modid, modversion, md5Value), doDebug.Checked);
                                 sqh.AddNewModversionToSolder(modid, modversion, md5Value);
                             }
                             id = sqh.GetModId(modid);

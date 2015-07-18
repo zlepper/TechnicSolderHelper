@@ -37,7 +37,7 @@ namespace TechnicSolderHelper.SQL
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.InnerException);
+                Debug.WriteLine(e.InnerException.ToString());
                 ch.SetConfig("mysqlPassword", crypto.EncryptToString("password"));
             }
             var password = crypto.DecryptString(ch.GetConfig("mysqlPassword"));
@@ -93,7 +93,7 @@ namespace TechnicSolderHelper.SQL
             {
                 MessageBox.Show(e.Message);
                 Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.InnerException);
+                Debug.WriteLine(e.InnerException.ToString());
             }
         }
 

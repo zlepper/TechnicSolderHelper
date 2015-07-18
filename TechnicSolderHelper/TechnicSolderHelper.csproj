@@ -207,6 +207,7 @@
     <Compile Include="confighandler\confighandler.cs" />
     <Compile Include="cryptography\crypto.cs" />
     <Compile Include="cryptography\KeyHandler.cs" />
+    <Compile Include="Debug.cs" />
     <Compile Include="FileUpload\UploadProgression.cs">
       <SubType>Form</SubType>
     </Compile>

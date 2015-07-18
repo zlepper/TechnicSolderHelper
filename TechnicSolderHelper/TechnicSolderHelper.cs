@@ -369,6 +369,8 @@ namespace TechnicSolderHelper
                 File.WriteAllText(_path, htmlfile);
             }
 
+            Debug.AssignCheckbox(doDebug);
+
             return false;
         }
 
@@ -1162,8 +1164,9 @@ namespace TechnicSolderHelper
                     {
                         sb.AppendLine(pros);
                     }
-                    File.AppendAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "DebugFromModpackHelper.txt"), sb.ToString());
+                    Debug.WriteLine(sb.ToString());
                 }
+                Debug.Save();
                 Thread.Sleep(100);
             }
             StatusLabel.Text = "Saving mod data";
@@ -1214,7 +1217,6 @@ namespace TechnicSolderHelper
                 }
 
             }
-
             if (CreateTechnicPack.Checked && SolderPack.Checked && UploadToFTPServer.Checked)
             {
                 StatusLabel.Text = "Uploading to FTP";
