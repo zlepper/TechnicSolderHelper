@@ -135,11 +135,51 @@ namespace ModpackHelper.CLI
                 args.Remove("-c");
             }
 
+            // Check if everything should be repacked
+            if (args.Contains("-r"))
+            {
+                RepackEverything = true;
+                args.Remove("-r");
+            }
 
+            // Check if the local permissions should be updated with the newest
+            // permissions from FTB
+            if (args.Contains("-u"))
+            {
+                UpdateStoredPermissions = true;
+                args.Remove("-u");
+            }
 
+            // Check if Modpack Helper should generate a permission sheet.
+            if (args.Contains("-g"))
+            {
+                GeneratePermissionSheet = true;
+                args.Remove("-g");
+            }
+
+            // Check if Modpack Helper should be verbose in it's output
+            if (args.Contains("-v"))
+            {
+                Verbose = true;
+                args.Remove("-g");
+            }
+
+            // Gets the modpack name
+            if (args.Contains("-Mn"))
+            {
+                
+            }
 
 
             return true;
         }
+
+        public bool Verbose { get; set; }
+
+        public bool GeneratePermissionSheet { get; set; }
+
+        public bool UpdateStoredPermissions { get; set; }
+
+        public bool RepackEverything { get; set; }
     }
 }
