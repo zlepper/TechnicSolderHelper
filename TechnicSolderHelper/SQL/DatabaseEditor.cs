@@ -51,7 +51,6 @@ namespace TechnicSolderHelper.SQL
             foreach (DataGridViewRow row in data.Rows)
             {
                 //Here 2 cell is target value and 1 cell is Volume
-                string wtf = row.Cells[modVersionIndex].Value.ToString();
                 data.Rows[row.Index].Cells[modVersionIndex].Style.BackColor = row.Cells[modVersionIndex].Value.ToString().Contains(row.Cells[minecraftVersionIndex].Value.ToString()) ? Color.Red : Color.White;
             }
         }
