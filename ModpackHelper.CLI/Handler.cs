@@ -69,7 +69,7 @@ namespace ModpackHelper.CLI
 
                 // Check to make sure the user specified the 
                 // /mods/ directory as input directory
-                if (!supposedInputDirectory.EndsWith(_fileSystem.Path.PathSeparator + "mods"))
+                if (!supposedInputDirectory.EndsWith(_fileSystem.Path.DirectorySeparatorChar + "mods"))
                 {
                     messageShower.ShowMessageAsync(Messages.NotAModsDirectory);
                     return false;

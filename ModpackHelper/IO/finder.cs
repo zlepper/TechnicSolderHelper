@@ -20,6 +20,11 @@ namespace ModpackHelper.IO
 
         public Finder(): this(fileSystem: new FileSystem()){}
 
+        /// <summary>
+        /// Finds all the mods in the specified directory
+        /// </summary>
+        /// <param name="dir">The directory to search</param>
+        /// <returns></returns>
         public List<FileInfoBase> GetModFiles(DirectoryInfoBase dir)
         {
             List<FileInfoBase> files = dir.EnumerateFiles("*.zip", SearchOption.AllDirectories).Where(file => !Regex.IsMatch(file.Name, @"-?[0-9]+,-?[0-9]+.zip")).ToList();
@@ -29,6 +34,11 @@ namespace ModpackHelper.IO
             return files;
         }
 
+        /// <summary>
+        /// Finds all the mods in the specified directory
+        /// </summary>
+        /// <param name="dir">The directory to search</param>
+        /// <returns></returns>
         public List<FileInfoBase> GetModFiles(string dir)
         {
             return GetModFiles(_fileSystem.DirectoryInfo.FromDirectoryName(dir));

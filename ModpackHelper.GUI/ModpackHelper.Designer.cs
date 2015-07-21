@@ -39,10 +39,25 @@
             this.browseForOutputDirectoryButton = new System.Windows.Forms.Button();
             this.startPackingButton = new System.Windows.Forms.Button();
             this.globalConfigurationsGroupBox = new System.Windows.Forms.GroupBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.ClearOutpuDirectoryCheckBox = new System.Windows.Forms.CheckBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.getForgeVersionsButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.minecraftVersionDropdown = new System.Windows.Forms.ComboBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.technicOptionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.forgeVersionLabel = new System.Windows.Forms.Label();
+            this.forgeVersionDropdown = new System.Windows.Forms.ComboBox();
             this.PackTypeGroupBox = new System.Windows.Forms.GroupBox();
             this.ZipPackRadioButton = new System.Windows.Forms.RadioButton();
             this.SolderPackRadioButton = new System.Windows.Forms.RadioButton();
@@ -52,32 +67,17 @@
             this.checkPermissionsCheckBox = new System.Windows.Forms.CheckBox();
             this.createConfigZipCheckBox = new System.Windows.Forms.CheckBox();
             this.createForgeZipCheckBox = new System.Windows.Forms.CheckBox();
-            this.minecraftVersionDropdown = new System.Windows.Forms.ComboBox();
-            this.getForgeVersionsButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.forgeVersionDropdown = new System.Windows.Forms.ComboBox();
-            this.forgeVersionLabel = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
             inputFolderLabel = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             this.globalConfigurationsGroupBox.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.technicOptionsGroupBox.SuspendLayout();
             this.PackTypeGroupBox.SuspendLayout();
             this.technicPermissionsLevelGroupBox.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // inputFolderLabel
@@ -140,6 +140,7 @@
             this.browseForInputDirectoryButton.TabIndex = 1;
             this.browseForInputDirectoryButton.Text = "Browse";
             this.browseForInputDirectoryButton.UseVisualStyleBackColor = true;
+            this.browseForInputDirectoryButton.Click += new System.EventHandler(this.browseForInputDirectoryButton_Click);
             // 
             // outputDirectoryTextBox
             // 
@@ -156,6 +157,7 @@
             this.browseForOutputDirectoryButton.TabIndex = 1;
             this.browseForOutputDirectoryButton.Text = "Browse";
             this.browseForOutputDirectoryButton.UseVisualStyleBackColor = true;
+            this.browseForOutputDirectoryButton.Click += new System.EventHandler(this.browseForOutputDirectoryButton_Click);
             // 
             // startPackingButton
             // 
@@ -169,7 +171,7 @@
             // globalConfigurationsGroupBox
             // 
             this.globalConfigurationsGroupBox.Controls.Add(this.checkBox4);
-            this.globalConfigurationsGroupBox.Controls.Add(this.checkBox3);
+            this.globalConfigurationsGroupBox.Controls.Add(this.ClearOutpuDirectoryCheckBox);
             this.globalConfigurationsGroupBox.Controls.Add(this.checkBox2);
             this.globalConfigurationsGroupBox.Controls.Add(this.checkBox1);
             this.globalConfigurationsGroupBox.Controls.Add(this.groupBox2);
@@ -193,6 +195,127 @@
             this.globalConfigurationsGroupBox.TabStop = false;
             this.globalConfigurationsGroupBox.Text = "Global Configurations";
             // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(385, 129);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(94, 17);
+            this.checkBox4.TabIndex = 12;
+            this.checkBox4.Text = "Enable Debug";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
+            // ClearOutpuDirectoryCheckBox
+            // 
+            this.ClearOutpuDirectoryCheckBox.AutoSize = true;
+            this.ClearOutpuDirectoryCheckBox.Checked = true;
+            this.ClearOutpuDirectoryCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ClearOutpuDirectoryCheckBox.Location = new System.Drawing.Point(385, 104);
+            this.ClearOutpuDirectoryCheckBox.Name = "ClearOutpuDirectoryCheckBox";
+            this.ClearOutpuDirectoryCheckBox.Size = new System.Drawing.Size(159, 17);
+            this.ClearOutpuDirectoryCheckBox.TabIndex = 11;
+            this.ClearOutpuDirectoryCheckBox.Text = "Clear output directory on run";
+            this.ClearOutpuDirectoryCheckBox.UseVisualStyleBackColor = true;
+            this.ClearOutpuDirectoryCheckBox.CheckedChanged += new System.EventHandler(this.ClearOutpuDirectoryCheckBox_CheckedChanged);
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(142, 159);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(108, 17);
+            this.checkBox2.TabIndex = 10;
+            this.checkBox2.Text = "Create FTB Pack";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(9, 159);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(127, 17);
+            this.checkBox1.TabIndex = 9;
+            this.checkBox1.Text = "Create Technic Pack";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.radioButton2);
+            this.groupBox2.Controls.Add(this.radioButton1);
+            this.groupBox2.Location = new System.Drawing.Point(773, 17);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(104, 68);
+            this.groupBox2.TabIndex = 8;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Missing Info";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(7, 45);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(96, 17);
+            this.radioButton2.TabIndex = 0;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Ask as needed";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(7, 22);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(71, 17);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Create list";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(173, 100);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 7;
+            this.button4.Text = "Edit data";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(173, 129);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(125, 23);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Generate Permissions";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(254, 100);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(125, 23);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Repack everything";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(6, 129);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(160, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Update stored permissions";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // getForgeVersionsButton
+            // 
+            this.getForgeVersionsButton.Location = new System.Drawing.Point(6, 100);
+            this.getForgeVersionsButton.Name = "getForgeVersionsButton";
+            this.getForgeVersionsButton.Size = new System.Drawing.Size(160, 23);
+            this.getForgeVersionsButton.TabIndex = 3;
+            this.getForgeVersionsButton.Text = "Get Forge/Minecraft versions";
+            this.getForgeVersionsButton.UseVisualStyleBackColor = true;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.minecraftVersionDropdown);
@@ -207,6 +330,14 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Modpack Settings";
+            // 
+            // minecraftVersionDropdown
+            // 
+            this.minecraftVersionDropdown.FormattingEnabled = true;
+            this.minecraftVersionDropdown.Location = new System.Drawing.Point(6, 110);
+            this.minecraftVersionDropdown.Name = "minecraftVersionDropdown";
+            this.minecraftVersionDropdown.Size = new System.Drawing.Size(182, 21);
+            this.minecraftVersionDropdown.TabIndex = 1;
             // 
             // textBox2
             // 
@@ -237,6 +368,23 @@
             this.technicOptionsGroupBox.TabIndex = 4;
             this.technicOptionsGroupBox.TabStop = false;
             this.technicOptionsGroupBox.Text = "Technic Options";
+            // 
+            // forgeVersionLabel
+            // 
+            this.forgeVersionLabel.AutoSize = true;
+            this.forgeVersionLabel.Location = new System.Drawing.Point(162, 44);
+            this.forgeVersionLabel.Name = "forgeVersionLabel";
+            this.forgeVersionLabel.Size = new System.Drawing.Size(72, 13);
+            this.forgeVersionLabel.TabIndex = 0;
+            this.forgeVersionLabel.Text = "Forge Version";
+            // 
+            // forgeVersionDropdown
+            // 
+            this.forgeVersionDropdown.FormattingEnabled = true;
+            this.forgeVersionDropdown.Location = new System.Drawing.Point(162, 60);
+            this.forgeVersionDropdown.Name = "forgeVersionDropdown";
+            this.forgeVersionDropdown.Size = new System.Drawing.Size(121, 21);
+            this.forgeVersionDropdown.TabIndex = 7;
             // 
             // PackTypeGroupBox
             // 
@@ -334,149 +482,6 @@
             this.createForgeZipCheckBox.Text = "Create Forge zip";
             this.createForgeZipCheckBox.UseVisualStyleBackColor = true;
             // 
-            // minecraftVersionDropdown
-            // 
-            this.minecraftVersionDropdown.FormattingEnabled = true;
-            this.minecraftVersionDropdown.Location = new System.Drawing.Point(6, 110);
-            this.minecraftVersionDropdown.Name = "minecraftVersionDropdown";
-            this.minecraftVersionDropdown.Size = new System.Drawing.Size(182, 21);
-            this.minecraftVersionDropdown.TabIndex = 1;
-            // 
-            // getForgeVersionsButton
-            // 
-            this.getForgeVersionsButton.Location = new System.Drawing.Point(6, 100);
-            this.getForgeVersionsButton.Name = "getForgeVersionsButton";
-            this.getForgeVersionsButton.Size = new System.Drawing.Size(160, 23);
-            this.getForgeVersionsButton.TabIndex = 3;
-            this.getForgeVersionsButton.Text = "Get Forge/Minecraft versions";
-            this.getForgeVersionsButton.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(6, 129);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(160, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Update stored permissions";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(254, 100);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(125, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Repack everything";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(173, 129);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(125, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Generate Permissions";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(173, 100);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 7;
-            this.button4.Text = "Edit data";
-            this.button4.UseVisualStyleBackColor = true;
-            // 
-            // forgeVersionDropdown
-            // 
-            this.forgeVersionDropdown.FormattingEnabled = true;
-            this.forgeVersionDropdown.Location = new System.Drawing.Point(162, 60);
-            this.forgeVersionDropdown.Name = "forgeVersionDropdown";
-            this.forgeVersionDropdown.Size = new System.Drawing.Size(121, 21);
-            this.forgeVersionDropdown.TabIndex = 7;
-            // 
-            // forgeVersionLabel
-            // 
-            this.forgeVersionLabel.AutoSize = true;
-            this.forgeVersionLabel.Location = new System.Drawing.Point(162, 44);
-            this.forgeVersionLabel.Name = "forgeVersionLabel";
-            this.forgeVersionLabel.Size = new System.Drawing.Size(72, 13);
-            this.forgeVersionLabel.TabIndex = 0;
-            this.forgeVersionLabel.Text = "Forge Version";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.radioButton2);
-            this.groupBox2.Controls.Add(this.radioButton1);
-            this.groupBox2.Location = new System.Drawing.Point(773, 17);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(104, 68);
-            this.groupBox2.TabIndex = 8;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Missing Info";
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(7, 22);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(71, 17);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Create list";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(7, 45);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(96, 17);
-            this.radioButton2.TabIndex = 0;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Ask as needed";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(9, 159);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(127, 17);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Create Technic Pack";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(142, 159);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(108, 17);
-            this.checkBox2.TabIndex = 10;
-            this.checkBox2.Text = "Create FTB Pack";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(385, 104);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(159, 17);
-            this.checkBox3.TabIndex = 11;
-            this.checkBox3.Text = "Clear output directory on run";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(385, 129);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(94, 17);
-            this.checkBox4.TabIndex = 12;
-            this.checkBox4.Text = "Enable Debug";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            // 
             // ModpackHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -489,6 +494,8 @@
             this.Text = "Modpack Helper";
             this.globalConfigurationsGroupBox.ResumeLayout(false);
             this.globalConfigurationsGroupBox.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.technicOptionsGroupBox.ResumeLayout(false);
@@ -497,18 +504,14 @@
             this.PackTypeGroupBox.PerformLayout();
             this.technicPermissionsLevelGroupBox.ResumeLayout(false);
             this.technicPermissionsLevelGroupBox.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox inputDirectoryTextBox;
-        private System.Windows.Forms.Button browseForInputDirectoryButton;
-        private System.Windows.Forms.TextBox outputDirectoryTextBox;
-        private System.Windows.Forms.Button browseForOutputDirectoryButton;
+        public System.Windows.Forms.TextBox inputDirectoryTextBox;
+        public System.Windows.Forms.TextBox outputDirectoryTextBox;
         private System.Windows.Forms.Button startPackingButton;
         private System.Windows.Forms.GroupBox globalConfigurationsGroupBox;
         private System.Windows.Forms.GroupBox technicOptionsGroupBox;
@@ -536,9 +539,11 @@
         private System.Windows.Forms.Label forgeVersionLabel;
         private System.Windows.Forms.ComboBox forgeVersionDropdown;
         private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox1;
+        public System.Windows.Forms.CheckBox ClearOutpuDirectoryCheckBox;
+        public System.Windows.Forms.Button browseForInputDirectoryButton;
+        public System.Windows.Forms.Button browseForOutputDirectoryButton;
 
     }
 }

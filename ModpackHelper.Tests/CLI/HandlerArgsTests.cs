@@ -53,7 +53,7 @@ namespace ModpackHelper.Tests.CLI
             bool success = h.Start(args, messageShower.Object);
 
             Assert.False(success);
-            messageShower.Verify(m => m.ShowMessageAsync(string.Format(Messages.MissingFlag, "-o")));
+            messageShower.Verify(m => m.ShowMessageAsync(Messages.MissingOutputDirectory));
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace ModpackHelper.Tests.CLI
             bool success = h.Start(args, messageShower.Object);
 
             Assert.False(success);
-            messageShower.Verify(m => m.ShowMessageAsync(Messages.InputDirectoryFound));
+            messageShower.Verify(m => m.ShowMessageAsync(Messages.InputDirectoryNotFound));
         }
 
 

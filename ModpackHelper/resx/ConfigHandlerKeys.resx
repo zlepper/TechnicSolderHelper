@@ -117,14 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InputHasToBeModDirectory" xml:space="preserve">
-    <value>The inputfolder has to be a mods directory</value>
-    <comment>Error message</comment>
+  <data name="clearOutputDirectory" xml:space="preserve">
+    <value>clearoutputdirectory</value>
   </data>
-  <data name="SelectOutputDirectory" xml:space="preserve">
-    <value>Select the output directory</value>
+  <data name="inputDirectory" xml:space="preserve">
+    <value>inputdirectory</value>
   </data>
-  <data name="SelectTheInputDirectory" xml:space="preserve">
-    <value>Select the mods directory of the modpack.</value>
+  <data name="outputDirectory" xml:space="preserve">
+    <value>outputdirectory</value>
   </data>
 </root>

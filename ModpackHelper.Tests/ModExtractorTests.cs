@@ -6,6 +6,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using ModpackHelper.mods;
+using ModpackHelper.Shared;
+using ModpackHelper.Shared.Mods;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests

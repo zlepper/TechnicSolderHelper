@@ -23,7 +23,7 @@ namespace ModpackHelper.Tests.IO
             {
                 {configJsonFilePath, new MockFileData("{}")}
             });
-            ConfigsHandler handler = new ConfigsHandler(fileSystem);
+            ConfigHandler handler = new ConfigHandler(fileSystem);
             string inputValue = "TestValue";
             string result = handler.SetProperty("TestKey", inputValue).ToString();
 
@@ -37,7 +37,7 @@ namespace ModpackHelper.Tests.IO
             {
                 {configJsonFilePath, new MockFileData("{\"TestKey\":\"TestValue\"}")}
             });
-            ConfigsHandler handler = new ConfigsHandler(fileSystem);
+            ConfigHandler handler = new ConfigHandler(fileSystem);
             string inputValue = "NEw test value";
 
             string result = handler.SetProperty("TestKey", inputValue).ToString();
@@ -52,7 +52,7 @@ namespace ModpackHelper.Tests.IO
             {
                 {configJsonFilePath, new MockFileData("{\"TestKey\":\"TestValue\"}")}
             });
-            ConfigsHandler handler = new ConfigsHandler(fileSystem);
+            ConfigHandler handler = new ConfigHandler(fileSystem);
 
             string result = handler.GetProperty("TestKey").ToString();
 
@@ -67,7 +67,7 @@ namespace ModpackHelper.Tests.IO
             {
                 {configJsonFilePath, new MockFileData("{\"TestKey\":\"TestValue\"}")}
             });
-            ConfigsHandler handler = new ConfigsHandler(fileSystem);
+            ConfigHandler handler = new ConfigHandler(fileSystem);
             handler.GetProperty("Someotherkey");
         }
 
@@ -76,7 +76,7 @@ namespace ModpackHelper.Tests.IO
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
 
-            ConfigsHandler handler = new ConfigsHandler(fileSystem);
+            ConfigHandler handler = new ConfigHandler(fileSystem);
 
             handler.SetProperty("Somekey", "Some value");
         }
@@ -87,7 +87,7 @@ namespace ModpackHelper.Tests.IO
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
 
-            ConfigsHandler handler = new ConfigsHandler(fileSystem);
+            ConfigHandler handler = new ConfigHandler(fileSystem);
 
             handler.GetProperty("SomeKey");
         }
@@ -95,7 +95,7 @@ namespace ModpackHelper.Tests.IO
         [Test]
         public void ConfigHandler_initalize_NormallyAndDispose()
         {
-            using (ConfigsHandler handler = new ConfigsHandler())
+            using (ConfigHandler handler = new ConfigHandler())
             {
                 Assert.NotNull(handler);
             }

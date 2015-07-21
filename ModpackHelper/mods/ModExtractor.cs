@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 using ModpackHelper.IO;
 using ModpackHelper.mods;
 
-namespace ModpackHelper
+namespace ModpackHelper.Shared.Mods
 {
     public class ModExtractor
     {
-        private readonly IFileSystem fileSystem;
+        private readonly IFileSystem _fileSystem;
 
         public ModExtractor(IFileSystem fileSystem)
         {
-            this.fileSystem = fileSystem;
+            _fileSystem = fileSystem;
         }
 
         public ModExtractor() : this(fileSystem: new FileSystem())
@@ -27,7 +27,7 @@ namespace ModpackHelper
 
         public Mcmod GetMcmodDataFromFile(string pathToJson)
         {
-            string json = new IOHandler(fileSystem).ReadJson(pathToJson);
+            string json = new IOHandler(_fileSystem).ReadJson(pathToJson);
 
             return GetMcmodDataFromJson(json);
         }

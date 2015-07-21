@@ -8,12 +8,17 @@ using Newtonsoft.Json;
 
 namespace ModpackHelper.IO
 {
-    public class ConfigsHandler : IDisposable
+    public class ConfigHandler : IDisposable
     {
         private readonly IFileSystem _fileSystem;
         private readonly Dictionary<string, object> _configsDictionary;
         private readonly string _configFilePath;
-        public ConfigsHandler(IFileSystem fileSystem)
+
+        /// <summary>
+        /// Initialize the confighandler with a special filesystem
+        /// </summary>
+        /// <param name="fileSystem">The filesystem to initialize with</param>
+        public ConfigHandler(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
             _configFilePath =
@@ -35,13 +40,19 @@ namespace ModpackHelper.IO
             _configsDictionary = Load(fileContens);
         }
 
-        // ReSharper disable once UnusedMember.Global
-        public ConfigsHandler()
+        /// <summary>
+        /// Create a confighandler
+        /// </summary>
+        public ConfigHandler()
             : this(fileSystem: new FileSystem())
         {
 
         }
 
+        /// <summary>
+        /// Save the currently stored data to disk
+        /// </summary>
+        /// <param name="info"></param>
         private void Save(Dictionary<string, object> info)
         {
             string json = JsonConvert.SerializeObject(info);
@@ -49,6 +60,7 @@ namespace ModpackHelper.IO
             _fileSystem.File.WriteAllText(_configFilePath, json);
         }
 
+        
         private Dictionary<string, object> Load(string fileContent)
         {
             string json = "{}";
@@ -59,6 +71,12 @@ namespace ModpackHelper.IO
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
         }
 
+        /// <summary>
+        /// Set a specific property to the specified value
+        /// </summary>
+        /// <param name="key">The key to save the property under</param>
+        /// <param name="value">The value to save</param>
+        /// <returns>The save value</returns>
         public object SetProperty(string key, object value)
         {
             if (_configsDictionary.ContainsKey(key))
@@ -73,6 +91,12 @@ namespace ModpackHelper.IO
             return value;
         }
 
+        /// <summary>
+        /// Gets a specific key from the saved configs.
+        /// </summary>
+        /// <param name="key">The key to find</param>
+        /// <returns>The object that was found</returns>
+        /// <exception cref="IndexOutOfRangeException">Throws this if the key is not found in the dictionary</exception>
         public object GetProperty(string key)
         {
             if (!_configsDictionary.ContainsKey(key))

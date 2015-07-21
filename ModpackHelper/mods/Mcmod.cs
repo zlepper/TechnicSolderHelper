@@ -26,8 +26,6 @@ namespace ModpackHelper.mods
                 Lists.AreEqual(Authors, other.Authors) && 
                 PublicPerms == other.PublicPerms && 
                 PrivatePerms == other.PrivatePerms && 
-                IsIgnore == other.IsIgnore && 
-                UseShortName == other.UseShortName && 
                 FromSuggestion == other.FromSuggestion && 
                 FromUserInput == other.FromUserInput && 
                 string.Equals(Filename, other.Filename) && 
@@ -51,8 +49,6 @@ namespace ModpackHelper.mods
                 hashCode = (hashCode*397) ^ (Authors != null ? Authors.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (int) PublicPerms;
                 hashCode = (hashCode*397) ^ (int) PrivatePerms;
-                hashCode = (hashCode*397) ^ IsIgnore.GetHashCode();
-                hashCode = (hashCode*397) ^ UseShortName.GetHashCode();
                 hashCode = (hashCode*397) ^ FromSuggestion.GetHashCode();
                 hashCode = (hashCode*397) ^ FromUserInput.GetHashCode();
                 hashCode = (hashCode*397) ^ (Filename != null ? Filename.GetHashCode() : 0);
