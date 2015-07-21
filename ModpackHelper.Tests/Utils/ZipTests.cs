@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ModpackHelper.IO;
+using ModpackHelper.Shared.IO;
 using ModpackHelper.Utils;
 using NUnit.Framework;
 

@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ModpackHelper.Utils;
 using Newtonsoft.Json;
 
@@ -20,15 +24,11 @@ namespace ModpackHelper.mods
                 string.Equals(Mcversion, other.Mcversion) && 
                 string.Equals(Url, other.Url) && 
                 string.Equals(Description, other.Description) && 
-                HasBeenWritenToModlist == other.HasBeenWritenToModlist && 
-                IsSkipping == other.IsSkipping && 
                 Lists.AreEqual(AuthorList, other.AuthorList) && 
                 Lists.AreEqual(Authors, other.Authors) && 
                 PublicPerms == other.PublicPerms && 
                 PrivatePerms == other.PrivatePerms && 
                 FromSuggestion == other.FromSuggestion && 
-                FromUserInput == other.FromUserInput && 
-                string.Equals(Filename, other.Filename) && 
                 string.Equals(Path, other.Path) && 
                 Aredone == other.Aredone;
         }
@@ -43,15 +43,11 @@ namespace ModpackHelper.mods
                 hashCode = (hashCode*397) ^ (Mcversion != null ? Mcversion.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Url != null ? Url.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Description != null ? Description.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ HasBeenWritenToModlist.GetHashCode();
-                hashCode = (hashCode*397) ^ IsSkipping.GetHashCode();
                 hashCode = (hashCode*397) ^ (AuthorList != null ? AuthorList.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Authors != null ? Authors.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (int) PublicPerms;
                 hashCode = (hashCode*397) ^ (int) PrivatePerms;
                 hashCode = (hashCode*397) ^ FromSuggestion.GetHashCode();
-                hashCode = (hashCode*397) ^ FromUserInput.GetHashCode();
-                hashCode = (hashCode*397) ^ (Filename != null ? Filename.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Path != null ? Path.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ Aredone.GetHashCode();
                 return hashCode;
@@ -89,16 +85,6 @@ namespace ModpackHelper.mods
         public string Description { get; set; }
 
         /// <summary>
-        /// Indicates if this mod has been written to the output modlist
-        /// </summary>
-        public bool HasBeenWritenToModlist { get; set; }
-
-        /// <summary>
-        /// Indicates if this mod should be skipped when packing
-        /// </summary>
-        public bool IsSkipping { get; set; }
-
-        /// <summary>
         /// A list of the authors of the mod
         /// </summary>
         public List<string> AuthorList { get; set; }
@@ -128,26 +114,29 @@ namespace ModpackHelper.mods
         public bool FromSuggestion { get; set; }
 
         /// <summary>
-        /// Indicates that the mods information was from a users input
-        /// </summary>
-        public bool FromUserInput { get; set; }
-
-        /// <summary>
-        /// The name of the file itself
-        /// </summary>
-        public string Filename { get; set; }
-
-        /// <summary>
         /// The path of the mod
         /// </summary>
-        public string Path { get; set; }
+        private string Path { get; set; }
+
+        public void SetPath(FileInfoBase f)
+        {
+            Path = f.FullName;
+        }
+
+        public FileInfoBase GetPath()
+        {
+            return new FileInfo(Path);
+        }
 
         /// <summary>
         /// Indicates that all informatio has been entered for the mod
         /// </summary>
         public bool Aredone { get; set; }
 
-
+        /// <summary>
+        /// The md5 value of the jar of this mod
+        /// </summary>
+        public string JarMd5 { get; set; }
 
         public static Mcmod GetMcmod(string json)
         {
@@ -171,6 +160,40 @@ namespace ModpackHelper.mods
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((Mcmod) obj);
+        }
+
+        /// <summary>
+        /// Checks if the mod is on the list of mods which has custom support.
+        /// </summary>
+        /// <param name="modFileName">The mod file name.</param>
+        /// <returns>Returns the number of the method to call, if no match is found, returns zero</returns>
+        public static int IsSpecialHandledMod(string modFileName)
+        {
+            string[] skipMods =
+                {"CarpentersBlocksCachedResources",
+                    "CodeChickenLib",
+                    "ejml-",
+                    "commons-codec",
+                    "commons-compress",
+                    "Cleanup"
+                };
+            if (skipMods.Any(t => modFileName.ToLower().Contains(t.ToLower())))
+            {
+                return 0;
+            }
+            string[] modPatterns =
+                {
+                    @"liteloader"
+                };
+            for (int i = 0; i < modPatterns.Length; i++)
+            {
+                if (Regex.IsMatch(modFileName, modPatterns[i], RegexOptions.IgnoreCase))
+                {
+                    return i + 1;
+                }
+            }
+
+            return int.MaxValue;
         }
     }
 }

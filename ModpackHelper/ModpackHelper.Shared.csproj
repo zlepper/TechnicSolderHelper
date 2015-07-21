@@ -83,7 +83,7 @@
     <Compile Include="UserInteraction\IForgeVersionSelector.cs" />
     <Compile Include="UserInteraction\IMessageShower.cs" />
     <Compile Include="Utils\Lists.cs" />
-    <Compile Include="Utils\ZipUtils.cs" />
+    <Compile Include="IO\ZipUtils.cs" />
     <Compile Include="web\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

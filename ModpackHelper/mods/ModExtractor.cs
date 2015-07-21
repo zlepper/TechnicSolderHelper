@@ -32,6 +32,11 @@ namespace ModpackHelper.Shared.Mods
             return GetMcmodDataFromJson(json);
         }
 
+        public Mcmod GetMcmodDataFromFile(FileInfoBase pathToJson)
+        {
+            return GetMcmodDataFromFile(pathToJson.FullName));
+        }
+
         public static Mcmod GetMcmodDataFromJson(string json)
         {
             // Try to convert the json into an mcmod
