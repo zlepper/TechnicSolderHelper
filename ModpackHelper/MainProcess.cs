@@ -24,7 +24,7 @@ namespace ModpackHelper.Shared
 
         public bool Start(DirectoryInfoBase inputDirectory, DirectoryInfoBase outputDirectory)
         {
-            
+            return true;
         }
     }
 }
