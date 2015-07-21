@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using ModpackHelper.MinecraftForge;
+using ModpackHelper.Shared.MinecraftForge;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests.MinecraftForge

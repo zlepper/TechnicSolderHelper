@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
-using ModpackHelper.IO;
+using ModpackHelper.Shared.IO;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests.IO
@@ -18,7 +18,7 @@ namespace ModpackHelper.Tests.IO
             });
             IOHandler iohandler = new IOHandler(fileSystem);
 
-            string results = iohandler.ReadJson(@"C:\file.json");
+            string results = iohandler.ReadText(@"C:\file.json");
 
             Assert.AreEqual("[{'key': 'value'}]", results);
         }
@@ -30,7 +30,7 @@ namespace ModpackHelper.Tests.IO
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
             IOHandler iohandler = new IOHandler(fileSystem);
 
-            iohandler.ReadJson(@"C:\file.json");
+            iohandler.ReadText(@"C:\file.json");
         }
 
         [Test]

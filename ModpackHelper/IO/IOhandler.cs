@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace ModpackHelper.IO
+namespace ModpackHelper.Shared.IO
 {
+    /// <summary>
+    /// Used to handle IO
+    /// </summary>
     public class IOHandler
     {
         private readonly IFileSystem fileSystem;
@@ -25,7 +24,12 @@ namespace ModpackHelper.IO
             
         }
 
-        public string ReadJson(string path)
+        /// <summary>
+        /// Reads the text of the specified file
+        /// </summary>
+        /// <param name="path">The file to read</param>
+        /// <returns>The text of the file</returns>
+        public string ReadText(string path)
         {
             if (fileSystem.File.Exists(path))
             {
@@ -34,9 +38,14 @@ namespace ModpackHelper.IO
             throw new FileNotFoundException();
         }
 
-        public string ReadJson(FileInfoBase path)
+        /// <summary>
+        /// Reads the text of the specified file
+        /// </summary>
+        /// <param name="path">The file to read</param>
+        /// <returns>The text of the file</returns>
+        public string ReadText(FileInfoBase path)
         {
-            return ReadJson(path.ToString());
+            return ReadText(path.FullName);
         }
 
         /// <summary>
@@ -47,22 +56,16 @@ namespace ModpackHelper.IO
         public string CalculateMd5(FileInfoBase file)
         {
             using (MD5 md5 = MD5.Create())
-            {
                 while (true)
-                {
                     try
                     {
                         using (Stream stream = file.OpenRead())
-                        {
                             return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
-                        }
                     }
                     catch
                     {
                         Thread.Sleep(100);
                     }
-                }
-            }
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ModpackHelper.Permissions;
+using ModpackHelper.Shared.Permissions;
 using ModpackHelper.Utils;
 using Newtonsoft.Json;
 
@@ -16,21 +17,25 @@ namespace ModpackHelper.mods
     /// </summary>
     public class Mcmod
     {
+        /// <summary>
+        /// Used to indicate if this mod should be skipped when packing the mods
+        /// </summary>
+        public bool IsSkipping;
+
         public bool Equals(Mcmod other)
         {
-            return string.Equals(Modid, other.Modid) && 
-                string.Equals(Name, other.Name) && 
-                string.Equals(Version, other.Version) && 
-                string.Equals(Mcversion, other.Mcversion) && 
-                string.Equals(Url, other.Url) && 
-                string.Equals(Description, other.Description) && 
-                Lists.AreEqual(AuthorList, other.AuthorList) && 
-                Lists.AreEqual(Authors, other.Authors) && 
-                PublicPerms == other.PublicPerms && 
-                PrivatePerms == other.PrivatePerms && 
-                FromSuggestion == other.FromSuggestion && 
-                string.Equals(Path, other.Path) && 
-                Aredone == other.Aredone;
+            return string.Equals(Modid, other.Modid) &&
+                   string.Equals(Name, other.Name) &&
+                   string.Equals(Version, other.Version) &&
+                   string.Equals(Mcversion, other.Mcversion) &&
+                   string.Equals(Url, other.Url) &&
+                   string.Equals(Description, other.Description) &&
+                   Lists.AreEqual(AuthorList, other.AuthorList) &&
+                   Lists.AreEqual(Authors, other.Authors) &&
+                   PublicPerms == other.PublicPerms &&
+                   PrivatePerms == other.PrivatePerms &&
+                   FromSuggestion == other.FromSuggestion &&
+                   string.Equals(Path, other.Path);
         }
 
         public override int GetHashCode()
@@ -49,7 +54,6 @@ namespace ModpackHelper.mods
                 hashCode = (hashCode*397) ^ (int) PrivatePerms;
                 hashCode = (hashCode*397) ^ FromSuggestion.GetHashCode();
                 hashCode = (hashCode*397) ^ (Path != null ? Path.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ Aredone.GetHashCode();
                 return hashCode;
             }
         }
@@ -77,7 +81,7 @@ namespace ModpackHelper.mods
         /// <summary>
         /// The info url of the mod
         /// </summary>
-        public string Url { get; set; }
+        public string Url { get; }
 
         /// <summary>
         /// A short description of the mod
@@ -98,20 +102,20 @@ namespace ModpackHelper.mods
         /// Indicates the permissions needed to distribute the mod
         /// in a public modpack
         /// </summary>
-        public PermissionLevel PublicPerms { get; set; }
+        public PermissionLevel PublicPerms { get; }
 
         /// <summary>
         /// Indicates the permissions needed to distribute the mod
         /// in a private modpack
         /// </summary>
-        public PermissionLevel PrivatePerms { get; set; }
+        public PermissionLevel PrivatePerms { get; }
 
         /// <summary>
         /// Indicates if this info was fetched from my remote database
         /// and therefor should not be put back into the databasee
         /// TODO write a json api instead of the direct db interaction
         /// </summary>
-        public bool FromSuggestion { get; set; }
+        public bool FromSuggestion { get; }
 
         /// <summary>
         /// The path of the mod
@@ -127,11 +131,6 @@ namespace ModpackHelper.mods
         {
             return new FileInfo(Path);
         }
-
-        /// <summary>
-        /// Indicates that all informatio has been entered for the mod
-        /// </summary>
-        public bool Aredone { get; set; }
 
         /// <summary>
         /// The md5 value of the jar of this mod
@@ -194,6 +193,54 @@ namespace ModpackHelper.mods
             }
 
             return int.MaxValue;
+        }
+
+        /// <summary>
+        /// Verifies is the current mcmod is fully valid
+        /// </summary>
+        /// <returns>True is the mod is valid, otherwise false</returns>
+        public bool IsValid()
+        {
+            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Version) ||
+                string.IsNullOrWhiteSpace(Mcversion) || string.IsNullOrWhiteSpace(Modid) || Modid.ToLower().Contains("example") || Name.ToLower().Contains("example") || Version.ToLower().Contains("example"))
+                return false;
+            return !Name.Contains("${") && !Version.Contains("${") && !Mcversion.Contains("${") && !Modid.Contains("${") && !Version.ToLower().Contains("@version@") && AuthorList != null && AuthorList.Count > 0;
+        }
+
+        /// <summary>
+        /// Gets a list of authors for the mod
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetAuthor()
+        {
+            return GetAuthors(new FileSystem());
+        }
+
+        /// <summary>
+        /// Gets a list of authors for the mod
+        /// </summary>
+        /// <param name="fileSystem"></param>
+        /// <returns></returns>
+        public List<string> GetAuthors(IFileSystem fileSystem)
+        {
+            if (Authors != null && Authors.Count != 0)
+                return AuthorList = Authors;
+            // Id the Modid isn't set, then we can't do anymore to attempt to grab info,
+            // so we should just return
+            if (string.IsNullOrWhiteSpace(Modid))
+                return AuthorList = new List<string>();
+
+            // The FTB permission list might have some info we can use
+            PermissionGetter pGetter = new PermissionGetter();
+            Permission temp = pGetter.GetPermissionFromModId(Modid);
+
+            if (temp != null)
+                // They did!
+                return AuthorList = temp.modAuthors.Split(',').ToList();
+
+            // The user will have to enter stuff themselves
+            // TODO attempt to grab authors from own permission storage
+            return new List<string>();
         }
     }
 }

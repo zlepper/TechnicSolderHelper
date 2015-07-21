@@ -4,19 +4,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ModpackHelper.mods;
-using ModpackHelper.MinecraftForge;
 using Newtonsoft.Json;
 
-namespace ModpackHelper.Mods
+namespace ModpackHelper.Shared.Mods
 {
+    /// <summary>
+    /// Used to manage all the saved mod data
+    /// </summary>
     public class ModsDBContext : IDisposable
     {
+        /// <summary>
+        /// The saved mods
+        /// </summary>
         public ConcurrentBag<Mcmod> Mods { get; set; }
         private readonly IFileSystem fileSystem;
-
+        /// <summary>
+        /// Location of the data file
+        /// </summary>
         public readonly string JsonDataFile =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper",
                 "ModsDB.json"); 
@@ -45,6 +50,9 @@ namespace ModpackHelper.Mods
             }
         }
 
+        /// <summary>
+        /// Saves the mod data to disk
+        /// </summary>
         public void Save()
         {
             if(!fileSystem.FileInfo.FromFileName(JsonDataFile).Directory.Exists) fileSystem.FileInfo.FromFileName(JsonDataFile).Directory.Create();

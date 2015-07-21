@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Newtonsoft.Json;
 
 namespace ModpackHelper.mods
@@ -66,7 +60,7 @@ namespace ModpackHelper.mods
             try
             {
                 Litemod m = JsonConvert.DeserializeObject<Litemod>(json);
-                return isNull(m) ? null : m;
+                return IsNull(m) ? null : m;
             }
             catch (JsonSerializationException)
             {
@@ -78,7 +72,7 @@ namespace ModpackHelper.mods
             }
         }
 
-        public static bool isNull(Litemod m)
+        public static bool IsNull(Litemod m)
         {
             return m.Author == null && m.Description == null && m.Mcversion == null && m.Name == null &&
                    m.Revision == null && m.Version == null;

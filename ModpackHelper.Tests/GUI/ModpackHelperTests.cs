@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading.Tasks;
 using ModpackHelper.GUI.UserInteraction;
 using ModpackHelper.IO;
-using ModpackHelper.Shared.resx;
 using ModpackHelper.UserInteraction;
 using Moq;
 using NUnit.Framework;
@@ -30,8 +24,8 @@ namespace ModpackHelper.Tests.GUI
             ModpackHelper.GUI.ModpackHelper mh = new ModpackHelper.GUI.ModpackHelper(fileSystem, null, null);
 
             // Everything should have the default value
-            Assert.AreEqual("", mh.inputDirectoryTextBox.Text);
-            Assert.AreEqual(fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "ModpackHelper"), mh.outputDirectoryTextBox.Text);
+            Assert.AreEqual("", mh.InputDirectoryTextBox.Text);
+            Assert.AreEqual(fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "ModpackHelper"), mh.OutputDirectoryTextBox.Text);
             Assert.IsTrue(mh.ClearOutpuDirectoryCheckBox.Checked);
         }
 
@@ -48,13 +42,12 @@ namespace ModpackHelper.Tests.GUI
             
             using (ConfigHandler ch = new ConfigHandler(fileSystem))
             {
-                Assert.AreEqual(@"C:\minecraft\mods", ch.GetProperty(ConfigHandlerKeys.inputDirectory));
+                Assert.AreEqual(@"C:\minecraft\mods", ch.Configs.InputDirectory);
             }
 
         }
 
         [Test]
-        [ExpectedException(typeof(IndexOutOfRangeException))]
         public void ModpackHelper_inputDirectoryBrowseButtonClickedAndUserDidNotSelectAModsDirectory()
         {
             MockFileSystem fileSystem = new MockFileSystem();
@@ -71,7 +64,7 @@ namespace ModpackHelper.Tests.GUI
 
             using (ConfigHandler ch = new ConfigHandler(fileSystem))
             {
-                ch.GetProperty(ConfigHandlerKeys.inputDirectory);
+                Assert.True(string.IsNullOrWhiteSpace(ch.Configs.InputDirectory));
             }
 
         }

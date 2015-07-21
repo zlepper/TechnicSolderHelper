@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace ModpackHelper.IO
+namespace ModpackHelper.Shared.IO
 {
+    /// <summary>
+    /// Used to find special files
+    /// </summary>
     public class Finder
     {
-        private readonly IFileSystem _fileSystem;
+        private readonly IFileSystem fileSystem;
 
         public Finder(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            this.fileSystem = fileSystem;
         }
 
         public Finder(): this(fileSystem: new FileSystem()){}
@@ -41,7 +41,7 @@ namespace ModpackHelper.IO
         /// <returns></returns>
         public List<FileInfoBase> GetModFiles(string dir)
         {
-            return GetModFiles(_fileSystem.DirectoryInfo.FromDirectoryName(dir));
+            return GetModFiles(fileSystem.DirectoryInfo.FromDirectoryName(dir));
         } 
     }
 }

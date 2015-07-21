@@ -117,13 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="clearOutputDirectory" xml:space="preserve">
-    <value>clearoutputdirectory</value>
-  </data>
-  <data name="inputDirectory" xml:space="preserve">
-    <value>inputdirectory</value>
-  </data>
-  <data name="outputDirectory" xml:space="preserve">
-    <value>outputdirectory</value>
-  </data>
 </root>

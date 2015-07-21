@@ -61,7 +61,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\ReadOnlyRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Helpers\ConfigLoader.cs" />
+    <Compile Include="ModInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModInfoForm.Designer.cs">
+      <DependentUpon>ModInfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserInteraction\DirectoryFinder.cs" />
     <Compile Include="ModpackHelper.cs">
       <SubType>Form</SubType>
@@ -72,6 +81,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInteraction\MessageShower.cs" />
+    <EmbeddedResource Include="ModInfoForm.resx">
+      <DependentUpon>ModInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ModpackHelper.resx">
       <DependentUpon>ModpackHelper.cs</DependentUpon>
     </EmbeddedResource>

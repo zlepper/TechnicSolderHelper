@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ModpackHelper.Permissions;
+using ModpackHelper.Shared.Permissions;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests.Permissions

@@ -3,52 +3,54 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Http;
-using System.Runtime.Caching;
+using System.Text.RegularExpressions;
+using ModpackHelper.MinecraftForge;
 using Newtonsoft.Json;
 
-namespace ModpackHelper.MinecraftForge
+namespace ModpackHelper.Shared.MinecraftForge
 {
     public class ForgeHandler : IDisposable
     {
-        private IFileSystem _fileSystem;
-        private readonly string _forgeVersionFilePath;
-        private List<ForgeVersion> _forgeVersions; 
+        private readonly IFileSystem fileSystem;
+        private readonly string forgeVersionFilePath;
+        private List<ForgeVersion> forgeVersions; 
 
         public ForgeHandler(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            this.fileSystem = fileSystem;
 
-            _forgeVersionFilePath =
-                _fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            forgeVersionFilePath =
+                this.fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     "SolderHelper", "forgeversions.json");
 
-            _forgeVersions = LoadForgeVersions();
+            forgeVersions = LoadForgeVersions();
         }
 
         public ForgeHandler() : this(new FileSystem()) {}
 
         public string SaveForgeVersions(List<ForgeVersion> forgeVersions)
         {
-            _forgeVersions = forgeVersions;
+            this.forgeVersions = forgeVersions;
             return SaveForgeVersions();
         }
 
         public string SaveForgeVersions()
         {
-            string json = JsonConvert.SerializeObject(_forgeVersions);
-            _fileSystem.File.WriteAllText(_forgeVersionFilePath, json);
+            string json = JsonConvert.SerializeObject(forgeVersions);
+            fileSystem.File.WriteAllText(forgeVersionFilePath, json);
             return json;
         }
 
         public List<ForgeVersion> LoadForgeVersions()
         {
-            if (!_fileSystem.File.Exists(_forgeVersionFilePath)) return new List<ForgeVersion>();
+            if (!fileSystem.File.Exists(forgeVersionFilePath))
+            {
+                return new List<ForgeVersion>();
+            }
             try
             {
-                using (Stream s = _fileSystem.File.OpenRead(_forgeVersionFilePath))
+                using (Stream s = fileSystem.File.OpenRead(forgeVersionFilePath))
                 using (StreamReader sr = new StreamReader(s))
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
@@ -66,22 +68,22 @@ namespace ModpackHelper.MinecraftForge
 
         public List<string> GetMinecraftVersions()
         {
-            return _forgeVersions.Select(f => f.MinecraftVersion).Distinct().ToList();
+            Regex minecraftPattern = new Regex(@"[0-9]\.[0-9](\.[0-9]{1,2})?", RegexOptions.IgnoreCase);
+            return forgeVersions.Select(f => f.MinecraftVersion).Distinct().Where(f => minecraftPattern.IsMatch(f)).ToList();
         }
 
         public List<int> GetForgeBuilds(string minecraftVersion)
         {
-            return _forgeVersions.Where(f => f.MinecraftVersion.Equals(minecraftVersion)).Select(f => f.Build).ToList();
+            return forgeVersions.Where(f => f.MinecraftVersion.Equals(minecraftVersion)).Select(f => f.Build).ToList();
         }
 
         public string GetDownloadUrl(int build)
         {
-            return _forgeVersions.Single(f => f.Build == build).DownloadUrl;
+            return forgeVersions.Single(f => f.Build == build).DownloadUrl;
         } 
 
         public List<ForgeVersion> DownloadForgeVersions()
         {
-            List<ForgeVersion> forgeVersions = new List<ForgeVersion>();
             Forgemaven mavenunjsonend;
             HttpClient client = new HttpClient();
             using (Stream s = client.GetStreamAsync("http://files.minecraftforge.net/maven/net/minecraftforge/forge/json").Result)
@@ -141,7 +143,7 @@ namespace ModpackHelper.MinecraftForge
 
             SaveForgeVersions(forgeVersions);
 
-            return _forgeVersions;
+            return this.forgeVersions;
         }
 
         public void Dispose()

@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace ModpackHelper.Shared.IO
 {
+    /// <summary>
+    /// Used to handle special zipping actions
+    /// </summary>
     public class ZipUtils
     {
         private readonly IFileSystem fileSystem;
@@ -61,13 +64,13 @@ namespace ModpackHelper.Shared.IO
                 {
                     // Iterate over all the entries in the zip file that's end in .info or .json
                     // And skip and dependencies files, since we can't use them anyway
-                    foreach (ZipArchiveEntry entry in archive.Entries.Where(entry => entry.FullName.EndsWith(".info", StringComparison.OrdinalIgnoreCase) || entry.FullName.EndsWith(".json")).Where(entry => !entry.Name.Contains("dependancies") && !entry.Name.Contains("dependencies")))
+                    foreach (ZipArchiveEntry entry in archive.Entries.Where(entry => entry.Name.EndsWith(".info", StringComparison.OrdinalIgnoreCase) || entry.Name.Equals("litemod.json")).Where(entry => !entry.Name.Contains("dependancies") && !entry.Name.Contains("dependencies")))
                     {
                         // Begin reading the file
                         using (Stream f = entry.Open())
                         {
                             // Create the output file
-                            string p = Path.Combine(directoryToExtractTo.FullName, entry.FullName);
+                            string p = Path.Combine(directoryToExtractTo.FullName, entry.Name);
                             FileInfoBase outFile = fileSystem.FileInfo.FromFileName(p);
                             using (Stream o = outFile.Create())
                             {
@@ -128,6 +131,33 @@ namespace ModpackHelper.Shared.IO
                     }
                 }
             }
+        }
+
+        public void SpecialPackSolderMod(FileInfoBase modfile, FileInfoBase zipFile)
+        {
+            // Check is the zip file is actually a zip file
+            if (!zipFile.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("Zip file should be a zip file.");
+            }
+            // Create a stream for the zip file
+            using (Stream zipFileStream = zipFile.Create())
+            {
+                using (ZipArchive zip = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
+                {
+                    string entryName = "mods/" + modfile.Name;
+                    ZipArchiveEntry entry = zip.CreateEntry(entryName);
+
+                    using (StreamWriter writer = new StreamWriter(entry.Open()))
+                    {
+                        using (Stream reader = modfile.OpenRead())
+                        {
+                            reader.CopyTo(writer.BaseStream);
+                        }
+                    }
+                }
+            }
+
         }
     }
 }

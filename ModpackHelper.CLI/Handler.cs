@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ModpackHelper.UserInteraction;
 
 namespace ModpackHelper.CLI
 {
     public class Handler
     {
-        private IFileSystem _fileSystem;
+        private IFileSystem fileSystem;
         public Handler():this(new FileSystem()) { }
 
         public Handler(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            this.fileSystem = fileSystem;
         }
 
         public bool ClearOutputDirectoryOnRun { get; set; }
@@ -69,14 +65,14 @@ namespace ModpackHelper.CLI
 
                 // Check to make sure the user specified the 
                 // /mods/ directory as input directory
-                if (!supposedInputDirectory.EndsWith(_fileSystem.Path.DirectorySeparatorChar + "mods"))
+                if (!supposedInputDirectory.EndsWith(fileSystem.Path.DirectorySeparatorChar + "mods"))
                 {
                     messageShower.ShowMessageAsync(Messages.NotAModsDirectory);
                     return false;
                 }
 
                 // Check to make sure the inputdirectory actually exists
-                if (!_fileSystem.Directory.Exists(supposedInputDirectory))
+                if (!fileSystem.Directory.Exists(supposedInputDirectory))
                 {
                     messageShower.ShowMessageAsync(Messages.InputDirectoryNotFound);
                     return false;

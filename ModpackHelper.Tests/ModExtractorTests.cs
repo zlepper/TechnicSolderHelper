@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using ModpackHelper.mods;
-using ModpackHelper.Shared;
 using ModpackHelper.Shared.Mods;
 using NUnit.Framework;
 

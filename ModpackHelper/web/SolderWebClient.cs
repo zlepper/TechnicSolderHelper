@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModpackHelper.Shared.web
 {
     public class SolderWebClient : CookieAwareWebClient
     {
-        public Uri baseUrl;
+        public Uri BaseUrl;
         public SolderWebClient(string baseUrl):base()
         {
-            this.baseUrl = new Uri(baseUrl);
+            this.BaseUrl = new Uri(baseUrl);
         }
 
         public SolderWebClient(string baseUrl, CookieContainer cc) : base(cc)
         {
-            this.baseUrl = new Uri(baseUrl);
+            this.BaseUrl = new Uri(baseUrl);
         }
 
         /// <summary>
@@ -29,7 +25,7 @@ namespace ModpackHelper.Shared.web
         /// <param name="loginData">The login data, formattet like this: "email": "email", "password": "somethingelse"</param>
         public new void Login(string loginPageAddress, NameValueCollection loginData)
         {
-            Uri loginUrl = new Uri(baseUrl, "login");
+            Uri loginUrl = new Uri(BaseUrl, "login");
             base.Login(loginUrl.AbsoluteUri, loginData);
         }
     }

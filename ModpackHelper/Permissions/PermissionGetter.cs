@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+using ModpackHelper.Permissions;
 using Newtonsoft.Json;
 
-namespace ModpackHelper.Permissions
+namespace ModpackHelper.Shared.Permissions
 {
     public class PermissionGetter
     {
@@ -17,12 +15,12 @@ namespace ModpackHelper.Permissions
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper",
                 "permissions.json");
 
-        private readonly IFileSystem _fileSystem;
-        private List<Permission> _permissions;
+        private readonly IFileSystem fileSystem;
+        private List<Permission> permissions;
 
         public PermissionGetter(IFileSystem fileSystem)
         {
-            _fileSystem = fileSystem;
+            this.fileSystem = fileSystem;
             Load();
         }
 
@@ -33,36 +31,36 @@ namespace ModpackHelper.Permissions
 
         public string GetShortName(string modId)
         {
-            Permission permission = _permissions.SingleOrDefault(p => p.modids.Contains(modId));
+            Permission permission = permissions.SingleOrDefault(p => p.modids.Contains(modId));
             return permission == null ? "" : permission.shortName;
         }
 
         public Permission GetPermissionFromShortname(string shortname)
         {
-            return _permissions.SingleOrDefault(p => p.shortName.Equals(shortname));
+            return permissions.SingleOrDefault(p => p.shortName.Equals(shortname));
         }
 
         public Permission GetPermissionFromModId(string modId)
         {
-            return _permissions.SingleOrDefault(p => p.modids.Contains(modId));
+            return permissions.SingleOrDefault(p => p.modids.Contains(modId));
         }
 
         public PermissionPolicy FindPermissionPolicy(string toCheck, bool isPublic)
         {
-            Permission perm = _permissions.FirstOrDefault(p => p.modids.Contains(toCheck) || p.shortName.Equals(toCheck));
+            Permission perm = permissions.FirstOrDefault(p => p.modids.Contains(toCheck) || p.shortName.Equals(toCheck));
             if(perm == null) return PermissionPolicy.Unknown;
             return isPublic ? perm.publicPolicy : perm.privatePolicy;
         }
 
         private void Load()
         {
-            if (_fileSystem.File.Exists(PermissionsFile))
-                using (Stream s = _fileSystem.File.OpenRead(PermissionsFile))
+            if (fileSystem.File.Exists(PermissionsFile))
+                using (Stream s = fileSystem.File.OpenRead(PermissionsFile))
                 using (StreamReader sr = new StreamReader(s))
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
                     JsonSerializer serializer = new JsonSerializer();
-                    _permissions = serializer.Deserialize<List<Permission>>(reader);
+                    permissions = serializer.Deserialize<List<Permission>>(reader);
                 }
             else
                 LoadOnlinePermissions();
@@ -70,14 +68,13 @@ namespace ModpackHelper.Permissions
 
         private void Save()
         {
-            string json = JsonConvert.SerializeObject(_permissions);
-            _fileSystem.FileInfo.FromFileName(PermissionsFile).Directory.Create();
-            _fileSystem.File.WriteAllText(PermissionsFile, json);
+            string json = JsonConvert.SerializeObject(permissions);
+            fileSystem.FileInfo.FromFileName(PermissionsFile).Directory.Create();
+            fileSystem.File.WriteAllText(PermissionsFile, json);
         }
 
         public void LoadOnlinePermissions()
         {
-            List<Permission> permissions;
             HttpClient client = new HttpClient();
             using (Stream s = client.GetStreamAsync("http://www.feed-the-beast.com/mods/json").Result)
             using (StreamReader sr = new StreamReader(s))
@@ -89,7 +86,7 @@ namespace ModpackHelper.Permissions
                 // json size doesn't matter because only a small piece is read at a time from the HTTP request
                 permissions = serializer.Deserialize<List<Permission>>(reader);
             }
-            _permissions = new List<Permission>();
+            this.permissions = new List<Permission>();
             foreach (Permission p in permissions.Where(p => !String.IsNullOrWhiteSpace(p.privateStringPolicy) &&
                                                             !String.IsNullOrWhiteSpace(p.publicStringPolicy)))
             {
@@ -103,7 +100,6 @@ namespace ModpackHelper.Permissions
                 if (r) p.publicPolicy = pp;
                 p.privateStringPolicy = null;
                 p.publicStringPolicy = null;
-                _permissions.Add(p);
             }
             Save();
         }

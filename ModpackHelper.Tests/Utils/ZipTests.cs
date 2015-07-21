@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ModpackHelper.IO;
 using ModpackHelper.Shared.IO;
-using ModpackHelper.Utils;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests.Utils
@@ -30,7 +25,7 @@ namespace ModpackHelper.Tests.Utils
             zip.GetInfoFilesFromArchive(@"C:\file.jar", @"C:\other");
 
             IOHandler handler = new IOHandler(fileSystem);
-            string data = handler.ReadJson(@"C:\other\mcmod.info");
+            string data = handler.ReadText(@"C:\other\mcmod.info");
             string expected =
                 "[\n{\n  \"modid\": \"Aroma1997s Dimension\",\n  \"name\": \"Aroma1997's Dimensional World\",\n  \"description\": \"This mod adds a new Dimension especially for mining. It is pretty much like the overworld, just different. :-)\",\n  \"mcversion\": \"1.7.10\",\n  \"version\": \"1.1.0.1\",\n  \"logoFile\": \"\",\n  \"url\": \"http://www.minecraftforum.net/topic/1679684-\",\n  \"updateUrl\": \"http://www.minecraftforum.net/topic/1679684-\",\n  \"authors\": [\"Aroma1997\", \"Schillaa\"],\n  \"credits\": \"Code by Aroma1997, Textures by Schillaa\",\n  \"parent\": \"\",\n  \"screenshots\": [],\n  \"dependencies\": []\n}\n]\n";
 
@@ -51,7 +46,7 @@ namespace ModpackHelper.Tests.Utils
             zip.GetInfoFilesFromArchive(@"C:\file.jar", @"C:\other");
 
             IOHandler handler = new IOHandler(fileSystem);
-            string data = handler.ReadJson(@"C:\other\mcmod.info");
+            string data = handler.ReadText(@"C:\other\mcmod.info");
             string expected =
                 "[\n{\n  \"modid\": \"Aroma1997s Dimension\",\n  \"name\": \"Aroma1997's Dimensional World\",\n  \"description\": \"This mod adds a new Dimension especially for mining. It is pretty much like the overworld, just different. :-)\",\n  \"mcversion\": \"1.7.10\",\n  \"version\": \"1.1.0.1\",\n  \"logoFile\": \"\",\n  \"url\": \"http://www.minecraftforum.net/topic/1679684-\",\n  \"updateUrl\": \"http://www.minecraftforum.net/topic/1679684-\",\n  \"authors\": [\"Aroma1997\", \"Schillaa\"],\n  \"credits\": \"Code by Aroma1997, Textures by Schillaa\",\n  \"parent\": \"\",\n  \"screenshots\": [],\n  \"dependencies\": []\n}\n]\n";
 

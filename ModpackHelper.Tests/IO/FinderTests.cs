@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ModpackHelper.IO;
+using ModpackHelper.Shared.IO;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests.IO
@@ -24,7 +20,7 @@ namespace ModpackHelper.Tests.IO
             {
                 {@"C:\Subdir\mod1." + fileEnding, new MockFileData("")},
                 {@"C:\Subdir\mod2." + fileEnding, new MockFileData("")},
-                {string.Format(@"C:\Subdir\mod2.{0}blarg", fileEnding), new MockFileData("")}
+                {$@"C:\Subdir\mod2.{fileEnding}blarg", new MockFileData("")}
             });
             Finder finder = new Finder(fileSystem);
 
