@@ -4,10 +4,9 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
-using ModpackHelper.Permissions;
 using Newtonsoft.Json;
 
-namespace ModpackHelper.Shared.Permissions
+namespace ModpackHelper.Shared.Permissions.FTB
 {
     public class PermissionGetter
     {

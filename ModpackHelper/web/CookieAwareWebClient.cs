@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
 
-namespace ModpackHelper.Shared.web
+namespace ModpackHelper.Shared.Web
 {
     public class CookieAwareWebClient : WebClient
     {
@@ -21,13 +22,13 @@ namespace ModpackHelper.Shared.web
 
         /// <summary>
         /// Logs into a service
-        /// See this: http://stackoverflow.com/questions/17183703/ for mrroe
+        /// See this: http://stackoverflow.com/questions/17183703/ for more
         /// </summary>
         /// <param name="loginPageAddress">The adress to send the login data to</param>
-        /// <param name="loginData">The login data, formattet like this: "username": "something", "password": "somethingelse"</param>
-        public void Login(string loginPageAddress, NameValueCollection loginData)
+        /// <param name="loginData">The login data, formattet like this: "email": "something", "password": "somethingelse"</param>
+        protected void Login(string loginPageAddress, NameValueCollection loginData)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(loginPageAddress);
+            /*HttpWebRequest request = (HttpWebRequest)WebRequest.Create(loginPageAddress);
 
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -41,7 +42,10 @@ namespace ModpackHelper.Shared.web
 
             WebResponse response = request.GetResponse();
             response.Close();
-            CookieContainer = container;
+            CookieContainer = container;*/
+            byte[] responbytes = UploadValues(loginPageAddress, "POST", loginData);
+            string responseBody = Encoding.UTF8.GetString(responbytes);
+            Debug.WriteLine(responseBody);
         }
 
         protected override WebRequest GetWebRequest(Uri address)

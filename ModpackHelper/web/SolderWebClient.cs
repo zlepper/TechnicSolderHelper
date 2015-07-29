@@ -1,32 +1,65 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Net;
+using System.Text;
 
-namespace ModpackHelper.Shared.web
+namespace ModpackHelper.Shared.Web
 {
-    public class SolderWebClient : CookieAwareWebClient
+    public class SolderWebClient : CookieAwareWebClient, ISolderWebClient
     {
-        public Uri BaseUrl;
+        private readonly Uri baseUrl;
         public SolderWebClient(string baseUrl):base()
         {
-            this.BaseUrl = new Uri(baseUrl);
+            this.baseUrl = new Uri(baseUrl);
         }
 
         public SolderWebClient(string baseUrl, CookieContainer cc) : base(cc)
         {
-            this.BaseUrl = new Uri(baseUrl);
+            this.baseUrl = new Uri(baseUrl);
         }
 
         /// <summary>
         /// Logs into solder
-        /// See this: http://stackoverflow.com/questions/17183703/ for mrroe
+        /// See this: http://stackoverflow.com/questions/17183703/ for more
         /// </summary>
-        /// <param name="loginPageAddress">The adress to send the login data to</param>
-        /// <param name="loginData">The login data, formattet like this: "email": "email", "password": "somethingelse"</param>
-        public new void Login(string loginPageAddress, NameValueCollection loginData)
+        public void Login(string email, string password)
         {
-            Uri loginUrl = new Uri(BaseUrl, "login");
-            base.Login(loginUrl.AbsoluteUri, loginData);
+            Uri loginUrl = new Uri(baseUrl, "login");
+            NameValueCollection loginData = new NameValueCollection
+            {
+              { "email", email },
+              { "password", password }
+            };
+            Login(loginUrl.AbsoluteUri, loginData);
+        }
+
+        public void CreatePack(string modpackname, string slug)
+        {
+            Uri createModpackUri = new Uri(baseUrl, "modpack/create");
+            NameValueCollection modpackData = new NameValueCollection
+            {
+                {"name", modpackname },
+                {"slug", slug }
+            };
+            byte[] responseBytes = UploadValues(createModpackUri, "POST", modpackData);
+            string response = Encoding.UTF8.GetString(responseBytes);
+            Debug.WriteLine(response);
+        }
+
+        public void AddMod(string modname, string modslug, string authors, string description, string modurl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddModVersion(string modId, string version)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RehashModVersion(string modversionId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -4,8 +4,9 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ModpackHelper.Permissions;
+using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Permissions;
+using ModpackHelper.Shared.Permissions.FTB;
 using ModpackHelper.Utils;
 using Newtonsoft.Json;
 
@@ -211,7 +212,7 @@ namespace ModpackHelper.mods
         /// Gets a list of authors for the mod
         /// </summary>
         /// <returns></returns>
-        public List<string> GetAuthor()
+        public List<string> GetAuthors()
         {
             return GetAuthors(new FileSystem());
         }
@@ -231,16 +232,16 @@ namespace ModpackHelper.mods
                 return AuthorList = new List<string>();
 
             // The FTB permission list might have some info we can use
-            PermissionGetter pGetter = new PermissionGetter();
+            PermissionGetter pGetter = new PermissionGetter(fileSystem);
             Permission temp = pGetter.GetPermissionFromModId(Modid);
 
             if (temp != null)
                 // They did!
                 return AuthorList = temp.modAuthors.Split(',').ToList();
-
-            // The user will have to enter stuff themselves
-            // TODO attempt to grab authors from own permission storage
-            return new List<string>();
+            using (ModsDBContext db = new ModsDBContext(fileSystem))
+            {
+                return AuthorList = db.GetSuggestedModAuthors(this);
+            }
         }
     }
 }

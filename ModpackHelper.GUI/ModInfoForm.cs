@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ModpackHelper.mods;
+using ModpackHelper.Shared.Mods;
 using ModpackHelper.UserInteraction;
 
 namespace ModpackHelper.GUI
@@ -58,8 +59,8 @@ namespace ModpackHelper.GUI
         /// </summary>
         public void InitializeContent(List<Mcmod> modsList, string mcv)
         {
-            this.mods = modsList;
-            this.currentMcVersion = mcv;
+            mods = modsList;
+            currentMcVersion = mcv;
             // Find all the mods that still needs info
             nonFinishedMods = mods.Where(m => !m.IsValid()).ToList();
             // No need to run over everything again is every mod is valid already
@@ -115,6 +116,7 @@ namespace ModpackHelper.GUI
             SkipModCheckBox.Checked = selectedMod.IsSkipping;
             ModNameTextBox.Text = selectedMod.Name ?? string.Empty;
             FileNameTextBox.Text = selectedMod.GetPath().Name;
+
             // We can't display lists, so we'll display a nicely formatted string
             ModAuthorTextBox.Text = selectedMod.AuthorList != null ? string.Join(", ", selectedMod.AuthorList) : string.Empty;
             ModIDTextBox.Text = selectedMod.Modid ?? string.Empty;
@@ -140,6 +142,13 @@ namespace ModpackHelper.GUI
         private void ModIDTextBox_TextChanged(object sender, EventArgs e)
         {
             selectedMod.Modid = ModIDTextBox.Text;
+
+            // Check if the new modid returns a mod author
+            List<string> a = selectedMod.GetAuthors(fileSystem);
+            if (a.Count > 0)
+            {
+                ModAuthorTextBox.Text = string.Join(", ", a);
+            }
         }
 
         // Make sure we update the mod version

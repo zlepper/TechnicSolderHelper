@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -17,7 +16,7 @@ namespace ModpackHelper.Shared.Mods
         /// <summary>
         /// The saved mods
         /// </summary>
-        public ConcurrentBag<Mcmod> Mods { get; set; }
+        public List<Mcmod> Mods { get; set; }
         private readonly IFileSystem fileSystem;
         /// <summary>
         /// Location of the data file
@@ -32,7 +31,7 @@ namespace ModpackHelper.Shared.Mods
         public ModsDBContext(IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
-            Mods = new ConcurrentBag<Mcmod>();
+            Mods = new List<Mcmod>();
             if (this.fileSystem.File.Exists(JsonDataFile))
             {
                 using (Stream s = this.fileSystem.File.OpenRead(JsonDataFile))
@@ -41,11 +40,7 @@ namespace ModpackHelper.Shared.Mods
                 {
                     JsonSerializer serializer = new JsonSerializer();
 
-                    List<Mcmod> m = serializer.Deserialize<List<Mcmod>>(reader);
-                    for (int i = 0, count = m.Count; i < count; i++)
-                    {
-                        Mods.Add(m[i]);
-                    }
+                    Mods = serializer.Deserialize<List<Mcmod>>(reader);
                 }
             }
         }
@@ -69,6 +64,24 @@ namespace ModpackHelper.Shared.Mods
         public void Dispose()
         {
             Save();
+        }
+
+        public static void SaveNewData(IFileSystem fileSystem, List<Mcmod> mods)
+        {
+            using (ModsDBContext db = new ModsDBContext(fileSystem))
+            {
+                foreach (Mcmod mod in mods)
+                {
+                    db.Mods.RemoveAll(m => m.JarMd5.Equals(mod.JarMd5));
+                }
+                db.Mods.AddRange(mods);
+            }
+        }
+
+        public List<string> GetSuggestedModAuthors(Mcmod mod)
+        {
+            List<Mcmod> options = Mods.Where(m => m.Modid.Equals(mod.Modid)).ToList();
+            return options.Any() ? options.Last().AuthorList : new List<string>();
         }
     }
 }

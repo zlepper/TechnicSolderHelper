@@ -84,6 +84,7 @@
     <Compile Include="MinecraftForge\ForgeHandlerTests.cs" />
     <Compile Include="Utils\ListsTest.cs" />
     <Compile Include="Utils\ZipTests.cs" />
+    <Compile Include="Web\SolderWebClientTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

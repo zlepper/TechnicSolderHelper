@@ -19,7 +19,6 @@ using ModpackHelper.UserInteraction;
 
 namespace ModpackHelper.GUI
 {
-    public delegate void ShowForm(List<Mcmod> mods, string minecraftVersion, string outputdirectory);
     public partial class ModpackHelper : Form
     {
         private readonly IFileSystem fileSystem;
@@ -221,7 +220,7 @@ namespace ModpackHelper.GUI
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new ShowForm(OpenModsInfoForm), mods, minecraftVersion, outputDirectory);
+                BeginInvoke(new Action(() => OpenModsInfoForm(mods, minecraftVersion, outputDirectory)));
             }
             else
             {
@@ -241,8 +240,19 @@ namespace ModpackHelper.GUI
                         Debug.WriteLine(sw.Elapsed);
                     };
                     bw.RunWorkerAsync();
+                    SaveNewData(mods);
                 };
             }
+        }
+
+        private void SaveNewData(List<Mcmod> mods)
+        {
+            BackgroundWorker bw = new BackgroundWorker();
+            bw.DoWork += (sender, args) =>
+            {
+                ModsDBContext.SaveNewData(fileSystem, mods);
+            };
+            bw.RunWorkerAsync();
         }
  
         private void MinecraftVersionDropdown_SelectedIndexChanged(object sender, EventArgs e)

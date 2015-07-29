@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
-using ModpackHelper.Permissions;
 using ModpackHelper.Shared.Permissions;
+using ModpackHelper.Shared.Permissions.FTB;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests.Permissions

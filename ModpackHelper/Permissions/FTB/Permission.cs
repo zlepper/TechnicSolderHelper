@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
-namespace ModpackHelper.Permissions
+namespace ModpackHelper.Shared.Permissions.FTB
 {
     public class Permission
     {

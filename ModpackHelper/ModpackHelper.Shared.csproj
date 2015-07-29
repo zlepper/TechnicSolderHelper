@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IO\ModPacker.cs" />
+    <Compile Include="Mods\Solder.cs" />
     <Compile Include="Utils\Config\ConfigHandler.cs" />
     <Compile Include="IO\Finder.cs" />
     <Compile Include="IO\IOhandler.cs" />
@@ -71,9 +72,9 @@
     <Compile Include="Mods\ModExtractor.cs" />
     <Compile Include="Mods\Mcmod2.cs" />
     <Compile Include="Mods\ModsDBContext.cs" />
-    <Compile Include="Permissions\PermissionLevel.cs" />
-    <Compile Include="Permissions\Permission.cs" />
-    <Compile Include="Permissions\PermissionGetter.cs" />
+    <Compile Include="Permissions\FTB\PermissionLevel.cs" />
+    <Compile Include="Permissions\FTB\Permission.cs" />
+    <Compile Include="Permissions\FTB\PermissionGetter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInteraction\IForgeVersionSelector.cs" />
     <Compile Include="UserInteraction\IMessageShower.cs" />
@@ -81,10 +82,11 @@
     <Compile Include="Utils\Config\Modpack.cs" />
     <Compile Include="Utils\Lists.cs" />
     <Compile Include="IO\ZipUtils.cs" />
-    <Compile Include="web\CookieAwareWebClient.cs">
+    <Compile Include="Web\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="web\SolderWebClient.cs">
+    <Compile Include="Web\ISolderWebClient.cs" />
+    <Compile Include="Web\SolderWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

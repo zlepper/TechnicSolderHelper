@@ -1,4 +1,4 @@
-﻿namespace ModpackHelper.mods
+﻿namespace ModpackHelper.Shared.Permissions.FTB
 {
     /// <summary>
     /// The permissions needed to distribute a mod
