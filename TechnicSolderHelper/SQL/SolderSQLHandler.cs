@@ -93,7 +93,7 @@ namespace TechnicSolderHelper.SQL
             {
                 MessageBox.Show(e.Message);
                 Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.InnerException.ToString());
+                //Debug.WriteLine(e.InnerException.ToString());
             }
         }
 
