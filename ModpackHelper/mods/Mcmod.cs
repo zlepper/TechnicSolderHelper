@@ -23,6 +23,11 @@ namespace ModpackHelper.mods
         /// </summary>
         public bool IsSkipping;
 
+        /// <summary>
+        /// True if the file has been added to solder
+        /// </summary>
+        public bool IsOnSolder { get; set; }
+
         public bool Equals(Mcmod other)
         {
             return string.Equals(Modid, other.Modid) &&

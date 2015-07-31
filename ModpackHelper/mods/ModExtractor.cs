@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
+using System.Threading;
 using ModpackHelper.mods;
 using ModpackHelper.Shared.IO;
 
@@ -107,6 +110,8 @@ namespace ModpackHelper.Shared.Mods
             {
                 throw new SerializationException("I can't turn that into anything useful");
             }
+
+
 
             return mod;
         }
@@ -212,6 +217,9 @@ namespace ModpackHelper.Shared.Mods
                         }
                         if (mod == null) return;
                         mod.SetPath(modFile); // Done to ensure we can actually find the file again
+
+                        mod.JarMd5 = CalculateMd5(mod.GetPath()); // Make sure we have the file md5 so we can compare files
+
                         mods.Add(mod); // Save back to our return values
                     };
                     // Save the background worker so we can find it later
@@ -233,6 +241,27 @@ namespace ModpackHelper.Shared.Mods
 
             }
             return mods;
+        }
+
+        public string CalculateMd5(FileInfoBase f)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                while (true)
+                {
+                    try
+                    {
+                        using (Stream stream = f.OpenRead())
+                        {
+                            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                        }
+                    }
+                    catch
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -65,19 +66,7 @@ namespace ModpackHelper.Shared.Mods
         {
             Save();
         }
-
-        public static void SaveNewData(IFileSystem fileSystem, List<Mcmod> mods)
-        {
-            using (ModsDBContext db = new ModsDBContext(fileSystem))
-            {
-                foreach (Mcmod mod in mods)
-                {
-                    db.Mods.RemoveAll(m => m.JarMd5.Equals(mod.JarMd5));
-                }
-                db.Mods.AddRange(mods);
-            }
-        }
-
+        
         public List<string> GetSuggestedModAuthors(Mcmod mod)
         {
             List<Mcmod> options = Mods.Where(m => m.Modid.Equals(mod.Modid)).ToList();

@@ -238,22 +238,14 @@ namespace ModpackHelper.GUI
                         packer.Pack(modslist, fileSystem.DirectoryInfo.FromDirectoryName(outputDirectory));
                         sw.Stop();
                         Debug.WriteLine(sw.Elapsed);
+                        string html = packer.GetFinishedHTML();
+                        fileSystem.File.WriteAllText(fileSystem.Path.Combine(outputDirectory, "mods.html"), html);
                     };
                     bw.RunWorkerAsync();
-                    SaveNewData(mods);
                 };
             }
         }
-
-        private void SaveNewData(List<Mcmod> mods)
-        {
-            BackgroundWorker bw = new BackgroundWorker();
-            bw.DoWork += (sender, args) =>
-            {
-                ModsDBContext.SaveNewData(fileSystem, mods);
-            };
-            bw.RunWorkerAsync();
-        }
+        
  
         private void MinecraftVersionDropdown_SelectedIndexChanged(object sender, EventArgs e)
         {
