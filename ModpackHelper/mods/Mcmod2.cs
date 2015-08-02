@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace ModpackHelper.mods
+namespace ModpackHelper.Shared.Mods
 {
     /// <summary>
     /// The version 2 of mcmod

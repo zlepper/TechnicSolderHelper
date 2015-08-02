@@ -1,6 +1,6 @@
-﻿namespace ModpackHelper.UserInteraction
+﻿namespace ModpackHelper.Shared.UserInteraction
 {
-    public interface IForgeVersionSelector
-    {
-    }
+	public interface IForgeVersionSelector
+	{
+	}
 }

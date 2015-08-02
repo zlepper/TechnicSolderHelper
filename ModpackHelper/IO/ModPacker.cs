@@ -6,7 +6,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ModpackHelper.mods;
 using ModpackHelper.Shared.Mods;
 
 namespace ModpackHelper.Shared.IO

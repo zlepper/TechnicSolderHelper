@@ -10,7 +10,7 @@ using ModpackHelper.Shared.Permissions.FTB;
 using ModpackHelper.Utils;
 using Newtonsoft.Json;
 
-namespace ModpackHelper.mods
+namespace ModpackHelper.Shared.Mods
 {
     /// <summary>
     /// Used to descripe a minecraft mod

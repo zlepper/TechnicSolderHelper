@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Newtonsoft.Json;
 
-namespace ModpackHelper.mods
+namespace ModpackHelper.Shared.Mods
 {
     /// <summary>
     /// Used to descripe a liteloader mod

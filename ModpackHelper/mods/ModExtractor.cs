@@ -8,7 +8,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
-using ModpackHelper.mods;
 using ModpackHelper.Shared.IO;
 
 namespace ModpackHelper.Shared.Mods

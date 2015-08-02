@@ -1,0 +1,15 @@
+﻿<Properties StartupItem="ModpackHelper.Mac/ModpackHelper.Mac.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ModpackHelper.Mac/MainWindow.cs">
+    <Files>
+      <File FileName="ModpackHelper.Mac/Main.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.Mac/MainWindow.cs" Line="52" Column="47" />
+      <File FileName="ModpackHelper.Mac/MainWindow.designer.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.Mac/ModsInfoWinodw.cs" Line="30" Column="4" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
