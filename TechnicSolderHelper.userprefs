@@ -1,11 +1,13 @@
 ﻿<Properties StartupItem="ModpackHelper.Mac/ModpackHelper.Mac.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ModpackHelper.Mac/MainWindow.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ModpackHelper.Mac/ModsInfoWindow.xib">
     <Files>
       <File FileName="ModpackHelper.Mac/Main.cs" Line="1" Column="1" />
-      <File FileName="ModpackHelper.Mac/MainWindow.cs" Line="52" Column="47" />
-      <File FileName="ModpackHelper.Mac/MainWindow.designer.cs" Line="1" Column="1" />
-      <File FileName="ModpackHelper.Mac/ModsInfoWinodw.cs" Line="30" Column="4" />
+      <File FileName="ModpackHelper.Mac/MainWindow.cs" Line="72" Column="25" />
+      <File FileName="ModpackHelper.Mac/ModsInfoWindow.cs" Line="10" Column="37" />
+      <File FileName="ModpackHelper.Mac/ModsInfoWindow.designer.cs" Line="86" Column="3" />
+      <File FileName="ModpackHelper.Mac/ModsInfoWindowController.cs" Line="25" Column="4" />
+      <File FileName="ModpackHelper.Mac/ModsInfoWindow.xib" Line="186" Column="32" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -11,6 +11,8 @@ using System.IO;
 using ModpackHelper.Shared.UserInteraction;
 using ModpackHelper.Mac.UserInteraction;
 using ModpackHelper.Shared.MinecraftForge;
+using ModpackHelper.Shared.IO;
+using System.IO.Abstractions;
 
 namespace ModpackHelper.Mac
 {
@@ -65,11 +67,24 @@ namespace ModpackHelper.Mac
 				List<Mcmod> mods = modExtrator.FindAllMods (inputDirectory);
 				BeginInvokeOnMainThread (new NSAction (() => OpenModsInfoForm (mods, minecraftVersion, outputdirectory)));
 			};
+			bw.RunWorkerAsync ();
 		}
 
-		private void OpenModsInfoForm (List<Mcmod> ModsDBContext, string MinecraftVersion, string outputDirectory)
+		private void OpenModsInfoForm (List<Mcmod> mods, string minecraftVersion, string outputDirectory)
 		{
-			
+			ModsInfoWindowController miwc = new ModsInfoWindowController ();
+			miwc.Window.InitializeContent (mods, minecraftVersion);
+			miwc.Window.MakeKeyAndOrderFront (this);
+			miwc.Window.DoneFillingInInfo += (List<Mcmod> modsList) => {
+				var bw = new BackgroundWorker ();
+				bw.DoWork += (object sender, DoWorkEventArgs e) => {
+					ModPacker packer = new ModPacker ();
+					packer.Pack (modsList, new FileSystem ().DirectoryInfo.FromDirectoryName (outputDirectory));
+					string html = packer.GetFinishedHTML ();
+					File.WriteAllText (Path.Combine (outputDirectory, "mods.html"), html);
+				};
+				bw.RunWorkerAsync ();
+			};
 		}
 
 		partial void BrowseForInputDirectoryButtonClicked (NSObject sender)
@@ -101,7 +116,7 @@ namespace ModpackHelper.Mac
 		{
 			string inputDirectory = InputDirectoryTextBox.StringValue;
 			string outputDirectory = OutputDirectoryTextBox.StringValue;
-			string minecraftVersion = MinecraftVersionComboBox.SelectedItem.ToString ();
+			string minecraftVersion = MinecraftVersionComboBox.TitleOfSelectedItem;
 
 			// Validate input directory
 			if (!Directory.Exists (inputDirectory)) {

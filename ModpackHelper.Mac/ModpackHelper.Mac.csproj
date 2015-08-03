@@ -71,15 +71,16 @@
     </Compile>
     <Compile Include="UserInteraction\DirectoryFinder.cs" />
     <Compile Include="UserInteraction\MessageShower.cs" />
-    <Compile Include="ModsInfoWinodw.cs" />
-    <Compile Include="ModsInfoWinodw.designer.cs">
-      <DependentUpon>ModsInfoWinodw.cs</DependentUpon>
+    <Compile Include="ModsInfoWindow.cs" />
+    <Compile Include="ModsInfoWindowController.cs" />
+    <Compile Include="ModsInfoWindow.designer.cs">
+      <DependentUpon>ModsInfoWindow.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainWindow.xib" />
     <InterfaceDefinition Include="MainMenu.xib" />
-    <InterfaceDefinition Include="ModsInfoWinodw.xib" />
+    <InterfaceDefinition Include="ModsInfoWindow.xib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

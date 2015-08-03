@@ -15,6 +15,11 @@ namespace ModpackHelper.Shared.IO
         private readonly IFileSystem fileSystem;
         private readonly StringBuilder sb;
 
+		public ModPacker ():this(new FileSystem())
+		{
+			
+		}
+
         public ModPacker(IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
@@ -59,7 +64,8 @@ namespace ModpackHelper.Shared.IO
                     bw.RunWorkerAsync();
                 }
                 // Make sure all backgroundworkers are finished running before returning to the caller
-                while (backgroundWorkers.Count > 0)
+				int count = -1;
+				while (backgroundWorkers.Any())
                 {
                     // Remove background workers that are done
                     foreach (BackgroundWorker bw in backgroundWorkers.Where(b => !b.IsBusy))
@@ -67,7 +73,11 @@ namespace ModpackHelper.Shared.IO
                         bw.Dispose();
                     }
                     backgroundWorkers.RemoveAll(b => !b.IsBusy);
-                    Debug.WriteLine(backgroundWorkers.Count + " backgroundworkers remaining.");
+					int c = backgroundWorkers.Count;
+					if (c != count) {
+						count = c;
+						Debug.WriteLine (count + " backgroundworkers remaining.");
+					}
                 }
                 foreach (Mcmod mod in mods)
                 {

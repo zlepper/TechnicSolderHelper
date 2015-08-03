@@ -347,7 +347,6 @@
 							<string key="NSFrame">{{498, 13}, {89, 32}}</string>
 							<reference key="NSSuperview" ref="312036702"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="652885403">
@@ -480,22 +479,6 @@
 					<int key="connectionID">31</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">BrowseForInputDirectoryButton:</string>
-						<reference key="source" ref="748157544"/>
-						<reference key="destination" ref="481960105"/>
-					</object>
-					<int key="connectionID">32</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">BrowseForOutputDirectoryClicked:</string>
-						<reference key="source" ref="748157544"/>
-						<reference key="destination" ref="145922986"/>
-					</object>
-					<int key="connectionID">33</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">OutputDirectoryTextBox</string>
 						<reference key="source" ref="748157544"/>
@@ -542,6 +525,22 @@
 						<reference key="destination" ref="213651891"/>
 					</object>
 					<int key="connectionID">51</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">BrowseForInputDirectoryButtonClicked:</string>
+						<reference key="source" ref="748157544"/>
+						<reference key="destination" ref="481960105"/>
+					</object>
+					<int key="connectionID">52</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">BrowseForOutputDirectoryButtonClicked:</string>
+						<reference key="source" ref="748157544"/>
+						<reference key="destination" ref="145922986"/>
+					</object>
+					<int key="connectionID">53</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -841,7 +840,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">51</int>
+			<int key="maxID">53</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
