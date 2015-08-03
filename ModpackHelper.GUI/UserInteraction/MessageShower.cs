@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Forms;
-using ModpackHelper.UserInteraction;
+using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.GUI.UserInteraction
 {

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO.Abstractions;
-using ModpackHelper.UserInteraction;
+using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.CLI
 {

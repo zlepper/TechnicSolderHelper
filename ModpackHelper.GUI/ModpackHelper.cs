@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,13 +9,12 @@ using ModpackHelper.GUI.Helpers;
 using ModpackHelper.GUI.Properties;
 using ModpackHelper.GUI.UserInteraction;
 using ModpackHelper.IO;
-using ModpackHelper.mods;
 using ModpackHelper.MinecraftForge;
 using ModpackHelper.Shared.IO;
 using ModpackHelper.Shared.MinecraftForge;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Utils.Config;
-using ModpackHelper.UserInteraction;
+using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.GUI
 {

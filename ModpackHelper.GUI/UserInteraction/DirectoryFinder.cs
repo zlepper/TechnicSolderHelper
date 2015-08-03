@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-using ModpackHelper.Shared.UserInteraction
+using System.Windows.Forms;
+using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.GUI.UserInteraction
 {

@@ -1,5 +1,5 @@
-﻿using System;
-using ModpackHelper.UserInteraction;
+using System;
+using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.CLI.UserInteraction
 {
