@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ModpackHelper.mods;
+using ModpackHelper.Shared.Mods;
 using NUnit.Framework;
 
 namespace ModpackHelper.Tests.Mods

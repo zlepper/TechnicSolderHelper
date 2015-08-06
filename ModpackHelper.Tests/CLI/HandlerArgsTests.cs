@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using ModpackHelper.CLI;
-using ModpackHelper.UserInteraction;
+using ModpackHelper.Shared.UserInteraction;
 using Moq;
 using NUnit.Framework;
 

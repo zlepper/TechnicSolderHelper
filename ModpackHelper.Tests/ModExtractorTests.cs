@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using System.Runtime.Serialization;
-using ModpackHelper.mods;
 using ModpackHelper.Shared.Mods;
 using NUnit.Framework;
 

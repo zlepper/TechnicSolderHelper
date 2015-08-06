@@ -2,7 +2,7 @@
 using System.IO.Abstractions.TestingHelpers;
 using ModpackHelper.GUI.UserInteraction;
 using ModpackHelper.IO;
-using ModpackHelper.UserInteraction;
+using ModpackHelper.Shared.UserInteraction;
 using Moq;
 using NUnit.Framework;
 

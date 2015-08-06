@@ -59,6 +59,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cryptography\Crypto.cs" />
+    <Compile Include="Cryptography\KeyHandler.cs" />
     <Compile Include="IO\ModPacker.cs" />
     <Compile Include="Mods\Solder.cs" />
     <Compile Include="Utils\Config\ConfigHandler.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="Web\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Web\FTP\FTPUploader.cs" />
     <Compile Include="Web\ISolderWebClient.cs" />
     <Compile Include="Web\SolderWebClient.cs">
       <SubType>Component</SubType>
