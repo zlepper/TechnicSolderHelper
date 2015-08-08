@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using ModpackHelper.GUI.Helpers;
 using ModpackHelper.GUI.Properties;
 using ModpackHelper.GUI.UserInteraction;
+using ModpackHelper.GUI.Windows;
 using ModpackHelper.IO;
 using ModpackHelper.MinecraftForge;
 using ModpackHelper.Shared.IO;

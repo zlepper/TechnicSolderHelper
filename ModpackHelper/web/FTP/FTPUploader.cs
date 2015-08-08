@@ -5,11 +5,6 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using ModpackHelper.IO;
-using ModpackHelper.Shared.Cryptography;
 
 namespace ModpackHelper.Shared.Web.FTP
 {

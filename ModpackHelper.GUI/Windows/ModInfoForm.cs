@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO.Abstractions;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.UserInteraction;
 
-namespace ModpackHelper.GUI
+namespace ModpackHelper.GUI.Windows
 {
 	public delegate void DoneFillingInInfoEventHandler (List<Mcmod> mods);
 
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 	public partial class ModInfoForm : Form
 	{
 		public event DoneFillingInInfoEventHandler DoneFillingInInfo;
@@ -22,7 +18,7 @@ namespace ModpackHelper.GUI
 		/// <summary>
 		/// Called when everything is filled in, and the form closes
 		/// </summary>
-		public virtual void OnDoneFillingInInfo ()
+		protected virtual void OnDoneFillingInInfo ()
 		{
 			DoneFillingInInfo?.Invoke (mods.Where (m => !m.IsSkipping).ToList ());
 		}

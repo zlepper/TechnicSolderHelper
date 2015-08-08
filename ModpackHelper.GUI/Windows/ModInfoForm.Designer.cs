@@ -1,4 +1,4 @@
-﻿namespace ModpackHelper.GUI
+﻿namespace ModpackHelper.GUI.Windows
 {
     partial class ModInfoForm
     {

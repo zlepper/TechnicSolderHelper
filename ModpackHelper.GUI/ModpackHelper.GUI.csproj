@@ -64,10 +64,16 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Helpers\ConfigLoader.cs" />
-    <Compile Include="ModInfoForm.cs">
+    <Compile Include="Windows\FTPUploaderForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ModInfoForm.Designer.cs">
+    <Compile Include="Windows\FTPUploaderForm.Designer.cs">
+      <DependentUpon>FTPUploaderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ModInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\ModInfoForm.Designer.cs">
       <DependentUpon>ModInfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UserInteraction\DirectoryFinder.cs" />
@@ -80,7 +86,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserInteraction\MessageShower.cs" />
-    <EmbeddedResource Include="ModInfoForm.resx">
+    <EmbeddedResource Include="Windows\FTPUploaderForm.resx">
+      <DependentUpon>FTPUploaderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\ModInfoForm.resx">
       <DependentUpon>ModInfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ModpackHelper.resx">
