@@ -8,7 +8,10 @@ namespace ModpackHelper.CLI
         static void Main(string[] args)
         {
             Handler h = new Handler();
-            h.Start(args.ToList(), new MessageShower());
+            if (h.Start(args.ToList(), new MessageShower()))
+            {
+
+            }
         }
     }
 }

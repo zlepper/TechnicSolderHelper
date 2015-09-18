@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Text;
+using ModpackHelper.Shared.MinecraftForge;
 using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.CLI
@@ -11,6 +13,14 @@ namespace ModpackHelper.CLI
     /// </summary>
     public class Handler
     {
+        /// <summary>
+        /// A forge handler to check against minecraft and forge versions
+        /// </summary>
+        private ForgeHandler Fh { get; set; }
+
+        /// <summary>
+        ///  The filesystem to work against
+        /// </summary>
         private readonly IFileSystem fileSystem;
         /// <summary>
         /// Creates a new handler to take care of userinput
@@ -24,6 +34,9 @@ namespace ModpackHelper.CLI
         public Handler(IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
+            // Create the forge handler and grab the latest data of the Minecraft Forge servers
+            Fh = new ForgeHandler(fileSystem);
+            Fh.DownloadForgeVersions();
         }
 
         /// <summary>
@@ -266,12 +279,22 @@ namespace ModpackHelper.CLI
                     return false;
                 }
 
-                // Get the modpack version
+                // Get the minecraft version
                 MinecraftVersion = args[index + 1];
 
                 if (string.IsNullOrWhiteSpace(ModpackVersion))
                 {
                     messageShower.ShowMessageAsync("You have not specified a value for the Minecraft version");
+                    return false;
+                }
+
+                // Make sure that the minecraft version actually exists
+                List<string> validMinecraftVersions = Fh.GetMinecraftVersions();
+                if (!validMinecraftVersions.Contains(MinecraftVersion))
+                {
+                    messageShower.ShowMessageAsync("Unknown Minecraft version, valid versions are:");
+                    foreach (string validMinecraftVersion in validMinecraftVersions)
+                        messageShower.ShowMessageAsync(validMinecraftVersion);
                     return false;
                 }
 
@@ -303,10 +326,9 @@ namespace ModpackHelper.CLI
                     return false;
                 }
 
-                // Get the modpack version
-                //ForgeVersionToPack = args[index + 1];
+                // Get the forge version
                 int t = -1;
-                bool converted = Int32.TryParse(args[index + 1], out t);
+                bool converted = int.TryParse(args[index + 1], out t);
                 if (converted)
                 {
                     ForgeVersionToPack = t;
@@ -314,6 +336,18 @@ namespace ModpackHelper.CLI
                 else
                 {
                     messageShower.ShowMessageAsync("You have not specified a valid value for the Forge version. It has to be a number");
+                    return false;
+                }
+
+                // Check that the selected forgeversion actually can be used
+                var validForgeVersions = Fh.GetForgeBuilds(MinecraftVersion);
+                if (!validForgeVersions.Contains(ForgeVersionToPack))
+                {
+                    messageShower.ShowMessageAsync("Unknown or invalid forge version for the selected version of Minecraft. Valid versions for Minecraft " + MinecraftVersion + " is:");
+                    StringBuilder sb = new StringBuilder();
+                    foreach (int validForgeVersion in validForgeVersions)
+                        sb.Append(validForgeVersion + "\t");
+                    messageShower.ShowMessageAsync(sb.ToString());
                     return false;
                 }
 
