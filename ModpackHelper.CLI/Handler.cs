@@ -1,23 +1,78 @@
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.CLI
 {
+    /// <summary>
+    /// Takes care of userinput from the console
+    /// </summary>
     public class Handler
     {
-        private IFileSystem fileSystem;
-        public Handler():this(new FileSystem()) { }
+        private readonly IFileSystem fileSystem;
+        /// <summary>
+        /// Creates a new handler to take care of userinput
+        /// </summary>
+        public Handler() : this(new FileSystem()) { }
 
+        /// <summary>
+        /// Creates a new handler to take care of userinput
+        /// </summary>
+        /// <param name="fileSystem">The custom filesystem to use</param>
         public Handler(IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
         }
 
+        /// <summary>
+        /// Indicates if the output directory should be cleared before run
+        /// </summary>
         public bool ClearOutputDirectoryOnRun { get; set; }
+        /// <summary>
+        /// Indicates what the input directory is
+        /// </summary>
         public string InputDirectory { get; set; }
+        /// <summary>
+        /// Indicates what the output directory is
+        /// </summary>
         public string OutputDirectory { get; set; }
-        public bool GetForgeVersions { get; set; }
+        /// <summary>
+        /// Indicates if Modpack Helper should be verbose
+        /// </summary>
+        public bool Verbose { get; set; }
+
+        /// <summary>
+        /// Indicates if all the mods found should be repacked
+        /// </summary>
+        public bool RepackEverything { get; set; }
+
+        /// <summary>
+        /// Indicates the name of the modpack to create
+        /// </summary>
+        public string ModpackName { get; set; }
+
+        /// <summary>
+        /// Indicates the version of the modpack to make
+        /// </summary>
+        public string ModpackVersion { get; set; }
+
+        /// <summary>
+        /// Indicates the minecraft version of the modpack
+        /// </summary>
+        public string MinecraftVersion { get; set; }
+
+        /// <summary>
+        /// Indicates if we should pack config files for the modpack
+        /// </summary>
+        public bool PackConfigFiles { get; set; }
+
+        /// <summary>
+        /// If set: Indicates what version of forge to pack
+        /// If not set: Do not pack a forge version
+        /// </summary>
+        public int ForgeVersionToPack { get; set; }
 
         /// <summary>
         /// Starts the entire modpacking process
@@ -34,6 +89,14 @@ namespace ModpackHelper.CLI
                 return false;
             }
 
+
+            // Check if Modpack Helper should be verbose in it's output
+            if (args.Contains("-v"))
+            {
+                Verbose = true;
+                args.Remove("-v");
+            }
+
             // Get the input directory
             if (args.Contains("-i"))
             {
@@ -46,7 +109,7 @@ namespace ModpackHelper.CLI
                 }
 
                 int index = args.IndexOf("-i");
-                
+
                 // Check if the the index is the last argument
                 // Also done to avoid an out of range exception in the next piece of code
                 if (index + 1 == args.Count)
@@ -117,13 +180,6 @@ namespace ModpackHelper.CLI
                 args.Remove(supposedOutputDirectory);
             }
 
-            // Check to see if we should recreate the local forge versions list
-            if (args.Contains("-f"))
-            {
-                GetForgeVersions = true;
-                args.Remove("-f");
-            }
-
             // Check if we should clear the output directory before run
             if (args.Contains("-c"))
             {
@@ -138,44 +194,146 @@ namespace ModpackHelper.CLI
                 args.Remove("-r");
             }
 
-            // Check if the local permissions should be updated with the newest
-            // permissions from FTB
-            if (args.Contains("-u"))
-            {
-                UpdateStoredPermissions = true;
-                args.Remove("-u");
-            }
-
-            // Check if Modpack Helper should generate a permission sheet.
-            if (args.Contains("-g"))
-            {
-                GeneratePermissionSheet = true;
-                args.Remove("-g");
-            }
-
-            // Check if Modpack Helper should be verbose in it's output
-            if (args.Contains("-v"))
-            {
-                Verbose = true;
-                args.Remove("-g");
-            }
 
             // Gets the modpack name
             if (args.Contains("-Mn"))
             {
-                
+                // Make sure there is an argument after this one
+                int index = args.IndexOf("-Mn");
+                if (index + 1 == args.Count)
+                {
+                    messageShower.ShowMessageAsync("You have not specified a value for the modpack name.");
+                    return false;
+                }
+
+                // Get the modpack name
+                ModpackName = args[index + 1];
+
+                if (string.IsNullOrWhiteSpace(ModpackName))
+                {
+                    messageShower.ShowMessageAsync("You have not specified a value for the modpack name.");
+                    return false;
+                }
+
+                // Remove the used values from the list
+                args.Remove(ModpackName);
+                args.Remove("-Mn");
+            }
+            else
+            {
+                messageShower.ShowMessageAsync("You have to enter a modpack name with the flag \"-Mn\".");
+                return false;
             }
 
+            // Get the modpack version
+            if (args.Contains("-Mv"))
+            {
+                // Make sure there is an argument after this one
+                int index = args.IndexOf("-Mv");
+                if (index + 1 == args.Count)
+                {
+                    messageShower.ShowMessageAsync("You have not specified a value for the modpack version");
+                    return false;
+                }
 
+                // Get the modpack version
+                ModpackVersion = args[index + 1];
+
+                if (string.IsNullOrWhiteSpace(ModpackVersion))
+                {
+                    messageShower.ShowMessageAsync("You have not specified a value for the modpack version");
+                    return false;
+                }
+
+                // Remove the used values from the list
+                args.Remove("-Mv");
+                args.Remove(ModpackVersion);
+            }
+            else
+            {
+                messageShower.ShowMessageAsync("You have to enter a modpack version with the flag \"-Mv\".");
+                return false;
+            }
+
+            // Get the Minecraft version
+            if (args.Contains("-MCv"))
+            {
+                // Make sure there is an argument after this one
+                int index = args.IndexOf("-MCv");
+                if (index + 1 == args.Count)
+                {
+                    messageShower.ShowMessageAsync("You have not specified a value for the Minecraft version");
+                    return false;
+                }
+
+                // Get the modpack version
+                MinecraftVersion = args[index + 1];
+
+                if (string.IsNullOrWhiteSpace(ModpackVersion))
+                {
+                    messageShower.ShowMessageAsync("You have not specified a value for the Minecraft version");
+                    return false;
+                }
+
+                // Remove the used values from the list
+                args.Remove("-MCv");
+                args.Remove(MinecraftVersion);
+            }
+            else
+            {
+                messageShower.ShowMessageAsync("You have to enter a Minecraft version with the flag \"-MCv\".");
+                return false;
+            }
+
+            // Check if we should pack config files
+            if (args.Contains("-Cfg"))
+            {
+                PackConfigFiles = true;
+                args.Remove("-Cfg");
+            }
+
+            // Check if we should pack a forge file (modpack.jar)
+            if (args.Contains("-f"))
+            {
+                // Make sure there is an argument after this one
+                int index = args.IndexOf("-f");
+                if (index + 1 == args.Count)
+                {
+                    messageShower.ShowMessageAsync("You have not specified a value for the Forge version");
+                    return false;
+                }
+
+                // Get the modpack version
+                //ForgeVersionToPack = args[index + 1];
+                int t = -1;
+                bool converted = Int32.TryParse(args[index + 1], out t);
+                if (converted)
+                {
+                    ForgeVersionToPack = t;
+                }
+                else
+                {
+                    messageShower.ShowMessageAsync("You have not specified a valid value for the Forge version. It has to be a number");
+                    return false;
+                }
+
+                // Remove the used values from the list
+                args.Remove("-f");
+                args.Remove(ForgeVersionToPack.ToString());
+            }
+
+            // Make sure we actually used everything the user entered
+            if (args.Any())
+            {
+                messageShower.ShowMessageAsync("Unknown arguments:");
+                // Output anything we couldn't use
+                foreach (string arg in args)
+                    messageShower.ShowMessageAsync(arg);
+                return false;
+            }
+
+            // Everything working fine, so we are free to continue
             return true;
         }
-
-        public bool Verbose { get; set; }
-
-        public bool GeneratePermissionSheet { get; set; }
-
-        public bool UpdateStoredPermissions { get; set; }
-
-        public bool RepackEverything { get; set; }
     }
 }

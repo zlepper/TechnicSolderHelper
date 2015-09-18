@@ -99,18 +99,16 @@ namespace ModpackHelper.CLI {
         /// <summary>
         ///   Looks up a localized string similar to Usage: TechnicSolderHelper.CLI.exe [-options] 
         ///Where options include:
-        ///	-i &lt;dir&gt;				Specifies the input directory
-        ///							Remember to specify the -o flag
-        ///	-o &lt;dir&gt;				Specifies the output directory
-        ///							Remember to specify the -i flag
+        ///	-i &lt;dir&gt;				Specifies the input directory(Required)
+        ///	-o &lt;dir&gt;				Specifies the output directory(Required)
+        ///	-Mn	&lt;value&gt;				Specifies the modpack name(Required)
+        ///	-Mv	&lt;value&gt;				Specifies the modpack version(Required)
+        ///	-MCv &lt;value&gt;			Specifies the Minecraft version(Required)
         ///	-c						Clear output directory on run
-        ///	-f 						Get Forge/Minecraft versions
         ///	-r 						Repack everything
-        ///	-u						Update stored permissions
-        ///	-g						Generate permissions
         ///	-v						Enable debugging/verbose output
-        ///	-Mn	&lt;value&gt;				Specifies the modpack name
-        ///	-Mv	&lt;val [rest of string was truncated]&quot;;.
+        ///	-Cfg					Packs the config files
+        ///	-f &lt;value&gt;				P [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Usage {
             get {
