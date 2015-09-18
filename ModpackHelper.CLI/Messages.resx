@@ -133,16 +133,16 @@
   <data name="Usage" xml:space="preserve">
     <value>Usage: TechnicSolderHelper.CLI.exe [-options] 
 Where options include:
-	-i &lt;dir&gt;				Specifies the input directory(Required)
-	-o &lt;dir&gt;				Specifies the output directory(Required)
-	-Mn	&lt;value&gt;				Specifies the modpack name(Required)
-	-Mv	&lt;value&gt;				Specifies the modpack version(Required)
-	-MCv &lt;value&gt;			Specifies the Minecraft version(Required)
-	-c						Clear output directory on run
-	-r 						Repack everything
-	-v						Enable debugging/verbose output
-	-Cfg					Packs the config files
-	-f &lt;value&gt;				Packs the specified forge version
+    -i &lt;dir&gt;                Specifies the input directory(Required)
+    -o &lt;dir&gt;                Specifies the output directory(Required)
+    -Mn &lt;value&gt;             Specifies the modpack name(Required)
+    -Mv &lt;value&gt;             Specifies the modpack version(Required)
+    -MCv &lt;value&gt;            Specifies the Minecraft version(Required)
+    -c                      Clear output directory on run
+    -r                      Repack everything
+    -v                      Enable debugging/verbose output
+    -Cfg                    Packs the config files
+    -f &lt;value&gt;              Packs the specified forge version
 Flags can come in any order, and the flags are case sensitive.</value>
     <comment>The message to be shown if the user hasn't specified any parameters</comment>
   </data>

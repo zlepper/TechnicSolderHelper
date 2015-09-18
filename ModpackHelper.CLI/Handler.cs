@@ -1,9 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using ModpackHelper.Shared.IO;
 using ModpackHelper.Shared.MinecraftForge;
+using ModpackHelper.Shared.Mods;
+using ModpackHelper.Shared.Permissions.FTB;
 using ModpackHelper.Shared.UserInteraction;
 
 namespace ModpackHelper.CLI
@@ -95,6 +102,7 @@ namespace ModpackHelper.CLI
         /// <returns>True if the process successed, otherwise false</returns>
         public bool Start(List<string> args, IMessageShower messageShower)
         {
+            // TODO Write some unit tests for all this... FML
             // Check if the user specified any arguments
             if (args.Count == 0)
             {
@@ -340,7 +348,7 @@ namespace ModpackHelper.CLI
                 }
 
                 // Check that the selected forgeversion actually can be used
-                var validForgeVersions = Fh.GetForgeBuilds(MinecraftVersion);
+                List<int> validForgeVersions = Fh.GetForgeBuilds(MinecraftVersion);
                 if (!validForgeVersions.Contains(ForgeVersionToPack))
                 {
                     messageShower.ShowMessageAsync("Unknown or invalid forge version for the selected version of Minecraft. Valid versions for Minecraft " + MinecraftVersion + " is:");
@@ -369,5 +377,157 @@ namespace ModpackHelper.CLI
             // Everything working fine, so we are free to continue
             return true;
         }
+
+        /// <summary>
+        /// Actually starts the pack creation progress
+        /// </summary>
+        /// <param name="messageShower"></param>
+        public void Pack(IMessageShower messageShower)
+        {
+            ModExtractor modExtractor = new ModExtractor(fileSystem);
+
+            // Measure the time it takes to get all the modinfo
+            // It's fast by the way ;)
+            messageShower.ShowMessageAsync("Extracting mod data");
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            // Get mod info of the mods in the input directory
+            List<Mcmod> mods = modExtractor.FindAllMods(InputDirectory);
+            sw.Stop();
+            messageShower.ShowMessageAsync("Extracting " + mods.Count + " mods data took: " + sw.Elapsed);
+            // Load some FTB data in we can query against for smartness
+            PermissionGetter pGetter = new PermissionGetter(fileSystem);
+            pGetter.LoadOnlinePermissions();
+            // Get the missing mods' info
+            GetInfoOnUnknownMods(mods, messageShower);
+
+            // Save the mod data back into the base
+            using (ModsDBContext db = new ModsDBContext(fileSystem))
+            {
+                messageShower.ShowMessageAsync("Saving mod data.");
+
+                // save the mods to the database 
+                db.Mods.AddRange(mods);
+                db.Save();
+            }
+
+            if (ClearOutputDirectoryOnRun)
+            {
+                int attempts = 0;
+                while (attempts < 20)
+                {
+                    try
+                    {
+                        Directory.Delete(OutputDirectory, true);
+                        break;
+                    }
+                    catch (Exception)
+                    {
+                        if (20 - attempts == 0)
+                        {
+                            messageShower.ShowMessageAsync("Unable to clear output directory, giving up. ");
+                            return;
+                        }
+                        messageShower.ShowMessageAsync("Unable to clear output directory. Trying again in 1 second. " + (20 - attempts) + " attempts left.");
+                        Thread.Sleep(1000);
+                        attempts++;
+                    }
+                }
+            }
+
+            // Actually pack the mods
+            messageShower.ShowMessageAsync("Packing Mods, please stand by, this can take a moment!");
+            sw.Restart();
+            ModPacker packer = new ModPacker(fileSystem);
+            packer.Pack(mods, fileSystem.DirectoryInfo.FromDirectoryName(OutputDirectory));
+            sw.Stop();
+            messageShower.ShowMessageAsync("packing " + mods.Count + " mods took: " + sw.Elapsed);
+
+            // Output list of all the mods packed
+            string html = packer.GetFinishedHTML();
+            var p = fileSystem.Path.Combine(OutputDirectory, "mods.html");
+            fileSystem.File.WriteAllText(p, html);
+            messageShower.ShowMessage("Finished doing everything. There is now a list of the packed mods at: " + p + Environment.NewLine + "Press enter to continue.");
+        }
+
+        /// <summary>
+        /// Gets all the unknown mods info
+        /// </summary>
+        /// <param name="mods"></param>
+        /// <param name="messageShower"></param>
+        private void GetInfoOnUnknownMods(List<Mcmod> mods, IMessageShower messageShower)
+        {
+            // Find all the mods still missing info
+            Mcmod[] missingMods = mods.Where(m => !m.IsValid()).ToArray();
+            // Make sure there actually are mods missing info
+            if (missingMods.Any())
+            {
+                messageShower.ShowMessageAsync("Unable to find info for all the mods. Please provide info as requested:");
+                // Request data for all the mods missing info
+                foreach (Mcmod missingMod in missingMods)
+                {
+                    if (missingMod.AuthorList == null || !missingMod.AuthorList.Any())
+                    {
+                        // Try to figure out the authors from some stored data
+                        missingMod.AuthorList = missingMod.GetAuthors(fileSystem);
+                    }
+
+                    // Get the minecraft version
+                    if (string.IsNullOrWhiteSpace(missingMod.Mcversion) || missingMod.Mcversion.ToLower().Contains("example") || missingMod.Mcversion.Contains("${"))
+                    {
+                        missingMod.Mcversion = MinecraftVersion;
+                    }
+
+                    if(missingMod.IsValid()) continue;
+
+                    // Make sure the user knows what file they are dealing with
+                    messageShower.ShowMessageAsync("Filename: " + missingMod.GetPath().Name);
+
+                    // Get the mod name
+                    // The loop ensures that the user can't continue until they enter something
+                    while (string.IsNullOrWhiteSpace(missingMod.Name) || missingMod.Name.ToLower().Contains("example") ||
+                        missingMod.Name.Contains("${"))
+                    {
+                        messageShower.ShowMessageAsync("What is the name of the mod?");
+                        missingMod.Name = Console.ReadLine();
+                    }
+
+                    // Get the mod version
+                    // The loop ensured that the user can't continue until they enter something
+                    while (string.IsNullOrWhiteSpace(missingMod.Version) ||
+                           missingMod.Version.ToLower().Contains("example") ||
+                           missingMod.Version.Contains("${"))
+                    {
+                        messageShower.ShowMessageAsync("What is the version of the mod?");
+                        missingMod.Version = Console.ReadLine();
+                    }
+
+                    
+
+                    // Get the modid
+                    if (string.IsNullOrWhiteSpace(missingMod.Modid) || missingMod.Modid.ToLower().Contains("example") ||
+                        missingMod.Modid.Contains("${"))
+                    {
+                        missingMod.Modid = missingMod.Name.Replace(' ', '-').Replace('|', '-');
+                    }
+
+                    // Get the mods author(s)
+                    if (!missingMod.AuthorList.Any())
+                    {
+                        // Check if we actually found anything
+                        while (!missingMod.AuthorList.Any())
+                        {
+                            messageShower.ShowMessageAsync("Who is the author of \"" + missingMod.Name + "\"?");
+                            string authors = Console.ReadLine();
+
+                            // Make sure the user entered something
+                            if (string.IsNullOrWhiteSpace(authors)) continue;
+                            missingMod.AuthorList.AddRange(authors.Replace(", ", ",").Split(','));
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

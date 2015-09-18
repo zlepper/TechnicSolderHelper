@@ -155,7 +155,7 @@ namespace ModpackHelper.Shared.Mods
 						OnWorkingModChanged (filename);
 
 						// Check is the mod should be handled in a special way, 
-						//fx liteloader requires a special way of finding the mod details
+						// e.g liteloader requires a special way of finding the mod details
 						int modAction = Mcmod.IsSpecialHandledMod (filename);
 						if (modAction == 0) {
 							return;
@@ -166,38 +166,32 @@ namespace ModpackHelper.Shared.Mods
 						// ReSharper disable once AccessToDisposedClosure
 						Mcmod mod = modsDB.Mods.SingleOrDefault (m => m.JarMd5.Equals (md5Value));
 						if (mod == null) {
-							// We don't know about that specific mod file
+                            // We don't know about that specific mod file
 
-							// Create a temporary folder where we can do stuff without messing up other things 
-							// In theory anyway
-							DirectoryInfoBase tempOutputFolder =
-								fileSystem.DirectoryInfo.FromDirectoryName (
-									fileSystem.Path.Combine (fileSystem.Path.GetTempPath (), "ModpackHelper",
-										Guid.NewGuid ().ToString ()));
+                            // Read the first .info file in the archive, if any
+                            string info = zipUtils.ReadFromInfoFileInArchive(modFile);
 
-							// Extract all the .info files
-							List<FileInfoBase> infoFiles = zipUtils.GetInfoFilesFromArchive (modFile, tempOutputFolder);
-
-							// Check if we actually extracted any .info files
-							if (infoFiles.Count == 0) {
-								// Since there wasn't extracted any files, then we don't know 
-								// anything about the file, and should just return and emptry file
-								mod = new Mcmod ();
-							}
-
-							// Remove dependencies.info files, since we can't use them for anything at all. 
-							foreach (FileInfoBase infoFile in infoFiles) {
-								// Attempt to turn the .info files into info Mcmod objects
-								try {
-									mod = GetMcmodDataFromFile (infoFile);
-								} catch (SerializationException) {
-									// Inform the caller that we couldn't parse this file info an Mcmod for some reason
-									OnSerializationExceptionOccured (modFile.FullName);
-									mod = new Mcmod ();
-								}
-							}
-							// Clear the temporary setup
-							tempOutputFolder.Delete (true);
+                            // Check if we actually extracted any .info files
+                            if (string.IsNullOrWhiteSpace(info))
+                            {
+                                // Since there wasn't eany .info files, then we should just
+                                // make a blank mod and query the user for data
+                                mod = new Mcmod();
+                            }
+                            else
+                            {
+                                // Attempt to turn the .info file into info Mcmod objects
+                                try
+                                {
+                                    mod = GetMcmodDataFromJson(info);
+                                }
+                                catch (SerializationException)
+                                {
+                                    // Inform the caller that we couldn't parse this file info an Mcmod for some reason
+                                    OnSerializationExceptionOccured(modFile.FullName);
+                                    mod = new Mcmod();
+                                }
+                            }
 						}
 						if (mod == null)
 							return;

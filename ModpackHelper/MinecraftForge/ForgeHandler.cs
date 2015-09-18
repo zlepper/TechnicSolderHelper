@@ -38,7 +38,15 @@ namespace ModpackHelper.Shared.MinecraftForge
         public string SaveForgeVersions()
         {
             string json = JsonConvert.SerializeObject(forgeVersions);
-            fileSystem.File.WriteAllText(forgeVersionFilePath, json);
+            try
+            {
+                fileSystem.File.WriteAllText(forgeVersionFilePath, json);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                DirectoryInfo directoryInfo = new FileInfo(forgeVersionFilePath)?.Directory;
+                directoryInfo?.Create();
+            }
             return json;
         }
 

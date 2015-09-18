@@ -85,6 +85,47 @@ namespace ModpackHelper.Shared.IO
             }
             return outputFiles;
         }
+        /// <summary>
+        /// Reads the text in the first valid file found in the zip file
+        /// Should be less IO heavy than the above method, though in testing they seem 
+        /// to be the same speed
+        /// </summary>
+        /// <param name="pathToArchive"></param>
+        /// <returns></returns>
+        public string ReadFromInfoFileInArchive(FileInfoBase pathToArchive)
+        {
+            // Validate the zip files existence
+            if (!pathToArchive.Exists)
+            {
+                throw new FileNotFoundException();
+            }
+            List<FileInfoBase> outputFiles = new List<FileInfoBase>();
+            // Read from the zip file
+            using (Stream filestream = pathToArchive.OpenRead())
+            {
+                // Create a zip archive to work through
+                using (ZipArchive archive = new ZipArchive(filestream))
+                {
+                    // Iterate over all the entries in the zip file that's end in .info or .json
+                    // And skip and dependencies files, since we can't use them anyway
+                    foreach (ZipArchiveEntry entry in archive.Entries.Where(entry => entry.Name.EndsWith(".info", StringComparison.OrdinalIgnoreCase) || entry.Name.Equals("litemod.json")).Where(entry => !entry.Name.Contains("dependancies") && !entry.Name.Contains("dependencies")))
+                    {
+                        // Begin reading the file
+                        using (Stream f = entry.Open())
+                        {
+                            // Read directly from the file stream, this is much faster than actually writing it to disk first
+                            using (StreamReader reader = new StreamReader(f))
+                            {
+                                // Read the text from the file and send it back
+                                return reader.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+            }
+            // If this happens, then we couldn't find a file
+            return null;
+        }
 
         /// <summary>
         /// Puts all the files in the specified input folder into the output file
