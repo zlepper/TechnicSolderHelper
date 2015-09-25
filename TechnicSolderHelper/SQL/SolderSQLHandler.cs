@@ -296,7 +296,7 @@ namespace TechnicSolderHelper.SQL
 
         public void CreateModpackBuild(int modpackId, String version, String mcVersion, String javaVersion, int memory)
         {
-            String sql = string.Format("INSERT INTO {0}.{1}(modpack_id, version, minecraft, is_published, private, created_at, updated_at, minecraft_md5, min_java, min_memory) VALUES(@modpack, @version, @mcVersion, 0, 0, @create, @update, 0, @minJava, @minMemory);", _database, _prefix + "builds");
+            String sql = string.Format("INSERT INTO {0}.{1}(modpack_id, version, minecraft, is_published, private, created_at, updated_at, min_java, min_memory) VALUES(@modpack, @version, @mcVersion, 0, 0, @create, @update, @minJava, @minMemory);", _database, _prefix + "builds");
             using (MySqlConnection conn = new MySqlConnection(_connectionString))
             {
                 conn.Open();
