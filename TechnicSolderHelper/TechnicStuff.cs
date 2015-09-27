@@ -324,7 +324,7 @@ namespace TechnicSolderHelper
                 {
 
                     var modid = mod.Modid.Contains("|")
-                        ? mod.Modid.Replace("|", "+")
+                        ? mod.Modid.Replace("|", string.Empty)
                             .Replace(".", string.Empty)
                             .ToLower()
                         : mod.Modid.Replace(".", string.Empty).ToLower();
@@ -360,7 +360,7 @@ namespace TechnicSolderHelper
                     {
                         var modDir = Path.Combine(_outputDirectory, "mods",
                             mod.Modid.Contains("|")
-                                ? mod.Modid.Replace("|", "+")
+                                ? mod.Modid.Replace("|", string.Empty)
                                     .Replace(".", string.Empty)
                                     .ToLower()
                                     .Replace(Globalfunctions.PathSeperator.ToString(), string.Empty)
@@ -386,10 +386,10 @@ namespace TechnicSolderHelper
 
                         var modArchive = mod.Modid.Contains("|")
                             ? Path.Combine(_outputDirectory, "mods",
-                                mod.Modid.Replace("|", "+")
+                                mod.Modid.Replace("|", string.Empty)
                                     .Replace(".", string.Empty)
                                     .ToLower(),
-                                mod.Modid.Replace("|", "+")
+                                mod.Modid.Replace("|", string.Empty)
                                     .Replace(".", string.Empty)
                                     .ToLower() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip")
                             : Path.Combine(_outputDirectory, "mods", mod.Modid.Replace(".", string.Empty).ToLower(),
@@ -399,7 +399,7 @@ namespace TechnicSolderHelper
                         {
                             Environment.CurrentDirectory = Path.Combine(_outputDirectory, "mods",
                                 mod.Modid.Contains("|")
-                                    ? mod.Modid.Replace("|", "+")
+                                    ? mod.Modid.Replace("|", string.Empty)
                                         .Replace(".", string.Empty)
                                         .ToLower()
                                     : mod.Modid.Replace(".", string.Empty).ToLower());
@@ -418,7 +418,7 @@ namespace TechnicSolderHelper
                         _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, true);
 
                         // Add mod info to a html file
-                        CreateTableRow(mod.Name.Replace("|", "+"), modid, modversion);
+                        CreateTableRow(mod.Name.Replace("|", string.Empty), modid, modversion);
 
                         process.WaitForExit();
 
