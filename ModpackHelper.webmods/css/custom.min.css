@@ -1,0 +1,1 @@
+﻿.login{display:flex;display:-webkit-flex;display:-ms-flexbox;-ms-flex-direction:row;-webkit-flex-direction:row;flex-direction:row}.login .center{width:50%;margin:auto;vertical-align:middle}.login .center h1{margin-top:0}@media screen and (max-width:992px){.login .center{width:75%}}@media screen and (max-width:600px){.login .center{width:95%}}

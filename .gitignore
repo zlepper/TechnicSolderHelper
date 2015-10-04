@@ -209,3 +209,9 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+
+.vs/
+.nuget/
+Scripts/
+Content/
+fonts/

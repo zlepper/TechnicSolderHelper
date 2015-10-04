@@ -1,0 +1,95 @@
+﻿<div ng-app="app" ng-controller="ModsController">
+    <div ng-show="state !== 'connected'">
+        <h1>Awaiting SignalR connection, one moment</h1>
+    </div>
+    <div ng-show="state === 'connected'">
+        <div class="row" ng-show="!loggedIn">
+            <div class="col-md-12">
+                <div class="alert alert-danger alert-dismissible" role="alert" ng-show="loginFailed">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Login failed:</strong> Wrong username or password
+                </div>
+                <form ng-submit="login()">
+                    <div class="form-group">
+                        <label for="username-input">Username</label>
+                        <input type="text" class="form-control" id="username-input" required="required" ng-model="loginData.username" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password-input">Password</label>
+                        <input type="password" class="form-control" id="password-input" required="required" ng-model="loginData.password"/>
+                    </div>
+                    <button type="submit" class="btn btn-default">Login</button>
+                </form>
+            </div>
+        </div>
+        <div ng-show="loggedIn">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>What to show?</h3>
+                </div>
+                <div class="col-md-4">
+                    <form>
+                        <div class="form-group">
+                            <label for="status-select">Status</label>
+                            <select class="form-control" id="status-select" ng-model="requestOptions.Status">
+                                <option value="Awaiting">Undecided</option>
+                                <option value="Accepted">Accepted</option>
+                                <option value="Denied">Denied</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                    <form>
+                        <div class="form-group">
+                            <label for="limit-input">Limit</label>
+                            <input class="form-control" type="number" value="20" id="limit-input" max="100" min="5" ng-model="requestOptions.Limit" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <form>
+                        <div class="form-group">
+                            <label for="search-input">Search</label>
+                            <input class="form-control" type="search" id="search-input" ng-model="requestOptions.Search" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <button ng-click="requestData()" class="btn btn-default">Reload</button>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Filename</th>
+                                <th>Mod name</th>
+                                <th>Mod version</th>
+                                <th>Mod Id</th>
+                                <th>MC version</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="mod in mods">
+                                <td>{{mod.Id}}</td>
+                                <td>{{mod.Filename}}</td>
+                                <td>{{mod.Name}}</td>
+                                <td>{{mod.Version}}</td>
+                                <td>{{mod.Modid}}</td>
+                                <td>{{mod.Mcversion}}</td>
+                                <td>
+                                    <button class="btn btn-danger" ng-click="denyMod(mod)" ng-show="requestOptions.Status != 'Denied'">Deny</button>
+                                    <button class="btn btn-success" ng-click="acceptMod(mod)" ng-show="requestOptions.Status != 'Accepted'">Accept</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

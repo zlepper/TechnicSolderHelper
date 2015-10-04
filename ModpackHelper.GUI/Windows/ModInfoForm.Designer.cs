@@ -47,6 +47,7 @@
             this.ModNameTextBox = new System.Windows.Forms.TextBox();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.SkipAllButton = new System.Windows.Forms.Button();
+            this.CheckOnlineButton = new System.Windows.Forms.Button();
             this.ModDataGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -225,7 +226,7 @@
             // 
             // SkipAllButton
             // 
-            this.SkipAllButton.Location = new System.Drawing.Point(95, 532);
+            this.SkipAllButton.Location = new System.Drawing.Point(94, 532);
             this.SkipAllButton.Name = "SkipAllButton";
             this.SkipAllButton.Size = new System.Drawing.Size(123, 23);
             this.SkipAllButton.TabIndex = 10;
@@ -233,11 +234,22 @@
             this.SkipAllButton.UseVisualStyleBackColor = true;
             this.SkipAllButton.Click += new System.EventHandler(this.SkipAllButton_Click);
             // 
+            // CheckOnlineButton
+            // 
+            this.CheckOnlineButton.Location = new System.Drawing.Point(94, 561);
+            this.CheckOnlineButton.Name = "CheckOnlineButton";
+            this.CheckOnlineButton.Size = new System.Drawing.Size(123, 23);
+            this.CheckOnlineButton.TabIndex = 11;
+            this.CheckOnlineButton.Text = "Check online";
+            this.CheckOnlineButton.UseVisualStyleBackColor = true;
+            this.CheckOnlineButton.Click += new System.EventHandler(this.CheckOnlineButton_Click);
+            // 
             // ModInfoForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(710, 615);
+            this.Controls.Add(this.CheckOnlineButton);
             this.Controls.Add(this.SkipAllButton);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.ModDataGroupBox);
@@ -277,5 +289,6 @@
         private System.Windows.Forms.TextBox ModNameTextBox;
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.Button SkipAllButton;
+        private System.Windows.Forms.Button CheckOnlineButton;
     }
 }

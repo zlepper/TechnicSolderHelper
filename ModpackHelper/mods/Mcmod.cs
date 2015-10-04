@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Permissions;
 using ModpackHelper.Shared.Permissions.FTB;
+using ModpackHelper.Shared.UserInteraction;
+using ModpackHelper.Shared.Web.Api;
 using ModpackHelper.Utils;
 using Newtonsoft.Json;
 
@@ -120,8 +128,17 @@ namespace ModpackHelper.Shared.Mods
         /// Indicates if this info was fetched from my remote database
         /// and therefor should not be put back into the databasee
         /// TODO write a json api instead of the direct db interaction
+        /// TODO Mostly done with the json api
         /// </summary>
-        public bool FromSuggestion { get; }
+        [JsonIgnore]
+        public bool FromSuggestion { get; set; }
+
+        /// <summary>
+        /// Indicates if the information was entered by the user
+        /// rather than read from a .info file or from the webapi
+        /// </summary>
+        [JsonIgnore]
+        public bool FromUser { get; set; }
 
         /// <summary>
         /// The path of the mod
@@ -229,6 +246,7 @@ namespace ModpackHelper.Shared.Mods
         /// <returns></returns>
         public List<string> GetAuthors(IFileSystem fileSystem)
         {
+            if(AuthorList != null && AuthorList.Count != 0) return AuthorList;
             if (Authors != null && Authors.Count != 0)
                 return AuthorList = Authors;
             // Id the Modid isn't set, then we can't do anymore to attempt to grab info,
@@ -246,6 +264,122 @@ namespace ModpackHelper.Shared.Mods
             using (ModsDBContext db = new ModsDBContext(fileSystem))
             {
                 return AuthorList = db.GetSuggestedModAuthors(this);
+            }
+        }
+
+        /// <summary>
+        /// Updates this mod with results from the webapi
+        /// </summary>
+        /// <param name="mod">The webapi mod</param>
+        public void UpdateFromApi(Mod mod)
+        {
+            Name = mod.Name;
+            Modid = mod.Modid;
+            Mcversion = mod.Mcversion;
+            Version = mod.Version;
+
+            // Push the author into the mod information
+            if (AuthorList == null)
+            {
+                AuthorList = new List<string>();
+            }
+            foreach (Author author in mod.Authors)
+            {
+                AuthorList.Add(author.Name);
+            }
+            AuthorList = AuthorList.Distinct().ToList();
+            // Make sure this mod doens't get reuploaded to the webapi
+            FromSuggestion = true;
+        }
+
+        
+        public delegate void DoneWithApiEventHandler();
+
+        public event DoneWithApiEventHandler DoneWithApi;
+
+        /// <summary>
+        /// Called when the returns and a result is available
+        /// </summary>
+        protected virtual void OnDoneWithApi()
+        {
+            DoneWithApi?.Invoke();
+        }
+
+        /// <summary>
+        /// Queries the webapi for mod information
+        /// </summary>
+        /// <param name="messageShower">The messageshower to display messages on</param>
+        /// <returns></returns>
+        public async Task GetModInfoFromApi(IMessageShower messageShower = null)
+        {
+            // Create a client so we can query the webapi
+            using (var client = new HttpClient())
+            {
+                // set some basic information
+                client.BaseAddress = new Uri("http://localhost:58013/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                // Query the api
+                HttpResponseMessage response = await client.GetAsync("api/Mods/" + JarMd5);
+                switch (response.StatusCode)
+                {
+                    // A mod was found
+                    case HttpStatusCode.OK:
+                        Mod m = await response.Content.ReadAsAsync<Mod>();
+                        UpdateFromApi(m);
+                        break;
+                    // No mod was found, or another error happened
+                    default:
+                        messageShower?.ShowMessageAsync("The all knowing internetz doesn't contain any info about this mod!");
+                        return;
+                }
+                // Tell our clients that we are done
+                OnDoneWithApi();
+            }
+        }
+
+        /// <summary>
+        /// Uploads the mods info to the webapi
+        /// </summary>
+        public void UploadToApi()
+        {
+            if (FromUser && !FromSuggestion)
+            {
+                using (BackgroundWorker bw = new BackgroundWorker())
+                {
+                    bw.DoWork += delegate(object sender, DoWorkEventArgs args)
+                    {
+                        UploadModInfoToApi().Wait();
+                    };
+                    bw.RunWorkerAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Uploads the mod to the webapi
+        /// </summary>
+        /// <returns></returns>
+        public async Task UploadModInfoToApi()
+        {
+            // Create a client so we can query the webapi
+            using (var client = new HttpClient())
+            {
+                // Set some basic information
+                client.BaseAddress = new Uri("http://localhost:58013/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                Mod mod = Mod.CreateFromMcmod(this);
+
+                // Query the api
+                //HttpResponseMessage response = await client.GetAsync("api/Mods/" + JarMd5);
+                var response = await client.PostAsJsonAsync("api/Mods", mod);
+                if (response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine(Name + " was uploaded to the api.");
+                }
             }
         }
     }
