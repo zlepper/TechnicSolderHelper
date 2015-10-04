@@ -499,13 +499,6 @@
             <param name="md5">The md5 value of the mod</param>
             <returns>The mod with the specific md5 value</returns>
         </member>
-        <member name="M:ModpackHelper.webmods.Controllers.ModsController.GetMod(System.Int32)">
-            <summary>
-            Get a mod from the database
-            </summary>
-            <param name="id">The id of the mod</param>
-            <returns>The mod if found</returns>
-        </member>
         <member name="M:ModpackHelper.webmods.Controllers.ModsController.PostMod(ModpackHelper.Shared.Web.Api.Mod)">
             <summary>
             Add a mod to the database

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using ModpackHelper.Shared.Web.Api;
 using ModpackHelper.webmods.db;
@@ -25,7 +27,7 @@ namespace ModpackHelper.webmods.Helpers
                 IQueryable<Mod> mods = db.Mods.Where(m => m.JarMd5.Equals(mod.JarMd5));
 
                 // Check how many already submitted a mod with this exact data
-                IQueryable<Mod> modsLike = mods.Where(m => m.Equals(mod));
+                IQueryable<Mod> modsLike = mods.Where(m => m.Mcversion.Equals(mod.Mcversion) && m.Name.Equals(mod.Mcversion) && m.Version.Equals(mod.Version) && m.Modid.Equals(mod.Modid) && (m.Authors.Count() == mod.Authors.Count));
                 int c = modsLike.Count();
 
                 if (user == null)
@@ -34,7 +36,30 @@ namespace ModpackHelper.webmods.Helpers
                     user = new HelperUser(userip);
                     db.HelperUsers.Add(user);
                 }
+                else
+                {
+                    // Make sure the user didn't already upload this
+                    if (mods.Any(m => m.HelperUserId == user.Id))
+                    {
+                        return;
+                    }
+                }
+
+                // Mark the mods uploader as the user
                 mod.HelperUser = user;
+
+                // Make sure the mod authors are linked to authors already in the db
+
+                foreach (Author author in mod.Authors)
+                {
+                    if(db.Authors.Any(a => a.Name.Equals(author.Name, StringComparison.OrdinalIgnoreCase))) continue;
+                    db.Authors.Add(author);
+                }
+                db.SaveChanges();
+
+                var authors = mod.Authors.Select(author => db.Authors.FirstOrDefault(o => o.Name.Equals(author.Name, StringComparison.OrdinalIgnoreCase))).ToList();
+
+                mod.Authors = authors;
 
                 if (c == 0)
                 {

@@ -240,6 +240,7 @@ namespace ModpackHelper.GUI
                         Debug.WriteLine(sw.Elapsed);
                         string html = packer.GetFinishedHTML();
                         fileSystem.File.WriteAllText(fileSystem.Path.Combine(outputDirectory, "mods.html"), html);
+                        messageShower.ShowMessageAsync("Done packing mods");
                     };
                     bw.RunWorkerAsync();
                 };

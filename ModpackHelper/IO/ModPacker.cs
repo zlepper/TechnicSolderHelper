@@ -59,6 +59,13 @@ namespace ModpackHelper.Shared.IO
                         Debug.WriteLine("Done packing " + modID);
                         mod.IsOnSolder = true;
                         AddDataToOutput(mod.Name, modID, modversion);
+
+                        // Check if this mods data was entered by the user
+                        // And if it is, upload it to the webapi
+                        if (mod.FromUser && !mod.FromSuggestion)
+                        {
+                            mod.UploadToApi();
+                        }
                     };
                     backgroundWorkers.Add(bw);
                     bw.RunWorkerAsync();

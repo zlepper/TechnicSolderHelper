@@ -7,6 +7,7 @@ using ModpackHelper.Shared.Web.Api;
 using ModpackHelper.webmods.db;
 using ModpackHelper.webmods.Helpers;
 using Newtonsoft.Json;
+// ReSharper disable UnusedMember.Global
 
 namespace ModpackHelper.webmods.Hubs
 {
@@ -24,7 +25,7 @@ namespace ModpackHelper.webmods.Hubs
         {
             // Get the status parameter
             Status s;
-            bool validStatus = Status.TryParse(requestOptions.Status, true, out s);
+            bool validStatus = Enum.TryParse(requestOptions.Status, true, out s);
             if (!validStatus) return;
 
             using (var db = new ModpackHelperContext())
@@ -68,10 +69,10 @@ namespace ModpackHelper.webmods.Hubs
                 }
 
                 // Find all the mods like the accepted one
-                var mods = db.Mods.Where(m => m.JarMd5.Equals(mod.JarMd5));
+                var mods = db.Mods.Include(m => m.Authors).Where(m => m.JarMd5.Equals(mod.JarMd5));
                 foreach (Mod mod1 in mods)
                 {
-                    mod1.Status = mod1.Equals(mod) ? Status.Accepted : Status.Denied;
+                    mod1.Status = mod1.Mcversion.Equals(mod.Mcversion) && mod1.Name.Equals(mod.Name) && mod1.Version.Equals(mod.Version) && mod1.Modid.Equals(mod.Modid) && mod1.Authors.Count() == mod.Authors.Count ? Status.Accepted : Status.Denied;
                     // Tell the clients to hide it because it was accepted by someone else
                     Clients.All.RemoveMod(mod1.Id);
                 }
@@ -95,12 +96,33 @@ namespace ModpackHelper.webmods.Hubs
                 }
 
                 // Find all the mods like this one
-                var mods = db.Mods.Where(m => m.Equals(mod));
+                var mods = db.Mods.Include(m => m.Authors).Where(m => m.Mcversion.Equals(mod.Mcversion) && m.Name.Equals(mod.Name) && m.Version.Equals(mod.Version) && m.Modid.Equals(mod.Modid) && m.Authors.Count() == mod.Authors.Count);
                 foreach (Mod mod1 in mods)
                 {
                     mod1.Status = Status.Denied;
                     // Tell the client to remove it because it was denied by someone else
                     Clients.All.RemoveMod(mod1.Id);
+                }
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            // raise a new exception nesting
+                            // the current instance as InnerException
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
                 }
             }
         }
@@ -112,6 +134,7 @@ namespace ModpackHelper.webmods.Hubs
         /// <param name="password"></param>
         public void LoginUser(string username, string password)
         {
+            // Make sure the user actually entered something
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 return;

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using ModpackHelper.Shared.Mods;
 using ModpackHelper.Utils;
 
 namespace ModpackHelper.Shared.Web.Api
@@ -93,10 +94,38 @@ namespace ModpackHelper.Shared.Web.Api
         public bool Equals(Mod obj)
         {
             return obj.Mcversion.Equals(Mcversion)
-                   && Lists.AreEqual(obj.Authors.ToList(), Authors.ToList())
+                   && obj.Authors.Count == Authors.Count
                    && obj.Name.Equals(Name)
                    && obj.Version.Equals(Version)
                    && obj.Modid.Equals(Modid);
+        }
+
+        /// <summary>
+        /// Create a mod object from an mcmod
+        /// </summary>
+        /// <param name="mod"></param>
+        /// <returns></returns>
+        public static Mod CreateFromMcmod(Mcmod mod)
+        {
+            // Create the authorlist to upload
+            ICollection<Author> authors = new List<Author>(mod.AuthorList.Count);
+            foreach (string author in mod.AuthorList)
+            {
+                authors.Add(new Author() {Name = author});
+            }
+
+            return new Mod()
+            {
+                Name = mod.Name,
+                JarMd5 = mod.JarMd5,
+                Modid = mod.Modid,
+                Mcversion = mod.Mcversion,
+                Url = mod.Url,
+                Version = mod.Version,
+                Filename = mod.GetPath().Name,
+                Authors = authors
+            };
+
         }
     }
 

@@ -82,8 +82,8 @@
                                 <td>{{mod.Modid}}</td>
                                 <td>{{mod.Mcversion}}</td>
                                 <td>
-                                    <button class="btn btn-danger" ng-click="denyMod(mod)">Deny</button>
-                                    <button class="btn btn-success" ng-click="acceptMod(mod)">Accept</button>
+                                    <button class="btn btn-danger" ng-click="denyMod(mod)" ng-show="requestOptions.Status != 'Denied'">Deny</button>
+                                    <button class="btn btn-success" ng-click="acceptMod(mod)" ng-show="requestOptions.Status != 'Accepted'">Accept</button>
                                 </td>
                             </tr>
                         </tbody>

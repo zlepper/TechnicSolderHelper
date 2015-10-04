@@ -44,24 +44,6 @@ namespace ModpackHelper.webmods.Controllers
             return Ok(mod);
         }
 
-        /// <summary>
-        /// Get a mod from the database
-        /// </summary>
-        /// <param name="id">The id of the mod</param>
-        /// <returns>The mod if found</returns>
-        [ResponseType(typeof(Mod))]
-        [Route("api/Mods/{id}")]
-        public IHttpActionResult GetMod(int id)
-        {
-            Mod mod = db.Mods.Find(id);
-            if (mod == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(mod);
-        }
-
         //// PUT: api/Mods/5
         //[ResponseType(typeof(void))]
         //public IHttpActionResult PutMod(int id, Mod mod)
@@ -116,7 +98,7 @@ namespace ModpackHelper.webmods.Controllers
             ApiHelpers.AddModToDB(mod);
 
             // Tell the user where they can find the data
-            return CreatedAtRoute("DefaultApi", new { id = mod.Id }, mod);
+            return Ok();
         }
 
         // DELETE: api/Mods/5

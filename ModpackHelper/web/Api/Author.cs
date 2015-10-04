@@ -11,7 +11,6 @@ namespace ModpackHelper.Shared.Web.Api
         /// <summary>
         /// Database key
         /// </summary>
-        [JsonIgnore]
         public int Id { get; set; }
 
         /// <summary>

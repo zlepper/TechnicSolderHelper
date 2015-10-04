@@ -1,4 +1,6 @@
-﻿angular.module("app")
+﻿var l;
+
+angular.module("app")
     .controller("ModsController", ["$scope", "Hub", "$timeout", function ($scope, Hub, $timeout) {
 
         $scope.state = "disconnected";
@@ -14,6 +16,8 @@
             username: "",
             password: ""
         }
+
+        l = $scope;
 
         // Declare the hub connection
         var hub = new Hub("ModsHub", {
@@ -106,7 +110,7 @@
                 $scope.requestData();
         });
 
-        $scope.login = function() {
+        $scope.login = function () {
             if ($scope.state === "connected") {
                 console.log($scope.loginData);
                 hub.loginUser($scope.loginData.username, $scope.loginData.password);
