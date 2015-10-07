@@ -28,7 +28,7 @@ namespace ModpackHelper.Tests
                 {@"C:\mcmod.json", new MockFileData(json)}
             });
 
-            ModExtractor modExtractor = new ModExtractor(fileSystem);
+            ModExtractor modExtractor = new ModExtractor("1.7.10", fileSystem);
 
             Mcmod mod = modExtractor.GetMcmodDataFromFile(@"C:\mcmod.json");
 
@@ -55,7 +55,7 @@ namespace ModpackHelper.Tests
                 {@"C:\mcmod.json", new MockFileData("{{{{{")}
             });
 
-            ModExtractor modExtractor = new ModExtractor(fileSystem);
+            ModExtractor modExtractor = new ModExtractor("1.7.10", fileSystem);
 
             modExtractor.GetMcmodDataFromFile(@"C:\mcmod.json");
         }

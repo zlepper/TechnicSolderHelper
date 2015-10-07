@@ -101,6 +101,17 @@ namespace ModpackHelper.Shared.Web.Api
         }
 
         /// <summary>
+        /// Checks if the mods data is valid
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValid()
+        {
+            return !string.IsNullOrWhiteSpace(Modid) && !string.IsNullOrWhiteSpace(Name) &&
+                   !string.IsNullOrWhiteSpace(Version) && !string.IsNullOrWhiteSpace(Mcversion) && Authors != null &&
+                   Authors.Any() && !string.IsNullOrWhiteSpace(JarMd5) && !string.IsNullOrWhiteSpace(Filename);
+        }
+
+        /// <summary>
         /// Create a mod object from an mcmod
         /// </summary>
         /// <param name="mod"></param>

@@ -596,6 +596,38 @@
             <param name="outputBytes">The length of the hash to generate, in bytes.</param>
             <returns>A hash of the password.</returns>
         </member>
+        <member name="T:ModpackHelper.webmods.Hubs.ApiHub">
+            <summary>
+            A SignalR hub that provides the same options as the api itself, expect it's much faster due to less shaking hands and stuff like that. 
+            </summary>
+        </member>
+        <member name="F:ModpackHelper.webmods.Hubs.ApiHub.db">
+            <summary>
+            The database with all the info
+            </summary>
+        </member>
+        <member name="M:ModpackHelper.webmods.Hubs.ApiHub.GetMods">
+            <summary>
+            Get a list of all the mods in the database
+            </summary>
+        </member>
+        <member name="M:ModpackHelper.webmods.Hubs.ApiHub.GetMod(System.String)">
+            <summary>
+            Get the specific mod from the db, provided it has been accepted
+            </summary>
+            <param name="md5">The md5 value of the mod</param>
+        </member>
+        <member name="M:ModpackHelper.webmods.Hubs.ApiHub.PostMod(ModpackHelper.Shared.Web.Api.Mod)">
+            <summary>
+            Add a mod to the database
+            </summary>
+            <param name="mod">The mod to add to the database</param>
+        </member>
+        <member name="T:ModpackHelper.webmods.Hubs.IApiClient">
+            <summary>
+            An interface descripting what methods are available on the client. 
+            </summary>
+        </member>
         <member name="T:ModpackHelper.webmods.Hubs.IClient">
             <summary>
             An interface specifying all the methods available on the client

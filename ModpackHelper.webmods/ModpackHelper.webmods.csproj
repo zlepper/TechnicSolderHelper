@@ -215,6 +215,7 @@
     </Compile>
     <Compile Include="Helpers\ApiHelpers.cs" />
     <Compile Include="Helpers\PasswordHash.cs" />
+    <Compile Include="Hubs\ApiHub.cs" />
     <Compile Include="Hubs\IClient.cs" />
     <Compile Include="Hubs\ModsHub.cs" />
     <Compile Include="Hubs\RequestOptions.cs" />

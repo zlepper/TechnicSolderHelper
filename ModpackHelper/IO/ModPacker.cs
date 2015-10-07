@@ -6,6 +6,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR.Client;
 using ModpackHelper.Shared.Mods;
 
 namespace ModpackHelper.Shared.IO
@@ -30,66 +31,77 @@ namespace ModpackHelper.Shared.IO
 
         public void Pack(List<Mcmod> mods, DirectoryInfoBase outputDirectory)
         {
-            outputDirectory.Create();
-            List<BackgroundWorker> backgroundWorkers = new List<BackgroundWorker>(mods.Count);
-            ZipUtils zipUtils = new ZipUtils(fileSystem);
-            using (ModsDBContext db = new ModsDBContext(fileSystem))
+            // Create a SignalR connection to the api
+            using (HubConnection hubConnection = new HubConnection(Constants.ApiUrl))
             {
-                foreach (Mcmod mod in mods)
+                IHubProxy apiHubProxy = hubConnection.CreateHubProxy("ApiHub");
+                Task con = hubConnection.Start();
+
+                // Create the output directory where we should put all the new files
+                outputDirectory.Create();
+                List<BackgroundWorker> backgroundWorkers = new List<BackgroundWorker>(mods.Count);
+                ZipUtils zipUtils = new ZipUtils(fileSystem);
+                using (ModsDBContext db = new ModsDBContext(fileSystem))
                 {
-                    BackgroundWorker bw = new BackgroundWorker();
-                    bw.DoWork += (sender, args) =>
+                    // Wait for the SignalR connection to be established
+                    con.Wait();
+                    foreach (Mcmod mod in mods)
                     {
-                        string modID = mod.Modid.Replace("|", string.Empty).ToLower();
-                        string modversion = (mod.Mcversion + "-" + mod.Version).ToLower();
-
-                        // Check if mod is online
-                        Mcmod mo = db.Mods.FirstOrDefault(m => m.JarMd5.Equals(mod.JarMd5));
-                        if (mo != null && mo.IsOnSolder) return;
-                        // Create the output directory 
-                        string zipFileDirectory = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID);
-                        fileSystem.Directory.CreateDirectory(zipFileDirectory);
-
-                        string zipFileName = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID,
-                            modID + "-" + modversion + ".zip");
-                        FileInfoBase zipFile = fileSystem.FileInfo.FromFileName(zipFileName);
-
-                        Debug.WriteLine("Packing " + modID);
-                        zipUtils.SpecialPackSolderMod(mod.GetPath(), zipFile);
-                        Debug.WriteLine("Done packing " + modID);
-                        mod.IsOnSolder = true;
-                        AddDataToOutput(mod.Name, modID, modversion);
-
-                        // Check if this mods data was entered by the user
-                        // And if it is, upload it to the webapi
-                        if (mod.FromUser && !mod.FromSuggestion)
+                        BackgroundWorker bw = new BackgroundWorker();
+                        bw.DoWork += (sender, args) =>
                         {
-                            mod.UploadToApi();
-                        }
-                    };
-                    backgroundWorkers.Add(bw);
-                    bw.RunWorkerAsync();
-                }
-                // Make sure all backgroundworkers are finished running before returning to the caller
-				int count = -1;
-				while (backgroundWorkers.Any())
-                {
-                    // Remove background workers that are done
-                    foreach (BackgroundWorker bw in backgroundWorkers.Where(b => !b.IsBusy))
-                    {
-                        bw.Dispose();
+                            string modID = mod.Modid.Replace("|", string.Empty).ToLower();
+                            string modversion = (mod.Mcversion + "-" + mod.Version).ToLower();
+
+                            // Check if mod is online
+                            Mcmod mo = db.Mods.FirstOrDefault(m => m.JarMd5.Equals(mod.JarMd5));
+                            if (mo != null && mo.IsOnSolder) return;
+                            // Create the output directory 
+                            string zipFileDirectory = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID);
+                            fileSystem.Directory.CreateDirectory(zipFileDirectory);
+
+                            string zipFileName = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID,
+                                modID + "-" + modversion + ".zip");
+                            FileInfoBase zipFile = fileSystem.FileInfo.FromFileName(zipFileName);
+
+                            Debug.WriteLine("Packing " + modID);
+                            zipUtils.SpecialPackSolderMod(mod.GetPath(), zipFile);
+                            Debug.WriteLine("Done packing " + modID);
+                            mod.IsOnSolder = true;
+                            AddDataToOutput(mod.Name, modID, modversion);
+
+                            // Check if this mods data was entered by the user
+                            // And if it is, upload it to the webapi
+                            if (mod.FromUser && !mod.FromSuggestion)
+                            {
+                                mod.UploadToApi(apiHubProxy);
+                            }
+                        };
+                        backgroundWorkers.Add(bw);
+                        bw.RunWorkerAsync();
                     }
-                    backgroundWorkers.RemoveAll(b => !b.IsBusy);
-					int c = backgroundWorkers.Count;
-					if (c != count) {
-						count = c;
-						Debug.WriteLine (count + " backgroundworkers remaining.");
-					}
-                }
-                foreach (Mcmod mod in mods)
-                {
-                    db.Mods.RemoveAll(m => m.JarMd5.Equals(mod.JarMd5));
-                    db.Mods.Add(mod);
+                    // Make sure all backgroundworkers are finished running before returning to the caller
+                    int count = -1;
+                    while (backgroundWorkers.Any())
+                    {
+                        // Remove background workers that are done
+                        foreach (BackgroundWorker bw in backgroundWorkers.Where(b => !b.IsBusy))
+                        {
+                            bw.Dispose();
+                        }
+                        backgroundWorkers.RemoveAll(b => !b.IsBusy);
+                        int c = backgroundWorkers.Count;
+                        if (c != count)
+                        {
+                            count = c;
+                            Debug.WriteLine(count + " backgroundworkers remaining.");
+                        }
+                    }
+                    foreach (Mcmod mod in mods)
+                    {
+                        db.Mods.RemoveAll(m => m.JarMd5.Equals(mod.JarMd5));
+                        db.Mods.Add(mod);
+                    }
                 }
             }
         }

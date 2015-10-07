@@ -196,7 +196,7 @@ namespace ModpackHelper.GUI
 
             // We are free to continue
             
-            ModExtractor modExtractor = new ModExtractor(fileSystem);
+            ModExtractor modExtractor = new ModExtractor(minecraftVersion, fileSystem);
             
             // Make sure we don't lock the main thread
             BackgroundWorker bw = new BackgroundWorker();

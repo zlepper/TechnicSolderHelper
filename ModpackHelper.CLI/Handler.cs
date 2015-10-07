@@ -384,7 +384,7 @@ namespace ModpackHelper.CLI
         /// <param name="messageShower"></param>
         public void Pack(IMessageShower messageShower)
         {
-            ModExtractor modExtractor = new ModExtractor(fileSystem);
+            ModExtractor modExtractor = new ModExtractor(MinecraftVersion, fileSystem);
 
             // Measure the time it takes to get all the modinfo
             // It's fast by the way ;)

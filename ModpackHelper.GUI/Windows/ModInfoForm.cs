@@ -96,19 +96,19 @@ namespace ModpackHelper.GUI.Windows
                 }
                 // Select the first mod on the list
                 ModSelectionList.SelectedIndex = 0;
-                foreach (Mcmod mod in nonFinishedMods)
-                {
-                    using (BackgroundWorker bw = new BackgroundWorker())
-                    {
-                        bw.DoWork += BwFetchModInfoFromApi;
-                        List<object> param = new List<object>()
-                            {
-                                mod,
-                                null
-                            };
-                        bw.RunWorkerAsync(param);
-                    }
-                }
+                //foreach (Mcmod mod in nonFinishedMods)
+                //{
+                //    using (BackgroundWorker bw = new BackgroundWorker())
+                //    {
+                //        bw.DoWork += BwFetchModInfoFromApi;
+                //        List<object> param = new List<object>()
+                //            {
+                //                mod,
+                //                null
+                //            };
+                //        bw.RunWorkerAsync(param);
+                //    }
+                //}
             }
         }
 
@@ -263,7 +263,7 @@ namespace ModpackHelper.GUI.Windows
                     BeginInvoke(new Action(() => ModSelectionList_SelectedIndexChanged(null, EventArgs.Empty)));
                 }
             };
-            mod.GetModInfoFromApi(param[1] as IMessageShower).Wait();
+            mod.GetModInfoFromApi(messageShower: param[1] as IMessageShower).Wait();
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR.Client;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Permissions;
 using ModpackHelper.Shared.Permissions.FTB;
@@ -230,6 +231,14 @@ namespace ModpackHelper.Shared.Mods
             return !Name.Contains("${") && !Version.Contains("${") && !Mcversion.Contains("${") && !Modid.Contains("${") && !Version.ToLower().Contains("@version@") && AuthorList != null && AuthorList.Count > 0;
         }
 
+        public void AttemptToCalculateModId()
+        {
+            if (string.IsNullOrWhiteSpace(Modid) && !string.IsNullOrWhiteSpace(Name))
+            {
+                Modid = Name.Replace(" ", "-").Replace("|", string.Empty);
+            }
+        }
+
         /// <summary>
         /// Gets a list of authors for the mod
         /// </summary>
@@ -271,7 +280,7 @@ namespace ModpackHelper.Shared.Mods
         /// Updates this mod with results from the webapi
         /// </summary>
         /// <param name="mod">The webapi mod</param>
-        public void UpdateFromApi(Mod mod)
+        private void UpdateFromApi(Mod mod)
         {
             Name = mod.Name;
             Modid = mod.Modid;
@@ -340,6 +349,18 @@ namespace ModpackHelper.Shared.Mods
         }
 
         /// <summary>
+        /// Queries the webapi for mod information through SignalR
+        /// Make sure to open the hub connection before calling this.
+        /// </summary>
+        /// <param name="apiHubProxy"></param>
+        public void GetModInfoFromApi(IHubProxy apiHubProxy)
+        {
+            Mod mod = apiHubProxy.Invoke<Mod>("GetMod", JarMd5).Result;
+            if (mod == null) return;
+            UpdateFromApi(mod);
+        }
+
+        /// <summary>
         /// Uploads the mods info to the webapi
         /// </summary>
         public void UploadToApi()
@@ -355,6 +376,15 @@ namespace ModpackHelper.Shared.Mods
                     bw.RunWorkerAsync();
                 }
             }
+        }
+
+        /// <summary>
+        /// Uploads the mods information to the webapi through SignalR
+        /// </summary>
+        /// <param name="apiHubProxy"></param>
+        public void UploadToApi(IHubProxy apiHubProxy)
+        {
+            apiHubProxy.Invoke("PostMod", Mod.CreateFromMcmod(this));
         }
 
         /// <summary>

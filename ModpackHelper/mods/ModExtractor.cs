@@ -8,6 +8,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR.Client;
 using ModpackHelper.Shared.IO;
 
 namespace ModpackHelper.Shared.Mods
@@ -21,6 +23,9 @@ namespace ModpackHelper.Shared.Mods
     /// </summary>
     public class ModExtractor
     {
+        /// <summary>
+        /// The files system to extract files from
+        /// </summary>
         private readonly IFileSystem fileSystem;
 
         /// <summary>
@@ -41,6 +46,8 @@ namespace ModpackHelper.Shared.Mods
             WorkingModChanged?.Invoke(filename);
         }
 
+        private string mcversion;
+
         /// <summary>
         /// Emited when there is a mod that couldn't be parsed
         /// </summary>
@@ -50,12 +57,13 @@ namespace ModpackHelper.Shared.Mods
             SerializationExceptionOccured?.Invoke(filename);
         }
 
-        public ModExtractor(IFileSystem fileSystem)
+        public ModExtractor(string mcversion, IFileSystem fileSystem)
         {
             this.fileSystem = fileSystem;
+            this.mcversion = mcversion;
         }
 
-        public ModExtractor() : this(fileSystem: new FileSystem())
+        public ModExtractor(string mcversion) : this(mcversion, new FileSystem())
         {
 
         }
@@ -135,109 +143,138 @@ namespace ModpackHelper.Shared.Mods
         /// </summary> 
         public List<Mcmod> FindAllMods(DirectoryInfoBase inputDirectory)
         {
-            // Find the mod files in the input directory
-            Finder finder = new Finder(fileSystem);
-            List<FileInfoBase> modFiles = finder.GetModFiles(inputDirectory);
-
-            // Used to take care of all the io we will be doing
-            IOHandler ioHandler = new IOHandler(fileSystem);
-            ZipUtils zipUtils = new ZipUtils(fileSystem);
-
-            // Create the list we will return
-            List<Mcmod> mods = new List<Mcmod>(modFiles.Count);
-
-            List<BackgroundWorker> backgroundWorkers = new List<BackgroundWorker>();
-
-            // Context for the local mods database
-            using (ModsDBContext modsDB = new ModsDBContext(fileSystem))
+            // Create a fast connection to the mod database using SignalR
+            // TODO Something goes wrong when this closes, no idea what. 
+            // The application doesn't crash, and neither does the server, so for now i'll just ignore this.
+            // See this for further reference: https://github.com/SignalR/SignalR/issues/2685 
+            using (HubConnection hubConnection = new HubConnection(Constants.ApiUrl))
             {
-                // Walk through all the found modfiles
-                foreach (FileInfoBase modFile in modFiles)
+                IHubProxy apiHubProxy = hubConnection.CreateHubProxy("ApiHub");
+                Task con = hubConnection.Start();
+
+                // Find the mod files in the input directory
+                Finder finder = new Finder(fileSystem);
+                List<FileInfoBase> modFiles = finder.GetModFiles(inputDirectory);
+
+                // Create the list we will return
+                List<Mcmod> mods = new List<Mcmod>(modFiles.Count);
+                // Used to take care of all the io we will be doing
+                IOHandler ioHandler = new IOHandler(fileSystem);
+                ZipUtils zipUtils = new ZipUtils(fileSystem);
+
+
+                List<BackgroundWorker> backgroundWorkers = new List<BackgroundWorker>();
+
+                // Context for the local mods database
+                using (ModsDBContext modsDB = new ModsDBContext(fileSystem))
                 {
-                    // Create a background worker, so we can work in multiple threads and speedup what we are doing
-                    BackgroundWorker bw = new BackgroundWorker();
-                    bw.DoWork += delegate
+                    // Wait for the SignalR connection to be established
+                    con.Wait();
+                    // Walk through all the found modfiles
+                    foreach (FileInfoBase modFile in modFiles)
                     {
-                        string filename = modFile.Name;
-
-                        // Update any event listernes, such as the interface
-                        OnWorkingModChanged(filename);
-
-                        // Check is the mod should be handled in a special way, 
-                        // e.g liteloader requires a special way of finding the mod details
-                        int modAction = Mcmod.IsSpecialHandledMod(filename);
-                        if (modAction == 0)
+                        // Create a background worker, so we can work in multiple threads and speedup what we are doing
+                        BackgroundWorker bw = new BackgroundWorker();
+                        bw.DoWork += delegate
                         {
-                            return;
-                        }
+                            string filename = modFile.Name;
 
-                        // Check if we already have this mod stored in the Database
-                        string md5Value = ioHandler.CalculateMd5(modFile);
-                        // ReSharper disable once AccessToDisposedClosure
-                        Mcmod mod = modsDB.Mods.SingleOrDefault(m => m.JarMd5.Equals(md5Value));
-                        if (mod == null)
-                        {
-                            // We don't know about that specific mod file
+                            // Update any event listernes, such as the interface
+                            OnWorkingModChanged(filename);
 
-                            // Read the first .info file in the archive, if any
-                            string info = zipUtils.ReadFromInfoFileInArchive(modFile);
-
-                            // Check if we actually extracted any .info files
-                            if (string.IsNullOrWhiteSpace(info))
+                            // Check is the mod should be handled in a special way, 
+                            // e.g liteloader requires a special way of finding the mod details
+                            int modAction = Mcmod.IsSpecialHandledMod(filename);
+                            if (modAction == 0)
                             {
-                                // Since there wasn't eany .info files, then we should just
-                                // make a blank mod and query the user for data
-                                mod = new Mcmod();
+                                return;
                             }
-                            else
+
+                            // Check if we already have this mod stored in the Database
+                            string md5Value = ioHandler.CalculateMd5(modFile);
+                            // ReSharper disable once AccessToDisposedClosure
+                            Mcmod mod = modsDB.Mods.SingleOrDefault(m => m.JarMd5.Equals(md5Value));
+                            if (mod == null)
                             {
-                                // Attempt to turn the .info file into info Mcmod objects
-                                try
+                                // We don't know about that specific mod file
+
+                                // Read the first .info file in the archive, if any
+                                string info = zipUtils.ReadFromInfoFileInArchive(modFile);
+
+                                // Check if we actually extracted any .info files
+                                if (string.IsNullOrWhiteSpace(info))
                                 {
-                                    mod = GetMcmodDataFromJson(info);
-                                }
-                                catch (SerializationException)
-                                {
-                                    // Inform the caller that we couldn't parse this file info an Mcmod for some reason
-                                    OnSerializationExceptionOccured(modFile.FullName);
+                                    // Since there wasn't eany .info files, then we should just
+                                    // make a blank mod and query the user for data
                                     mod = new Mcmod();
                                 }
+                                else
+                                {
+                                    // Attempt to turn the .info file into info Mcmod objects
+                                    try
+                                    {
+                                        mod = GetMcmodDataFromJson(info);
+                                    }
+                                    catch (SerializationException)
+                                    {
+                                        // Inform the caller that we couldn't parse this file info an Mcmod for some reason
+                                        OnSerializationExceptionOccured(modFile.FullName);
+                                        mod = new Mcmod();
+                                    }
+                                }
                             }
+                            if (mod == null)
+                                return;
+                            mod.SetPath(modFile); // Done to ensure we can actually find the file again
+
+                            mod.JarMd5 = CalculateMd5(mod.GetPath());
+                            // Make sure we have the file md5 so we can compare files
+
+                            // Try to calculate some of the mods data if it isn't there.
+                            if (!mod.IsValid())
+                            {
+                                if (mod.AuthorList == null || mod.AuthorList.Count == 0)
+                                    mod.GetAuthors(fileSystem);
+                                if (string.IsNullOrWhiteSpace(mod.Modid)) mod.AttemptToCalculateModId();
+                                if (string.IsNullOrWhiteSpace(mod.Mcversion)) mod.Mcversion = mcversion;
+                                if (!mod.IsValid())
+                                {
+                                    mod.GetModInfoFromApi(apiHubProxy);
+                                }
+                            }
+
+                            mods.Add(mod); // Save back to our return values
+                        };
+                        // Save the background worker so we can find it later
+                        backgroundWorkers.Add(bw);
+                        // Start the background worker
+                        bw.RunWorkerAsync();
+                    }
+                    // Make sure all backgroundworkers are finished running before returning to the caller
+                    int count = -1;
+                    while (backgroundWorkers.Any())
+                    {
+                        // Remove background workers that are done
+                        foreach (BackgroundWorker bw in backgroundWorkers.Where(b => !b.IsBusy))
+                        {
+                            bw.Dispose();
                         }
-                        if (mod == null)
-                            return;
-                        mod.SetPath(modFile); // Done to ensure we can actually find the file again
-
-                        mod.JarMd5 = CalculateMd5(mod.GetPath()); // Make sure we have the file md5 so we can compare files
-
-                        mods.Add(mod); // Save back to our return values
-                    };
-                    // Save the background worker so we can find it later
-                    backgroundWorkers.Add(bw);
-                    // Start the background worker
-                    bw.RunWorkerAsync();
-                }
-                // Make sure all backgroundworkers are finished running before returning to the caller
-                int count = -1;
-                while (backgroundWorkers.Any())
-                {
-                    // Remove background workers that are done
-                    foreach (BackgroundWorker bw in backgroundWorkers.Where(b => !b.IsBusy))
-                    {
-                        bw.Dispose();
+                        backgroundWorkers.RemoveAll(b => !b.IsBusy);
+                        int c = backgroundWorkers.Count;
+                        if (c != count)
+                        {
+                            count = c;
+                            Debug.WriteLine(count + " backgroundworkers remaining.");
+                        }
                     }
-                    backgroundWorkers.RemoveAll(b => !b.IsBusy);
-                    int c = backgroundWorkers.Count;
-                    if (c != count)
-                    {
-                        count = c;
-                        Debug.WriteLine(count + " backgroundworkers remaining.");
-                    }
-                }
 
+                }
+                return mods;
             }
-            return mods;
         }
+
+
+
 
         public string CalculateMd5(FileInfoBase f)
         {
