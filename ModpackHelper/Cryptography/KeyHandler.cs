@@ -18,8 +18,8 @@ namespace ModpackHelper.Shared.Cryptography
         {
             this.fileSystem = fileSystem;
 
-            keysPath = fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "keys.dat");
-            vectorPath = fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper", "vector.dat");
+            keysPath = fileSystem.Path.Combine(Constants.ApplicationDataPath, "keys.dat");
+            vectorPath = fileSystem.Path.Combine(Constants.ApplicationDataPath, "vector.dat");
 
             Random r;
             if (!fileSystem.File.Exists(keysPath))

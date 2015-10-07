@@ -11,8 +11,7 @@ namespace ModpackHelper.Shared.Permissions.FTB
     public class PermissionGetter
     {
         public static readonly string PermissionsFile =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper",
-                "permissions.json");
+            Path.Combine(Constants.ApplicationDataPath, "permissions.json");
 
         private readonly IFileSystem fileSystem;
         private List<Permission> permissions;

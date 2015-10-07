@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,6 @@ namespace ModpackHelper.Shared
         /// The path to where all Modpack Helpers own files are stored
         /// TODO Refractor everything to use this instead of it's own files
         /// </summary>
-        public static string ApplicationDataPath;
+        public static string ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper");
     }
 }

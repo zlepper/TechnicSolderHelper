@@ -22,7 +22,7 @@ namespace ModpackHelper.Shared.Mods
         /// Location of the data file
         /// </summary>
         public readonly string JsonDataFile =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper",
+            Path.Combine(Constants.ApplicationDataPath,
                 "ModsDB.json"); 
 
         public ModsDBContext() : this(new FileSystem())

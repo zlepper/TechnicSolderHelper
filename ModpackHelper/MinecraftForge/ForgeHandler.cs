@@ -21,8 +21,7 @@ namespace ModpackHelper.Shared.MinecraftForge
             this.fileSystem = fileSystem;
 
             forgeVersionFilePath =
-                this.fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "SolderHelper", "forgeversions.json");
+                this.fileSystem.Path.Combine(Constants.ApplicationDataPath, "forgeversions.json");
 
             forgeVersions = LoadForgeVersions();
         }

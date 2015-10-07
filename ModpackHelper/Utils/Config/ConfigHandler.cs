@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Abstractions;
+using ModpackHelper.Shared;
 using ModpackHelper.Shared.Utils.Config;
 using Newtonsoft.Json;
 
@@ -20,8 +21,7 @@ namespace ModpackHelper.IO
         {
             this.fileSystem = fileSystem;
             configFilePath =
-                this.fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "SolderHelper", "settings.json");
+                this.fileSystem.Path.Combine(Constants.ApplicationDataPath, "settings.json");
             string fileContens;
             try
             {
