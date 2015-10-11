@@ -1,7 +1,9 @@
-﻿using System.Web.Http;
+﻿using System.Linq;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using ModpackHelper.webmods.db;
 using Newtonsoft.Json;
 
 namespace ModpackHelper.webmods
@@ -20,6 +22,7 @@ namespace ModpackHelper.webmods
             // Disable xml generation
             var formatters = GlobalConfiguration.Configuration.Formatters;
             formatters.Remove(formatters.XmlFormatter);
+
             
         }
     }

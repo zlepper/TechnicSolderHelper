@@ -1,6 +1,8 @@
 ﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using ModpackHelper.Shared.Web.Api;
+using ModpackHelper.webmods.Helpers;
 
 namespace ModpackHelper.webmods.db
 {
@@ -27,6 +29,17 @@ namespace ModpackHelper.webmods.db
                     context.Database.Delete();
                     context.Database.Create();
                 }
+            }
+            // Make sure to create a default user that can be used to login to the DB
+            if (!context.Users.Any())
+            {
+                User u = new User()
+                {
+                    Username = "admin",
+                    Password = PasswordHash.CreateHash("admin")
+                };
+                context.Users.Add(u);
+                context.SaveChanges();
             }
         }
     }
