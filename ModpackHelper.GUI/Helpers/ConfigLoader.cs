@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Abstractions;
 using ModpackHelper.IO;
+using ModpackHelper.Shared.Utils.Config;
 
 namespace ModpackHelper.GUI.Helpers
 {
@@ -27,22 +28,24 @@ namespace ModpackHelper.GUI.Helpers
             // This enables us to retain the state of the application between launches
             using (ConfigHandler ch = new ConfigHandler(fileSystem))
             {
-                modpackHelper.InputDirectoryTextBox.Text = string.IsNullOrWhiteSpace(ch.Configs.ModpackName) ? ch.Configs.InputDirectory : ch.Configs.Modpacks[ch.Configs.ModpackName].InputDirectory;
+                Configs c = ch.Configs;
 
-                modpackHelper.OutputDirectoryTextBox.Text = string.IsNullOrWhiteSpace(ch.Configs.OutputDirectory) ? fileSystem.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "ModpackHelper") : ch.Configs.OutputDirectory;
-                
-                modpackHelper.ClearOutpuDirectoryCheckBox.Checked = ch.Configs.ClearOutputDirectory;
+                // Check if we have ever created a pack before. If we haven't, then
+                // we can't load anything
+                if (string.IsNullOrWhiteSpace(c.LastSelectedModpack)) return;
+                // Failsafe to make sure the pack we are trying to load data for actually exists
+                if (!c.Modpacks.ContainsKey(c.LastSelectedModpack)) return;
 
-                modpackHelper.CreateConfigZipCheckBox.Checked = ch.Configs.CreateConfigZip;
+                // Load the modpack data
+                Modpack modpack = c.Modpacks[c.LastSelectedModpack];
 
-                if (ch.Configs.TechnicPermissionsPrivate)
-                    modpackHelper.technicPermissionsPrivatePack.Checked = true;
-                else
-                    modpackHelper.technicPermissionsPublicPack.Checked = true;
-
-                modpackHelper.MinecraftVersionDropdown.SelectedItem = string.IsNullOrWhiteSpace(ch.Configs.ModpackName)
-                    ? "1.7.10"
-                    : ch.Configs.Modpacks[ch.Configs.ModpackName].MinecraftVersion;
+                // Load all the data back into the form
+                modpackHelper.createForgeZipCheckBox.Checked = modpack.CreateForgeZip;
+                modpackHelper.ClearOutpuDirectoryCheckBox.Checked = modpack.ClearOutputDirectory;
+                modpackHelper.CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
+                modpackHelper.CreateConfigZipCheckBox.Checked = modpack.CreateConfigZip;
+                modpackHelper.ModpackNameTextBox.Text = modpack.Name;
+                modpackHelper.MinecraftVersionDropdown.SelectedText = modpack.MinecraftVersion;
             }
         }
     }

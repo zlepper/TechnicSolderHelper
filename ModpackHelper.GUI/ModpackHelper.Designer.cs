@@ -64,7 +64,7 @@ namespace ModpackHelper.GUI
             this.technicPermissionsLevelGroupBox = new System.Windows.Forms.GroupBox();
             this.technicPermissionsPublicPack = new System.Windows.Forms.RadioButton();
             this.technicPermissionsPrivatePack = new System.Windows.Forms.RadioButton();
-            this.CheckPermissionsCheckBox = new System.Windows.Forms.CheckBox();
+            this.CheckTechnicPermissionsCheckBox = new System.Windows.Forms.CheckBox();
             this.CreateConfigZipCheckBox = new System.Windows.Forms.CheckBox();
             this.createForgeZipCheckBox = new System.Windows.Forms.CheckBox();
             inputFolderLabel = new System.Windows.Forms.Label();
@@ -215,7 +215,6 @@ namespace ModpackHelper.GUI
             this.ClearOutpuDirectoryCheckBox.TabIndex = 11;
             this.ClearOutpuDirectoryCheckBox.Text = "Clear output directory on run";
             this.ClearOutpuDirectoryCheckBox.UseVisualStyleBackColor = true;
-            this.ClearOutpuDirectoryCheckBox.CheckedChanged += new System.EventHandler(this.ClearOutpuDirectoryCheckBox_CheckedChanged);
             // 
             // CreateFTBPackCheckBox
             // 
@@ -236,7 +235,6 @@ namespace ModpackHelper.GUI
             this.CreateTechnicPackCheckBox.TabIndex = 6;
             this.CreateTechnicPackCheckBox.Text = "Create Technic Pack";
             this.CreateTechnicPackCheckBox.UseVisualStyleBackColor = true;
-            this.CreateTechnicPackCheckBox.CheckedChanged += new System.EventHandler(this.CreateTechnicPackCheckBox_CheckedChanged);
             // 
             // button4
             // 
@@ -321,7 +319,6 @@ namespace ModpackHelper.GUI
             this.ModpackNameTextBox.Name = "ModpackNameTextBox";
             this.ModpackNameTextBox.Size = new System.Drawing.Size(182, 21);
             this.ModpackNameTextBox.TabIndex = 3;
-            this.ModpackNameTextBox.LostFocus += new System.EventHandler(this.ModpackNameTextBox_LostFocus);
             // 
             // technicOptionsGroupBox
             // 
@@ -329,7 +326,7 @@ namespace ModpackHelper.GUI
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionDropdown);
             this.technicOptionsGroupBox.Controls.Add(this.PackTypeGroupBox);
             this.technicOptionsGroupBox.Controls.Add(this.technicPermissionsLevelGroupBox);
-            this.technicOptionsGroupBox.Controls.Add(this.CheckPermissionsCheckBox);
+            this.technicOptionsGroupBox.Controls.Add(this.CheckTechnicPermissionsCheckBox);
             this.technicOptionsGroupBox.Controls.Add(this.CreateConfigZipCheckBox);
             this.technicOptionsGroupBox.Controls.Add(this.createForgeZipCheckBox);
             this.technicOptionsGroupBox.Location = new System.Drawing.Point(12, 209);
@@ -422,17 +419,16 @@ namespace ModpackHelper.GUI
             this.technicPermissionsPrivatePack.TabStop = true;
             this.technicPermissionsPrivatePack.Text = "Private Pack";
             this.technicPermissionsPrivatePack.UseVisualStyleBackColor = true;
-            this.technicPermissionsPrivatePack.CheckedChanged += new System.EventHandler(this.technicPermissionsPrivatePack_CheckedChanged);
             // 
-            // CheckPermissionsCheckBox
+            // CheckTechnicPermissionsCheckBox
             // 
-            this.CheckPermissionsCheckBox.AutoSize = true;
-            this.CheckPermissionsCheckBox.Location = new System.Drawing.Point(20, 116);
-            this.CheckPermissionsCheckBox.Name = "CheckPermissionsCheckBox";
-            this.CheckPermissionsCheckBox.Size = new System.Drawing.Size(115, 17);
-            this.CheckPermissionsCheckBox.TabIndex = 9;
-            this.CheckPermissionsCheckBox.Text = "Check Permissions";
-            this.CheckPermissionsCheckBox.UseVisualStyleBackColor = true;
+            this.CheckTechnicPermissionsCheckBox.AutoSize = true;
+            this.CheckTechnicPermissionsCheckBox.Location = new System.Drawing.Point(20, 116);
+            this.CheckTechnicPermissionsCheckBox.Name = "CheckTechnicPermissionsCheckBox";
+            this.CheckTechnicPermissionsCheckBox.Size = new System.Drawing.Size(115, 17);
+            this.CheckTechnicPermissionsCheckBox.TabIndex = 9;
+            this.CheckTechnicPermissionsCheckBox.Text = "Check Permissions";
+            this.CheckTechnicPermissionsCheckBox.UseVisualStyleBackColor = true;
             // 
             // CreateConfigZipCheckBox
             // 
@@ -443,7 +439,6 @@ namespace ModpackHelper.GUI
             this.CreateConfigZipCheckBox.TabIndex = 8;
             this.CreateConfigZipCheckBox.Text = "Create Config zip";
             this.CreateConfigZipCheckBox.UseVisualStyleBackColor = true;
-            this.CreateConfigZipCheckBox.CheckedChanged += new System.EventHandler(this.CreateConfigZipCheckBox_CheckedChanged);
             // 
             // createForgeZipCheckBox
             // 
@@ -454,7 +449,6 @@ namespace ModpackHelper.GUI
             this.createForgeZipCheckBox.TabIndex = 10;
             this.createForgeZipCheckBox.Text = "Create Forge zip";
             this.createForgeZipCheckBox.UseVisualStyleBackColor = true;
-            this.createForgeZipCheckBox.CheckedChanged += new System.EventHandler(this.createForgeZipCheckBox_CheckedChanged);
             // 
             // ModpackHelper
             // 
@@ -488,7 +482,7 @@ namespace ModpackHelper.GUI
         public GroupBox globalConfigurationsGroupBox;
         public GroupBox technicOptionsGroupBox;
         public CheckBox createForgeZipCheckBox;
-        public CheckBox CheckPermissionsCheckBox;
+        public CheckBox CheckTechnicPermissionsCheckBox;
         public CheckBox CreateConfigZipCheckBox;
         public GroupBox technicPermissionsLevelGroupBox;
         public RadioButton technicPermissionsPublicPack;

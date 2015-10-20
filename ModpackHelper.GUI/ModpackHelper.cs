@@ -50,7 +50,7 @@ namespace ModpackHelper.GUI
             }
             // ReSharper disable once CoVariantArrayConversion
             MinecraftVersionDropdown.Items.AddRange(forgeHandler.GetMinecraftVersions().ToArray());
-            MinecraftVersionDropdown.SelectedIndex = MinecraftVersionDropdown.Items.Count-1;
+            MinecraftVersionDropdown.SelectedIndex = MinecraftVersionDropdown.Items.Count - 1;
         }
 
         // Called when the user clicks the browse button for the input directory
@@ -62,12 +62,25 @@ namespace ModpackHelper.GUI
             {
                 InputDirectoryTextBox.Text = i;
                 using (ConfigHandler ch = new ConfigHandler(fileSystem))
+                {
                     if (string.IsNullOrWhiteSpace(ModpackNameTextBox.Text))
-                        ch.Configs.InputDirectory = i;
-                    else if (!ch.Configs.Modpacks.ContainsKey(ModpackNameTextBox.Text))
-                        ch.Configs.Modpacks.Add(ModpackNameTextBox.Text, new Modpack { InputDirectory = i, Name = ModpackNameTextBox.Text });
+                    {
+                        return;
+                    }
+                    if (!ch.Configs.Modpacks.ContainsKey(ModpackNameTextBox.Text))
+                    {
+                        ch.Configs.Modpacks.Add(ModpackNameTextBox.Text,
+                            new Modpack
+                            {
+                                InputDirectory = i,
+                                Name = ModpackNameTextBox.Text
+                            });
+                    }
                     else
+                    {
                         ch.Configs.Modpacks[ModpackNameTextBox.Text].InputDirectory = i;
+                    }
+                }
             }
             else
                 messageShower.ShowMessage(Resources.InputHasToBeModDirectory);
@@ -77,60 +90,6 @@ namespace ModpackHelper.GUI
         public void browseForOutputDirectoryButton_Click(object sender, EventArgs e)
         {
             OutputDirectoryTextBox.Text = directoryFinder.GetDirectory(Resources.SelectOutputDirectory, OutputDirectoryTextBox.Text);
-            using (ConfigHandler ch = new ConfigHandler(fileSystem))
-                ch.Configs.OutputDirectory = OutputDirectoryTextBox.Text;
-        }
-
-        // Called when the user checks or unchecks the ClearOutDirectory checkbox
-        public void ClearOutpuDirectoryCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            using (ConfigHandler ch = new ConfigHandler(fileSystem))
-                ch.Configs.ClearOutputDirectory = ClearOutpuDirectoryCheckBox.Checked;
-        }
-
-        private void CreateTechnicPackCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            using (ConfigHandler ch = new ConfigHandler(fileSystem))
-                ch.Configs.CreateTechnicPack = CreateTechnicPackCheckBox.Checked;
-
-        }
-
-        private void CreateConfigZipCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            using (ConfigHandler ch = new ConfigHandler(fileSystem))
-                ch.Configs.CreateConfigZip = CreateConfigZipCheckBox.Checked;
-        }
-
-        private void createForgeZipCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            using (ConfigHandler ch = new ConfigHandler(fileSystem))
-                ch.Configs.CreateForgeZip = createForgeZipCheckBox.Checked;
-        }
-
-        private void technicPermissionsPrivatePack_CheckedChanged(object sender, EventArgs e)
-        {
-            using (ConfigHandler ch = new ConfigHandler(fileSystem))
-                ch.Configs.TechnicPermissionsPrivate = technicPermissionsPrivatePack.Checked;
-        }
-
-        private void ModpackNameTextBox_LostFocus(object sender, EventArgs e)
-        {
-            using (ConfigHandler ch = new ConfigHandler(fileSystem))
-            {
-                string text = ModpackNameTextBox.Text;
-                if (!string.IsNullOrWhiteSpace(text))
-                {
-                    if (ch.Configs.Modpacks.ContainsKey(text))
-                    {
-                        ch.Configs.Modpacks[text].Name = text;
-                    }
-                    else
-                    {
-                        ch.Configs.Modpacks.Add(text, new Modpack { Name = text });
-                    }
-                }
-                ch.Configs.ModpackName = text;
-            }
         }
 
         private void startPackingButton_Click(object sender, EventArgs e)
@@ -144,11 +103,13 @@ namespace ModpackHelper.GUI
             // Indicates if a config zip should be included in the modpack
             bool createConfigZip = createTechnicPack && CreateConfigZipCheckBox.Checked;
             // Indicates if permissions should be check
-            bool checkPermissions = createTechnicPack && CheckPermissionsCheckBox.Checked;
+            bool checkPermissions = createTechnicPack && CheckTechnicPermissionsCheckBox.Checked;
             // Indicates if this is a public pack
-            bool publicPack = checkPermissions && technicPermissionsPublicPack.Checked;
+            bool privatePack = checkPermissions && technicPermissionsPrivatePack.Checked;
             // Indicates if a forge zip should be created
             bool createForgeZip = createTechnicPack && createForgeZipCheckBox.Checked;
+            // Indicates if we should clear the output directory before packing
+            bool clearOutputDirectory = ClearOutpuDirectoryCheckBox.Checked;
             // Indicates what the selected forge version is
             string selectedForgeVersion = createTechnicPack && createForgeZip ? forgeVersionDropdown.SelectedItem.ToString() : null;
             if (createForgeZip && string.IsNullOrWhiteSpace(selectedForgeVersion))
@@ -195,9 +156,9 @@ namespace ModpackHelper.GUI
             if (!valid) return;
 
             // We are free to continue
-            
+
             ModExtractor modExtractor = new ModExtractor(minecraftVersion, fileSystem);
-            
+
             // Make sure we don't lock the main thread
             BackgroundWorker bw = new BackgroundWorker();
             bw.DoWork += delegate
@@ -210,12 +171,37 @@ namespace ModpackHelper.GUI
                 sw.Stop();
                 Debug.WriteLine(sw.Elapsed);
                 OpenModsInfoForm(mods, minecraftVersion, outputdirectory);
-                
+
             };
             bw.RunWorkerAsync();
+
+            // Save the modpack data locally
+            using (ConfigHandler ch = new ConfigHandler(fileSystem))
+            {
+                // Load the configs
+                Configs c = ch.Configs;
+
+                // Locate data about this modpack, or create some new data
+                var modpack = c.Modpacks.ContainsKey(modpackName) ? c.Modpacks[modpackName] : new Modpack();
+
+                // Save all the data
+                modpack.Name = modpackName;
+                modpack.CreateConfigZip = createConfigZip;
+                modpack.CreateForgeZip = createForgeZip;
+                modpack.CreateTechnicPack = createTechnicPack;
+                modpack.InputDirectory = inputDirectory;
+                modpack.MinecraftVersion = minecraftVersion;
+                modpack.OutputDirectory = outputdirectory;
+                modpack.TechnicPermissionsPrivate = privatePack;
+                modpack.ClearOutputDirectory = clearOutputDirectory;
+                modpack.CheckTechnicPermissions = checkPermissions;
+
+                // Change the last selected pack, so we know what pack to load on startup
+                c.LastSelectedModpack = modpackName;
+            }
         }
 
-        
+
         private void OpenModsInfoForm(List<Mcmod> mods, string minecraftVersion, string outputDirectory)
         {
             if (InvokeRequired)
@@ -227,7 +213,7 @@ namespace ModpackHelper.GUI
                 ModInfoForm form = new ModInfoForm(fileSystem, messageShower);
                 form.InitializeContent(mods, minecraftVersion);
                 form.Show();
-                form.DoneFillingInInfo += delegate(List<Mcmod> modslist)
+                form.DoneFillingInInfo += delegate (List<Mcmod> modslist)
                 {
                     BackgroundWorker bw = new BackgroundWorker();
                     bw.DoWork += (sender, args) =>
@@ -246,8 +232,8 @@ namespace ModpackHelper.GUI
                 };
             }
         }
-        
- 
+
+
         private void MinecraftVersionDropdown_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(ModpackNameTextBox.Text)) return;
