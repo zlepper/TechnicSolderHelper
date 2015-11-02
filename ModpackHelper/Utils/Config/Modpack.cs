@@ -56,5 +56,15 @@ namespace ModpackHelper.Shared.Utils.Config
         /// Indicates if we should check for private permissions
         /// </summary>
         public bool TechnicPermissionsPrivate { get; set; }
+
+        /// <summary>
+        /// Indicates if we should create a solderpack or a zip pack
+        /// </summary>
+        public bool CreateSolderPack { get; set; }
+
+        /// <summary>
+        /// Indicates what version of forge the pack should be packed with
+        /// </summary>
+        public string ForgeVersion { get; set; }
     }
 }

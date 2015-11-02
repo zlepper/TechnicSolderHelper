@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Net;
+using ModpackHelper.Shared.Utils.Config;
 
 namespace ModpackHelper.Shared.Web.FTP
 {
@@ -51,27 +52,23 @@ namespace ModpackHelper.Shared.Web.FTP
         /// <summary>
         /// Creates a new ftp file uploader
         /// </summary>
-        /// <param name="username">The username to login with</param>
-        /// <param name="password">The password to login with</param>
-        /// <param name="url">The url pointing to the FTP service</param>
-        public FTPUploader(string username, string password, string url) : this(username, password, url, new FileSystem()) { }
+        /// <param name="ftpLoginInfo">The login info for the server</param>
+        public FTPUploader(FTPLoginInfo ftpLoginInfo) : this(ftpLoginInfo, new FileSystem()) { }
 
         /// <summary>
         /// Creates a new ftp file uploader
         /// </summary>
-        /// <param name="username">The username to login with</param>
-        /// <param name="password">The password to login with</param>
-        /// <param name="url">The url pointing to the FTP service</param>
+        /// <param name="ftpLoginInfo">The login info for the server</param>
         /// <param name="fileSystem">The filesystem the FTPUploader should work against</param>
-        public FTPUploader(string username, string password, string url, IFileSystem fileSystem)
+        public FTPUploader(FTPLoginInfo ftpLoginInfo, IFileSystem fileSystem)
         {
             if (!url.ToLower().StartsWith("ftp://"))
             {
                 throw new ArgumentException("url has to be a ftp:// url");
             }
-            this.username = username;
-            this.password = password;
-            this.url = url;
+            username = ftpLoginInfo.Username;
+            password = ftpLoginInfo.Password;
+            url = ftpLoginInfo.Address;
             this.fileSystem = fileSystem;
         }
 

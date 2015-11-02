@@ -101,6 +101,12 @@
     </Compile>
     <Compile Include="Helpers\ConfigLoader.cs" />
     <Compile Include="Helpers\Notifier.cs" />
+    <Compile Include="Windows\FTPConnectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\FTPConnectForm.Designer.cs">
+      <DependentUpon>FTPConnectForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\FTPUploaderForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -129,6 +135,9 @@
     <Compile Include="Windows\MySQLConnectForm.Designer.cs">
       <DependentUpon>MySQLConnectForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Windows\FTPConnectForm.resx">
+      <DependentUpon>FTPConnectForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Windows\FTPUploaderForm.resx">
       <DependentUpon>FTPUploaderForm.cs</DependentUpon>
     </EmbeddedResource>

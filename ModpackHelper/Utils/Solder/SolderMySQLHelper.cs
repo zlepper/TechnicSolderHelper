@@ -56,7 +56,7 @@ namespace ModpackHelper.Shared.Utils.Solder
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine(e.ToString());
             }
         }
 

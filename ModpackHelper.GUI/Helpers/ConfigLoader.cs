@@ -29,7 +29,10 @@ namespace ModpackHelper.GUI.Helpers
             using (ConfigHandler ch = new ConfigHandler(fileSystem))
             {
                 Configs c = ch.Configs;
-
+                foreach(Modpack mp in c.Modpacks.Values)
+                {
+                    modpackHelper.ModpackNameTextBox.Items.Add(mp.Name);
+                }
                 // Check if we have ever created a pack before. If we haven't, then
                 // we can't load anything
                 if (string.IsNullOrWhiteSpace(c.LastSelectedModpack)) return;
@@ -40,12 +43,19 @@ namespace ModpackHelper.GUI.Helpers
                 Modpack modpack = c.Modpacks[c.LastSelectedModpack];
 
                 // Load all the data back into the form
+                modpackHelper.ModpackNameTextBox.Text = c.LastSelectedModpack;
+                modpackHelper.MinecraftVersionDropdown.SelectedIndex = modpackHelper.MinecraftVersionDropdown.Items.IndexOf(modpack.MinecraftVersion);
+                modpackHelper.InputDirectoryTextBox.Text = modpack.InputDirectory;
+                modpackHelper.OutputDirectoryTextBox.Text = modpack.OutputDirectory;
                 modpackHelper.createForgeZipCheckBox.Checked = modpack.CreateForgeZip;
+                modpackHelper.CreateConfigZipCheckBox.Checked = modpack.CreateConfigZip;
+                modpackHelper.CreateTechnicPackCheckBox.Checked = modpack.CreateTechnicPack;
                 modpackHelper.ClearOutpuDirectoryCheckBox.Checked = modpack.ClearOutputDirectory;
                 modpackHelper.CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
-                modpackHelper.CreateConfigZipCheckBox.Checked = modpack.CreateConfigZip;
-                modpackHelper.ModpackNameTextBox.Text = modpack.Name;
-                modpackHelper.MinecraftVersionDropdown.SelectedText = modpack.MinecraftVersion;
+                modpackHelper.ZipPackRadioButton.Checked = !(modpackHelper.SolderPackRadioButton.Checked = modpack.CreateSolderPack);
+                modpackHelper.technicPermissionsPublicPack.Checked = !(modpackHelper.technicPermissionsPrivatePack.Checked = modpack.TechnicPermissionsPrivate);
+                if (!string.IsNullOrWhiteSpace(modpack.ForgeVersion))
+                    modpackHelper.forgeVersionDropdown.SelectedIndex = modpackHelper.forgeVersionDropdown.Items.IndexOf(modpack.ForgeVersion);
             }
         }
     }

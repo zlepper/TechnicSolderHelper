@@ -44,20 +44,28 @@ namespace ModpackHelper.GUI
             this.browseForOutputDirectoryButton = new System.Windows.Forms.Button();
             this.startPackingButton = new System.Windows.Forms.Button();
             this.globalConfigurationsGroupBox = new System.Windows.Forms.GroupBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.ClearOutpuDirectoryCheckBox = new System.Windows.Forms.CheckBox();
-            this.CreateFTBPackCheckBox = new System.Windows.Forms.CheckBox();
-            this.CreateTechnicPackCheckBox = new System.Windows.Forms.CheckBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.getForgeVersionsButton = new System.Windows.Forms.Button();
+            this.EnableDebugCheckbox = new System.Windows.Forms.CheckBox();
             this.ModpackSettingsGroupBox = new System.Windows.Forms.GroupBox();
             this.MinecraftVersionDropdown = new System.Windows.Forms.ComboBox();
             this.ModpackVersionTextbox = new System.Windows.Forms.TextBox();
             this.ModpackNameTextBox = new System.Windows.Forms.ComboBox();
+            this.ClearOutpuDirectoryCheckBox = new System.Windows.Forms.CheckBox();
+            this.getForgeVersionsButton = new System.Windows.Forms.Button();
+            this.CreateFTBPackCheckBox = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.CreateTechnicPackCheckBox = new System.Windows.Forms.CheckBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.technicOptionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.SolderConfigurePanel = new System.Windows.Forms.Panel();
+            this.ConfigureSolderButton = new System.Windows.Forms.Button();
+            this.ForceSolderUpdateCheckBox = new System.Windows.Forms.CheckBox();
+            this.minimumMemoryTextBox = new System.Windows.Forms.TextBox();
+            this.MinimumJavaVersionCombobox = new System.Windows.Forms.ComboBox();
+            this.UploadToFTPCheckbox = new System.Windows.Forms.CheckBox();
+            this.ConfigureFTPButton = new System.Windows.Forms.Button();
+            this.UseSolderCheckbox = new System.Windows.Forms.CheckBox();
             this.forgeVersionLabel = new System.Windows.Forms.Label();
             this.forgeVersionDropdown = new System.Windows.Forms.ComboBox();
             this.PackTypeGroupBox = new System.Windows.Forms.GroupBox();
@@ -69,11 +77,6 @@ namespace ModpackHelper.GUI
             this.CheckTechnicPermissionsCheckBox = new System.Windows.Forms.CheckBox();
             this.CreateConfigZipCheckBox = new System.Windows.Forms.CheckBox();
             this.createForgeZipCheckBox = new System.Windows.Forms.CheckBox();
-            this.UseSolderCheckbox = new System.Windows.Forms.CheckBox();
-            this.ConfigureSolderButton = new System.Windows.Forms.Button();
-            this.minimumMemoryTextBox = new System.Windows.Forms.TextBox();
-            this.MinimumJavaVersionCombobox = new System.Windows.Forms.ComboBox();
-            this.ForceSolderUpdateCheckBox = new System.Windows.Forms.CheckBox();
             inputFolderLabel = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             ModpackNameLabel = new System.Windows.Forms.Label();
@@ -84,6 +87,7 @@ namespace ModpackHelper.GUI
             this.globalConfigurationsGroupBox.SuspendLayout();
             this.ModpackSettingsGroupBox.SuspendLayout();
             this.technicOptionsGroupBox.SuspendLayout();
+            this.SolderConfigurePanel.SuspendLayout();
             this.PackTypeGroupBox.SuspendLayout();
             this.technicPermissionsLevelGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -91,7 +95,7 @@ namespace ModpackHelper.GUI
             // inputFolderLabel
             // 
             inputFolderLabel.AutoSize = true;
-            inputFolderLabel.Location = new System.Drawing.Point(6, 17);
+            inputFolderLabel.Location = new System.Drawing.Point(206, 16);
             inputFolderLabel.Name = "inputFolderLabel";
             inputFolderLabel.Size = new System.Drawing.Size(63, 13);
             inputFolderLabel.TabIndex = 0;
@@ -100,7 +104,7 @@ namespace ModpackHelper.GUI
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(6, 58);
+            label1.Location = new System.Drawing.Point(206, 57);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(71, 13);
             label1.TabIndex = 0;
@@ -133,16 +137,34 @@ namespace ModpackHelper.GUI
             MinecraftVersionLabel.TabIndex = 0;
             MinecraftVersionLabel.Text = "Minecraft Version";
             // 
+            // minimumMemoryLabel
+            // 
+            minimumMemoryLabel.AutoSize = true;
+            minimumMemoryLabel.Location = new System.Drawing.Point(0, 36);
+            minimumMemoryLabel.Name = "minimumMemoryLabel";
+            minimumMemoryLabel.Size = new System.Drawing.Size(124, 13);
+            minimumMemoryLabel.TabIndex = 15;
+            minimumMemoryLabel.Text = "Minimum Memory (in MB)";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(0, 75);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(106, 13);
+            label2.TabIndex = 15;
+            label2.Text = "MinimumJavaVersion";
+            // 
             // InputDirectoryTextBox
             // 
-            this.InputDirectoryTextBox.Location = new System.Drawing.Point(6, 33);
+            this.InputDirectoryTextBox.Location = new System.Drawing.Point(206, 32);
             this.InputDirectoryTextBox.Name = "InputDirectoryTextBox";
             this.InputDirectoryTextBox.Size = new System.Drawing.Size(478, 20);
             this.InputDirectoryTextBox.TabIndex = 1;
             // 
             // browseForInputDirectoryButton
             // 
-            this.browseForInputDirectoryButton.Location = new System.Drawing.Point(490, 32);
+            this.browseForInputDirectoryButton.Location = new System.Drawing.Point(690, 31);
             this.browseForInputDirectoryButton.Name = "browseForInputDirectoryButton";
             this.browseForInputDirectoryButton.Size = new System.Drawing.Size(75, 23);
             this.browseForInputDirectoryButton.TabIndex = 1;
@@ -152,14 +174,14 @@ namespace ModpackHelper.GUI
             // 
             // OutputDirectoryTextBox
             // 
-            this.OutputDirectoryTextBox.Location = new System.Drawing.Point(6, 74);
+            this.OutputDirectoryTextBox.Location = new System.Drawing.Point(206, 73);
             this.OutputDirectoryTextBox.Name = "OutputDirectoryTextBox";
             this.OutputDirectoryTextBox.Size = new System.Drawing.Size(478, 20);
             this.OutputDirectoryTextBox.TabIndex = 2;
             // 
             // browseForOutputDirectoryButton
             // 
-            this.browseForOutputDirectoryButton.Location = new System.Drawing.Point(490, 73);
+            this.browseForOutputDirectoryButton.Location = new System.Drawing.Point(690, 72);
             this.browseForOutputDirectoryButton.Name = "browseForOutputDirectoryButton";
             this.browseForOutputDirectoryButton.Size = new System.Drawing.Size(75, 23);
             this.browseForOutputDirectoryButton.TabIndex = 1;
@@ -179,21 +201,21 @@ namespace ModpackHelper.GUI
             // 
             // globalConfigurationsGroupBox
             // 
-            this.globalConfigurationsGroupBox.Controls.Add(this.checkBox4);
+            this.globalConfigurationsGroupBox.Controls.Add(this.EnableDebugCheckbox);
+            this.globalConfigurationsGroupBox.Controls.Add(this.ModpackSettingsGroupBox);
+            this.globalConfigurationsGroupBox.Controls.Add(inputFolderLabel);
             this.globalConfigurationsGroupBox.Controls.Add(this.ClearOutpuDirectoryCheckBox);
+            this.globalConfigurationsGroupBox.Controls.Add(this.InputDirectoryTextBox);
+            this.globalConfigurationsGroupBox.Controls.Add(this.getForgeVersionsButton);
             this.globalConfigurationsGroupBox.Controls.Add(this.CreateFTBPackCheckBox);
+            this.globalConfigurationsGroupBox.Controls.Add(this.browseForOutputDirectoryButton);
+            this.globalConfigurationsGroupBox.Controls.Add(this.button1);
             this.globalConfigurationsGroupBox.Controls.Add(this.CreateTechnicPackCheckBox);
+            this.globalConfigurationsGroupBox.Controls.Add(this.button2);
+            this.globalConfigurationsGroupBox.Controls.Add(this.OutputDirectoryTextBox);
+            this.globalConfigurationsGroupBox.Controls.Add(this.browseForInputDirectoryButton);
             this.globalConfigurationsGroupBox.Controls.Add(this.button4);
             this.globalConfigurationsGroupBox.Controls.Add(this.button3);
-            this.globalConfigurationsGroupBox.Controls.Add(this.button2);
-            this.globalConfigurationsGroupBox.Controls.Add(this.button1);
-            this.globalConfigurationsGroupBox.Controls.Add(this.getForgeVersionsButton);
-            this.globalConfigurationsGroupBox.Controls.Add(this.ModpackSettingsGroupBox);
-            this.globalConfigurationsGroupBox.Controls.Add(this.InputDirectoryTextBox);
-            this.globalConfigurationsGroupBox.Controls.Add(this.OutputDirectoryTextBox);
-            this.globalConfigurationsGroupBox.Controls.Add(this.browseForOutputDirectoryButton);
-            this.globalConfigurationsGroupBox.Controls.Add(inputFolderLabel);
-            this.globalConfigurationsGroupBox.Controls.Add(this.browseForInputDirectoryButton);
             this.globalConfigurationsGroupBox.Controls.Add(label1);
             this.globalConfigurationsGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.globalConfigurationsGroupBox.Location = new System.Drawing.Point(12, 12);
@@ -203,92 +225,16 @@ namespace ModpackHelper.GUI
             this.globalConfigurationsGroupBox.TabStop = false;
             this.globalConfigurationsGroupBox.Text = "Global Configurations";
             // 
-            // checkBox4
+            // EnableDebugCheckbox
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(385, 129);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(94, 17);
-            this.checkBox4.TabIndex = 12;
-            this.checkBox4.Text = "Enable Debug";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            // 
-            // ClearOutpuDirectoryCheckBox
-            // 
-            this.ClearOutpuDirectoryCheckBox.AutoSize = true;
-            this.ClearOutpuDirectoryCheckBox.Checked = true;
-            this.ClearOutpuDirectoryCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ClearOutpuDirectoryCheckBox.Location = new System.Drawing.Point(385, 104);
-            this.ClearOutpuDirectoryCheckBox.Name = "ClearOutpuDirectoryCheckBox";
-            this.ClearOutpuDirectoryCheckBox.Size = new System.Drawing.Size(159, 17);
-            this.ClearOutpuDirectoryCheckBox.TabIndex = 11;
-            this.ClearOutpuDirectoryCheckBox.Text = "Clear output directory on run";
-            this.ClearOutpuDirectoryCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // CreateFTBPackCheckBox
-            // 
-            this.CreateFTBPackCheckBox.AutoSize = true;
-            this.CreateFTBPackCheckBox.Location = new System.Drawing.Point(142, 159);
-            this.CreateFTBPackCheckBox.Name = "CreateFTBPackCheckBox";
-            this.CreateFTBPackCheckBox.Size = new System.Drawing.Size(108, 17);
-            this.CreateFTBPackCheckBox.TabIndex = 7;
-            this.CreateFTBPackCheckBox.Text = "Create FTB Pack";
-            this.CreateFTBPackCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // CreateTechnicPackCheckBox
-            // 
-            this.CreateTechnicPackCheckBox.AutoSize = true;
-            this.CreateTechnicPackCheckBox.Location = new System.Drawing.Point(9, 159);
-            this.CreateTechnicPackCheckBox.Name = "CreateTechnicPackCheckBox";
-            this.CreateTechnicPackCheckBox.Size = new System.Drawing.Size(127, 17);
-            this.CreateTechnicPackCheckBox.TabIndex = 6;
-            this.CreateTechnicPackCheckBox.Text = "Create Technic Pack";
-            this.CreateTechnicPackCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(173, 100);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 7;
-            this.button4.Text = "Edit data";
-            this.button4.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(173, 129);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(125, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Generate Permissions";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(254, 100);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(125, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Repack everything";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(6, 129);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(160, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Update stored permissions";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // getForgeVersionsButton
-            // 
-            this.getForgeVersionsButton.Location = new System.Drawing.Point(6, 100);
-            this.getForgeVersionsButton.Name = "getForgeVersionsButton";
-            this.getForgeVersionsButton.Size = new System.Drawing.Size(160, 23);
-            this.getForgeVersionsButton.TabIndex = 3;
-            this.getForgeVersionsButton.Text = "Get Forge/Minecraft versions";
-            this.getForgeVersionsButton.UseVisualStyleBackColor = true;
+            this.EnableDebugCheckbox.AutoSize = true;
+            this.EnableDebugCheckbox.Location = new System.Drawing.Point(585, 128);
+            this.EnableDebugCheckbox.Name = "EnableDebugCheckbox";
+            this.EnableDebugCheckbox.Size = new System.Drawing.Size(94, 17);
+            this.EnableDebugCheckbox.TabIndex = 12;
+            this.EnableDebugCheckbox.Text = "Enable Debug";
+            this.EnableDebugCheckbox.UseVisualStyleBackColor = true;
+            this.EnableDebugCheckbox.CheckedChanged += new System.EventHandler(this.EnableDebugCheckbox_CheckedChanged);
             // 
             // ModpackSettingsGroupBox
             // 
@@ -298,7 +244,7 @@ namespace ModpackHelper.GUI
             this.ModpackSettingsGroupBox.Controls.Add(ModpackVersionLabel);
             this.ModpackSettingsGroupBox.Controls.Add(this.ModpackNameTextBox);
             this.ModpackSettingsGroupBox.Controls.Add(ModpackNameLabel);
-            this.ModpackSettingsGroupBox.Location = new System.Drawing.Point(573, 11);
+            this.ModpackSettingsGroupBox.Location = new System.Drawing.Point(6, 19);
             this.ModpackSettingsGroupBox.Name = "ModpackSettingsGroupBox";
             this.ModpackSettingsGroupBox.Size = new System.Drawing.Size(194, 141);
             this.ModpackSettingsGroupBox.TabIndex = 2;
@@ -328,15 +274,92 @@ namespace ModpackHelper.GUI
             this.ModpackNameTextBox.Name = "ModpackNameTextBox";
             this.ModpackNameTextBox.Size = new System.Drawing.Size(182, 21);
             this.ModpackNameTextBox.TabIndex = 3;
+            this.ModpackNameTextBox.SelectedIndexChanged += new System.EventHandler(this.ModpackNameTextBox_SelectedIndexChanged);
+            // 
+            // ClearOutpuDirectoryCheckBox
+            // 
+            this.ClearOutpuDirectoryCheckBox.AutoSize = true;
+            this.ClearOutpuDirectoryCheckBox.Checked = true;
+            this.ClearOutpuDirectoryCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ClearOutpuDirectoryCheckBox.Location = new System.Drawing.Point(585, 103);
+            this.ClearOutpuDirectoryCheckBox.Name = "ClearOutpuDirectoryCheckBox";
+            this.ClearOutpuDirectoryCheckBox.Size = new System.Drawing.Size(159, 17);
+            this.ClearOutpuDirectoryCheckBox.TabIndex = 11;
+            this.ClearOutpuDirectoryCheckBox.Text = "Clear output directory on run";
+            this.ClearOutpuDirectoryCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // getForgeVersionsButton
+            // 
+            this.getForgeVersionsButton.Location = new System.Drawing.Point(206, 99);
+            this.getForgeVersionsButton.Name = "getForgeVersionsButton";
+            this.getForgeVersionsButton.Size = new System.Drawing.Size(160, 23);
+            this.getForgeVersionsButton.TabIndex = 3;
+            this.getForgeVersionsButton.Text = "Get Forge/Minecraft versions";
+            this.getForgeVersionsButton.UseVisualStyleBackColor = true;
+            // 
+            // CreateFTBPackCheckBox
+            // 
+            this.CreateFTBPackCheckBox.AutoSize = true;
+            this.CreateFTBPackCheckBox.Location = new System.Drawing.Point(342, 158);
+            this.CreateFTBPackCheckBox.Name = "CreateFTBPackCheckBox";
+            this.CreateFTBPackCheckBox.Size = new System.Drawing.Size(108, 17);
+            this.CreateFTBPackCheckBox.TabIndex = 7;
+            this.CreateFTBPackCheckBox.Text = "Create FTB Pack";
+            this.CreateFTBPackCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(206, 128);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(160, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Update stored permissions";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // CreateTechnicPackCheckBox
+            // 
+            this.CreateTechnicPackCheckBox.AutoSize = true;
+            this.CreateTechnicPackCheckBox.Checked = true;
+            this.CreateTechnicPackCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CreateTechnicPackCheckBox.Location = new System.Drawing.Point(209, 158);
+            this.CreateTechnicPackCheckBox.Name = "CreateTechnicPackCheckBox";
+            this.CreateTechnicPackCheckBox.Size = new System.Drawing.Size(127, 17);
+            this.CreateTechnicPackCheckBox.TabIndex = 6;
+            this.CreateTechnicPackCheckBox.Text = "Create Technic Pack";
+            this.CreateTechnicPackCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(454, 99);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(125, 23);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Repack everything";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(373, 99);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 7;
+            this.button4.Text = "Edit data";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(373, 128);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(125, 23);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Generate Permissions";
+            this.button3.UseVisualStyleBackColor = true;
             // 
             // technicOptionsGroupBox
             // 
-            this.technicOptionsGroupBox.Controls.Add(this.ForceSolderUpdateCheckBox);
-            this.technicOptionsGroupBox.Controls.Add(this.MinimumJavaVersionCombobox);
-            this.technicOptionsGroupBox.Controls.Add(label2);
-            this.technicOptionsGroupBox.Controls.Add(minimumMemoryLabel);
-            this.technicOptionsGroupBox.Controls.Add(this.minimumMemoryTextBox);
-            this.technicOptionsGroupBox.Controls.Add(this.ConfigureSolderButton);
+            this.technicOptionsGroupBox.Controls.Add(this.SolderConfigurePanel);
+            this.technicOptionsGroupBox.Controls.Add(this.UploadToFTPCheckbox);
+            this.technicOptionsGroupBox.Controls.Add(this.ConfigureFTPButton);
             this.technicOptionsGroupBox.Controls.Add(this.UseSolderCheckbox);
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionLabel);
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionDropdown);
@@ -347,10 +370,96 @@ namespace ModpackHelper.GUI
             this.technicOptionsGroupBox.Controls.Add(this.createForgeZipCheckBox);
             this.technicOptionsGroupBox.Location = new System.Drawing.Point(12, 209);
             this.technicOptionsGroupBox.Name = "technicOptionsGroupBox";
-            this.technicOptionsGroupBox.Size = new System.Drawing.Size(571, 201);
+            this.technicOptionsGroupBox.Size = new System.Drawing.Size(571, 272);
             this.technicOptionsGroupBox.TabIndex = 4;
             this.technicOptionsGroupBox.TabStop = false;
             this.technicOptionsGroupBox.Text = "Technic Options";
+            // 
+            // SolderConfigurePanel
+            // 
+            this.SolderConfigurePanel.Controls.Add(this.ConfigureSolderButton);
+            this.SolderConfigurePanel.Controls.Add(minimumMemoryLabel);
+            this.SolderConfigurePanel.Controls.Add(label2);
+            this.SolderConfigurePanel.Controls.Add(this.ForceSolderUpdateCheckBox);
+            this.SolderConfigurePanel.Controls.Add(this.minimumMemoryTextBox);
+            this.SolderConfigurePanel.Controls.Add(this.MinimumJavaVersionCombobox);
+            this.SolderConfigurePanel.Location = new System.Drawing.Point(292, 40);
+            this.SolderConfigurePanel.Name = "SolderConfigurePanel";
+            this.SolderConfigurePanel.Size = new System.Drawing.Size(144, 143);
+            this.SolderConfigurePanel.TabIndex = 20;
+            this.SolderConfigurePanel.Visible = false;
+            // 
+            // ConfigureSolderButton
+            // 
+            this.ConfigureSolderButton.Location = new System.Drawing.Point(3, 7);
+            this.ConfigureSolderButton.Name = "ConfigureSolderButton";
+            this.ConfigureSolderButton.Size = new System.Drawing.Size(138, 23);
+            this.ConfigureSolderButton.TabIndex = 13;
+            this.ConfigureSolderButton.Text = "Configure Solder MySQL";
+            this.ConfigureSolderButton.UseVisualStyleBackColor = true;
+            this.ConfigureSolderButton.Click += new System.EventHandler(this.ConfigureSolderButton_Click);
+            // 
+            // ForceSolderUpdateCheckBox
+            // 
+            this.ForceSolderUpdateCheckBox.AutoSize = true;
+            this.ForceSolderUpdateCheckBox.Location = new System.Drawing.Point(1, 119);
+            this.ForceSolderUpdateCheckBox.Name = "ForceSolderUpdateCheckBox";
+            this.ForceSolderUpdateCheckBox.Size = new System.Drawing.Size(122, 17);
+            this.ForceSolderUpdateCheckBox.TabIndex = 17;
+            this.ForceSolderUpdateCheckBox.Text = "Force Solder update";
+            this.ForceSolderUpdateCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // minimumMemoryTextBox
+            // 
+            this.minimumMemoryTextBox.Location = new System.Drawing.Point(3, 52);
+            this.minimumMemoryTextBox.Name = "minimumMemoryTextBox";
+            this.minimumMemoryTextBox.Size = new System.Drawing.Size(138, 20);
+            this.minimumMemoryTextBox.TabIndex = 14;
+            // 
+            // MinimumJavaVersionCombobox
+            // 
+            this.MinimumJavaVersionCombobox.FormattingEnabled = true;
+            this.MinimumJavaVersionCombobox.Items.AddRange(new object[] {
+            "Java 6",
+            "Java 7",
+            "Java 8"});
+            this.MinimumJavaVersionCombobox.Location = new System.Drawing.Point(3, 92);
+            this.MinimumJavaVersionCombobox.Name = "MinimumJavaVersionCombobox";
+            this.MinimumJavaVersionCombobox.Size = new System.Drawing.Size(138, 21);
+            this.MinimumJavaVersionCombobox.TabIndex = 16;
+            // 
+            // UploadToFTPCheckbox
+            // 
+            this.UploadToFTPCheckbox.AutoSize = true;
+            this.UploadToFTPCheckbox.Location = new System.Drawing.Point(162, 93);
+            this.UploadToFTPCheckbox.Name = "UploadToFTPCheckbox";
+            this.UploadToFTPCheckbox.Size = new System.Drawing.Size(95, 17);
+            this.UploadToFTPCheckbox.TabIndex = 19;
+            this.UploadToFTPCheckbox.Text = "Upload to FTP";
+            this.UploadToFTPCheckbox.UseVisualStyleBackColor = true;
+            this.UploadToFTPCheckbox.CheckedChanged += new System.EventHandler(this.UploadToFTPCheckbox_CheckedChanged);
+            // 
+            // ConfigureFTPButton
+            // 
+            this.ConfigureFTPButton.Location = new System.Drawing.Point(162, 116);
+            this.ConfigureFTPButton.Name = "ConfigureFTPButton";
+            this.ConfigureFTPButton.Size = new System.Drawing.Size(103, 23);
+            this.ConfigureFTPButton.TabIndex = 18;
+            this.ConfigureFTPButton.Text = "Configure FTP";
+            this.ConfigureFTPButton.UseVisualStyleBackColor = true;
+            this.ConfigureFTPButton.Visible = false;
+            this.ConfigureFTPButton.Click += new System.EventHandler(this.ConfigureFTPButton_Click);
+            // 
+            // UseSolderCheckbox
+            // 
+            this.UseSolderCheckbox.AutoSize = true;
+            this.UseSolderCheckbox.Location = new System.Drawing.Point(292, 20);
+            this.UseSolderCheckbox.Name = "UseSolderCheckbox";
+            this.UseSolderCheckbox.Size = new System.Drawing.Size(78, 17);
+            this.UseSolderCheckbox.TabIndex = 12;
+            this.UseSolderCheckbox.Text = "Use Solder";
+            this.UseSolderCheckbox.UseVisualStyleBackColor = true;
+            this.UseSolderCheckbox.CheckedChanged += new System.EventHandler(this.UseSolderCheckbox_CheckedChanged);
             // 
             // forgeVersionLabel
             // 
@@ -360,6 +469,7 @@ namespace ModpackHelper.GUI
             this.forgeVersionLabel.Size = new System.Drawing.Size(72, 13);
             this.forgeVersionLabel.TabIndex = 0;
             this.forgeVersionLabel.Text = "Forge Version";
+            this.forgeVersionLabel.Visible = false;
             // 
             // forgeVersionDropdown
             // 
@@ -369,6 +479,7 @@ namespace ModpackHelper.GUI
             this.forgeVersionDropdown.Name = "forgeVersionDropdown";
             this.forgeVersionDropdown.Size = new System.Drawing.Size(121, 21);
             this.forgeVersionDropdown.TabIndex = 11;
+            this.forgeVersionDropdown.Visible = false;
             // 
             // PackTypeGroupBox
             // 
@@ -407,12 +518,13 @@ namespace ModpackHelper.GUI
             // 
             this.technicPermissionsLevelGroupBox.Controls.Add(this.technicPermissionsPublicPack);
             this.technicPermissionsLevelGroupBox.Controls.Add(this.technicPermissionsPrivatePack);
-            this.technicPermissionsLevelGroupBox.Location = new System.Drawing.Point(162, 93);
+            this.technicPermissionsLevelGroupBox.Location = new System.Drawing.Point(20, 139);
             this.technicPermissionsLevelGroupBox.Name = "technicPermissionsLevelGroupBox";
-            this.technicPermissionsLevelGroupBox.Size = new System.Drawing.Size(136, 64);
+            this.technicPermissionsLevelGroupBox.Size = new System.Drawing.Size(109, 64);
             this.technicPermissionsLevelGroupBox.TabIndex = 5;
             this.technicPermissionsLevelGroupBox.TabStop = false;
             this.technicPermissionsLevelGroupBox.Text = "Permissions Level";
+            this.technicPermissionsLevelGroupBox.Visible = false;
             // 
             // technicPermissionsPublicPack
             // 
@@ -445,6 +557,7 @@ namespace ModpackHelper.GUI
             this.CheckTechnicPermissionsCheckBox.TabIndex = 9;
             this.CheckTechnicPermissionsCheckBox.Text = "Check Permissions";
             this.CheckTechnicPermissionsCheckBox.UseVisualStyleBackColor = true;
+            this.CheckTechnicPermissionsCheckBox.CheckedChanged += new System.EventHandler(this.CheckTechnicPermissionsCheckBox_CheckedChanged);
             // 
             // CreateConfigZipCheckBox
             // 
@@ -465,80 +578,13 @@ namespace ModpackHelper.GUI
             this.createForgeZipCheckBox.TabIndex = 10;
             this.createForgeZipCheckBox.Text = "Create Forge zip";
             this.createForgeZipCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // UseSolderCheckbox
-            // 
-            this.UseSolderCheckbox.AutoSize = true;
-            this.UseSolderCheckbox.Location = new System.Drawing.Point(425, 19);
-            this.UseSolderCheckbox.Name = "UseSolderCheckbox";
-            this.UseSolderCheckbox.Size = new System.Drawing.Size(78, 17);
-            this.UseSolderCheckbox.TabIndex = 12;
-            this.UseSolderCheckbox.Text = "Use Solder";
-            this.UseSolderCheckbox.UseVisualStyleBackColor = true;
-            this.UseSolderCheckbox.CheckedChanged += new System.EventHandler(this.UseSolderCheckbox_CheckedChanged);
-            // 
-            // ConfigureSolderButton
-            // 
-            this.ConfigureSolderButton.Location = new System.Drawing.Point(425, 39);
-            this.ConfigureSolderButton.Name = "ConfigureSolderButton";
-            this.ConfigureSolderButton.Size = new System.Drawing.Size(138, 23);
-            this.ConfigureSolderButton.TabIndex = 13;
-            this.ConfigureSolderButton.Text = "Configure Solder MySQL";
-            this.ConfigureSolderButton.UseVisualStyleBackColor = true;
-            this.ConfigureSolderButton.Click += new System.EventHandler(this.ConfigureSolderButton_Click);
-            // 
-            // minimumMemoryTextBox
-            // 
-            this.minimumMemoryTextBox.Location = new System.Drawing.Point(425, 84);
-            this.minimumMemoryTextBox.Name = "minimumMemoryTextBox";
-            this.minimumMemoryTextBox.Size = new System.Drawing.Size(138, 20);
-            this.minimumMemoryTextBox.TabIndex = 14;
-            // 
-            // minimumMemoryLabel
-            // 
-            minimumMemoryLabel.AutoSize = true;
-            minimumMemoryLabel.Location = new System.Drawing.Point(422, 68);
-            minimumMemoryLabel.Name = "minimumMemoryLabel";
-            minimumMemoryLabel.Size = new System.Drawing.Size(124, 13);
-            minimumMemoryLabel.TabIndex = 15;
-            minimumMemoryLabel.Text = "Minimum Memory (in MB)";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(422, 107);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(106, 13);
-            label2.TabIndex = 15;
-            label2.Text = "MinimumJavaVersion";
-            // 
-            // MinimumJavaVersionCombobox
-            // 
-            this.MinimumJavaVersionCombobox.FormattingEnabled = true;
-            this.MinimumJavaVersionCombobox.Items.AddRange(new object[] {
-            "Java 6",
-            "Java 7",
-            "Java 8"});
-            this.MinimumJavaVersionCombobox.Location = new System.Drawing.Point(425, 124);
-            this.MinimumJavaVersionCombobox.Name = "MinimumJavaVersionCombobox";
-            this.MinimumJavaVersionCombobox.Size = new System.Drawing.Size(138, 21);
-            this.MinimumJavaVersionCombobox.TabIndex = 16;
-            // 
-            // ForceSolderUpdateCheckBox
-            // 
-            this.ForceSolderUpdateCheckBox.AutoSize = true;
-            this.ForceSolderUpdateCheckBox.Location = new System.Drawing.Point(423, 151);
-            this.ForceSolderUpdateCheckBox.Name = "ForceSolderUpdateCheckBox";
-            this.ForceSolderUpdateCheckBox.Size = new System.Drawing.Size(122, 17);
-            this.ForceSolderUpdateCheckBox.TabIndex = 17;
-            this.ForceSolderUpdateCheckBox.Text = "Force Solder update";
-            this.ForceSolderUpdateCheckBox.UseVisualStyleBackColor = true;
+            this.createForgeZipCheckBox.CheckedChanged += new System.EventHandler(this.createForgeZipCheckBox_CheckedChanged);
             // 
             // ModpackHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1000, 469);
+            this.ClientSize = new System.Drawing.Size(1000, 537);
             this.Controls.Add(this.technicOptionsGroupBox);
             this.Controls.Add(this.globalConfigurationsGroupBox);
             this.Controls.Add(this.startPackingButton);
@@ -550,6 +596,8 @@ namespace ModpackHelper.GUI
             this.ModpackSettingsGroupBox.PerformLayout();
             this.technicOptionsGroupBox.ResumeLayout(false);
             this.technicOptionsGroupBox.PerformLayout();
+            this.SolderConfigurePanel.ResumeLayout(false);
+            this.SolderConfigurePanel.PerformLayout();
             this.PackTypeGroupBox.ResumeLayout(false);
             this.PackTypeGroupBox.PerformLayout();
             this.technicPermissionsLevelGroupBox.ResumeLayout(false);
@@ -585,7 +633,7 @@ namespace ModpackHelper.GUI
         public ComboBox MinecraftVersionDropdown;
         public Label forgeVersionLabel;
         public ComboBox forgeVersionDropdown;
-        public CheckBox checkBox4;
+        public CheckBox EnableDebugCheckbox;
         public CheckBox CreateFTBPackCheckBox;
         public CheckBox CreateTechnicPackCheckBox;
         public CheckBox ClearOutpuDirectoryCheckBox;
@@ -596,6 +644,9 @@ namespace ModpackHelper.GUI
         private TextBox minimumMemoryTextBox;
         private ComboBox MinimumJavaVersionCombobox;
         private CheckBox ForceSolderUpdateCheckBox;
+        private Button ConfigureFTPButton;
+        private Panel SolderConfigurePanel;
+        private CheckBox UploadToFTPCheckbox;
     }
 }
 

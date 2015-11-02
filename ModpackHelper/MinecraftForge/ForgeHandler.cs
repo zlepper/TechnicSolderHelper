@@ -75,7 +75,7 @@ namespace ModpackHelper.Shared.MinecraftForge
 
         public List<string> GetMinecraftVersions()
         {
-            Regex minecraftPattern = new Regex(@"[0-9]\.[0-9](\.[0-9]{1,2})?", RegexOptions.IgnoreCase);
+            Regex minecraftPattern = new Regex(@"^[0-9]\.[0-9](\.[0-9]{1,2})?$", RegexOptions.IgnoreCase);
             return forgeVersions.Select(f => f.MinecraftVersion).Distinct().Where(f => minecraftPattern.IsMatch(f)).ToList();
         }
 

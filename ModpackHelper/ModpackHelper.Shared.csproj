@@ -90,7 +90,9 @@
     <Compile Include="Cryptography\Crypto.cs" />
     <Compile Include="Cryptography\KeyHandler.cs" />
     <Compile Include="IO\ModPacker.cs" />
+    <Compile Include="Utils\Config\FTPLoginInfo.cs" />
     <Compile Include="Utils\Config\SolderLoginInfo.cs" />
+    <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\Solder\SolderMySQLHelper.cs" />
     <Compile Include="Web\Api\Connection.cs" />
     <Compile Include="Web\Api\Mod.cs" />

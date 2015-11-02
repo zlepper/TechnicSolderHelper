@@ -1,12 +1,11 @@
-﻿using System;
-using ModpackHelper.Shared.Cryptography;
+﻿using ModpackHelper.Shared.Cryptography;
 
 namespace ModpackHelper.Shared.Utils.Config
 {
     /// <summary>
-    /// Contains info about how to login to the solder DB
+    /// Contains info about how to login to the FTP server
     /// </summary>
-    public class SolderLoginInfo
+    public class FTPLoginInfo
     {
         /// <summary>
         /// The username to connect to the DB
@@ -16,8 +15,10 @@ namespace ModpackHelper.Shared.Utils.Config
         /// <summary>
         /// The password to login with
         /// </summary>
-        public string Password {
-            get {
+        public string Password
+        {
+            get
+            {
                 Crypto crypto = new Crypto();
                 return crypto.DecryptString(Pw);
             }
@@ -39,35 +40,13 @@ namespace ModpackHelper.Shared.Utils.Config
         public string Address { get; set; }
 
         /// <summary>
-        /// The name of the scema to connect to
-        /// Also known as the database name
-        /// </summary>
-        public string DatabaseSchema { get; set; }
-
-        /// <summary>
-        /// The prefix of the tables in solder
-        /// </summary>
-        public string TablePrefix { get; set; }
-
-        /// <summary>
-        /// Get the connectionstring that connects to the Database
-        /// </summary>
-        /// <returns></returns>
-        public string GetConnectionString()
-        {
-            Crypto crypto = new Crypto();
-            return
-                $"address={Address};username={Username};password={Password};database={DatabaseSchema}";
-        }
-
-        /// <summary>
         /// Checks if the info in here has any chance of being valid
         /// </summary>
         /// <returns></returns>
         public bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(Address) &&
-                   !string.IsNullOrWhiteSpace(DatabaseSchema);
+                   !string.IsNullOrWhiteSpace(Password);
         }
     }
 }
