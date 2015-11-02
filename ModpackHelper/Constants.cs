@@ -15,12 +15,17 @@ namespace ModpackHelper.Shared
         /// <summary>
         /// The url of the remote api
         /// </summary>
-        public const string ApiUrl = "http://localhost:58013/";
+        public const string ApiUrl = "http://helper.zlepper.dk/";
 
         /// <summary>
         /// The path to where all Modpack Helpers own files are stored
         /// TODO Refractor everything to use this instead of it's own files
         /// </summary>
-        public static string ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper");
+        public static readonly string ApplicationDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SolderHelper");
+
+        /// <summary>
+        /// Indicates if the application is running under UNIX
+        /// </summary>
+        public static readonly bool IsUnix = Environment.OSVersion.ToString().ToLower().Contains("unix");
     }
 }

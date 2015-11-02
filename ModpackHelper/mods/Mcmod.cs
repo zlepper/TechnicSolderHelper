@@ -397,7 +397,7 @@ namespace ModpackHelper.Shared.Mods
             using (var client = new HttpClient())
             {
                 // Set some basic information
-                client.BaseAddress = new Uri("http://localhost:58013/");
+                client.BaseAddress = new Uri(Constants.ApiUrl);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -411,6 +411,11 @@ namespace ModpackHelper.Shared.Mods
                     Debug.WriteLine(Name + " was uploaded to the api.");
                 }
             }
+        }
+
+        public string GetSafeModId()
+        {
+            return Modid.Replace(" ", "-").Replace("|", string.Empty);
         }
     }
 }

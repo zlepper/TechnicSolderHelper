@@ -47,6 +47,10 @@
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -86,6 +90,8 @@
     <Compile Include="Cryptography\Crypto.cs" />
     <Compile Include="Cryptography\KeyHandler.cs" />
     <Compile Include="IO\ModPacker.cs" />
+    <Compile Include="Utils\Config\SolderLoginInfo.cs" />
+    <Compile Include="Utils\Solder\SolderMySQLHelper.cs" />
     <Compile Include="Web\Api\Connection.cs" />
     <Compile Include="Web\Api\Mod.cs" />
     <Compile Include="Mods\Solder.cs" />
@@ -121,6 +127,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UserInteraction\IDirectoryFinder.cs" />
+    <Compile Include="Web\Solder\SolderMySQLClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

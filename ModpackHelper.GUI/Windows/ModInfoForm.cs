@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ModpackHelper.GUI.Helpers;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.UserInteraction;
 using ModpackHelper.Shared.Web.Api;
@@ -65,7 +66,7 @@ namespace ModpackHelper.GUI.Windows
             currentMcVersion = mcv;
             // Find all the mods that still needs info
             nonFinishedMods = mods.Where(m => !m.IsValid()).ToList();
-            // No need to run over everything again is every mod is valid already
+            // No need to run over everything again if every mod if valid already
             if (nonFinishedMods.Count > 0)
             {
                 foreach (Mcmod mod in nonFinishedMods)
@@ -96,20 +97,8 @@ namespace ModpackHelper.GUI.Windows
                 }
                 // Select the first mod on the list
                 ModSelectionList.SelectedIndex = 0;
-                //foreach (Mcmod mod in nonFinishedMods)
-                //{
-                //    using (BackgroundWorker bw = new BackgroundWorker())
-                //    {
-                //        bw.DoWork += BwFetchModInfoFromApi;
-                //        List<object> param = new List<object>()
-                //            {
-                //                mod,
-                //                null
-                //            };
-                //        bw.RunWorkerAsync(param);
-                //    }
-                //}
             }
+            Notifier.FlashWindow(this);
         }
 
         private Mcmod GetSelectedMod()

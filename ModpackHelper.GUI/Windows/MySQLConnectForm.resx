@@ -117,20 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InputHasToBeModDirectory" xml:space="preserve">
-    <value>The inputfolder has to be a mods directory</value>
-    <comment>Error message</comment>
-  </data>
-  <data name="MySQLConnectionFailed" xml:space="preserve">
-    <value>The Solder DB connection was invalid, this could be either wrong credentials, or the database not being a working solder database.</value>
-  </data>
-  <data name="MySQLConnectionSuccess" xml:space="preserve">
-    <value>The Solder DB connection was succesfull</value>
-  </data>
-  <data name="SelectOutputDirectory" xml:space="preserve">
-    <value>Select the output directory</value>
-  </data>
-  <data name="SelectTheInputDirectory" xml:space="preserve">
-    <value>Select the mods directory of the modpack.</value>
-  </data>
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label3.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label4.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label5.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
 </root>

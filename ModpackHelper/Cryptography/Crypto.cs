@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ModpackHelper.Shared.Cryptography
 {
-    class Crypto
+    public class Crypto
     {
         private readonly ICryptoTransform encryptorTransform;
         private readonly ICryptoTransform decryptorTransform;

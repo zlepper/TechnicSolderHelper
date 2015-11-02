@@ -36,6 +36,8 @@ namespace ModpackHelper.GUI
             System.Windows.Forms.Label ModpackNameLabel;
             System.Windows.Forms.Label ModpackVersionLabel;
             System.Windows.Forms.Label MinecraftVersionLabel;
+            System.Windows.Forms.Label minimumMemoryLabel;
+            System.Windows.Forms.Label label2;
             this.InputDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.browseForInputDirectoryButton = new System.Windows.Forms.Button();
             this.OutputDirectoryTextBox = new System.Windows.Forms.TextBox();
@@ -67,11 +69,18 @@ namespace ModpackHelper.GUI
             this.CheckTechnicPermissionsCheckBox = new System.Windows.Forms.CheckBox();
             this.CreateConfigZipCheckBox = new System.Windows.Forms.CheckBox();
             this.createForgeZipCheckBox = new System.Windows.Forms.CheckBox();
+            this.UseSolderCheckbox = new System.Windows.Forms.CheckBox();
+            this.ConfigureSolderButton = new System.Windows.Forms.Button();
+            this.minimumMemoryTextBox = new System.Windows.Forms.TextBox();
+            this.MinimumJavaVersionCombobox = new System.Windows.Forms.ComboBox();
+            this.ForceSolderUpdateCheckBox = new System.Windows.Forms.CheckBox();
             inputFolderLabel = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             ModpackNameLabel = new System.Windows.Forms.Label();
             ModpackVersionLabel = new System.Windows.Forms.Label();
             MinecraftVersionLabel = new System.Windows.Forms.Label();
+            minimumMemoryLabel = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
             this.globalConfigurationsGroupBox.SuspendLayout();
             this.ModpackSettingsGroupBox.SuspendLayout();
             this.technicOptionsGroupBox.SuspendLayout();
@@ -322,6 +331,13 @@ namespace ModpackHelper.GUI
             // 
             // technicOptionsGroupBox
             // 
+            this.technicOptionsGroupBox.Controls.Add(this.ForceSolderUpdateCheckBox);
+            this.technicOptionsGroupBox.Controls.Add(this.MinimumJavaVersionCombobox);
+            this.technicOptionsGroupBox.Controls.Add(label2);
+            this.technicOptionsGroupBox.Controls.Add(minimumMemoryLabel);
+            this.technicOptionsGroupBox.Controls.Add(this.minimumMemoryTextBox);
+            this.technicOptionsGroupBox.Controls.Add(this.ConfigureSolderButton);
+            this.technicOptionsGroupBox.Controls.Add(this.UseSolderCheckbox);
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionLabel);
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionDropdown);
             this.technicOptionsGroupBox.Controls.Add(this.PackTypeGroupBox);
@@ -331,7 +347,7 @@ namespace ModpackHelper.GUI
             this.technicOptionsGroupBox.Controls.Add(this.createForgeZipCheckBox);
             this.technicOptionsGroupBox.Location = new System.Drawing.Point(12, 209);
             this.technicOptionsGroupBox.Name = "technicOptionsGroupBox";
-            this.technicOptionsGroupBox.Size = new System.Drawing.Size(571, 166);
+            this.technicOptionsGroupBox.Size = new System.Drawing.Size(571, 201);
             this.technicOptionsGroupBox.TabIndex = 4;
             this.technicOptionsGroupBox.TabStop = false;
             this.technicOptionsGroupBox.Text = "Technic Options";
@@ -450,6 +466,74 @@ namespace ModpackHelper.GUI
             this.createForgeZipCheckBox.Text = "Create Forge zip";
             this.createForgeZipCheckBox.UseVisualStyleBackColor = true;
             // 
+            // UseSolderCheckbox
+            // 
+            this.UseSolderCheckbox.AutoSize = true;
+            this.UseSolderCheckbox.Location = new System.Drawing.Point(425, 19);
+            this.UseSolderCheckbox.Name = "UseSolderCheckbox";
+            this.UseSolderCheckbox.Size = new System.Drawing.Size(78, 17);
+            this.UseSolderCheckbox.TabIndex = 12;
+            this.UseSolderCheckbox.Text = "Use Solder";
+            this.UseSolderCheckbox.UseVisualStyleBackColor = true;
+            this.UseSolderCheckbox.CheckedChanged += new System.EventHandler(this.UseSolderCheckbox_CheckedChanged);
+            // 
+            // ConfigureSolderButton
+            // 
+            this.ConfigureSolderButton.Location = new System.Drawing.Point(425, 39);
+            this.ConfigureSolderButton.Name = "ConfigureSolderButton";
+            this.ConfigureSolderButton.Size = new System.Drawing.Size(138, 23);
+            this.ConfigureSolderButton.TabIndex = 13;
+            this.ConfigureSolderButton.Text = "Configure Solder MySQL";
+            this.ConfigureSolderButton.UseVisualStyleBackColor = true;
+            this.ConfigureSolderButton.Click += new System.EventHandler(this.ConfigureSolderButton_Click);
+            // 
+            // minimumMemoryTextBox
+            // 
+            this.minimumMemoryTextBox.Location = new System.Drawing.Point(425, 84);
+            this.minimumMemoryTextBox.Name = "minimumMemoryTextBox";
+            this.minimumMemoryTextBox.Size = new System.Drawing.Size(138, 20);
+            this.minimumMemoryTextBox.TabIndex = 14;
+            // 
+            // minimumMemoryLabel
+            // 
+            minimumMemoryLabel.AutoSize = true;
+            minimumMemoryLabel.Location = new System.Drawing.Point(422, 68);
+            minimumMemoryLabel.Name = "minimumMemoryLabel";
+            minimumMemoryLabel.Size = new System.Drawing.Size(124, 13);
+            minimumMemoryLabel.TabIndex = 15;
+            minimumMemoryLabel.Text = "Minimum Memory (in MB)";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(422, 107);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(106, 13);
+            label2.TabIndex = 15;
+            label2.Text = "MinimumJavaVersion";
+            // 
+            // MinimumJavaVersionCombobox
+            // 
+            this.MinimumJavaVersionCombobox.FormattingEnabled = true;
+            this.MinimumJavaVersionCombobox.Items.AddRange(new object[] {
+            "Java 6",
+            "Java 7",
+            "Java 8"});
+            this.MinimumJavaVersionCombobox.Location = new System.Drawing.Point(425, 124);
+            this.MinimumJavaVersionCombobox.Name = "MinimumJavaVersionCombobox";
+            this.MinimumJavaVersionCombobox.Size = new System.Drawing.Size(138, 21);
+            this.MinimumJavaVersionCombobox.TabIndex = 16;
+            // 
+            // ForceSolderUpdateCheckBox
+            // 
+            this.ForceSolderUpdateCheckBox.AutoSize = true;
+            this.ForceSolderUpdateCheckBox.Location = new System.Drawing.Point(423, 151);
+            this.ForceSolderUpdateCheckBox.Name = "ForceSolderUpdateCheckBox";
+            this.ForceSolderUpdateCheckBox.Size = new System.Drawing.Size(122, 17);
+            this.ForceSolderUpdateCheckBox.TabIndex = 17;
+            this.ForceSolderUpdateCheckBox.Text = "Force Solder update";
+            this.ForceSolderUpdateCheckBox.UseVisualStyleBackColor = true;
+            // 
             // ModpackHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -507,7 +591,11 @@ namespace ModpackHelper.GUI
         public CheckBox ClearOutpuDirectoryCheckBox;
         public Button browseForInputDirectoryButton;
         public Button browseForOutputDirectoryButton;
-
+        private CheckBox UseSolderCheckbox;
+        private Button ConfigureSolderButton;
+        private TextBox minimumMemoryTextBox;
+        private ComboBox MinimumJavaVersionCombobox;
+        private CheckBox ForceSolderUpdateCheckBox;
     }
 }
 

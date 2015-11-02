@@ -70,6 +70,24 @@ namespace ModpackHelper.GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Solder DB connection was invalid, this could be either wrong credentials, or the database not being a working solder database..
+        /// </summary>
+        internal static string MySQLConnectionFailed {
+            get {
+                return ResourceManager.GetString("MySQLConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Solder DB connection was succesfull.
+        /// </summary>
+        internal static string MySQLConnectionSuccess {
+            get {
+                return ResourceManager.GetString("MySQLConnectionSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select the output directory.
         /// </summary>
         internal static string SelectOutputDirectory {

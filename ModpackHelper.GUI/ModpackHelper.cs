@@ -249,5 +249,25 @@ namespace ModpackHelper.GUI
                             Name = ModpackNameTextBox.Text
                         });
         }
+
+        private void UseSolderCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            var ch = new ConfigHandler(fileSystem);
+            if (ch.Configs.SolderLoginInfo == null && UseSolderCheckbox.Checked)
+            {
+                messageShower.ShowMessageAsync("This feature requires that Solder is run under MySQL. " + Environment.NewLine + "The Solder connection has not been configured, please do so. ");
+            }
+
+            ConfigureSolderButton.Visible = UseSolderCheckbox.Checked;
+            minimumMemoryTextBox.Visible = UseSolderCheckbox.Checked;
+            MinimumJavaVersionCombobox.Visible = UseSolderCheckbox.Checked;
+            ForceSolderUpdateCheckBox.Visible = UseSolderCheckbox.Checked;
+        }
+
+        private void ConfigureSolderButton_Click(object sender, EventArgs e)
+        {
+            MySQLConnectForm f = new MySQLConnectForm(fileSystem, messageShower);
+            f.ShowDialog(this);
+        }
     }
 }

@@ -6,5 +6,6 @@ namespace ModpackHelper.Shared.Utils.Config
     {
         public string LastSelectedModpack { get; set; }
         public Dictionary<string, Modpack> Modpacks = new Dictionary<string, Modpack>();
+        public SolderLoginInfo SolderLoginInfo { get; set; }
     }
 }
