@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ModpackHelper.Shared.Utils.Config
 {
@@ -66,5 +67,22 @@ namespace ModpackHelper.Shared.Utils.Config
         /// Indicates what version of forge the pack should be packed with
         /// </summary>
         public string ForgeVersion { get; set; }
+
+        /// <summary>
+        /// Indicates if this modpack should be uploaded to solder
+        /// </summary>
+        public bool UseSolder { get; set; }
+
+        /// <summary>
+        /// Indicates if this modpack should be uploaded to FTP
+        /// </summary>
+        public bool UploadToFTP { get; set; }
+
+        /// <summary>
+        /// Indicates what version of the modpack we are packing
+        /// This will not be saved to the json file
+        /// </summary>
+        [JsonIgnore]
+        public string Version { get; set; }
     }
 }

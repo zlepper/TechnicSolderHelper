@@ -7,7 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
+using ModpackHelper.Shared.MinecraftForge;
 using ModpackHelper.Shared.Mods;
+using ModpackHelper.Shared.Utils.Config;
+using ModpackHelper.Shared.Utils.Solder;
 
 namespace ModpackHelper.Shared.IO
 {
@@ -16,10 +19,10 @@ namespace ModpackHelper.Shared.IO
         private readonly IFileSystem fileSystem;
         private readonly StringBuilder sb;
 
-		public ModPacker ():this(new FileSystem())
-		{
-			
-		}
+        public ModPacker() : this(new FileSystem())
+        {
+
+        }
 
         public ModPacker(IFileSystem fileSystem)
         {
@@ -29,13 +32,15 @@ namespace ModpackHelper.Shared.IO
             sb.AppendLine(html);
         }
 
-        public void Pack(List<Mcmod> mods, DirectoryInfoBase outputDirectory)
+        public void Pack(List<Mcmod> mods, Modpack modpack)
         {
             // Create a SignalR connection to the api
             using (HubConnection hubConnection = new HubConnection(Constants.ApiUrl))
             {
                 IHubProxy apiHubProxy = hubConnection.CreateHubProxy("ApiHub");
                 Task con = hubConnection.Start();
+
+                DirectoryInfoBase outputDirectory = fileSystem.DirectoryInfo.FromDirectoryName(modpack.OutputDirectory);
 
                 // Create the output directory where we should put all the new files
                 outputDirectory.Create();
@@ -45,6 +50,7 @@ namespace ModpackHelper.Shared.IO
                 {
                     // Wait for the SignalR connection to be established
                     con.Wait();
+                    // Iterate over all the mods and create a thread for each mod
                     foreach (Mcmod mod in mods)
                     {
                         BackgroundWorker bw = new BackgroundWorker();
@@ -80,6 +86,38 @@ namespace ModpackHelper.Shared.IO
                         backgroundWorkers.Add(bw);
                         bw.RunWorkerAsync();
                     }
+                    if (modpack.CreateForgeZip)
+                    {
+                        BackgroundWorker bw = new BackgroundWorker();
+                        bw.DoWork += (sender, args) =>
+                        {
+                            bool skip = false;
+                            var forgedownloadUrl =
+                                new ForgeHandler(fileSystem).GetDownloadUrl((Int32.Parse(modpack.ForgeVersion)));
+                            if (modpack.UseSolder)
+                            {
+                                SolderMySQLHelper ssh = new SolderMySQLHelper(modpack.Name, modpack.Version);
+                                if (
+                                    ssh.IsModVersionOnline(new Mcmod()
+                                    {
+                                        Version = modpack.ForgeVersion,
+                                        Mcversion = modpack.MinecraftVersion,
+                                        Modid = "forge"
+                                    }))
+                                {
+                                    skip = true;
+                                }
+                            }
+                            if (!skip)
+                            {
+                                
+                            }
+                        };
+                        backgroundWorkers.Add(bw);
+                        bw.RunWorkerAsync();
+
+                    }
+
                     // Make sure all backgroundworkers are finished running before returning to the caller
                     int count = -1;
                     while (backgroundWorkers.Any())

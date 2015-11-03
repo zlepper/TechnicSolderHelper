@@ -195,7 +195,7 @@ namespace ModpackHelper.Shared.Web.Solder
                 conn.Open();
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@version", mod.Version);
+                    cmd.Parameters.AddWithValue("@version", $"{mod.Mcversion}-{mod.Version}");
                     cmd.Parameters.AddWithValue("@modslug", mod.GetSafeModId());
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {

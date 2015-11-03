@@ -29,6 +29,7 @@ namespace ModpackHelper.GUI.Helpers
             using (ConfigHandler ch = new ConfigHandler(fileSystem))
             {
                 Configs c = ch.Configs;
+                // Load all the currently registered modpacks into the select dropdown
                 foreach(Modpack mp in c.Modpacks.Values)
                 {
                     modpackHelper.ModpackNameTextBox.Items.Add(mp.Name);

@@ -182,26 +182,8 @@ namespace ModpackHelper.GUI
 
             // Check if we had any errors along the way
             if (!valid) return;
-            
-            // We are free to continue
-            ModExtractor modExtractor = new ModExtractor(minecraftVersion, fileSystem);
 
-            // Make sure we don't lock the main thread
-            BackgroundWorker bw = new BackgroundWorker();
-            bw.DoWork += delegate
-            {
-                // Measure the time it takes to get all the modinfo
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                // Get mod info of the mods in the input directory
-                List<Mcmod> mods = modExtractor.FindAllMods(inputDirectory);
-                sw.Stop();
-                Debug.WriteLine(sw.Elapsed.ToString());
-                OpenModsInfoForm(mods, minecraftVersion, outputdirectory);
-
-            };
-            bw.RunWorkerAsync();
-
+            Modpack modpack;
             // Save the modpack data locally
             using (ConfigHandler ch = new ConfigHandler(fileSystem))
             {
@@ -209,7 +191,7 @@ namespace ModpackHelper.GUI
                 Configs c = ch.Configs;
 
                 // Locate data about this modpack, or create some new data
-                Modpack modpack = c.Modpacks.ContainsKey(modpackName) ? c.Modpacks[modpackName] : new Modpack();
+                modpack = c.Modpacks.ContainsKey(modpackName) ? c.Modpacks[modpackName] : new Modpack();
 
                 // Save all the data
                 modpack.Name = modpackName;
@@ -224,23 +206,53 @@ namespace ModpackHelper.GUI
                 modpack.CheckTechnicPermissions = checkPermissions;
                 modpack.CreateSolderPack = createSolderPack;
                 modpack.ForgeVersion = selectedForgeVersion;
+                modpack.UseSolder = useSolder;
+                modpack.UploadToFTP = uploadToFTP;
+                modpack.Version = modpackVersion;
 
                 // Change the last selected pack, so we know what pack to load on startup
                 c.LastSelectedModpack = modpackName;
+
+                // Save the modpack
+                if (!c.Modpacks.ContainsKey(modpackName))
+                {
+                    c.Modpacks.Add(modpackName, modpack);
+                }
             }
+
+            // We are free to continue
+            ModExtractor modExtractor = new ModExtractor(minecraftVersion, fileSystem);
+
+            // Make sure we don't lock the main thread
+            BackgroundWorker bw = new BackgroundWorker();
+            bw.DoWork += delegate
+            {
+                // Measure the time it takes to get all the modinfo
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                // Get mod info of the mods in the input directory
+                List<Mcmod> mods = modExtractor.FindAllMods(inputDirectory);
+                sw.Stop();
+                Debug.WriteLine(sw.Elapsed.ToString());
+                OpenModsInfoForm(mods, modpack);
+
+            };
+            bw.RunWorkerAsync();
+
+            
         }
 
 
-        private void OpenModsInfoForm(List<Mcmod> mods, string minecraftVersion, string outputDirectory)
+        private void OpenModsInfoForm(List<Mcmod> mods, Modpack modpack)
         {
             if (InvokeRequired)
             {
-                BeginInvoke(new Action(() => OpenModsInfoForm(mods, minecraftVersion, outputDirectory)));
+                BeginInvoke(new Action(() => OpenModsInfoForm(mods, modpack)));
             }
             else
             {
                 ModInfoForm form = new ModInfoForm(fileSystem, messageShower);
-                form.InitializeContent(mods, minecraftVersion);
+                form.InitializeContent(mods, modpack.MinecraftVersion);
                 form.Show();
                 form.DoneFillingInInfo += delegate (List<Mcmod> modslist)
                 {
@@ -250,17 +262,19 @@ namespace ModpackHelper.GUI
                         Stopwatch sw = new Stopwatch();
                         sw.Start();
                         ModPacker packer = new ModPacker(fileSystem);
-                        packer.Pack(modslist, fileSystem.DirectoryInfo.FromDirectoryName(outputDirectory));
+                        packer.Pack(modslist, modpack);
                         sw.Stop();
                         Debug.WriteLine(sw.Elapsed.ToString());
                         string html = packer.GetFinishedHTML();
-                        fileSystem.File.WriteAllText(fileSystem.Path.Combine(outputDirectory, "mods.html"), html);
+                        fileSystem.File.WriteAllText(fileSystem.Path.Combine(modpack.OutputDirectory, "mods.html"), html);
                         messageShower.ShowMessageAsync("Done packing mods");
                     };
                     bw.RunWorkerAsync();
                 };
             }
         }
+
+
 
 
         private void MinecraftVersionDropdown_SelectedIndexChanged(object sender, EventArgs e)
