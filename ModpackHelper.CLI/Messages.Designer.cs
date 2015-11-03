@@ -101,8 +101,8 @@ namespace ModpackHelper.CLI {
         ///Where options include:
         ///    -i &lt;dir&gt;                Specifies the input directory(Required)
         ///    -o &lt;dir&gt;                Specifies the output directory(Required)
-        ///    -Mn &lt;value&gt;             Specifies the modpack name(Required)
-        ///    -Mv &lt;value&gt;             Specifies the modpack version(Required)
+        ///    -Mn &lt;value&gt;             Specifies the Modpack name(Required)
+        ///    -Mv &lt;value&gt;             Specifies the Modpack version(Required)
         ///    -MCv &lt;value&gt;            Specifies the Minecraft version(Required)
         ///    -c                      Clear output directory on run
         ///    -r                      Repack e [rest of string was truncated]&quot;;.

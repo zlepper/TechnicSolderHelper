@@ -84,5 +84,11 @@ namespace ModpackHelper.Shared.Utils.Config
         /// </summary>
         [JsonIgnore]
         public string Version { get; set; }
+
+        /// <summary>
+        /// Indicates if the entire pack should be repacked
+        /// </summary>
+        [JsonIgnore]
+        public bool RepackEverything { get; set; }
     }
 }

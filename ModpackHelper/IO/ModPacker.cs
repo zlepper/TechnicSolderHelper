@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
@@ -48,8 +50,49 @@ namespace ModpackHelper.Shared.IO
                 ZipUtils zipUtils = new ZipUtils(fileSystem);
                 using (ModsDBContext db = new ModsDBContext(fileSystem))
                 {
+                    // Check if we should pack forge, and then do it!
+                    if (modpack.CreateForgeZip)
+                    {
+                        BackgroundWorker bw = new BackgroundWorker();
+                        bw.DoWork += (sender, args) =>
+                        {
+                            bool skip = false;
+                            var forgedownloadUrl =
+                                new ForgeHandler(fileSystem).GetDownloadUrl((Int32.Parse(modpack.ForgeVersion)));
+                            if (modpack.UseSolder)
+                            {
+                                SolderMySQLHelper ssh = new SolderMySQLHelper(modpack.Name, modpack.Version);
+                                if (
+                                    ssh.IsModVersionOnline(new Mcmod()
+                                    {
+                                        Version = modpack.ForgeVersion,
+                                        Mcversion = modpack.MinecraftVersion,
+                                        Modid = "forge"
+                                    }))
+                                {
+                                    skip = true;
+                                }
+                            }
+                            if (!skip)
+                            {
+                                ZipUtils zu = new ZipUtils(fileSystem);
+                                var forgeZip =
+                                    fileSystem.FileInfo.FromFileName(Path.Combine(modpack.OutputDirectory, "mods",
+                                        "forge", $"forge-{modpack.MinecraftVersion}-{modpack.ForgeVersion}"));
+                                WebClient wb = new WebClient();
+                                using (Stream s = wb.OpenRead(forgedownloadUrl))
+                                {
+                                    zu.SpecialPackForgeZip(s, forgeZip);
+                                }
+                            }
+                        };
+                        backgroundWorkers.Add(bw);
+                        bw.RunWorkerAsync();
+                    }
+
                     // Wait for the SignalR connection to be established
                     con.Wait();
+                    
                     // Iterate over all the mods and create a thread for each mod
                     foreach (Mcmod mod in mods)
                     {
@@ -86,37 +129,7 @@ namespace ModpackHelper.Shared.IO
                         backgroundWorkers.Add(bw);
                         bw.RunWorkerAsync();
                     }
-                    if (modpack.CreateForgeZip)
-                    {
-                        BackgroundWorker bw = new BackgroundWorker();
-                        bw.DoWork += (sender, args) =>
-                        {
-                            bool skip = false;
-                            var forgedownloadUrl =
-                                new ForgeHandler(fileSystem).GetDownloadUrl((Int32.Parse(modpack.ForgeVersion)));
-                            if (modpack.UseSolder)
-                            {
-                                SolderMySQLHelper ssh = new SolderMySQLHelper(modpack.Name, modpack.Version);
-                                if (
-                                    ssh.IsModVersionOnline(new Mcmod()
-                                    {
-                                        Version = modpack.ForgeVersion,
-                                        Mcversion = modpack.MinecraftVersion,
-                                        Modid = "forge"
-                                    }))
-                                {
-                                    skip = true;
-                                }
-                            }
-                            if (!skip)
-                            {
-                                
-                            }
-                        };
-                        backgroundWorkers.Add(bw);
-                        bw.RunWorkerAsync();
-
-                    }
+                    
 
                     // Make sure all backgroundworkers are finished running before returning to the caller
                     int count = -1;

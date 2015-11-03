@@ -201,7 +201,31 @@ namespace ModpackHelper.Shared.IO
                     }
                 }
             }
+        }
 
+        public void SpecialPackForgeZip(Stream forgeStream, FileInfoBase zipFile)
+        {
+            // Check is the zip file is actually a zip file
+            if (!zipFile.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("Zip file should be a zip file.");
+            }
+            // Create a stream for the zip file
+            using (Stream zipFileStream = File.Create(zipFile.FullName))
+            {
+                // TODO reverse this once https://bugzilla.xamarin.com/show_bug.cgi?id=32725 is fixed
+                // Make it ZipArchiveMode.Update instead of .Create
+                using (ZipArchive zip = new ZipArchive(zipFileStream, ZipArchiveMode.Create))
+                {
+                    string entryName = "bin/modpack.jar";
+                    ZipArchiveEntry entry = zip.CreateEntry(entryName);
+
+                    using (StreamWriter writer = new StreamWriter(entry.Open()))
+                    {
+                        forgeStream.CopyTo(writer.BaseStream);
+                    }
+                }
+            }
         }
     }
 }

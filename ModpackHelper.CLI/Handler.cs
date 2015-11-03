@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
@@ -12,6 +11,8 @@ using ModpackHelper.Shared.MinecraftForge;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Permissions.FTB;
 using ModpackHelper.Shared.UserInteraction;
+using ModpackHelper.Shared.Utils.Config;
+using Debug = ModpackHelper.Shared.Utils.Debug;
 
 namespace ModpackHelper.CLI
 {
@@ -29,6 +30,9 @@ namespace ModpackHelper.CLI
         ///  The filesystem to work against
         /// </summary>
         private readonly IFileSystem fileSystem;
+
+        public Modpack Modpack;
+
         /// <summary>
         /// Creates a new handler to take care of userinput
         /// </summary>
@@ -47,54 +51,6 @@ namespace ModpackHelper.CLI
         }
 
         /// <summary>
-        /// Indicates if the output directory should be cleared before run
-        /// </summary>
-        public bool ClearOutputDirectoryOnRun { get; set; }
-        /// <summary>
-        /// Indicates what the input directory is
-        /// </summary>
-        public string InputDirectory { get; set; }
-        /// <summary>
-        /// Indicates what the output directory is
-        /// </summary>
-        public string OutputDirectory { get; set; }
-        /// <summary>
-        /// Indicates if Modpack Helper should be verbose
-        /// </summary>
-        public bool Verbose { get; set; }
-
-        /// <summary>
-        /// Indicates if all the mods found should be repacked
-        /// </summary>
-        public bool RepackEverything { get; set; }
-
-        /// <summary>
-        /// Indicates the name of the modpack to create
-        /// </summary>
-        public string ModpackName { get; set; }
-
-        /// <summary>
-        /// Indicates the version of the modpack to make
-        /// </summary>
-        public string ModpackVersion { get; set; }
-
-        /// <summary>
-        /// Indicates the minecraft version of the modpack
-        /// </summary>
-        public string MinecraftVersion { get; set; }
-
-        /// <summary>
-        /// Indicates if we should pack config files for the modpack
-        /// </summary>
-        public bool PackConfigFiles { get; set; }
-
-        /// <summary>
-        /// If set: Indicates what version of forge to pack
-        /// If not set: Do not pack a forge version
-        /// </summary>
-        public int ForgeVersionToPack { get; set; }
-
-        /// <summary>
         /// Starts the entire modpacking process
         /// </summary>
         /// <param name="args"></param>
@@ -102,6 +58,8 @@ namespace ModpackHelper.CLI
         /// <returns>True if the process successed, otherwise false</returns>
         public bool Start(List<string> args, IMessageShower messageShower)
         {
+            Modpack = new Modpack();
+
             // TODO Write some unit tests for all this... FML
             // Check if the user specified any arguments
             if (args.Count == 0)
@@ -114,7 +72,7 @@ namespace ModpackHelper.CLI
             // Check if Modpack Helper should be verbose in it's output
             if (args.Contains("-v"))
             {
-                Verbose = true;
+                Debug.OutputDebug = true;
                 args.Remove("-v");
             }
 
@@ -162,7 +120,7 @@ namespace ModpackHelper.CLI
                     return false;
                 }
 
-                InputDirectory = supposedInputDirectory;
+                Modpack.InputDirectory = supposedInputDirectory;
                 args.Remove("-i");
                 args.Remove(supposedInputDirectory);
             }
@@ -171,7 +129,7 @@ namespace ModpackHelper.CLI
             if (args.Contains("-o"))
             {
                 // Check if the input directory was specified
-                if (string.IsNullOrWhiteSpace(InputDirectory))
+                if (string.IsNullOrWhiteSpace(Modpack.InputDirectory))
                 {
                     messageShower.ShowMessageAsync(Messages.MissingInputDirectory);
                     return false;
@@ -196,7 +154,7 @@ namespace ModpackHelper.CLI
                     return false;
                 }
 
-                OutputDirectory = supposedOutputDirectory;
+                Modpack.OutputDirectory = supposedOutputDirectory;
                 args.Remove("-o");
                 args.Remove(supposedOutputDirectory);
             }
@@ -204,75 +162,75 @@ namespace ModpackHelper.CLI
             // Check if we should clear the output directory before run
             if (args.Contains("-c"))
             {
-                ClearOutputDirectoryOnRun = true;
+                Modpack.ClearOutputDirectory = true;
                 args.Remove("-c");
             }
 
             // Check if everything should be repacked
             if (args.Contains("-r"))
             {
-                RepackEverything = true;
+                Modpack.RepackEverything = true;
                 args.Remove("-r");
             }
 
 
-            // Gets the modpack name
+            // Gets the Modpack name
             if (args.Contains("-Mn"))
             {
                 // Make sure there is an argument after this one
                 int index = args.IndexOf("-Mn");
                 if (index + 1 == args.Count)
                 {
-                    messageShower.ShowMessageAsync("You have not specified a value for the modpack name.");
+                    messageShower.ShowMessageAsync("You have not specified a value for the Modpack name.");
                     return false;
                 }
 
-                // Get the modpack name
-                ModpackName = args[index + 1];
+                // Get the Modpack name
+                Modpack.Name = args[index + 1];
 
-                if (string.IsNullOrWhiteSpace(ModpackName))
+                if (string.IsNullOrWhiteSpace(Modpack.Name))
                 {
-                    messageShower.ShowMessageAsync("You have not specified a value for the modpack name.");
+                    messageShower.ShowMessageAsync("You have not specified a value for the Modpack name.");
                     return false;
                 }
 
                 // Remove the used values from the list
-                args.Remove(ModpackName);
+                args.Remove(Modpack.Name);
                 args.Remove("-Mn");
             }
             else
             {
-                messageShower.ShowMessageAsync("You have to enter a modpack name with the flag \"-Mn\".");
+                messageShower.ShowMessageAsync("You have to enter a Modpack name with the flag \"-Mn\".");
                 return false;
             }
 
-            // Get the modpack version
+            // Get the Modpack version
             if (args.Contains("-Mv"))
             {
                 // Make sure there is an argument after this one
                 int index = args.IndexOf("-Mv");
                 if (index + 1 == args.Count)
                 {
-                    messageShower.ShowMessageAsync("You have not specified a value for the modpack version");
+                    messageShower.ShowMessageAsync("You have not specified a value for the Modpack version");
                     return false;
                 }
 
-                // Get the modpack version
-                ModpackVersion = args[index + 1];
+                // Get the Modpack version
+                Modpack.Version = args[index + 1];
 
-                if (string.IsNullOrWhiteSpace(ModpackVersion))
+                if (string.IsNullOrWhiteSpace(Modpack.Version))
                 {
-                    messageShower.ShowMessageAsync("You have not specified a value for the modpack version");
+                    messageShower.ShowMessageAsync("You have not specified a value for the Modpack version");
                     return false;
                 }
 
                 // Remove the used values from the list
                 args.Remove("-Mv");
-                args.Remove(ModpackVersion);
+                args.Remove(Modpack.Version);
             }
             else
             {
-                messageShower.ShowMessageAsync("You have to enter a modpack version with the flag \"-Mv\".");
+                messageShower.ShowMessageAsync("You have to enter a Modpack version with the flag \"-Mv\".");
                 return false;
             }
 
@@ -288,9 +246,9 @@ namespace ModpackHelper.CLI
                 }
 
                 // Get the minecraft version
-                MinecraftVersion = args[index + 1];
+                Modpack.MinecraftVersion = args[index + 1];
 
-                if (string.IsNullOrWhiteSpace(ModpackVersion))
+                if (string.IsNullOrWhiteSpace(Modpack.MinecraftVersion))
                 {
                     messageShower.ShowMessageAsync("You have not specified a value for the Minecraft version");
                     return false;
@@ -298,7 +256,7 @@ namespace ModpackHelper.CLI
 
                 // Make sure that the minecraft version actually exists
                 List<string> validMinecraftVersions = Fh.GetMinecraftVersions();
-                if (!validMinecraftVersions.Contains(MinecraftVersion))
+                if (!validMinecraftVersions.Contains(Modpack.MinecraftVersion))
                 {
                     messageShower.ShowMessageAsync("Unknown Minecraft version, valid versions are:");
                     foreach (string validMinecraftVersion in validMinecraftVersions)
@@ -308,7 +266,7 @@ namespace ModpackHelper.CLI
 
                 // Remove the used values from the list
                 args.Remove("-MCv");
-                args.Remove(MinecraftVersion);
+                args.Remove(Modpack.MinecraftVersion);
             }
             else
             {
@@ -319,11 +277,11 @@ namespace ModpackHelper.CLI
             // Check if we should pack config files
             if (args.Contains("-Cfg"))
             {
-                PackConfigFiles = true;
+                Modpack.CreateConfigZip = true;
                 args.Remove("-Cfg");
             }
 
-            // Check if we should pack a forge file (modpack.jar)
+            // Check if we should pack a forge file (Modpack.jar)
             if (args.Contains("-f"))
             {
                 // Make sure there is an argument after this one
@@ -335,11 +293,12 @@ namespace ModpackHelper.CLI
                 }
 
                 // Get the forge version
-                int t = -1;
+                int t;
                 bool converted = int.TryParse(args[index + 1], out t);
                 if (converted)
                 {
-                    ForgeVersionToPack = t;
+                    Modpack.ForgeVersion = t.ToString();
+                    Modpack.CreateForgeZip = true;
                 }
                 else
                 {
@@ -348,10 +307,10 @@ namespace ModpackHelper.CLI
                 }
 
                 // Check that the selected forgeversion actually can be used
-                List<int> validForgeVersions = Fh.GetForgeBuilds(MinecraftVersion);
-                if (!validForgeVersions.Contains(ForgeVersionToPack))
+                List<int> validForgeVersions = Fh.GetForgeBuilds(Modpack.MinecraftVersion);
+                if (!validForgeVersions.Contains(int.Parse(Modpack.ForgeVersion)))
                 {
-                    messageShower.ShowMessageAsync("Unknown or invalid forge version for the selected version of Minecraft. Valid versions for Minecraft " + MinecraftVersion + " is:");
+                    messageShower.ShowMessageAsync("Unknown or invalid forge version for the selected version of Minecraft. Valid versions for Minecraft " + Modpack.MinecraftVersion + " is:");
                     StringBuilder sb = new StringBuilder();
                     foreach (int validForgeVersion in validForgeVersions)
                         sb.Append(validForgeVersion + "\t");
@@ -361,7 +320,7 @@ namespace ModpackHelper.CLI
 
                 // Remove the used values from the list
                 args.Remove("-f");
-                args.Remove(ForgeVersionToPack.ToString());
+                args.Remove(Modpack.ForgeVersion);
             }
 
             // Make sure we actually used everything the user entered
@@ -384,7 +343,7 @@ namespace ModpackHelper.CLI
         /// <param name="messageShower"></param>
         public void Pack(IMessageShower messageShower)
         {
-            ModExtractor modExtractor = new ModExtractor(MinecraftVersion, fileSystem);
+            ModExtractor modExtractor = new ModExtractor(Modpack.MinecraftVersion, fileSystem);
 
             // Measure the time it takes to get all the modinfo
             // It's fast by the way ;)
@@ -392,7 +351,7 @@ namespace ModpackHelper.CLI
             Stopwatch sw = new Stopwatch();
             sw.Start();
             // Get mod info of the mods in the input directory
-            List<Mcmod> mods = modExtractor.FindAllMods(InputDirectory);
+            List<Mcmod> mods = modExtractor.FindAllMods(Modpack.InputDirectory);
             sw.Stop();
             messageShower.ShowMessageAsync("Extracting " + mods.Count + " mods data took: " + sw.Elapsed);
             // Load some FTB data in we can query against for smartness
@@ -411,14 +370,14 @@ namespace ModpackHelper.CLI
                 db.Save();
             }
 
-            if (ClearOutputDirectoryOnRun)
+            if (Modpack.ClearOutputDirectory)
             {
                 int attempts = 0;
                 while (attempts < 20)
                 {
                     try
                     {
-                        Directory.Delete(OutputDirectory, true);
+                        Directory.Delete(Modpack.OutputDirectory, true);
                         break;
                     }
                     catch (Exception)
@@ -435,17 +394,19 @@ namespace ModpackHelper.CLI
                 }
             }
 
+
+
             // Actually pack the mods
             messageShower.ShowMessageAsync("Packing Mods, please stand by, this can take a moment!");
             sw.Restart();
             ModPacker packer = new ModPacker(fileSystem);
-            packer.Pack(mods, fileSystem.DirectoryInfo.FromDirectoryName(OutputDirectory));
+            packer.Pack(mods, Modpack);
             sw.Stop();
             messageShower.ShowMessageAsync("packing " + mods.Count + " mods took: " + sw.Elapsed);
 
             // Output list of all the mods packed
             string html = packer.GetFinishedHTML();
-            var p = fileSystem.Path.Combine(OutputDirectory, "mods.html");
+            var p = fileSystem.Path.Combine(Modpack.OutputDirectory, "mods.html");
             fileSystem.File.WriteAllText(p, html);
             messageShower.ShowMessage("Finished doing everything. There is now a list of the packed mods at: " + p + Environment.NewLine + "Press enter to continue.");
         }
@@ -475,7 +436,7 @@ namespace ModpackHelper.CLI
                     // Get the minecraft version
                     if (string.IsNullOrWhiteSpace(missingMod.Mcversion) || missingMod.Mcversion.ToLower().Contains("example") || missingMod.Mcversion.Contains("${"))
                     {
-                        missingMod.Mcversion = MinecraftVersion;
+                        missingMod.Mcversion = Modpack.MinecraftVersion;
                     }
 
                     if(missingMod.IsValid()) continue;
