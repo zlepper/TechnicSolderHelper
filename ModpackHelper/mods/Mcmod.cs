@@ -415,7 +415,8 @@ namespace ModpackHelper.Shared.Mods
 
         public string GetSafeModId()
         {
-            return Modid.Replace(" ", "-").Replace("|", string.Empty);
+            // Regex get rids of any illigal windows explorer characters
+            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?", string.Empty);
         }
     }
 }
