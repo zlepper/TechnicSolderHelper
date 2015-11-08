@@ -323,11 +323,11 @@ namespace TechnicSolderHelper
                 bw.DoWork += (o, arg) =>
                 {
 
-                    var modid = mod.Modid.Contains("|")
-                        ? mod.Modid.Replace("|", string.Empty)
-                            .Replace(".", string.Empty)
-                            .ToLower()
-                        : mod.Modid.Replace(".", string.Empty).ToLower();
+                    var modid = mod.Modid
+                        .Replace("|", string.Empty)
+                        .Replace(".", string.Empty)
+                        .Replace(":", string.Empty)
+                        .ToLower();
                     string modversion = mod.Mcversion.ToLower() + "-" + mod.Version.ToLower();
                     if (useSolderBool && !force)
                     {
@@ -359,12 +359,9 @@ namespace TechnicSolderHelper
                     if (!_modsSqLhelper.IsFileInSolder(modfile) || force)
                     {
                         var modDir = Path.Combine(_outputDirectory, "mods",
-                            mod.Modid.Contains("|")
-                                ? mod.Modid.Replace("|", string.Empty)
+                            mod.Modid.Replace("|", string.Empty)
                                     .Replace(".", string.Empty)
-                                    .ToLower()
-                                    .Replace(Globalfunctions.PathSeperator.ToString(), string.Empty)
-                                : mod.Modid.Replace(".", string.Empty)
+                                    .Replace(":", string.Empty)
                                     .ToLower()
                                     .Replace(Globalfunctions.PathSeperator.ToString(), string.Empty), "mods");
                         Directory.CreateDirectory(modDir);
@@ -384,25 +381,22 @@ namespace TechnicSolderHelper
                         Directory.CreateDirectory(tempFileDirectory);
                         File.Copy(modfile, tempModFile, true);
 
-                        var modArchive = mod.Modid.Contains("|")
-                            ? Path.Combine(_outputDirectory, "mods",
+                        var modArchive = Path.Combine(_outputDirectory, "mods",
                                 mod.Modid.Replace("|", string.Empty)
                                     .Replace(".", string.Empty)
+                                    .Replace(":", string.Empty)
                                     .ToLower(),
                                 mod.Modid.Replace("|", string.Empty)
                                     .Replace(".", string.Empty)
-                                    .ToLower() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip")
-                            : Path.Combine(_outputDirectory, "mods", mod.Modid.Replace(".", string.Empty).ToLower(),
-                                mod.Modid.Replace(".", string.Empty).ToLower() + "-" + mod.Mcversion.ToLower() + "-" +
-                                mod.Version.ToLower() + ".zip");
+                                    .Replace(":", string.Empty)
+                                    .ToLower() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip");
                         if (Globalfunctions.IsUnix())
                         {
                             Environment.CurrentDirectory = Path.Combine(_outputDirectory, "mods",
-                                mod.Modid.Contains("|")
-                                    ? mod.Modid.Replace("|", string.Empty)
+                                mod.Modid.Replace("|", string.Empty)
                                         .Replace(".", string.Empty)
-                                        .ToLower()
-                                    : mod.Modid.Replace(".", string.Empty).ToLower());
+                                        .Replace(":", string.Empty)
+                                        .ToLower());
                             _startInfo.FileName = "zip";
                             _startInfo.Arguments = "-r \"" + modArchive + "\" \"mods\" ";
                         }
@@ -418,7 +412,10 @@ namespace TechnicSolderHelper
                         _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, true);
 
                         // Add mod info to a html file
-                        CreateTableRow(mod.Name.Replace("|", string.Empty), modid, modversion);
+                        CreateTableRow(mod.Name.Replace("|", string.Empty), modid.Replace("|", string.Empty)
+                                        .Replace(".", string.Empty)
+                                        .Replace(":", string.Empty)
+                                        .ToLower(), modversion);
 
                         process.WaitForExit();
 
@@ -428,10 +425,16 @@ namespace TechnicSolderHelper
                             string archive = Path.Combine(_outputDirectory, "mods", modArchive);
                             SolderSqlHandler sqh = new SolderSqlHandler();
                             string md5Value = SqlHelper.CalculateMd5(archive).ToLower();
-                            if (sqh.IsModversionOnline(modid, modversion))
+                            if (sqh.IsModversionOnline(modid.Replace("|", string.Empty)
+                                        .Replace(".", string.Empty)
+                                        .Replace(":", string.Empty)
+                                        .ToLower(), modversion))
                             {
                                 Debug.WriteLine(string.Format("Updating mod on solder with Modid: {0} modversion: {1} md5value: {2}", modid, modversion, md5Value), doDebug.Checked);
-                                sqh.UpdateModversionMd5(modid, modversion, md5Value);
+                                sqh.UpdateModversionMd5(modid.Replace("|", string.Empty)
+                                        .Replace(".", string.Empty)
+                                        .Replace(":", string.Empty)
+                                        .ToLower(), modversion, md5Value);
 								Debug.WriteLine(string.Format("Done updating mod on solder with modid: {0}", modid));
                             }
                             else
@@ -439,13 +442,22 @@ namespace TechnicSolderHelper
                                 id = sqh.GetModId(modid);
                                 if (id == -1)
                                 {
-                                    sqh.AddModToSolder(modid, mod.Description, GetAuthors(mod), mod.Url,
+                                    sqh.AddModToSolder(modid.Replace("|", string.Empty)
+                                        .Replace(".", string.Empty)
+                                        .Replace(":", string.Empty)
+                                        .ToLower(), mod.Description, GetAuthors(mod), mod.Url,
                                         mod.Name);
                                 }
                                 Debug.WriteLine(string.Format("Adding mod to solder with Modid: {0} modversion: {1} md5value: {2}", modid, modversion, md5Value), doDebug.Checked);
-                                sqh.AddNewModversionToSolder(modid, modversion, md5Value);
+                                sqh.AddNewModversionToSolder(modid.Replace("|", string.Empty)
+                                        .Replace(".", string.Empty)
+                                        .Replace(":", string.Empty)
+                                        .ToLower(), modversion, md5Value);
                             }
-                            id = sqh.GetModId(modid);
+                            id = sqh.GetModId(modid.Replace("|", string.Empty)
+                                        .Replace(".", string.Empty)
+                                        .Replace(":", string.Empty)
+                                        .ToLower());
                             int modVersionId = sqh.GetModversionId(id, modversion);
                             sqh.AddModversionToBuild(_buildId, modVersionId);
 							Debug.WriteLine(string.Format("Done addong mod {0} to build", modid));
