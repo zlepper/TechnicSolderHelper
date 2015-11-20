@@ -3,61 +3,78 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using ModpackHelper.Shared.Mods;
+using RestSharp;
+using RestSharp.Authenticators;
 
 namespace ModpackHelper.Shared.Web
 {
-    public class SolderWebClient : CookieAwareWebClient, ISolderWebClient
+    public static class IRestRequestExtension
+    {
+        public static void MakeAjaxRequestType(this IRestRequest restRequest)
+        {
+            // Get around stupid ajax checks in solder
+            restRequest.AddHeader("X-Requested-With", "XMLHttpRequest");
+        }
+    }
+
+    public class SolderWebClient :  ISolderWebClient
     {
         private readonly Uri baseUrl;
-        public SolderWebClient(string baseUrl):base()
+        private readonly IRestClient client;
+        private readonly CookieContainer cookieContainer;
+        
+
+        public SolderWebClient(string baseUrl, IRestClient c = null)
         {
+            if (c == null)
+            {
+                client = new RestClient(baseUrl);
+            }
+            cookieContainer = new CookieContainer();
+            client.CookieContainer = cookieContainer;
             this.baseUrl = new Uri(baseUrl);
         }
 
-        public SolderWebClient(string baseUrl, CookieContainer cc) : base(cc)
-        {
-            this.baseUrl = new Uri(baseUrl);
-        }
-
-        /// <summary>
-        /// Logs into solder
-        /// See this: http://stackoverflow.com/questions/17183703/ for more
-        /// </summary>
         public void Login(string email, string password)
         {
-            Uri loginUrl = new Uri(baseUrl, "login");
-            NameValueCollection loginData = new NameValueCollection
-            {
-              { "email", email },
-              { "password", password }
-            };
-            Login(loginUrl.AbsoluteUri, loginData);
+            client.Authenticator = new SimpleAuthenticator("email", email, "password", password);
+            var request = new RestRequest("login", Method.POST);
+            client.Execute(request);
         }
 
         public void CreatePack(string modpackname, string slug)
         {
-            Uri createModpackUri = new Uri(baseUrl, "modpack/create");
-            NameValueCollection modpackData = new NameValueCollection
-            {
-                {"name", modpackname },
-                {"slug", slug }
-            };
-            byte[] responseBytes = UploadValues(createModpackUri, "POST", modpackData);
-            string response = Encoding.UTF8.GetString(responseBytes);
-            Debug.WriteLine(response);
+            var request = new RestRequest("modpack/create", Method.POST);
+            request.AddParameter("name", modpackname);
+            request.AddParameter("slug", slug);
+            client.Execute(request);
         }
 
-        public void AddMod(string modname, string modslug, string authors, string description, string modurl)
+        public void AddMod(Mcmod mod)
         {
-            throw new NotImplementedException();
+            var request = new RestRequest("mod/create", Method.POST);
+            request.AddParameter("pretty_name", mod.Name);
+            request.AddParameter("name", mod.GetSafeModId());
+            request.AddParameter("author", string.Join(", ", mod.GetAuthors()));
+            request.AddParameter("description", mod.Description);
+            request.AddParameter("link", mod.Url);
+            var res = client.Execute(request);
+            Debug.WriteLine(res);
         }
 
-        public void AddModVersion(string modId, string version)
+        public void AddModVersion(string modId, string md5, string version)
         {
-            throw new NotImplementedException();
+            var request = new RestRequest("mod/add-version", Method.POST);
+            request.AddParameter("mod-id", modId);
+            request.AddParameter("add-version", version);
+            //request.AddParameter("add-md5", md5);
+            request.MakeAjaxRequestType();
+            var res = client.Execute(request);
+            Debug.WriteLine(res);
         }
 
-        public void RehashModVersion(string modversionId)
+        public void RehashModVersion(string modversionId, string md5)
         {
             throw new NotImplementedException();
         }

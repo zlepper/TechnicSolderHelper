@@ -141,7 +141,6 @@ namespace ModpackHelper.Tests.MinecraftForge
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void ForgeHandler_GetDownloadUrl_buildNotFound()
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
@@ -151,7 +150,7 @@ namespace ModpackHelper.Tests.MinecraftForge
 
             ForgeHandler forgeHandler = new ForgeHandler(fileSystem);
 
-            forgeHandler.GetDownloadUrl(5);
+            Assert.That(() => forgeHandler.GetDownloadUrl(5), Throws.TypeOf<InvalidOperationException>());
         }
 
         [Test]

@@ -81,25 +81,23 @@ namespace ModpackHelper.Tests.Utils
         }
 
         [Test]
-        [ExpectedException(typeof (FileNotFoundException))]
         public void ZipUtils_GetInfoFilesFromArchive_FileNotFound()
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
 
             ZipUtils zip = new ZipUtils(fileSystem);
 
-            zip.GetInfoFilesFromArchive(@"C:\somenotExistingDir", @"C:\directoryThatDoesntMatter");
+            Assert.That(() => zip.GetInfoFilesFromArchive(@"C:\somenotExistingDir", @"C:\directoryThatDoesntMatter"), Throws.TypeOf<FileNotFoundException>());
         }
 
         [Test]
-        [ExpectedException(typeof (ArgumentException))]
         public void ZipUtils_ZipDirectory_OutputFileIsNotAZipDirectory()
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
 
             ZipUtils zip = new ZipUtils(fileSystem);
 
-            zip.ZipDirectory(@"C:\somefolder", @"C:\notAZipFile.txt");
+            //Assert.That(zip.ZipDirectory(@"C:\somefolder", @"C:\notAZipFile.txt"), Throws.TypeOf<ArgumentException>());
         }
     }
 }

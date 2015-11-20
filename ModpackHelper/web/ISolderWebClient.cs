@@ -1,4 +1,6 @@
-﻿namespace ModpackHelper.Shared.Web
+﻿using ModpackHelper.Shared.Mods;
+
+namespace ModpackHelper.Shared.Web
 {
     public interface ISolderWebClient
     {
@@ -30,22 +32,20 @@
         ///         description: Description
         ///         link: Mod url
         /// </summary>
-        /// <param name="modname">The name of the mod to create</param>
-        /// <param name="modslug">The modslug of the mod (ModID)</param>
-        /// <param name="authors">The authors of the mod, optional</param>
-        /// <param name="description">A description of the mod, optional</param>
-        /// <param name="modurl">A url to the mod, optional</param>
-        void AddMod(string modname, string modslug, string authors, string description, string modurl);
+        /// <param name="mod">The mod to add to solder</param>
+        void AddMod(Mcmod mod);
 
         /// <summary>
         /// Adds/update a version of a mod
         /// Should hit: http://solder.zlepper.dk/mod/add-version with POST
         ///         mod-id: the numeric id of the mod
         ///         add-version: The version of the mod (minecraft version + "-" + mod version)
+        ///         add-md5: The md5 of the packed mod
         /// </summary>
         /// <param name="modId"></param>
+        /// <param name="md5">The md5 value of the packed mod</param>
         /// <param name="version"></param>
-        void AddModVersion(string modId, string version);
+        void AddModVersion(string modId, string md5, string version);
 
         /// <summary>
         /// Rehashes a specific mod version
@@ -54,6 +54,7 @@
         ///         ver_id: The id of the modversion
         /// </summary>
         /// <param name="modversionId"></param>
-        void RehashModVersion(string modversionId);
+        /// <param name="md5">The md5 of the packed mod</param>
+        void RehashModVersion(string modversionId, string md5);
     }
 }

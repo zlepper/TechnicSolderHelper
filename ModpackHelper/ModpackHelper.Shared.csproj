@@ -55,6 +55,10 @@
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -120,14 +124,9 @@
     <Compile Include="Web\Api\Author.cs" />
     <Compile Include="Web\Api\HelperUser.cs" />
     <Compile Include="Web\Api\User.cs" />
-    <Compile Include="Web\CookieAwareWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Web\FTP\FTPUploader.cs" />
     <Compile Include="Web\ISolderWebClient.cs" />
-    <Compile Include="Web\SolderWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Web\SolderWebClient.cs" />
     <Compile Include="UserInteraction\IDirectoryFinder.cs" />
     <Compile Include="Web\Solder\SolderMySQLClient.cs" />
   </ItemGroup>

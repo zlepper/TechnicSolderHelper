@@ -47,7 +47,6 @@ namespace ModpackHelper.Tests
 
 
         [Test]
-        [ExpectedException(typeof(SerializationException))]
         public void ModExtractor_GetMcmodDataFromFile_ShouldThrowSerializationException()
         {
             MockFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>()
@@ -57,14 +56,13 @@ namespace ModpackHelper.Tests
 
             ModExtractor modExtractor = new ModExtractor("1.7.10", fileSystem);
 
-            modExtractor.GetMcmodDataFromFile(@"C:\mcmod.json");
+            Assert.That(() => modExtractor.GetMcmodDataFromFile(@"C:\mcmod.json"), Throws.TypeOf<SerializationException>());
         }
 
         [Test]
-        [ExpectedException(typeof(SerializationException))]
         public void ModExtractor_GetMcmodDataFromJson_ShouldThrowSerializationException()
         {
-            ModExtractor.GetMcmodDataFromJson("{{{{");
+            Assert.That(() => ModExtractor.GetMcmodDataFromJson("{{{{"), Throws.TypeOf<SerializationException>());
         }
     }
 }
