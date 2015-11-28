@@ -111,10 +111,12 @@ namespace ModpackHelper.GUI
             bool createForgeZip = createTechnicPack && createForgeZipCheckBox.Checked;
             // Indicates if we should clear the output directory before packing
             bool clearOutputDirectory = ClearOutpuDirectoryCheckBox.Checked;
+            // Indicates if we should force a solder update no matter what
+            bool forceSolder = ForceSolderUpdateCheckBox.Checked;
 
             // Indicates if we should upload to an FTP server
-            bool uploadToFTP = UploadToFTPCheckbox.Checked;
-            if (uploadToFTP)
+            bool uploadToFtp = UploadToFTPCheckbox.Checked;
+            if (uploadToFtp)
             {
                 var ch = new ConfigHandler(fileSystem);
                 if (ch.Configs.FTPLoginInfo == null || !ch.Configs.FTPLoginInfo.IsValid())
@@ -180,6 +182,30 @@ namespace ModpackHelper.GUI
                 valid = false;
             }
 
+            string minJava = "";
+            if (useSolder)
+            {
+                minJava = MinimumJavaVersionCombobox.SelectedText;
+            }
+
+            string minMemory = "0";
+            if (useSolder)
+            {
+                int m;
+                minMemory = minimumMemoryTextBox.Text;
+                bool parsed = int.TryParse(minMemory, out m);
+                if (!parsed || m < 0)
+                {
+                    messageShower.ShowMessageAsync("The entered minimum memory is not a valid value.");
+                    valid = false;
+                } 
+                if(parsed && m == 0)
+                {
+                    minMemory = "";
+                }
+            }
+
+
             // Check if we had any errors along the way
             if (!valid) return;
 
@@ -207,8 +233,11 @@ namespace ModpackHelper.GUI
                 modpack.CreateSolderPack = createSolderPack;
                 modpack.ForgeVersion = selectedForgeVersion;
                 modpack.UseSolder = useSolder;
-                modpack.UploadToFTP = uploadToFTP;
+                modpack.UploadToFTP = uploadToFtp;
                 modpack.Version = modpackVersion;
+                modpack.MinJava = minJava;
+                modpack.MinMemory = minMemory;
+                modpack.ForceSolder = forceSolder;
 
                 // Change the last selected pack, so we know what pack to load on startup
                 c.LastSelectedModpack = modpackName;
@@ -268,13 +297,62 @@ namespace ModpackHelper.GUI
                         string html = packer.GetFinishedHTML();
                         fileSystem.File.WriteAllText(fileSystem.Path.Combine(modpack.OutputDirectory, "mods.html"), html);
                         messageShower.ShowMessageAsync("Done packing mods");
+                        if (modpack.UploadToFTP)
+                        {
+                            UploadToFtp(mods, modpack);
+                        } else if (modpack.CreateSolderPack && modpack.UseSolder)
+                        {
+                            UpdateSolder(mods, modpack);
+                        }
                     };
                     bw.RunWorkerAsync();
+
+                    // Upload mods to the webapi
+                    BackgroundWorker bw2 = new BackgroundWorker();
+                    bw2.DoWork += (sender, args) =>
+                    {
+                        foreach (Mcmod mod in mods)
+                        {
+                            mod.UploadToApi();
+                        }
+                    };
+                    bw2.RunWorkerAsync();
                 };
             }
         }
 
+        private void UpdateSolder(List<Mcmod> mods, Modpack modpack)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => UpdateSolder(mods, modpack)));
+            }
+            else
+            {
+                var ch = new ConfigHandler(fileSystem);
+                var sli = ch.Configs.SolderLoginInfo;
+                var s = new Solder(fileSystem);
+                s.Initialize(sli.Username, sli.Password, mods, modpack);
+                s.Update(sli.Address);
+            }
+        }
 
+        private void UploadToFtp(List<Mcmod> mods, Modpack modpack)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => UploadToFtp(mods, modpack)));
+            }
+            else
+            {
+                FtpUploaderForm f = new FtpUploaderForm(fileSystem.DirectoryInfo.FromDirectoryName(Path.Combine(modpack.OutputDirectory, "mods")));
+                f.ShowDialog(this);
+                if (modpack.UseSolder)
+                {
+                    UpdateSolder(mods, modpack);
+                }
+            }
+        }
 
 
         private void MinecraftVersionDropdown_SelectedIndexChanged(object sender, EventArgs e)
@@ -298,7 +376,7 @@ namespace ModpackHelper.GUI
             ConfigHandler ch = new ConfigHandler(fileSystem);
             if (ch.Configs.SolderLoginInfo == null && UseSolderCheckbox.Checked)
             {
-                messageShower.ShowMessageAsync("This feature requires that Solder is run under MySQL. " + Environment.NewLine + "The Solder connection has not been configured, please do so. ");
+                messageShower.ShowMessageAsync("The Solder connection has not been configured, please do so. ");
             }
 
             SolderConfigurePanel.Visible = UseSolderCheckbox.Checked;

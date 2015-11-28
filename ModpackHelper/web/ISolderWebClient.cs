@@ -1,4 +1,5 @@
 ﻿using ModpackHelper.Shared.Mods;
+using ModpackHelper.Shared.Utils.Config;
 
 namespace ModpackHelper.Shared.Web
 {
@@ -33,7 +34,7 @@ namespace ModpackHelper.Shared.Web
         ///         link: Mod url
         /// </summary>
         /// <param name="mod">The mod to add to solder</param>
-        void AddMod(Mcmod mod);
+        string AddMod(Mcmod mod);
 
         /// <summary>
         /// Adds/update a version of a mod
@@ -56,5 +57,14 @@ namespace ModpackHelper.Shared.Web
         /// <param name="modversionId"></param>
         /// <param name="md5">The md5 of the packed mod</param>
         void RehashModVersion(string modversionId, string md5);
+
+        string CreateBuild(Modpack modpack);
+
+        string GetModpackId(string slug);
+        string GetModId(Mcmod mod);
+
+        void AddBuildToModpack(Mcmod mod, string modpackbuildid);
+
+        string GetBuildId(Modpack modpack);
     }
 }

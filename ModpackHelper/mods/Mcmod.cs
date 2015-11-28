@@ -161,6 +161,12 @@ namespace ModpackHelper.Shared.Mods
         /// </summary>
         public string JarMd5 { get; set; }
 
+        /// <summary>
+        /// The path to the output file that was generated
+        /// </summary>
+        [JsonIgnore]
+        public string OutputFile { get; set; }
+
         public static Mcmod GetMcmod(string json)
         {
             try
@@ -416,7 +422,7 @@ namespace ModpackHelper.Shared.Mods
         public string GetSafeModId()
         {
             // Regex get rids of any illigal windows explorer characters
-            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?", string.Empty);
+            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?|'", string.Empty);
         }
     }
 }

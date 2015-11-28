@@ -55,6 +55,10 @@ namespace ModpackHelper.GUI.Helpers
                 modpackHelper.CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
                 modpackHelper.ZipPackRadioButton.Checked = !(modpackHelper.SolderPackRadioButton.Checked = modpack.CreateSolderPack);
                 modpackHelper.technicPermissionsPublicPack.Checked = !(modpackHelper.technicPermissionsPrivatePack.Checked = modpack.TechnicPermissionsPrivate);
+                modpackHelper.UseSolderCheckbox.Checked = modpack.UseSolder;
+                modpackHelper.MinimumJavaVersionCombobox.SelectedText = modpack.MinJava;
+                modpackHelper.minimumMemoryTextBox.Text = modpack.MinMemory;
+                modpackHelper.ForceSolderUpdateCheckBox.Checked = modpack.ForceSolder;
                 if (!string.IsNullOrWhiteSpace(modpack.ForgeVersion))
                     modpackHelper.forgeVersionDropdown.SelectedIndex = modpackHelper.forgeVersionDropdown.Items.IndexOf(modpack.ForgeVersion);
             }

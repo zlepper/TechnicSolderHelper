@@ -62,13 +62,13 @@ namespace ModpackHelper.Shared.Web.FTP
         /// <param name="fileSystem">The filesystem the FTPUploader should work against</param>
         public FTPUploader(FTPLoginInfo ftpLoginInfo, IFileSystem fileSystem)
         {
+            url = ftpLoginInfo.Address;
             if (!url.ToLower().StartsWith("ftp://"))
             {
                 throw new ArgumentException("url has to be a ftp:// url");
             }
             username = ftpLoginInfo.Username;
             password = ftpLoginInfo.Password;
-            url = ftpLoginInfo.Address;
             this.fileSystem = fileSystem;
         }
 
@@ -83,6 +83,7 @@ namespace ModpackHelper.Shared.Web.FTP
 
             foreach (FileInfoBase file in files)
             {
+                OnWorkingFileChanged(file.Name);
                 UploadFile(file.FullName, file.FullName.Replace(folder.FullName + Path.DirectorySeparatorChar, ""), "mods");
             }
 
@@ -218,7 +219,7 @@ namespace ModpackHelper.Shared.Web.FTP
                     using (Stream requestStream = request.GetRequestStream())
                     {
                         // Ensured that we can get upload progress
-                        byte[] buffer = new byte[1024 * 100];
+                        byte[] buffer = new byte[1024];
                         int totalReadBytesCount = 0;
                         int readBytesCount;
                         while ((readBytesCount = fs.Read(buffer, 0, buffer.Length)) > 0)
@@ -226,7 +227,7 @@ namespace ModpackHelper.Shared.Web.FTP
                             requestStream.Write(buffer, 0, readBytesCount);
                             // Calculate progress
                             totalReadBytesCount += readBytesCount;
-                            double progress = totalReadBytesCount * 100.0 / requestStream.Length;
+                            double progress = totalReadBytesCount * 100.0 / fs.Length;
                             OnFileProgressChanged(progress);
                         }
 

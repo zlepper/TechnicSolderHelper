@@ -13,6 +13,7 @@ using ModpackHelper.GUI.UserInteraction;
 using ModpackHelper.IO;
 using ModpackHelper.Shared.UserInteraction;
 using ModpackHelper.Shared.Utils.Config;
+using ModpackHelper.Shared.Web;
 using ModpackHelper.Shared.Web.Solder;
 
 namespace ModpackHelper.GUI.Windows
@@ -33,8 +34,6 @@ namespace ModpackHelper.GUI.Windows
             ServerAddressTextBox.Text = solderInfo.Address;
             UsernameTextBox.Text = solderInfo.Username;
             PasswordTextBox.Text = solderInfo.Password;
-            DatabaseTextBox.Text = solderInfo.DatabaseSchema;
-            PrefixTextBox.Text = solderInfo.TablePrefix;
         }
 
         public MySQLConnectForm() : this(new FileSystem(), new MessageShower())
@@ -47,9 +46,7 @@ namespace ModpackHelper.GUI.Windows
             return new SolderLoginInfo()
             {
                 Address = ServerAddressTextBox.Text,
-                DatabaseSchema = DatabaseTextBox.Text,
                 Password = PasswordTextBox.Text,
-                TablePrefix = PrefixTextBox.Text,
                 Username = UsernameTextBox.Text
             };
 
@@ -60,10 +57,8 @@ namespace ModpackHelper.GUI.Windows
             SolderLoginInfo sli = CreateSli();
             if (sli.IsValid())
             {
-                SolderMySQLClient ssc = new SolderMySQLClient(sli);
-                messageShower.ShowMessageAsync(ssc.TestConnection()
-                    ? Resources.MySQLConnectionSuccess
-                    : Resources.MySQLConnectionFailed);
+                ISolderWebClient wc = new SolderWebClient(sli.Address);
+                wc.Login(sli.Username, sli.Password);
             }
             else
             {

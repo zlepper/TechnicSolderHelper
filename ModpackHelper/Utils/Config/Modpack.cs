@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -90,5 +91,29 @@ namespace ModpackHelper.Shared.Utils.Config
         /// </summary>
         [JsonIgnore]
         public bool RepackEverything { get; set; }
+
+        /// <summary>
+        /// The minimum java version required to play the pack
+        /// </summary>
+        public string MinJava { get; set; }
+
+        /// <summary>
+        /// The minimum required amount of memory to play the pack
+        /// </summary>
+        public string MinMemory { get; set; }
+
+        /// <summary>
+        /// Indicates if the mods should be uploaded and reshashed no matter what
+        /// </summary>
+        public bool ForceSolder { get; set; }
+
+        /// <summary>
+        /// Generates a safe modpack slug
+        /// </summary>
+        /// <returns></returns>
+        public string GetSlug()
+        {
+            return Regex.Replace(Name.ToLower().Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?|'", string.Empty);
+        }
     }
 }

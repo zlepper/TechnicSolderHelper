@@ -67,7 +67,7 @@ namespace ModpackHelper.Shared.Utils.Config
         public bool IsValid()
         {
             return !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrWhiteSpace(Address) &&
-                   !string.IsNullOrWhiteSpace(DatabaseSchema);
+                   !string.IsNullOrWhiteSpace(Password);
         }
     }
 }
