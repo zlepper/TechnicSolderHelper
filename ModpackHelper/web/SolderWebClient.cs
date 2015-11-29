@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Net;
-using System.Runtime.Serialization;
-using System.Text;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Web.Solder.Responses;
 using Newtonsoft.Json;
+using ModpackHelper.Shared.Utils.Config;
 using RestSharp;
 using RestSharp.Authenticators;
+using Modpack = ModpackHelper.Shared.Utils.Config.Modpack;
 
 namespace ModpackHelper.Shared.Web
 {
@@ -45,14 +44,22 @@ namespace ModpackHelper.Shared.Web
 
         public void CreatePack(string modpackname, string slug)
         {
-            var request = new RestRequest("modpack/create", Method.POST);
-            request.AddParameter("name", modpackname);
-            request.AddParameter("slug", slug);
-            var res = client.Execute(request);
+            // Only create the pack if it's not already there. 
+            try
+            {
+                string id = GetModpackId(slug);
+            }
+            catch (Exception)
+            {
+                var request = new RestRequest("modpack/create", Method.POST);
+                request.AddParameter("name", modpackname);
+                request.AddParameter("slug", slug);
+                var res = client.Execute(request);
+            }
             
         }
 
-        public void AddMod(Mcmod mod)
+        public string AddMod(Mcmod mod)
         {
             var request = new RestRequest("mod/create", Method.POST);
             request.AddParameter("pretty_name", mod.Name);
@@ -62,6 +69,7 @@ namespace ModpackHelper.Shared.Web
             request.AddParameter("link", mod.Url);
             var res = client.Execute(request);
             Debug.WriteLine(res);
+            return GetModId(mod);
         }
 
         public void AddModVersion(string modId, string md5, string version)
@@ -69,7 +77,7 @@ namespace ModpackHelper.Shared.Web
             var request = new RestRequest("mod/add-version", Method.POST);
             request.AddParameter("mod-id", modId);
             request.AddParameter("add-version", version);
-            request.AddParameter("md5", md5);
+            request.AddParameter("add-md5", md5);
             request.MakeAjaxRequestType();
             var res = client.Execute(request);
             Debug.WriteLine(res);
@@ -83,15 +91,7 @@ namespace ModpackHelper.Shared.Web
             request.MakeAjaxRequestType();
             var res = client.Execute(request);
         }
-
-        public string GetModId(Mcmod mod)
-        {
-            var request = new RestRequest("api/mod/{modname}");
-            request.AddParameter("modname", mod.GetSafeModId(), ParameterType.UrlSegment);
-            var res = client.Execute(request);
-            Mod m = JsonConvert.DeserializeObject<Mod>(res.Content);
-            return !string.IsNullOrWhiteSpace(m.Id) ? m.Id : null;
-        }
+        
 
         public bool IsModversionOnline(Mcmod mod)
         {
@@ -102,10 +102,77 @@ namespace ModpackHelper.Shared.Web
             ModVersion mv = JsonConvert.DeserializeObject<ModVersion>(res.Content);
             return !string.IsNullOrWhiteSpace(mv.Id);
         }
-
-        public string GetModpackId(string modpackName)
+        
+        public string CreateBuild(Modpack modpack)
         {
-            var request = new RestRequest("api/");
+            string id = GetModpackId(modpack.GetSlug());
+            var request = new RestRequest("mods/add-build/{id}", Method.POST);
+            request.AddParameter("id", id, ParameterType.UrlSegment);
+            request.AddParameter("version", modpack.Version);
+            request.AddParameter("minecraft", modpack.MinecraftVersion);
+            request.AddParameter("java-version", modpack.MinJava);
+            request.AddParameter("memory-enabled", !string.IsNullOrWhiteSpace(modpack.MinMemory));
+            request.AddParameter("memory", modpack.MinMemory);
+            var res = client.Execute(request);
+            Debug.WriteLine(res);
+
+            // Return the build id because the response redirects
+            return GetBuildId(modpack);
+        }
+
+        public string GetBuildId(Modpack modpack)
+        {
+            var request = new RestRequest("api/modpack/{modpack}/{build}");
+            request.AddParameter("modpack", modpack.GetSlug(), ParameterType.UrlSegment);
+            request.AddParameter("build", modpack.Version, ParameterType.UrlSegment);
+            var res = client.Execute<Mods.Solder.ModpackWithBuild>(request);
+            return res.Data.id;
+        }
+
+        public string GetModpackId(string slug)
+        {
+            var request = new RestRequest("api/{modpack}");
+            request.AddParameter("modpack", slug, ParameterType.UrlSegment);
+            var res = client.Execute<Mods.Solder.ModpackWithoutBuild>(request);
+            try
+            {
+                return res.Data.id;
+            }
+            catch (NullReferenceException)
+            {
+                return null;
+            }
+        }
+
+        public string GetModId(Mcmod mod)
+        {
+            var request = new RestRequest("api/mod/{mod}");
+            request.AddParameter("mod", mod.GetSafeModId(), ParameterType.UrlSegment);
+            var res = client.Execute<Mods.Solder.ModpackWithBuild.Mod>(request);
+            try
+            {
+                return res.Data.id;
+            }
+            catch (NullReferenceException)
+            {
+                return null;
+            }
+        }
+
+        public void AddBuildToModpack(Mcmod mod, string modpackbuildid)
+        {
+            var request = new RestRequest("modpack/build/modify/add", Method.POST);
+            request.MakeAjaxRequestType();
+            request.AddParameter("build", modpackbuildid);
+            request.AddParameter("mod-name", mod.Name);
+            request.AddParameter("mod-version", mod.Version);
+            var res = client.Execute<AddBuildToModpackResponse>(request);
+            if(!res.Data.Status.Equals("success")) throw new Exception("Something went wrong when adding a mod to a build");
+        }
+
+        private class AddBuildToModpackResponse
+        {
+            public string Status { get; set; }
         }
     }
 }

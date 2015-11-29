@@ -40,7 +40,7 @@ namespace ModpackHelper.Shared.Permissions.FTB
 
         public Permission GetPermissionFromModId(string modId)
         {
-            return permissions.SingleOrDefault(p => p.modids.Contains(modId));
+            return permissions.FirstOrDefault(p => p.modids.Contains(modId));
         }
 
         public PermissionPolicy FindPermissionPolicy(string toCheck, bool isPublic)
