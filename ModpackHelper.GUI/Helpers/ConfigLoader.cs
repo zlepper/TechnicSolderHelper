@@ -48,9 +48,9 @@ namespace ModpackHelper.GUI.Helpers
                 modpackHelper.MinecraftVersionDropdown.SelectedIndex = modpackHelper.MinecraftVersionDropdown.Items.IndexOf(modpack.MinecraftVersion);
                 modpackHelper.InputDirectoryTextBox.Text = modpack.InputDirectory;
                 modpackHelper.OutputDirectoryTextBox.Text = modpack.OutputDirectory;
+                modpackHelper.technicOptionsGroupBox.Visible = modpackHelper.CreateTechnicPackCheckBox.Checked = modpack.CreateTechnicPack;
                 modpackHelper.createForgeZipCheckBox.Checked = modpack.CreateForgeZip;
                 modpackHelper.CreateConfigZipCheckBox.Checked = modpack.CreateConfigZip;
-                modpackHelper.CreateTechnicPackCheckBox.Checked = modpack.CreateTechnicPack;
                 modpackHelper.ClearOutpuDirectoryCheckBox.Checked = modpack.ClearOutputDirectory;
                 modpackHelper.CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
                 modpackHelper.ZipPackRadioButton.Checked = !(modpackHelper.SolderPackRadioButton.Checked = modpack.CreateSolderPack);
@@ -59,6 +59,7 @@ namespace ModpackHelper.GUI.Helpers
                 modpackHelper.MinimumJavaVersionCombobox.SelectedText = modpack.MinJava;
                 modpackHelper.minimumMemoryTextBox.Text = modpack.MinMemory;
                 modpackHelper.ForceSolderUpdateCheckBox.Checked = modpack.ForceSolder;
+                modpackHelper.UploadToFTPCheckbox.Checked = modpack.UploadToFTP;
                 if (!string.IsNullOrWhiteSpace(modpack.ForgeVersion))
                     modpackHelper.forgeVersionDropdown.SelectedIndex = modpackHelper.forgeVersionDropdown.Items.IndexOf(modpack.ForgeVersion);
             }

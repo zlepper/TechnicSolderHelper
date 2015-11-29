@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Web.Solder.Responses;
@@ -29,6 +30,10 @@ namespace ModpackHelper.Shared.Web
 
         public SolderWebClient(string baseUrl, IRestClient c = null)
         {
+            if (!baseUrl.StartsWith("http://") || !baseUrl.StartsWith("https://"))
+            {
+                baseUrl = "http://" + baseUrl;
+            }
             client = c ?? new RestClient(baseUrl);
             cookieContainer = new CookieContainer();
             client.CookieContainer = cookieContainer;
@@ -37,26 +42,46 @@ namespace ModpackHelper.Shared.Web
 
         public void Login(string email, string password)
         {
-            client.Authenticator = new SimpleAuthenticator("email", email, "password", password);
+            //client.Authenticator = new SimpleAuthenticator("email", email, "password", password);
             var request = new RestRequest("login", Method.POST);
-            client.Execute(request);
+            request.AddParameter("email", email);
+            request.AddParameter("password", password);
+            var res = client.Execute(request);
+            Debug.WriteLine(res);
         }
 
-        public void CreatePack(string modpackname, string slug)
+        public string CreatePack(string modpackname, string slug)
         {
             // Only create the pack if it's not already there. 
             try
             {
                 string id = GetModpackId(slug);
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new NullReferenceException();
+                }
             }
             catch (Exception)
             {
                 var request = new RestRequest("modpack/create", Method.POST);
                 request.AddParameter("name", modpackname);
                 request.AddParameter("slug", slug);
+                request.AddParameter("hidden", false);
                 var res = client.Execute(request);
+                Debug.WriteLine(res);
+                string id = res.ResponseUri.Segments.Last();
+                int n;
+                bool convert = int.TryParse(id, out n);
+                if (convert)
+                {
+                    return id;
+                }
+                else
+                {
+                    Debug.WriteLine(res);
+                }
             }
-            
+            return GetModpackId(slug);
         }
 
         public string AddMod(Mcmod mod)
@@ -102,11 +127,10 @@ namespace ModpackHelper.Shared.Web
             ModVersion mv = JsonConvert.DeserializeObject<ModVersion>(res.Content);
             return !string.IsNullOrWhiteSpace(mv.Id);
         }
-        
-        public string CreateBuild(Modpack modpack)
+
+        public string CreateBuild(Modpack modpack, string id)
         {
-            string id = GetModpackId(modpack.GetSlug());
-            var request = new RestRequest("mods/add-build/{id}", Method.POST);
+            var request = new RestRequest("modpack/add-build/{id}", Method.POST);
             request.AddParameter("id", id, ParameterType.UrlSegment);
             request.AddParameter("version", modpack.Version);
             request.AddParameter("minecraft", modpack.MinecraftVersion);
@@ -117,7 +141,13 @@ namespace ModpackHelper.Shared.Web
             Debug.WriteLine(res);
 
             // Return the build id because the response redirects
-            return GetBuildId(modpack);
+            return res.ResponseUri.Segments.Last();
+        }
+
+        public string CreateBuild(Modpack modpack)
+        {
+            string id = GetModpackId(modpack.GetSlug());
+            return CreateBuild(modpack, id);
         }
 
         public string GetBuildId(Modpack modpack)
@@ -131,7 +161,7 @@ namespace ModpackHelper.Shared.Web
 
         public string GetModpackId(string slug)
         {
-            var request = new RestRequest("api/{modpack}");
+            var request = new RestRequest("api/modpack/{modpack}");
             request.AddParameter("modpack", slug, ParameterType.UrlSegment);
             var res = client.Execute<Mods.Solder.ModpackWithoutBuild>(request);
             try
@@ -161,11 +191,12 @@ namespace ModpackHelper.Shared.Web
 
         public void AddBuildToModpack(Mcmod mod, string modpackbuildid)
         {
-            var request = new RestRequest("modpack/build/modify/add", Method.POST);
+            var request = new RestRequest("modpack/modify/add", Method.POST);
             request.MakeAjaxRequestType();
             request.AddParameter("build", modpackbuildid);
-            request.AddParameter("mod-name", mod.Name);
-            request.AddParameter("mod-version", mod.Version);
+            request.AddParameter("mod-name", mod.GetSolderModName());
+            request.AddParameter("mod-version", mod.GetOnlineVersion());
+            request.AddParameter("action", "add");
             var res = client.Execute<AddBuildToModpackResponse>(request);
             if(!res.Data.Status.Equals("success")) throw new Exception("Something went wrong when adding a mod to a build");
         }

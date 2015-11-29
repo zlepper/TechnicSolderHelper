@@ -61,17 +61,17 @@ namespace ModpackHelper.Shared.IO
                                 new ForgeHandler(fileSystem).GetDownloadUrl((Int32.Parse(modpack.ForgeVersion)));
                             if (modpack.UseSolder)
                             {
-                                SolderMySQLHelper ssh = new SolderMySQLHelper(modpack.Name, modpack.Version);
-                                if (
-                                    ssh.IsModVersionOnline(new Mcmod()
-                                    {
-                                        Version = modpack.ForgeVersion,
-                                        Mcversion = modpack.MinecraftVersion,
-                                        Modid = "forge"
-                                    }))
-                                {
-                                    skip = true;
-                                }
+                                //SolderMySQLHelper ssh = new SolderMySQLHelper(modpack.Name, modpack.Version);
+                                //if (
+                                //    ssh.IsModVersionOnline(new Mcmod()
+                                //    {
+                                //        Version = modpack.ForgeVersion,
+                                //        Mcversion = modpack.MinecraftVersion,
+                                //        Modid = "forge"
+                                //    }))
+                                //{
+                                //    skip = true;
+                                //}
                             }
                             if (!skip)
                             {
@@ -84,6 +84,8 @@ namespace ModpackHelper.Shared.IO
                                 {
                                     zu.SpecialPackForgeZip(s, forgeZip);
                                 }
+                                Mcmod forge = Mcmod.GetForgeMod(modpack.MinecraftVersion, modpack.ForgeVersion);
+                                forge.OutputFile = forgeZip.FullName;
                             }
                         };
                         backgroundWorkers.Add(bw);
@@ -104,14 +106,15 @@ namespace ModpackHelper.Shared.IO
 
                             // Check if mod is online
                             Mcmod mo = db.Mods.FirstOrDefault(m => m.JarMd5.Equals(mod.JarMd5));
-                            if (mo != null && mo.IsOnSolder) return;
+                            if (mo != null && mo.IsOnSolder && !modpack.ForceSolder)
+                                return;
                             // Create the output directory 
                             string zipFileDirectory = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID);
                             fileSystem.Directory.CreateDirectory(zipFileDirectory);
 
-                            string zipFileName = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID,
+                            mod.OutputFile= fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID,
                                 modID + "-" + modversion + ".zip");
-                            FileInfoBase zipFile = fileSystem.FileInfo.FromFileName(zipFileName);
+                            FileInfoBase zipFile = fileSystem.FileInfo.FromFileName(mod.OutputFile);
 
                             Debug.WriteLine("Packing " + modID);
                             zipUtils.SpecialPackSolderMod(mod.GetPath(), zipFile);
@@ -121,7 +124,7 @@ namespace ModpackHelper.Shared.IO
 
                             // Check if this mods data was entered by the user
                             // And if it is, upload it to the webapi
-                            if (mod.FromUser && !mod.FromSuggestion)
+                            if (!mod.IsSkipping && mod.FromUser && !mod.FromSuggestion)
                             {
                                 mod.UploadToApi(apiHubProxy);
                             }
