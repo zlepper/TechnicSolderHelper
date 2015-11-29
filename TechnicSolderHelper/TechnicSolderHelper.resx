@@ -133,7 +133,7 @@
     <value>146, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+<!--  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAAAAAAAEAIAA7/AAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAEAAAABAAgGAAAAXHKoZgAAIABJ
         REFUeJzsvXmUZUl52Pn7IuLe917uWWuv1U3v0HRD0ywCgQVIGDAgxCKPASEjJBmPfaTRzGDP0XhmrDNj
@@ -1212,6 +1212,6 @@
         KQFnZL3GM0u2QRBc2x02U5iFKf7Nf/g43bPEv/vn76hunuekVCaCliJoESixLD8RQTELKYIWoCsiLViS
         Pa+MvJxOFtNWN9OatBJirYUyBrQiygFoEDSAHCAH/JLBIrUMVuQxAEoCRgCmRjA1whMZj82//Y9HBt+k
         b9I36Zv0TfomvSr9H8DLTMkwifECAAAAAElFTkSuQmCC
-</value>
-  </data>
+</value>  
+</data>-->
 </root>
