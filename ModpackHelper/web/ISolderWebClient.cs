@@ -56,5 +56,12 @@ namespace ModpackHelper.Shared.Web
         /// <param name="modversionId"></param>
         /// <param name="md5">The md5 of the packed mod</param>
         void RehashModVersion(string modversionId, string md5);
+
+        /// <summary>
+        /// Tries to find a specific mod on solder
+        /// </summary>
+        /// <param name="mod">The mod to find</param>
+        /// <returns>The id of the mod if found, otherwise null</returns>
+        string GetModId(Mcmod mod);
     }
 }

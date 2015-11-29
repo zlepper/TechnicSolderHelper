@@ -1,13 +1,15 @@
-﻿<Properties StartupItem="ModpackHelper.Mac/ModpackHelper.Mac.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench>
+﻿<Properties StartupItem="ModpackHelper.GUI\ModpackHelper.GUI.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ModpackHelper\IO\ModPacker.cs">
     <Files>
-      <File FileName="ModpackHelper.Mac/Main.cs" Line="1" Column="1" />
-      <File FileName="ModpackHelper.Mac/MainWindow.cs" Line="1" Column="1" />
-      <File FileName="ModpackHelper.Mac/ModsInfoWindow.cs" Line="1" Column="1" />
-      <File FileName="ModpackHelper.Mac/ModsInfoWindow.designer.cs" Line="1" Column="1" />
-      <File FileName="ModpackHelper.Mac/ModsInfoWindowController.cs" Line="1" Column="1" />
-      <File FileName="ModpackHelper/IO/ZipUtils.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.Mac\Main.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.Mac\MainWindow.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.Mac\ModsInfoWindow.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.Mac\ModsInfoWindow.designer.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.Mac\ModsInfoWindowController.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper\IO\ZipUtils.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper.GUI\ModpackHelper.cs" Line="1" Column="1" />
+      <File FileName="ModpackHelper\IO\ModPacker.cs" Line="81" Column="50" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

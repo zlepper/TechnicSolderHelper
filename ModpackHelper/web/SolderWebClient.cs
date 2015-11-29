@@ -2,8 +2,11 @@
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using ModpackHelper.Shared.Mods;
+using ModpackHelper.Shared.Web.Solder.Responses;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
 
@@ -18,19 +21,16 @@ namespace ModpackHelper.Shared.Web
         }
     }
 
-    public class SolderWebClient :  ISolderWebClient
+    public class SolderWebClient : ISolderWebClient
     {
         private readonly Uri baseUrl;
         private readonly IRestClient client;
         private readonly CookieContainer cookieContainer;
-        
+
 
         public SolderWebClient(string baseUrl, IRestClient c = null)
         {
-            if (c == null)
-            {
-                client = new RestClient(baseUrl);
-            }
+            client = c ?? new RestClient(baseUrl);
             cookieContainer = new CookieContainer();
             client.CookieContainer = cookieContainer;
             this.baseUrl = new Uri(baseUrl);
@@ -48,7 +48,8 @@ namespace ModpackHelper.Shared.Web
             var request = new RestRequest("modpack/create", Method.POST);
             request.AddParameter("name", modpackname);
             request.AddParameter("slug", slug);
-            client.Execute(request);
+            var res = client.Execute(request);
+            
         }
 
         public void AddMod(Mcmod mod)
@@ -68,7 +69,7 @@ namespace ModpackHelper.Shared.Web
             var request = new RestRequest("mod/add-version", Method.POST);
             request.AddParameter("mod-id", modId);
             request.AddParameter("add-version", version);
-            //request.AddParameter("add-md5", md5);
+            request.AddParameter("md5", md5);
             request.MakeAjaxRequestType();
             var res = client.Execute(request);
             Debug.WriteLine(res);
@@ -76,7 +77,35 @@ namespace ModpackHelper.Shared.Web
 
         public void RehashModVersion(string modversionId, string md5)
         {
-            throw new NotImplementedException();
+            var request = new RestRequest("mod/rehash", Method.POST);
+            request.AddParameter("version-id", modversionId);
+            request.AddParameter("md5", md5);
+            request.MakeAjaxRequestType();
+            var res = client.Execute(request);
+        }
+
+        public string GetModId(Mcmod mod)
+        {
+            var request = new RestRequest("api/mod/{modname}");
+            request.AddParameter("modname", mod.GetSafeModId(), ParameterType.UrlSegment);
+            var res = client.Execute(request);
+            Mod m = JsonConvert.DeserializeObject<Mod>(res.Content);
+            return !string.IsNullOrWhiteSpace(m.Id) ? m.Id : null;
+        }
+
+        public bool IsModversionOnline(Mcmod mod)
+        {
+            var request = new RestRequest("api/mod/{modname}/{modversion}");
+            request.AddParameter("modname", mod.GetSafeModId(), ParameterType.UrlSegment);
+            request.AddParameter("modversion", mod.GetOnlineVersion(), ParameterType.UrlSegment);
+            var res = client.Execute(request);
+            ModVersion mv = JsonConvert.DeserializeObject<ModVersion>(res.Content);
+            return !string.IsNullOrWhiteSpace(mv.Id);
+        }
+
+        public string GetModpackId(string modpackName)
+        {
+            var request = new RestRequest("api/");
         }
     }
 }

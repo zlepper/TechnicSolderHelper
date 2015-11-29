@@ -413,10 +413,16 @@ namespace ModpackHelper.Shared.Mods
             }
         }
 
-        public string GetSafeModId()
+        public virtual string GetSafeModId()
         {
             // Regex get rids of any illigal windows explorer characters
-            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?", string.Empty);
+            // And some characters that breaks url navigation
+            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty);
+        }
+
+        public virtual string GetOnlineVersion()
+        {
+            return Mcversion + "-" + Version;
         }
     }
 }
