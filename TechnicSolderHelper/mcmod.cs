@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TechnicSolderHelper.SQL;
 
 namespace TechnicSolderHelper
@@ -47,6 +48,14 @@ namespace TechnicSolderHelper
         public String Path { get; set; }
 
         public Boolean Aredone { get; set; }
+
+
+        public virtual string GetSafeModId()
+        {
+            // Regex get rids of any illigal windows explorer characters
+            // And some characters that breaks url navigation
+            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty);
+        }
 
     }
 
@@ -164,6 +173,7 @@ namespace TechnicSolderHelper
 
             return mod;
         }
+
     }
 
     public class Mcmod2

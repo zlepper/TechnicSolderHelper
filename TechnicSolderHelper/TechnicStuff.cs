@@ -323,11 +323,7 @@ namespace TechnicSolderHelper
                 bw.DoWork += (o, arg) =>
                 {
 
-                    var modid = mod.Modid
-                        .Replace("|", string.Empty)
-                        .Replace(".", string.Empty)
-                        .Replace(":", string.Empty)
-                        .ToLower();
+                    var modid = mod.GetSafeModId();
                     string modversion = mod.Mcversion.ToLower() + "-" + mod.Version.ToLower();
                     if (useSolderBool && !force)
                     {
@@ -359,11 +355,7 @@ namespace TechnicSolderHelper
                     if (!_modsSqLhelper.IsFileInSolder(modfile) || force)
                     {
                         var modDir = Path.Combine(_outputDirectory, "mods",
-                            mod.Modid.Replace("|", string.Empty)
-                                    .Replace(".", string.Empty)
-                                    .Replace(":", string.Empty)
-                                    .ToLower()
-                                    .Replace(Globalfunctions.PathSeperator.ToString(), string.Empty), "mods");
+                            mod.GetSafeModId(), "mods");
                         Directory.CreateDirectory(modDir);
                         if (_processesUsingFolder.ContainsKey(modDir))
                         {
@@ -382,21 +374,12 @@ namespace TechnicSolderHelper
                         File.Copy(modfile, tempModFile, true);
 
                         var modArchive = Path.Combine(_outputDirectory, "mods",
-                                mod.Modid.Replace("|", string.Empty)
-                                    .Replace(".", string.Empty)
-                                    .Replace(":", string.Empty)
-                                    .ToLower(),
-                                mod.Modid.Replace("|", string.Empty)
-                                    .Replace(".", string.Empty)
-                                    .Replace(":", string.Empty)
-                                    .ToLower() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip");
+                                mod.GetSafeModId(),
+                                mod.GetSafeModId() + "-" + mod.Mcversion.ToLower() + "-" + mod.Version.ToLower() + ".zip");
                         if (Globalfunctions.IsUnix())
                         {
                             Environment.CurrentDirectory = Path.Combine(_outputDirectory, "mods",
-                                mod.Modid.Replace("|", string.Empty)
-                                        .Replace(".", string.Empty)
-                                        .Replace(":", string.Empty)
-                                        .ToLower());
+                                mod.GetSafeModId());
                             _startInfo.FileName = "zip";
                             _startInfo.Arguments = "-r \"" + modArchive + "\" \"mods\" ";
                         }
@@ -412,10 +395,7 @@ namespace TechnicSolderHelper
                         _modsSqLhelper.AddMod(mod.Name, mod.Modid, mod.Version, mod.Mcversion, fileName, modMd5, true);
 
                         // Add mod info to a html file
-                        CreateTableRow(mod.Name.Replace("|", string.Empty), modid.Replace("|", string.Empty)
-                                        .Replace(".", string.Empty)
-                                        .Replace(":", string.Empty)
-                                        .ToLower(), modversion);
+                        CreateTableRow(mod.Name.Replace("|", string.Empty), mod.GetSafeModId(), modversion);
 
                         process.WaitForExit();
 
@@ -425,16 +405,10 @@ namespace TechnicSolderHelper
                             string archive = Path.Combine(_outputDirectory, "mods", modArchive);
                             SolderSqlHandler sqh = new SolderSqlHandler();
                             string md5Value = SqlHelper.CalculateMd5(archive).ToLower();
-                            if (sqh.IsModversionOnline(modid.Replace("|", string.Empty)
-                                        .Replace(".", string.Empty)
-                                        .Replace(":", string.Empty)
-                                        .ToLower(), modversion))
+                            if (sqh.IsModversionOnline(mod.GetSafeModId(), modversion))
                             {
                                 Debug.WriteLine(string.Format("Updating mod on solder with Modid: {0} modversion: {1} md5value: {2}", modid, modversion, md5Value), doDebug.Checked);
-                                sqh.UpdateModversionMd5(modid.Replace("|", string.Empty)
-                                        .Replace(".", string.Empty)
-                                        .Replace(":", string.Empty)
-                                        .ToLower(), modversion, md5Value);
+                                sqh.UpdateModversionMd5(mod.GetSafeModId(), modversion, md5Value);
 								Debug.WriteLine(string.Format("Done updating mod on solder with modid: {0}", modid));
                             }
                             else
@@ -442,22 +416,13 @@ namespace TechnicSolderHelper
                                 id = sqh.GetModId(modid);
                                 if (id == -1)
                                 {
-                                    sqh.AddModToSolder(modid.Replace("|", string.Empty)
-                                        .Replace(".", string.Empty)
-                                        .Replace(":", string.Empty)
-                                        .ToLower(), mod.Description, GetAuthors(mod), mod.Url,
+                                    sqh.AddModToSolder(mod.GetSafeModId(), mod.Description, GetAuthors(mod), mod.Url,
                                         mod.Name);
                                 }
                                 Debug.WriteLine(string.Format("Adding mod to solder with Modid: {0} modversion: {1} md5value: {2}", modid, modversion, md5Value), doDebug.Checked);
-                                sqh.AddNewModversionToSolder(modid.Replace("|", string.Empty)
-                                        .Replace(".", string.Empty)
-                                        .Replace(":", string.Empty)
-                                        .ToLower(), modversion, md5Value);
+                                sqh.AddNewModversionToSolder(mod.GetSafeModId(), modversion, md5Value);
                             }
-                            id = sqh.GetModId(modid.Replace("|", string.Empty)
-                                        .Replace(".", string.Empty)
-                                        .Replace(":", string.Empty)
-                                        .ToLower());
+                            id = sqh.GetModId(mod.GetSafeModId());
                             int modVersionId = sqh.GetModversionId(id, modversion);
                             sqh.AddModversionToBuild(_buildId, modVersionId);
 							Debug.WriteLine(string.Format("Done addong mod {0} to build", modid));
