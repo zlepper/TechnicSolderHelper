@@ -16,6 +16,7 @@ namespace TechnicSolderHelper
             }
             catch (Exception e)
             {
+                Debug.WriteLine(e.ToString(), true);
                 Debug.WriteLine(e.Message, true);
                 Debug.WriteLine(e.StackTrace, true);
                 Debug.WriteLine(e.InnerException, true);
