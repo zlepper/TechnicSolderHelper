@@ -25,6 +25,9 @@ namespace ModpackHelper.GUI
         private readonly IFileSystem fileSystem;
         private readonly IDirectoryFinder directoryFinder;
         private readonly IMessageShower messageShower;
+        private Timer animationTimer;
+        private Dictionary<string, int> animationGoals = new Dictionary<string, int>();
+
         // Normal constructor
         public ModpackHelper() : this(new FileSystem(), new DirectoryFinder(), new MessageShower())
         {
@@ -34,11 +37,18 @@ namespace ModpackHelper.GUI
         // Unit testing constructor
         public ModpackHelper(IFileSystem fileSystem, IDirectoryFinder finder, IMessageShower messageShower)
         {
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.animationTimer = new Timer();
+            this.animationTimer.Tick += AnimationTimerOnTick;
+            this.animationTimer.Interval = 1000 / 144;
+
             this.fileSystem = fileSystem;
             directoryFinder = finder;
             this.messageShower = messageShower;
             InitializeComponent();
-            
+
             // Get minecraft versions
             ForgeHandler forgeHandler = new ForgeHandler(fileSystem);
             if (forgeHandler.GetMinecraftVersions().Count < 5)
@@ -52,6 +62,85 @@ namespace ModpackHelper.GUI
             // Reload the interface
             ConfigLoader cl = new ConfigLoader(this, fileSystem);
             cl.ReloadConfigs();
+
+            // Ensure that the window is big enough to contain all the current controls
+            EnsureWindowSize();
+        }
+
+        /// <summary>
+        /// Handles any animations
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="eventArgs"></param>
+        private void AnimationTimerOnTick(object sender, EventArgs eventArgs)
+        {
+            int rightGoal;
+            bool couldGet = animationGoals.TryGetValue("right", out rightGoal);
+            if (couldGet)
+            {
+                Debug.WriteLine(rightGoal + ":" + Width);
+                if (rightGoal < this.Width)
+                {
+                    Width--;
+                }
+                else if (rightGoal > Width)
+                {
+                    Width++;
+                }
+                else
+                {
+                    animationGoals.Remove("right");
+                }
+            }
+
+            int bottom;
+            couldGet = animationGoals.TryGetValue("bottom", out bottom);
+            if (couldGet)
+            {
+                Debug.WriteLine(bottom + ":" + Height);
+                if (bottom < Height)
+                {
+                    Height--;
+                }
+                else if (bottom > Height)
+                {
+                    Height++;
+                }
+                else
+                {
+                    animationGoals.Remove("bottom");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensures the window is at least big enough to contain all the currently visible controls
+        /// </summary>
+        private void EnsureWindowSize()
+        {
+            // Check the global configuration group box size
+            int right = globalConfigurationsGroupBox.Location.X + globalConfigurationsGroupBox.Size.Width;
+            if (right + 25 > Width)
+            {
+                animationTimer.Enabled = true;
+                if (!animationGoals.ContainsKey("right"))
+                {
+                    animationGoals.Add("right", right + 25);
+                }
+            }
+
+            // Check the technic options box
+            int bottom = technicOptionsGroupBox.Location.Y + technicOptionsGroupBox.Size.Height + statusStrip1.Size.Height;
+            if (bottom + 50 > Height)
+            {
+                animationTimer.Enabled = true;
+                if (!animationGoals.ContainsKey("bottom"))
+                {
+                    animationGoals.Add("bottom", bottom + 50);
+                }
+            }
+
+            animationTimer.Enabled = animationGoals.Count > 0;
         }
 
         // Called when the user clicks the browse button for the input directory
@@ -198,8 +287,8 @@ namespace ModpackHelper.GUI
                 {
                     messageShower.ShowMessageAsync("The entered minimum memory is not a valid value.");
                     valid = false;
-                } 
-                if(parsed && m == 0)
+                }
+                if (parsed && m == 0)
                 {
                     minMemory = "";
                 }
@@ -268,7 +357,7 @@ namespace ModpackHelper.GUI
             };
             bw.RunWorkerAsync();
 
-            
+
         }
 
 
@@ -300,7 +389,8 @@ namespace ModpackHelper.GUI
                         if (modpack.UploadToFTP)
                         {
                             UploadToFtp(mods, modpack);
-                        } else if (modpack.CreateSolderPack && modpack.UseSolder)
+                        }
+                        else if (modpack.CreateSolderPack && modpack.UseSolder)
                         {
                             UpdateSolder(mods, modpack);
                         }
