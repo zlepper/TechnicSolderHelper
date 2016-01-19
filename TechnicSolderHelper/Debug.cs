@@ -32,7 +32,8 @@ namespace TechnicSolderHelper
 
         public static void WriteLine(object o, bool condition = false)
         {
-            WriteLine(o.ToString(), condition);
+            if(o != null)
+                WriteLine(o.ToString(), condition);
         }
 
         public static void Save()
