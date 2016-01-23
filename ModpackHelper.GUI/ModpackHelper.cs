@@ -27,7 +27,7 @@ namespace ModpackHelper.GUI
         private readonly IMessageShower messageShower;
         private Timer animationTimer;
         private Dictionary<string, int> animationGoals = new Dictionary<string, int>();
-
+        private bool isRunningBackgroundTask = false;
         // Normal constructor
         public ModpackHelper() : this(new FileSystem(), new DirectoryFinder(), new MessageShower())
         {
@@ -74,43 +74,30 @@ namespace ModpackHelper.GUI
         /// <param name="eventArgs"></param>
         private void AnimationTimerOnTick(object sender, EventArgs eventArgs)
         {
+            // Ensure right of window is correctly sized
             int rightGoal;
             bool couldGet = animationGoals.TryGetValue("right", out rightGoal);
             if (couldGet)
-            {
-                Debug.WriteLine(rightGoal + ":" + Width);
-                if (rightGoal < this.Width)
-                {
+                if (rightGoal < Width)
                     Width--;
-                }
                 else if (rightGoal > Width)
-                {
                     Width++;
-                }
                 else
-                {
                     animationGoals.Remove("right");
-                }
-            }
 
+            // Ensure bottom of window is correctly sized
             int bottom;
             couldGet = animationGoals.TryGetValue("bottom", out bottom);
             if (couldGet)
-            {
-                Debug.WriteLine(bottom + ":" + Height);
                 if (bottom < Height)
-                {
                     Height--;
-                }
                 else if (bottom > Height)
-                {
                     Height++;
-                }
                 else
-                {
                     animationGoals.Remove("bottom");
-                }
-            }
+
+            // Make sure we only animate when there is anything to animate
+            animationTimer.Enabled = animationGoals.Count > 0;
         }
 
         /// <summary>
@@ -124,9 +111,7 @@ namespace ModpackHelper.GUI
             {
                 animationTimer.Enabled = true;
                 if (!animationGoals.ContainsKey("right"))
-                {
                     animationGoals.Add("right", right + 25);
-                }
             }
 
             // Check the technic options box
@@ -135,12 +120,8 @@ namespace ModpackHelper.GUI
             {
                 animationTimer.Enabled = true;
                 if (!animationGoals.ContainsKey("bottom"))
-                {
                     animationGoals.Add("bottom", bottom + 50);
-                }
             }
-
-            animationTimer.Enabled = animationGoals.Count > 0;
         }
 
         // Called when the user clicks the browse button for the input directory
@@ -341,6 +322,7 @@ namespace ModpackHelper.GUI
             // We are free to continue
             ModExtractor modExtractor = new ModExtractor(minecraftVersion, fileSystem);
 
+            isRunningBackgroundTask = true;
             // Make sure we don't lock the main thread
             BackgroundWorker bw = new BackgroundWorker();
             bw.DoWork += delegate
@@ -352,6 +334,7 @@ namespace ModpackHelper.GUI
                 List<Mcmod> mods = modExtractor.FindAllMods(inputDirectory);
                 sw.Stop();
                 Debug.WriteLine(sw.Elapsed.ToString());
+                isRunningBackgroundTask = false;
                 OpenModsInfoForm(mods, modpack);
 
             };
@@ -374,6 +357,7 @@ namespace ModpackHelper.GUI
                 form.Show();
                 form.DoneFillingInInfo += delegate (List<Mcmod> modslist)
                 {
+                    isRunningBackgroundTask = true;
                     BackgroundWorker bw = new BackgroundWorker();
                     bw.DoWork += (sender, args) =>
                     {
@@ -386,44 +370,50 @@ namespace ModpackHelper.GUI
                         string html = packer.GetFinishedHTML();
                         fileSystem.File.WriteAllText(fileSystem.Path.Combine(modpack.OutputDirectory, "mods.html"), html);
                         messageShower.ShowMessageAsync("Done packing mods");
+                        isRunningBackgroundTask = false;
                         if (modpack.UploadToFTP)
                         {
                             UploadToFtp(mods, modpack);
                         }
-                        else if (modpack.CreateSolderPack && modpack.UseSolder)
+                        if (modpack.CreateSolderPack && modpack.UseSolder)
                         {
                             UpdateSolder(mods, modpack);
                         }
                     };
                     bw.RunWorkerAsync();
-
-                    // Upload mods to the webapi
-                    BackgroundWorker bw2 = new BackgroundWorker();
-                    bw2.DoWork += (sender, args) =>
-                    {
-                        foreach (Mcmod mod in mods)
-                        {
-                            mod.UploadToApi();
-                        }
-                    };
-                    bw2.RunWorkerAsync();
                 };
             }
         }
 
         private void UpdateSolder(List<Mcmod> mods, Modpack modpack)
         {
-            if (InvokeRequired)
-            {
-                BeginInvoke(new Action(() => UpdateSolder(mods, modpack)));
-            }
-            else
+            isRunningBackgroundTask = true;
+            BackgroundWorker bw = new BackgroundWorker();
+            bw.DoWork += (sender, args) =>
             {
                 var ch = new ConfigHandler(fileSystem);
                 var sli = ch.Configs.SolderLoginInfo;
                 var s = new Solder(fileSystem);
+                s.DoneUpdatingMods += () =>
+                {
+                    isRunningBackgroundTask = false;
+                    ShowMessage("Done updating solder");
+                };
                 s.Initialize(sli.Username, sli.Password, mods, modpack);
                 s.Update(sli.Address);
+            };
+            bw.RunWorkerAsync();
+        }
+
+        private void ShowMessage(string message)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => ShowMessage(message)));
+            }
+            else
+            {
+                messageShower.ShowMessageAsync(message);
             }
         }
 
@@ -435,12 +425,10 @@ namespace ModpackHelper.GUI
             }
             else
             {
+                isRunningBackgroundTask = true;
                 FtpUploaderForm f = new FtpUploaderForm(fileSystem.DirectoryInfo.FromDirectoryName(Path.Combine(modpack.OutputDirectory, "mods")));
                 f.ShowDialog(this);
-                if (modpack.UseSolder)
-                {
-                    UpdateSolder(mods, modpack);
-                }
+                isRunningBackgroundTask = false;
             }
         }
 
@@ -526,6 +514,28 @@ namespace ModpackHelper.GUI
         private void EnableDebugCheckbox_CheckedChanged(object sender, EventArgs e)
         {
             Debug.OutputDebug = EnableDebugCheckbox.Checked;
+        }
+
+        private void CreateTechnicPackCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            technicOptionsGroupBox.Visible = CreateTechnicPackCheckBox.Checked;
+        }
+
+        //private void formClosingHandler(object sender, EventArgs e)
+        //{
+        //    
+        //}
+        private void formClosingHandler(object sender, CancelEventArgs e)
+        {
+            if (!isRunningBackgroundTask) return;
+            DialogResult result =
+                MessageBox.Show(
+                    "Are you sure you want to close the application. Is it currently running a background task, which can cause issues if canceled.",
+                    "Confirm exit", MessageBoxButtons.OKCancel);
+            if (result != DialogResult.OK)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }

@@ -96,7 +96,7 @@ namespace ModpackHelper.Shared.Mods
         /// <summary>
         /// The info url of the mod
         /// </summary>
-        public string Url { get; }
+        public string Url { get; set; }
 
         /// <summary>
         /// A short description of the mod
@@ -117,13 +117,13 @@ namespace ModpackHelper.Shared.Mods
         /// Indicates the permissions needed to distribute the mod
         /// in a public modpack
         /// </summary>
-        public PermissionLevel PublicPerms { get; }
+        public PermissionLevel PublicPerms { get; set; }
 
         /// <summary>
         /// Indicates the permissions needed to distribute the mod
         /// in a private modpack
         /// </summary>
-        public PermissionLevel PrivatePerms { get; }
+        public PermissionLevel PrivatePerms { get; set; }
 
         /// <summary>
         /// Indicates if this info was fetched from my remote database
@@ -371,7 +371,7 @@ namespace ModpackHelper.Shared.Mods
         /// </summary>
         public void UploadToApi()
         {
-            if (FromUser && !FromSuggestion)
+            if (!IsSkipping && FromUser && !FromSuggestion)
             {
                 using (BackgroundWorker bw = new BackgroundWorker())
                 {
@@ -419,10 +419,39 @@ namespace ModpackHelper.Shared.Mods
             }
         }
 
-        public string GetSafeModId()
+        public virtual string GetSafeModId()
         {
             // Regex get rids of any illigal windows explorer characters
-            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?|'", string.Empty);
+            // And some characters that breaks url navigation
+            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty);
+        }
+
+        public virtual string GetSolderModName()
+        {
+            return GetSafeModId().ToLower();
+        }
+
+        public virtual string GetOnlineVersion()
+        {
+            return Mcversion + "-" + Version;
+        }
+
+        public static Mcmod GetForgeMod(string minecraftVersion, string forgeVersion)
+        {
+            return new Mcmod
+            {
+                Name = "Minecraft Forge",
+                Modid = "forge",
+                Description =
+                    "Minecraft Forge is a common open source API allowing a broad range of mods to work cooperatively together. It allows many mods to be created without them editing the main Minecraft code.",
+                FromSuggestion = true,
+                AuthorList = new List<string>() {"LexManos", "Eloram", "Spacetoad", "cpw"},
+                Url = "http://minecraftforge.net",
+                Mcversion = minecraftVersion,
+                Version = forgeVersion,
+                PrivatePerms = PermissionLevel.Open,
+                PublicPerms = PermissionLevel.Open
+            };
         }
     }
 }

@@ -128,6 +128,12 @@
     <Compile Include="Web\ISolderWebClient.cs" />
     <Compile Include="Web\SolderWebClient.cs" />
     <Compile Include="UserInteraction\IDirectoryFinder.cs" />
+    <Compile Include="Web\Solder\Responses\AllModpacks.cs" />
+    <Compile Include="Web\Solder\Responses\Api.cs" />
+    <Compile Include="Web\Solder\Responses\Build.cs" />
+    <Compile Include="Web\Solder\Responses\Mod.cs" />
+    <Compile Include="Web\Solder\Responses\Modpack.cs" />
+    <Compile Include="Web\Solder\Responses\ModVersion.cs" />
     <Compile Include="Web\Solder\SolderMySQLClient.cs" />
   </ItemGroup>
   <ItemGroup>

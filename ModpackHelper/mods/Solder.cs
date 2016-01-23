@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using ModpackHelper.Shared.IO;
+using ModpackHelper.Shared.Utils;
 using ModpackHelper.Shared.Utils.Config;
 using ModpackHelper.Shared.Web;
 
@@ -13,6 +15,7 @@ using ModpackHelper.Shared.Web;
 
 namespace ModpackHelper.Shared.Mods
 {
+    public delegate void DoneUpdatingModsEventHandler();
     public class Solder
     {
         private Modpack modpack;
@@ -44,7 +47,7 @@ namespace ModpackHelper.Shared.Mods
 
         public class ModpackWithoutBuild
         {
-            public string id;
+            public string id { get; set; }
             public string name { get; set; }
             public string display_name { get; set; }
             public string url { get; set; }
@@ -100,17 +103,27 @@ namespace ModpackHelper.Shared.Mods
             this.modpack = modpack;
         }
 
+        public event DoneUpdatingModsEventHandler DoneUpdatingMods;
+
+        /// <summary>
+        /// Called when everything is filled in, and the form closes
+        /// </summary>
+        protected virtual void OnDoneUpdatingMods()
+        {
+            DoneUpdatingMods?.Invoke();
+        }
+
         public void Update(string url)
         {
             ISolderWebClient wc = new SolderWebClient(url);
             wc.Login(username, password);
-            wc.CreatePack(modpack.Name, modpack.GetSlug());
-            string buildId = wc.CreateBuild(modpack);
+            string modpackId = wc.CreatePack(modpack.Name, modpack.GetSlug());
+            string buildId = wc.CreateBuild(modpack, modpackId);
 
             var backgroundWorkers = new List<BackgroundWorker>(mods.Count);
-            for (int i = 0; i < mods.Count; i++)
+            foreach (Mcmod mod in mods)
             {
-                Mcmod mod = mods[i];
+                if(mod.IsSkipping) continue;
                 BackgroundWorker bw = new BackgroundWorker();
                 bw.DoWork += BwOnDoWork;
                 var parameters = new Dictionary<string, object>
@@ -122,15 +135,24 @@ namespace ModpackHelper.Shared.Mods
                 bw.RunWorkerAsync(parameters);
                 backgroundWorkers.Add(bw);
             }
-            while (backgroundWorkers.Count > 0)
+            // Make sure all backgroundworkers are finished running before returning to the caller
+            int count = -1;
+            while (backgroundWorkers.Any())
             {
-                var toRemove = backgroundWorkers.Where(backgroundWorker => !backgroundWorker.IsBusy).ToList();
-                foreach (var backgroundWorker in toRemove)
+                // Remove background workers that are done
+                foreach (BackgroundWorker bw in backgroundWorkers.Where(b => !b.IsBusy))
                 {
-                    backgroundWorker.Dispose();
-                    backgroundWorkers.Remove(backgroundWorker);
+                    bw.Dispose();
+                }
+                backgroundWorkers.RemoveAll(b => !b.IsBusy);
+                int c = backgroundWorkers.Count;
+                if (c != count)
+                {
+                    count = c;
+                    Debug.WriteLine(count + " backgroundworkers remaining.");
                 }
             }
+            OnDoneUpdatingMods();
         }
 
         private void BwOnDoWork(object sender, DoWorkEventArgs doWorkEventArgs)
@@ -150,6 +172,10 @@ namespace ModpackHelper.Shared.Mods
             try
             {
                 modid = wc.GetModId(mod);
+                if (string.IsNullOrWhiteSpace(modid))
+                {
+                    throw new NullReferenceException();
+                }
             }
             catch (Exception)
             {
@@ -159,9 +185,10 @@ namespace ModpackHelper.Shared.Mods
 
             IOHandler io = new IOHandler(fileSystem);
             string md5 = io.CalculateMd5(fileSystem.FileInfo.FromFileName(mod.OutputFile));
-            wc.AddModVersion(modid, md5, mod.Version);
+            wc.AddModVersion(modid, md5, mod.GetOnlineVersion());
 
             wc.AddBuildToModpack(mod, buildid);
+            Debug.WriteLine("Done");
         }
     }
 }
