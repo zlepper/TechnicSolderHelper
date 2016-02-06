@@ -105,6 +105,7 @@
     <Compile Include="Utils\ListsTest.cs" />
     <Compile Include="Utils\ZipTests.cs" />
     <Compile Include="Web\SolderWebClientTests.cs" />
+    <Compile Include="Web\Solder\Crawlers\BuildCrawlerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

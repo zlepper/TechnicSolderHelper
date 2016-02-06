@@ -9,7 +9,7 @@ namespace ModpackHelper.Shared.Web.Solder.Crawlers
 {
     public abstract class BaseCrawler<T> : ICrawler<T>
     {
-        protected const string namePattern = @"(\w+) \((\w+)\)";
+        protected const string namePattern = @"([^\r\n\(\)]+?) \(([^ \r\n\(\)]+)\)";
 
         /// <summary>
         /// The html to crawl

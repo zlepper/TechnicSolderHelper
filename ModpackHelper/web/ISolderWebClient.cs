@@ -78,8 +78,11 @@ namespace ModpackHelper.Shared.Web
 
         bool IsModversionOnline(Mcmod mod);
 
-        bool IsModversionInBuild(Mcmod mod, string buildid);
+        bool IsModInBuild(Mcmod mod, string buildid);
         void SetModversionInBuild(Mcmod mod, string buildid);
         string GetModVersionId(Mcmod mod);
+        bool IsPackOnline(Modpack modpack);
+        bool IsBuildOnline(Modpack modpack);
+        bool IsModversionActiveInBuild(Mcmod mod, string buildid);
     }
 }

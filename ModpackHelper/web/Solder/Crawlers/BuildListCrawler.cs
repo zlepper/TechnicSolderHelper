@@ -17,10 +17,16 @@ namespace ModpackHelper.Shared.Web.Solder.Crawlers
         public override List<Build> Crawl()
         {
             // Find the table rows
-            var tableRows = Document.DocumentNode.SelectNodes("//table[id='dataTables']/tbody/tr");
+            var tableRows = Document.DocumentNode.SelectNodes("//table[@id='dataTables']/tbody/tr");
 
             // Create the list of builds
-            List<Build> builds = new List<Build>(tableRows.Count);
+            List<Build> builds = new List<Build>();
+
+            // If there is not rows available, this means that there is no builds, at we might at well return an empty list
+            if (tableRows == null)
+            {
+                return builds;
+            }
 
             // Load all the build data
             builds.AddRange(tableRows.Select(row => new Build

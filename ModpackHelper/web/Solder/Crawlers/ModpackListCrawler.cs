@@ -18,9 +18,15 @@ namespace ModpackHelper.Shared.Web.Solder.Crawlers
         {
             // Find the table that contains data about all the modpacks in the system
             var tableRows = Document.DocumentNode.SelectNodes("//table/tbody/tr");
-            
+
             // Prepare the list of modpacks
-            List<Modpack> modpacks = new List<Modpack>(tableRows.Count);
+            List<Modpack> modpacks = new List<Modpack>();
+
+            // Just return if there isn't any table rows. This means that there is no modpacks available at the moment
+            if (tableRows == null)
+            {
+                return modpacks;
+            }
 
             // Read modpack data
             foreach (var row in tableRows)
@@ -35,7 +41,7 @@ namespace ModpackHelper.Shared.Web.Solder.Crawlers
 
                 // Find the modpack id
                 string tid = row.SelectSingleNode(".//td[7]/a[1]").GetAttributeValue("href", "");
-                tid = tid.Substring(tid.LastIndexOf("/", StringComparison.Ordinal));
+                tid = tid.Substring(tid.LastIndexOf("/", StringComparison.Ordinal) + 1);
                 modpack.Id = tid;
                 modpacks.Add(modpack);
             }

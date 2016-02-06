@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -22,6 +23,10 @@ namespace ModpackHelper.Shared.Web
 
     public class SolderWebClient : ISolderWebClient
     {
+        private Dictionary<string, string> ModIdCache = new Dictionary<string, string>();
+        private Dictionary<string, Dictionary<string, string>> ModversionIdCache = new Dictionary<string, Dictionary<string, string>>();  
+
+
         public readonly Uri baseUrl;
         public readonly IRestClient client;
         private readonly CookieContainer cookieContainer;
@@ -127,14 +132,38 @@ namespace ModpackHelper.Shared.Web
             return !string.IsNullOrWhiteSpace(mv.Md5);
         }
 
-        public bool IsModversionInBuild(Mcmod mod, string buildid)
+        private Dictionary<string, Build> buildCache = new Dictionary<string, Build>(); 
+
+        private Build GetBuild(string buildid)
         {
+            if (buildCache.ContainsKey(buildid))
+            {
+                return buildCache[buildid];
+            }
+
             var request = new RestRequest("modpack/build/{build}");
             request.AddParameter("build", buildid, ParameterType.UrlSegment);
             var res = client.Execute(request);
-            var bc = new BuildCrawler() {HTML = res.Content};
+            var bc = new BuildCrawler() { HTML = res.Content };
             var build = bc.Crawl();
-            return build.Mods.Any(m => m.Name.Equals(mod.GetSafeModId()) && m.Active.Equals(mod.GetOnlineVersion()));
+
+            buildCache.Add(buildid, build);
+            return build;
+        }
+
+        public bool IsModInBuild(Mcmod mod, string buildid)
+        {
+            var build = GetBuild(buildid);
+            var safeModId = mod.GetSafeModId();
+            return build.Mods.Any(m => m.Name.Equals(safeModId));
+        }
+
+        public bool IsModversionActiveInBuild(Mcmod mod, string buildid)
+        {
+            var build = GetBuild(buildid);
+            var safeModId = mod.GetSafeModId();
+            var onlineVersion = mod.GetOnlineVersion();
+            return build.Mods.Any(m => m.Name.Equals(safeModId) && m.Active.Equals(onlineVersion));
         }
 
         public string GetActiveModversionInBuildId(Mcmod mod, string buildid)
@@ -167,15 +196,44 @@ namespace ModpackHelper.Shared.Web
             return GetModVersionId(mod.GetSafeModId(), mod.GetOnlineVersion());
         }
 
+        public bool IsPackOnline(Modpack modpack)
+        {
+            return GetModpackId(modpack.GetSlug()) != null;
+        }
+
+        public bool IsBuildOnline(Modpack modpack)
+        {
+            return GetBuildId(modpack) != null;
+        }
+        
         private string GetModVersionId(string moid, string modversion)
         {
+            if (ModversionIdCache.ContainsKey(moid))
+            {
+                if (ModversionIdCache[moid].ContainsKey(modversion))
+                {
+                    return ModversionIdCache[moid][modversion];
+                }
+            }
+
             var modid = GetModId(moid);
             var request = new RestRequest("mod/view/{modid}");
             request.AddParameter("modid", modid, ParameterType.UrlSegment);
             var res = client.Execute(request);
             var mvc = new ModVersionCrawler(res.Content);
             var modVersions = mvc.Crawl();
-            return modVersions.FirstOrDefault(m => m.Version.Equals(modversion))?.Id;
+            string id = modVersions.FirstOrDefault(m => m.Version.Equals(modversion))?.Id;
+
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                if (!ModversionIdCache.ContainsKey(moid))
+                {
+                    ModversionIdCache.Add(moid, new Dictionary<string, string>());
+                }
+                ModversionIdCache[moid].Add(modversion, id);
+            }
+            return id;
+
         }
 
         public string CreateBuild(Modpack modpack, string id)
@@ -203,7 +261,8 @@ namespace ModpackHelper.Shared.Web
         public string GetBuildId(Modpack modpack)
         {
             var request = new RestRequest("modpack/view/{id}");
-            request.AddParameter("id", GetModpackId(modpack.GetSlug()), ParameterType.UrlSegment);
+            var modpackId = GetModpackId(modpack.GetSlug());
+            request.AddParameter("id", modpackId, ParameterType.UrlSegment);
             var res = client.Execute(request);
             var crawler = new BuildListCrawler {HTML = res.Content};
             var builds = crawler.Crawl();
@@ -228,12 +287,23 @@ namespace ModpackHelper.Shared.Web
 
         private string GetModId(string modid)
         {
+            if (ModIdCache.ContainsKey(modid))
+            {
+                return ModIdCache[modid];
+            }
+
             var request = new RestRequest("mod/list");
             var res = client.Execute(request);
             var crawler = new ModlistCrawler(res.Content);
             var mods = crawler.Crawl();
             var mo = mods.SingleOrDefault(m => m.Name.Equals(modid));
-            return mo?.Id;
+
+            string id = mo?.Id;
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                ModIdCache.Add(modid, id);
+            }
+            return id;
         }
 
         public void AddModversionToBuild(Mcmod mod, string modpackbuildid)

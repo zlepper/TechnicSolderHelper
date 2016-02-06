@@ -89,6 +89,8 @@ namespace ModpackHelper.Shared.Web.FTP
 
         }
 
+        private Dictionary<string, List<string>> DirectoryContentCache = new Dictionary<string, List<string>>(); 
+
         /// <summary>
         /// Gets the content of a directory on the FTP service
         /// </summary>
@@ -96,6 +98,11 @@ namespace ModpackHelper.Shared.Web.FTP
         /// <returns></returns>
         private List<string> GetDirectoryContent(string location)
         {
+            if (DirectoryContentCache.ContainsKey(location))
+            {
+                return DirectoryContentCache[location];
+            }
+
             List<string> folderContent = new List<string>();
             FtpWebRequest request;
             if (location == null)
@@ -136,6 +143,8 @@ namespace ModpackHelper.Shared.Web.FTP
                 }
             }
 
+            DirectoryContentCache.Add(location, folderContent);
+
             return folderContent;
         }
 
@@ -158,16 +167,19 @@ namespace ModpackHelper.Shared.Web.FTP
             }
 
             // Create a requst to the FTP server
+            Console.WriteLine(url);
             FtpWebRequest request = WebRequest.Create(url) as FtpWebRequest;
             if (request != null)
             {
                 // Login to the server
                 request.Credentials = new NetworkCredential(username, password);
+
+
+                Debug.Assert(request != null, "request != null");
+                List<string> directoryContent = GetDirectoryContent(request.RequestUri.ToString());
                 // Create all the subfolders up to the file
                 foreach (string folder in folders)
                 {
-                    Debug.Assert(request != null, "request != null");
-                    List<string> directoryContent = GetDirectoryContent(request.RequestUri.ToString());
                     if (directoryContent.Contains(folder))
                     {
                         if (request.RequestUri.ToString().EndsWith("/"))

@@ -17,9 +17,15 @@ namespace ModpackHelper.Shared.Web.Solder.Crawlers
 
         public override List<ModVersion> Crawl()
         {
-            var tableRows = Document.DocumentNode.SelectNodes("//table/tbody/tr[class='version']");
+            var tableRows = Document.DocumentNode.SelectNodes("//table/tbody/tr[@class='version']");
 
-            List<ModVersion> mvs = new List<ModVersion>(tableRows.Count);
+            List<ModVersion> mvs = new List<ModVersion>();
+
+            if (tableRows == null)
+            {
+                return mvs;
+            }
+
             mvs.AddRange(tableRows.Select(tableRow => new ModVersion
             {
                 Id = tableRow.GetAttributeValue("rel", null),

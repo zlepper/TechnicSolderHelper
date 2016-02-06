@@ -121,13 +121,30 @@ namespace ModpackHelper.Shared.Mods
             {
                 throw new Exception("Attempted to update solder, but could not log in");
             }
-            string modpackId = wc.CreatePack(modpack.Name, modpack.GetSlug());
-            string buildId = wc.CreateBuild(modpack, modpackId);
+            string modpackId = null;
+            if (wc.IsPackOnline(modpack))
+            {
+                modpackId = wc.GetModpackId(modpack.GetSlug());
+            }
+            else
+            {
+                modpackId = wc.CreatePack(modpack.Name, modpack.GetSlug());
+            }
+            string buildId = null;
+            if (wc.IsBuildOnline(modpack))
+            {
+                buildId = wc.GetBuildId(modpack);
+            }
+            else
+            {
+
+                buildId = wc.CreateBuild(modpack, modpackId);
+            }
 
             var backgroundWorkers = new List<BackgroundWorker>(mods.Count);
             foreach (Mcmod mod in mods)
             {
-                if(mod.IsSkipping) continue;
+                if (mod.IsSkipping) continue;
                 BackgroundWorker bw = new BackgroundWorker();
                 bw.DoWork += BwOnDoWork;
                 var parameters = new Dictionary<string, object>
@@ -163,13 +180,13 @@ namespace ModpackHelper.Shared.Mods
         {
             // Parse all the arguments
             var parameters = doWorkEventArgs.Argument as Dictionary<string, object>;
-            if(parameters == null) throw new NullReferenceException();
+            if (parameters == null) throw new NullReferenceException();
             ISolderWebClient wc = parameters["wc"] as ISolderWebClient;
             Mcmod mod = parameters["mod"] as Mcmod;
             string buildid = parameters["build"] as string;
-            if(wc == null) throw new NullReferenceException();
-            if(mod == null) throw new NullReferenceException();
-            if(buildid == null) throw new NullReferenceException();
+            if (wc == null) throw new NullReferenceException();
+            if (mod == null) throw new NullReferenceException();
+            if (buildid == null) throw new NullReferenceException();
 
             if (!mod.IsSkipping)
             {
@@ -197,13 +214,20 @@ namespace ModpackHelper.Shared.Mods
                     string md5 = io.CalculateMd5(fileSystem.FileInfo.FromFileName(mod.OutputFile));
                     wc.AddModVersion(modid, md5, mod.GetOnlineVersion());
                 }
-                if (wc.IsModversionInBuild(mod, buildid))
+                if (wc.IsModversionActiveInBuild(mod, buildid))
                 {
-                    wc.SetModversionInBuild(mod, buildid);
+                    
                 }
                 else
                 {
-                    wc.AddModversionToBuild(mod, buildid);
+                    if (wc.IsModInBuild(mod, buildid))
+                    {
+                        wc.SetModversionInBuild(mod, buildid);
+                    }
+                    else
+                    {
+                        wc.AddModversionToBuild(mod, buildid);
+                    }
                 }
                 Debug.WriteLine("Done");
             }

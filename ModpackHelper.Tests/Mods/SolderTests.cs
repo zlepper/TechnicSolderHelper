@@ -22,7 +22,7 @@ namespace ModpackHelper.Tests.Mods
         public void Setup()
         {
             mods = new List<Mcmod>();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Mcmod mod = new Mcmod
                 {
@@ -47,7 +47,7 @@ namespace ModpackHelper.Tests.Mods
                 MinJava = "1.7",
                 MinMemory = "1024",
                 MinecraftVersion = "1.7.10",
-                Version = Guid.NewGuid().ToString()
+                Version = "1.0.1"
             };
 
             var dict = mods.ToDictionary<Mcmod, string, MockFileData>(mod => mod.OutputFile, mod => Guid.NewGuid().ToString());
@@ -97,8 +97,7 @@ namespace ModpackHelper.Tests.Mods
             var Ftp = new FTPUploader(ftpLogin, fileSystem);
             var dir = fileSystem.DirectoryInfo.FromDirectoryName("C:\\something");
             Ftp.UploadFolder(dir);
-
-            //modpack.Version = Guid.NewGuid().ToString();
+            
 
             var solder = new Solder(fileSystem);
             solder.Initialize("hansen13579@outlook.com", "password", mods, modpack);
