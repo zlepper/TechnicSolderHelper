@@ -167,7 +167,6 @@ namespace ModpackHelper.Shared.Web.FTP
             }
 
             // Create a requst to the FTP server
-            Console.WriteLine(url);
             FtpWebRequest request = WebRequest.Create(url) as FtpWebRequest;
             if (request != null)
             {
