@@ -9,10 +9,11 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
+using ModpackHelper.IO;
 using ModpackHelper.Shared.MinecraftForge;
 using ModpackHelper.Shared.Mods;
 using ModpackHelper.Shared.Utils.Config;
-using ModpackHelper.Shared.Utils.Solder;
+using ModpackHelper.Shared.Web;
 
 namespace ModpackHelper.Shared.IO
 {
@@ -44,6 +45,17 @@ namespace ModpackHelper.Shared.IO
 
                 DirectoryInfoBase outputDirectory = fileSystem.DirectoryInfo.FromDirectoryName(modpack.OutputDirectory);
 
+
+                ISolderWebClient solderWebClient = null;
+                if (modpack.UseSolder)
+                {
+                    using (var config = new ConfigHandler(fileSystem))
+                    {
+                        var sli = config.Configs.SolderLoginInfo;
+                        solderWebClient = new SolderWebClient(sli.Address);
+                    }
+                }
+
                 // Create the output directory where we should put all the new files
                 outputDirectory.Create();
                 List<BackgroundWorker> backgroundWorkers = new List<BackgroundWorker>(mods.Count);
@@ -61,17 +73,18 @@ namespace ModpackHelper.Shared.IO
                                 new ForgeHandler(fileSystem).GetDownloadUrl((Int32.Parse(modpack.ForgeVersion)));
                             if (modpack.UseSolder)
                             {
+
                                 //SolderMySQLHelper ssh = new SolderMySQLHelper(modpack.Name, modpack.Version);
-                                //if (
-                                //    ssh.IsModVersionOnline(new Mcmod()
-                                //    {
-                                //        Version = modpack.ForgeVersion,
-                                //        Mcversion = modpack.MinecraftVersion,
-                                //        Modid = "forge"
-                                //    }))
-                                //{
-                                //    skip = true;
-                                //}
+                                if (
+                                    solderWebClient != null && solderWebClient.IsModversionOnline(new Mcmod()
+                                    {
+                                        Version = modpack.ForgeVersion,
+                                        Mcversion = modpack.MinecraftVersion,
+                                        Modid = "forge"
+                                    }))
+                                {
+                                    skip = true;
+                                }
                             }
                             if (!skip)
                             {
@@ -106,13 +119,16 @@ namespace ModpackHelper.Shared.IO
 
                             // Check if mod is online
                             Mcmod mo = db.Mods.FirstOrDefault(m => m.JarMd5.Equals(mod.JarMd5));
-                            if (mo != null && mo.IsOnSolder && !modpack.ForceSolder)
+                            if (mo != null && (mo.IsOnSolder && !modpack.ForceSolder || (solderWebClient != null && solderWebClient.IsModversionOnline(mod))))
+                            {
+                                mod.IsSkipping = true;
                                 return;
+                            }
                             // Create the output directory 
                             string zipFileDirectory = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID);
                             fileSystem.Directory.CreateDirectory(zipFileDirectory);
 
-                            mod.OutputFile= fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID,
+                            mod.OutputFile = fileSystem.Path.Combine(outputDirectory.FullName, "mods", modID,
                                 modID + "-" + modversion + ".zip");
                             FileInfoBase zipFile = fileSystem.FileInfo.FromFileName(mod.OutputFile);
 

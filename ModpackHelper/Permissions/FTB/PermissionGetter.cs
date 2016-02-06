@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace ModpackHelper.Shared.Permissions.FTB
@@ -66,9 +67,20 @@ namespace ModpackHelper.Shared.Permissions.FTB
 
         private void Save()
         {
-            string json = JsonConvert.SerializeObject(permissions);
-            fileSystem.FileInfo.FromFileName(PermissionsFile).Directory.Create();
-            fileSystem.File.WriteAllText(PermissionsFile, json);
+            while (true)
+            {
+                try
+                {
+                    string json = JsonConvert.SerializeObject(permissions);
+                    fileSystem.FileInfo.FromFileName(PermissionsFile).Directory.Create();
+                    fileSystem.File.WriteAllText(PermissionsFile, json);
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Thread.Sleep(50);
+                }
+            }
         }
 
         public void LoadOnlinePermissions()

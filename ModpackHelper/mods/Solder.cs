@@ -116,7 +116,11 @@ namespace ModpackHelper.Shared.Mods
         public void Update(string url)
         {
             ISolderWebClient wc = new SolderWebClient(url);
-            wc.Login(username, password);
+            bool loginSuccessful = wc.Login(username, password);
+            if (!loginSuccessful)
+            {
+                throw new Exception("Attempted to update solder, but could not log in");
+            }
             string modpackId = wc.CreatePack(modpack.Name, modpack.GetSlug());
             string buildId = wc.CreateBuild(modpack, modpackId);
 
@@ -167,28 +171,46 @@ namespace ModpackHelper.Shared.Mods
             if(mod == null) throw new NullReferenceException();
             if(buildid == null) throw new NullReferenceException();
 
-            // If the mod is already in solder, then we only need to add a build and add it to the modpack build
-            string modid;
-            try
+            if (!mod.IsSkipping)
             {
-                modid = wc.GetModId(mod);
-                if (string.IsNullOrWhiteSpace(modid))
+                // If the mod is already in solder, then we only need to add a build and add it to the modpack build
+                string modid;
+                try
                 {
-                    throw new NullReferenceException();
+                    modid = wc.GetModId(mod);
+                    if (string.IsNullOrWhiteSpace(modid))
+                    {
+                        throw new NullReferenceException();
+                    }
                 }
+                catch (Exception)
+                {
+                    modid = wc.AddMod(mod);
+                }
+                if (string.IsNullOrWhiteSpace(modid))
+                    throw new Exception("Something went wrong when adding a mod to solder.");
+
+
+                if (!wc.IsModversionOnline(mod))
+                {
+                    IOHandler io = new IOHandler(fileSystem);
+                    string md5 = io.CalculateMd5(fileSystem.FileInfo.FromFileName(mod.OutputFile));
+                    wc.AddModVersion(modid, md5, mod.GetOnlineVersion());
+                }
+                if (wc.IsModversionInBuild(mod, buildid))
+                {
+                    wc.SetModversionInBuild(mod, buildid);
+                }
+                else
+                {
+                    wc.AddModversionToBuild(mod, buildid);
+                }
+                Debug.WriteLine("Done");
             }
-            catch (Exception)
+            else
             {
-                modid = wc.AddMod(mod);
+                Debug.WriteLine("Skipped");
             }
-            if(string.IsNullOrWhiteSpace(modid)) throw new Exception("Something went wrong when adding a mod to solder.");
-
-            IOHandler io = new IOHandler(fileSystem);
-            string md5 = io.CalculateMd5(fileSystem.FileInfo.FromFileName(mod.OutputFile));
-            wc.AddModVersion(modid, md5, mod.GetOnlineVersion());
-
-            wc.AddBuildToModpack(mod, buildid);
-            Debug.WriteLine("Done");
         }
     }
 }

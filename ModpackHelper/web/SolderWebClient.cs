@@ -3,11 +3,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using ModpackHelper.Shared.Mods;
+using ModpackHelper.Shared.Web.Solder.Crawlers;
 using ModpackHelper.Shared.Web.Solder.Responses;
 using Newtonsoft.Json;
-using ModpackHelper.Shared.Utils.Config;
 using RestSharp;
-using RestSharp.Authenticators;
 using Modpack = ModpackHelper.Shared.Utils.Config.Modpack;
 
 namespace ModpackHelper.Shared.Web
@@ -23,14 +22,14 @@ namespace ModpackHelper.Shared.Web
 
     public class SolderWebClient : ISolderWebClient
     {
-        private readonly Uri baseUrl;
-        private readonly IRestClient client;
+        public readonly Uri baseUrl;
+        public readonly IRestClient client;
         private readonly CookieContainer cookieContainer;
 
 
         public SolderWebClient(string baseUrl, IRestClient c = null)
         {
-            if (!baseUrl.StartsWith("http://") || !baseUrl.StartsWith("https://"))
+            if (!baseUrl.StartsWith("http://") && !baseUrl.StartsWith("https://"))
             {
                 baseUrl = "http://" + baseUrl;
             }
@@ -40,14 +39,14 @@ namespace ModpackHelper.Shared.Web
             this.baseUrl = new Uri(baseUrl);
         }
 
-        public void Login(string email, string password)
+        public bool Login(string email, string password)
         {
-            //client.Authenticator = new SimpleAuthenticator("email", email, "password", password);
             var request = new RestRequest("login", Method.POST);
             request.AddParameter("email", email);
             request.AddParameter("password", password);
             var res = client.Execute(request);
-            Debug.WriteLine(res);
+            LoginCrawler crawler = new LoginCrawler {HTML = res.Content};
+            return crawler.Crawl();
         }
 
         public string CreatePack(string modpackname, string slug)
@@ -125,7 +124,58 @@ namespace ModpackHelper.Shared.Web
             request.AddParameter("modversion", mod.GetOnlineVersion(), ParameterType.UrlSegment);
             var res = client.Execute(request);
             ModVersion mv = JsonConvert.DeserializeObject<ModVersion>(res.Content);
-            return !string.IsNullOrWhiteSpace(mv.Id);
+            return !string.IsNullOrWhiteSpace(mv.Md5);
+        }
+
+        public bool IsModversionInBuild(Mcmod mod, string buildid)
+        {
+            var request = new RestRequest("modpack/build/{build}");
+            request.AddParameter("build", buildid, ParameterType.UrlSegment);
+            var res = client.Execute(request);
+            var bc = new BuildCrawler() {HTML = res.Content};
+            var build = bc.Crawl();
+            return build.Mods.Any(m => m.Name.Equals(mod.GetSafeModId()) && m.Active.Equals(mod.GetOnlineVersion()));
+        }
+
+        public string GetActiveModversionInBuildId(Mcmod mod, string buildid)
+        {
+            var request = new RestRequest("modpack/build/{build}");
+            request.AddParameter("build", buildid, ParameterType.UrlSegment);
+            var res = client.Execute(request);
+            var bc = new BuildCrawler() { HTML = res.Content };
+            var build = bc.Crawl();
+            string version = build.Mods.FirstOrDefault(m => m.Name.Equals(mod.GetSafeModId()))?.Active;
+            if (string.IsNullOrWhiteSpace(version)) return null;
+            return GetModVersionId(mod.GetSafeModId(), version);
+        }
+
+        public void SetModversionInBuild(Mcmod mod, string buildid)
+        {
+            var modVersionId = GetModVersionId(mod);
+            var request = new RestRequest("modpack/build/modify");
+            request.MakeAjaxRequestType();
+            request.AddParameter("action", "version");
+            request.AddParameter("build-id", buildid);
+            request.AddParameter("version", modVersionId);
+            request.AddParameter("modversion-id", GetActiveModversionInBuildId(mod, buildid));
+            var res = client.Execute(request);
+            Debug.WriteLine(res);
+        }
+
+        public string GetModVersionId(Mcmod mod)
+        {
+            return GetModVersionId(mod.GetSafeModId(), mod.GetOnlineVersion());
+        }
+
+        private string GetModVersionId(string moid, string modversion)
+        {
+            var modid = GetModId(moid);
+            var request = new RestRequest("mod/view/{modid}");
+            request.AddParameter("modid", modid, ParameterType.UrlSegment);
+            var res = client.Execute(request);
+            var mvc = new ModVersionCrawler(res.Content);
+            var modVersions = mvc.Crawl();
+            return modVersions.FirstOrDefault(m => m.Version.Equals(modversion))?.Id;
         }
 
         public string CreateBuild(Modpack modpack, string id)
@@ -152,44 +202,41 @@ namespace ModpackHelper.Shared.Web
 
         public string GetBuildId(Modpack modpack)
         {
-            var request = new RestRequest("api/modpack/{modpack}/{build}");
-            request.AddParameter("modpack", modpack.GetSlug(), ParameterType.UrlSegment);
-            request.AddParameter("build", modpack.Version, ParameterType.UrlSegment);
-            var res = client.Execute<Mods.Solder.ModpackWithBuild>(request);
-            return res.Data.id;
+            var request = new RestRequest("modpack/view/{id}");
+            request.AddParameter("id", GetModpackId(modpack.GetSlug()), ParameterType.UrlSegment);
+            var res = client.Execute(request);
+            var crawler = new BuildListCrawler {HTML = res.Content};
+            var builds = crawler.Crawl();
+            var build = builds.SingleOrDefault(b => b.Version.Equals(modpack.Version));
+            return build?.Id;
         }
 
         public string GetModpackId(string slug)
         {
-            var request = new RestRequest("api/modpack/{modpack}");
-            request.AddParameter("modpack", slug, ParameterType.UrlSegment);
-            var res = client.Execute<Mods.Solder.ModpackWithoutBuild>(request);
-            try
-            {
-                return res.Data.id;
-            }
-            catch (NullReferenceException)
-            {
-                return null;
-            }
+            var request = new RestRequest("modpack/list");
+            var res = client.Execute(request);
+            ModpackListCrawler crawler = new ModpackListCrawler {HTML = res.Content};
+            var modpacks = crawler.Crawl();
+            var modpack = modpacks.SingleOrDefault(m => m.Name.Equals(slug));
+            return modpack?.Id;
         }
 
         public string GetModId(Mcmod mod)
         {
-            var request = new RestRequest("api/mod/{mod}");
-            request.AddParameter("mod", mod.GetSafeModId(), ParameterType.UrlSegment);
-            var res = client.Execute<Mods.Solder.ModpackWithBuild.Mod>(request);
-            try
-            {
-                return res.Data.id;
-            }
-            catch (NullReferenceException)
-            {
-                return null;
-            }
+            return GetModId(mod.GetSafeModId());
         }
 
-        public void AddBuildToModpack(Mcmod mod, string modpackbuildid)
+        private string GetModId(string modid)
+        {
+            var request = new RestRequest("mod/list");
+            var res = client.Execute(request);
+            var crawler = new ModlistCrawler(res.Content);
+            var mods = crawler.Crawl();
+            var mo = mods.SingleOrDefault(m => m.Name.Equals(modid));
+            return mo?.Id;
+        }
+
+        public void AddModversionToBuild(Mcmod mod, string modpackbuildid)
         {
             var request = new RestRequest("modpack/modify/add", Method.POST);
             request.MakeAjaxRequestType();

@@ -37,29 +37,7 @@ namespace ModpackHelper.Shared.Utils.Config
         /// The address of database
         /// </summary>
         public string Address { get; set; }
-
-        /// <summary>
-        /// The name of the scema to connect to
-        /// Also known as the database name
-        /// </summary>
-        public string DatabaseSchema { get; set; }
-
-        /// <summary>
-        /// The prefix of the tables in solder
-        /// </summary>
-        public string TablePrefix { get; set; }
-
-        /// <summary>
-        /// Get the connectionstring that connects to the Database
-        /// </summary>
-        /// <returns></returns>
-        public string GetConnectionString()
-        {
-            Crypto crypto = new Crypto();
-            return
-                $"address={Address};username={Username};password={Password};database={DatabaseSchema}";
-        }
-
+        
         /// <summary>
         /// Checks if the info in here has any chance of being valid
         /// </summary>

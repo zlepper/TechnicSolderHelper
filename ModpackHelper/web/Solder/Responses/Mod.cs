@@ -16,5 +16,6 @@ namespace ModpackHelper.Shared.Web.Solder.Responses
         public string Link { get; set; }
         public string Donate { get; set; }
         public List<string> Versions { get; set; }
+        public string Active { get; set; }
     }
 }

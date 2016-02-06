@@ -65,6 +65,9 @@ namespace ModpackHelper.GUI
 
             // Ensure that the window is big enough to contain all the current controls
             EnsureWindowSize();
+
+            // Make sure there is something in the forge version list
+            
         }
 
         /// <summary>
@@ -462,7 +465,7 @@ namespace ModpackHelper.GUI
 
         private void ConfigureSolderButton_Click(object sender, EventArgs e)
         {
-            MySQLConnectForm f = new MySQLConnectForm(fileSystem, messageShower);
+            SolderConnectForm f = new SolderConnectForm(fileSystem, messageShower);
             f.ShowDialog(this);
         }
 
@@ -520,11 +523,7 @@ namespace ModpackHelper.GUI
         {
             technicOptionsGroupBox.Visible = CreateTechnicPackCheckBox.Checked;
         }
-
-        //private void formClosingHandler(object sender, EventArgs e)
-        //{
-        //    
-        //}
+        
         private void formClosingHandler(object sender, CancelEventArgs e)
         {
             if (!isRunningBackgroundTask) return;
@@ -535,6 +534,20 @@ namespace ModpackHelper.GUI
             if (result != DialogResult.OK)
             {
                 e.Cancel = true;
+            }
+        }
+
+        private void FillForgeDropdown()
+        {
+            using (var forgeHandler = new ForgeHandler(fileSystem))
+            {
+                List<int> versions = forgeHandler.GetForgeBuilds(MinecraftVersionDropdown.SelectedText);
+                forgeVersionDropdown.Items.Clear();
+                foreach (int version in versions)
+                {
+                    forgeVersionDropdown.Items.Add(version);
+                }
+                forgeVersionDropdown.SelectedIndex = forgeVersionDropdown.Items.Count - 1;
             }
         }
     }

@@ -18,12 +18,12 @@ using ModpackHelper.Shared.Web.Solder;
 
 namespace ModpackHelper.GUI.Windows
 {
-    public partial class MySQLConnectForm : Form
+    public partial class SolderConnectForm : Form
     {
         private IFileSystem fileSystem;
         private readonly IMessageShower messageShower;
 
-        public MySQLConnectForm(IFileSystem fileSystem, IMessageShower messageShower)
+        public SolderConnectForm(IFileSystem fileSystem, IMessageShower messageShower)
         {
             this.fileSystem = fileSystem;
             this.messageShower = messageShower;
@@ -36,7 +36,7 @@ namespace ModpackHelper.GUI.Windows
             PasswordTextBox.Text = solderInfo.Password;
         }
 
-        public MySQLConnectForm() : this(new FileSystem(), new MessageShower())
+        public SolderConnectForm() : this(new FileSystem(), new MessageShower())
         {
             
         }
@@ -58,7 +58,8 @@ namespace ModpackHelper.GUI.Windows
             if (sli.IsValid())
             {
                 ISolderWebClient wc = new SolderWebClient(sli.Address);
-                wc.Login(sli.Username, sli.Password);
+                bool result = wc.Login(sli.Username, sli.Password);
+                messageShower.ShowMessageAsync(result ? "Login was successful" : "Login failed");
             }
             else
             {

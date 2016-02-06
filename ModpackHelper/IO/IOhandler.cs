@@ -60,7 +60,7 @@ namespace ModpackHelper.Shared.IO
                     try
                     {
                         using (Stream stream = file.OpenRead())
-                            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty).ToLower();
                     }
                     catch
                     {

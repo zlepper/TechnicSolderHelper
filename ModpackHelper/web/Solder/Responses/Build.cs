@@ -12,7 +12,7 @@ namespace ModpackHelper.Shared.Web.Solder.Responses
         public string Minecraft { get; set; }
         public string Java { get; set; }
         public string Memory { get; set; }
-        public object Forge { get; set; }
         public List<Mod> Mods { get; set; }
+        public string Version { get; set; }
     }
 }

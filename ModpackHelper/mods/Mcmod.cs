@@ -29,6 +29,7 @@ namespace ModpackHelper.Shared.Mods
     {
         /// <summary>
         /// Used to indicate if this mod should be skipped when packing the mods
+        /// <strong>This is indicated by the user when they enter info, and should NOT be set programatically otherwise!!</strong>
         /// </summary>
         public bool IsSkipping;
 

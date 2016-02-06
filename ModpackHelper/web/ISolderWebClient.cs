@@ -10,7 +10,8 @@ namespace ModpackHelper.Shared.Web
         /// </summary>
         /// <param name="email">The email to login with</param>
         /// <param name="password">The password to login with</param>
-        void Login(string email, string password);
+        /// <returns>True if login was a success</returns>
+        bool Login(string email, string password);
 
         /// <summary>
         /// Create a pack with the specific name and slug
@@ -64,13 +65,21 @@ namespace ModpackHelper.Shared.Web
         /// <param name="mod">The mod to find</param>
         /// <returns>The id of the mod if found, otherwise null</returns>
         string GetModId(Mcmod mod);
+
         string CreateBuild(Modpack modpack);
+
         string CreateBuild(Modpack modpack, string id);
 
         string GetModpackId(string slug);
 
-        void AddBuildToModpack(Mcmod mod, string modpackbuildid);
+        void AddModversionToBuild(Mcmod mod, string modpackbuildid);
 
         string GetBuildId(Modpack modpack);
+
+        bool IsModversionOnline(Mcmod mod);
+
+        bool IsModversionInBuild(Mcmod mod, string buildid);
+        void SetModversionInBuild(Mcmod mod, string buildid);
+        string GetModVersionId(Mcmod mod);
     }
 }

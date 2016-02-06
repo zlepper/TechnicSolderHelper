@@ -43,6 +43,10 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
       <Private>True</Private>
@@ -51,8 +55,8 @@
       <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -62,8 +66,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.Abstractions, Version=2.0.0.117, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Abstractions.2.0.0.117\lib\net40\System.IO.Abstractions.dll</HintPath>
+    <Reference Include="System.IO.Abstractions, Version=2.0.0.123, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.123\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Compression" />
@@ -97,7 +101,6 @@
     <Compile Include="Utils\Config\FTPLoginInfo.cs" />
     <Compile Include="Utils\Config\SolderLoginInfo.cs" />
     <Compile Include="Utils\Debug.cs" />
-    <Compile Include="Utils\Solder\SolderMySQLHelper.cs" />
     <Compile Include="Web\Api\Connection.cs" />
     <Compile Include="Web\Api\Mod.cs" />
     <Compile Include="Mods\Solder.cs" />
@@ -128,13 +131,20 @@
     <Compile Include="Web\ISolderWebClient.cs" />
     <Compile Include="Web\SolderWebClient.cs" />
     <Compile Include="UserInteraction\IDirectoryFinder.cs" />
+    <Compile Include="Web\Solder\Crawlers\BaseCrawler.cs" />
+    <Compile Include="Web\Solder\Crawlers\BuildCrawler.cs" />
+    <Compile Include="Web\Solder\Crawlers\BuildListCrawler.cs" />
+    <Compile Include="Web\Solder\Crawlers\ICrawler.cs" />
+    <Compile Include="Web\Solder\Crawlers\LoginCrawler.cs" />
+    <Compile Include="Web\Solder\Crawlers\ModpackListCrawler.cs" />
+    <Compile Include="Web\Solder\Crawlers\ModVersionCrawler.cs" />
     <Compile Include="Web\Solder\Responses\AllModpacks.cs" />
     <Compile Include="Web\Solder\Responses\Api.cs" />
     <Compile Include="Web\Solder\Responses\Build.cs" />
     <Compile Include="Web\Solder\Responses\Mod.cs" />
     <Compile Include="Web\Solder\Responses\Modpack.cs" />
     <Compile Include="Web\Solder\Responses\ModVersion.cs" />
-    <Compile Include="Web\Solder\SolderMySQLClient.cs" />
+    <Compile Include="Web\Solder\Crawlers\ModlistCrawler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

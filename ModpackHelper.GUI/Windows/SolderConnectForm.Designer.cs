@@ -1,6 +1,6 @@
 ﻿namespace ModpackHelper.GUI.Windows
 {
-    partial class MySQLConnectForm
+    partial class SolderConnectForm
     {
         /// <summary>
         /// Required designer variable.
@@ -156,7 +156,7 @@
             this.Controls.Add(this.ServerAddressTextBox);
             this.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.MinimumSize = new System.Drawing.Size(669, 565);
-            this.Name = "MySQLConnectForm";
+            this.Name = "SolderConnectForm";
             this.Text = "MySQLConnectForm";
             this.ResumeLayout(false);
             this.PerformLayout();

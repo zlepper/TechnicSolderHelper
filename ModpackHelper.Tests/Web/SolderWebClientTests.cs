@@ -55,17 +55,57 @@ namespace ModpackHelper.Tests.Web
         {
             var responseMock = new Mock<IRestResponse>();
             responseMock.Setup(r => r.Content)
-                .Returns("{\"id\":\"1\",\"name\":\"test\",\"pretty_name\":\"test\",\"author\":\"\",\"description\":\"\",\"link\":\"\",\"donate\":\"\",\"versions\":[\"1.0.0\"]}");
+                .Returns("{\"md5\":\"a5eb911f1b42d956ec5bc98895b28fe9\",\"filesize\":null,\"url\":\"repo.zlepper.dk\\/mods\\/test\\/test-1.0.0.zip\"}");
             var clientMock = new Mock<IRestClient>();
             clientMock.Setup(c => c.Execute(It.IsAny<IRestRequest>())).Returns(responseMock.Object);
             var modMock = new Mock<Mcmod>();
-            modMock.Setup(m => m.GetSafeModId()).Returns("testmod");
-            modMock.Setup(m => m.GetOnlineVersion()).Returns("1.7.10-1.2.3");
+            modMock.Setup(m => m.GetSafeModId()).Returns("test");
+            modMock.Setup(m => m.GetOnlineVersion()).Returns("1.0.0");
             SolderWebClient sw = new SolderWebClient("http://solder.zlepper.dk", clientMock.Object);
 
             var result = sw.IsModversionOnline(modMock.Object);
 
             Assert.That(result, Is.EqualTo(true));
+        }
+
+        [Test]
+        public void LoginReturnsTrueIfSuccessful()
+        {
+            ISolderWebClient wc = new SolderWebClient("http://solder.zlepper.dk");
+            
+            bool response = wc.Login("hansen13579@outlook.com", "password");
+
+            Assert.That(response, Is.True);
+        }
+    
+        [Test]
+        public void LoginReturnsFalseIfFailed()
+        {
+            ISolderWebClient wc = new SolderWebClient("http://solder.zlepper.dk");
+
+            bool response = wc.Login("hansen13579@outlook.com", "password2");
+
+            Assert.That(response, Is.False);
+        }
+
+        [TestCase("zlepper.dk")]
+        [TestCase("solder.zlepper.dk")]
+        [TestCase("something.solder.zlepper.dk")]
+        public void HttpIsPrependedIfUserDidntProvideIt(string url)
+        {
+            SolderWebClient wc = new SolderWebClient(url);
+
+            Assert.That(wc.baseUrl.AbsoluteUri.StartsWith("http://"), Is.True);
+        }
+        
+        [Test]
+        public void HttpIsNotPrependedIfUserProvidedIt([Values("zlepper.dk/", "solder.zlepper.dk/")] string url, [Values("http://", "https://")] string start)
+        {
+            string s = start + url;
+            
+            SolderWebClient wc = new SolderWebClient(s);
+
+            Assert.That(wc.baseUrl.AbsoluteUri, Is.EqualTo(s));
         }
     }
 }
