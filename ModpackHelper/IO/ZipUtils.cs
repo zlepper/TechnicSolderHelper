@@ -132,11 +132,12 @@ namespace ModpackHelper.Shared.IO
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="output"></param>
-        public void ZipDirectory(string folder, string output)
+        /// <param name="blacklistedFileNames">A list of gile names to avoid packing. Acacepts wildcards at start and end</param>
+        public void ZipDirectory(string folder, string output, List<string> blacklistedFileNames = null)
         {
             DirectoryInfoBase f = fileSystem.DirectoryInfo.FromDirectoryName(folder);
             FileInfoBase o = fileSystem.FileInfo.FromFileName(output);
-            ZipDirectory(f, o);
+            ZipDirectory(f, o, blacklistedFileNames);
         }
 
         /// <summary>
@@ -144,8 +145,15 @@ namespace ModpackHelper.Shared.IO
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="zipArchive"></param>
-        public void ZipDirectory(DirectoryInfoBase folder, FileInfoBase zipArchive)
+        /// <param name="blacklistedFileNames">A list of file names to avoid packing. Accepts wildcards at start and end</param>
+        public void ZipDirectory(DirectoryInfoBase folder, FileInfoBase zipArchive, List<string> blacklistedFileNames = null)
         {
+            // Make sure we can iterate over the list, even if the user didn't specify it
+            if (blacklistedFileNames == null)
+            {
+                blacklistedFileNames = new List<string>();
+            }
+
             // Check if the output file actually is a zipfile
             if (!zipArchive.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
             {
@@ -159,6 +167,13 @@ namespace ModpackHelper.Shared.IO
                     // Find all the files in the inputfolder
                     foreach (FileInfoBase file in folder.GetFiles("*.*", SearchOption.AllDirectories))
                     {
+                        // Check if the file is in the blackList, and skip over it
+                        if (IsFileInBlacklist(blacklistedFileNames, file))
+                        {
+                            continue;
+                        }
+
+
                         string entryname = file.FullName.Replace(folder.FullName, "");
 
                         ZipArchiveEntry entry = zip.CreateEntry(entryname);
@@ -173,6 +188,33 @@ namespace ModpackHelper.Shared.IO
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks if the file should be skipped 
+        /// </summary>
+        /// <param name="blacklistedFileNames"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        private bool IsFileInBlacklist(List<string> blacklistedFileNames, FileInfoBase file)
+        {
+            var name = file.Name;
+            for (int i = 0; i < blacklistedFileNames.Count; i++)
+            {
+                string blacklistedFileName = blacklistedFileNames[i];
+                if (blacklistedFileName.StartsWith("*"))
+                {
+                    blacklistedFileName = blacklistedFileName.Replace("*", "");
+                    if (name.EndsWith(blacklistedFileName)) return true;
+                }
+                if (blacklistedFileName.EndsWith("*"))
+                {
+                    blacklistedFileName = blacklistedFileName.Replace("*", "");
+                    if (name.StartsWith(blacklistedFileName)) return true;
+                }
+                if (name.Equals(blacklistedFileName)) return true;
+            }
+            return false;
         }
 
         public void SpecialPackSolderMod(FileInfoBase modfile, FileInfoBase zipFile)

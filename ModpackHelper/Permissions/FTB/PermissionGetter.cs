@@ -46,9 +46,17 @@ namespace ModpackHelper.Shared.Permissions.FTB
 
         public PermissionPolicy FindPermissionPolicy(string toCheck, bool isPublic)
         {
-            Permission perm = permissions.FirstOrDefault(p => p.modids.Contains(toCheck) || p.shortName.Equals(toCheck));
-            if(perm == null) return PermissionPolicy.Unknown;
-            return isPublic ? perm.publicPolicy : perm.privatePolicy;
+            try
+            {
+                Permission perm =
+                    permissions.FirstOrDefault(p => p.modids.Contains(toCheck) || p.shortName.Equals(toCheck));
+                if (perm == null) return PermissionPolicy.Unknown;
+                return isPublic ? perm.publicPolicy : perm.privatePolicy;
+            }
+            catch (Exception)
+            {
+                return PermissionPolicy.Unknown;
+            } 
         }
 
         private void Load()
@@ -96,7 +104,7 @@ namespace ModpackHelper.Shared.Permissions.FTB
                 // json size doesn't matter because only a small piece is read at a time from the HTTP request
                 permissions = serializer.Deserialize<List<Permission>>(reader);
             }
-            this.permissions = new List<Permission>();
+            var tp = new List<Permission>();
             foreach (Permission p in permissions.Where(p => !String.IsNullOrWhiteSpace(p.privateStringPolicy) &&
                                                             !String.IsNullOrWhiteSpace(p.publicStringPolicy)))
             {
@@ -110,7 +118,9 @@ namespace ModpackHelper.Shared.Permissions.FTB
                 if (r) p.publicPolicy = pp;
                 p.privateStringPolicy = null;
                 p.publicStringPolicy = null;
+                tp.Add(p);
             }
+            permissions = tp;
             Save();
         }
     }

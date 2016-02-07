@@ -22,6 +22,8 @@ namespace ModpackHelper.Shared.IO
         private readonly IFileSystem fileSystem;
         private readonly StringBuilder sb;
 
+        private static readonly List<string> BannedFileNames = new List<string>() { "YAMPST.nbt" };
+
         public ModPacker() : this(new FileSystem())
         {
 
@@ -62,6 +64,7 @@ namespace ModpackHelper.Shared.IO
                 ZipUtils zipUtils = new ZipUtils(fileSystem);
                 using (ModsDBContext db = new ModsDBContext(fileSystem))
                 {
+                    Mcmod forge = null;
                     // Check if we should pack forge, and then do it!
                     if (modpack.CreateForgeZip)
                     {
@@ -70,18 +73,13 @@ namespace ModpackHelper.Shared.IO
                         {
                             bool skip = false;
                             var forgedownloadUrl =
-                                new ForgeHandler(fileSystem).GetDownloadUrl((Int32.Parse(modpack.ForgeVersion)));
+                                new ForgeHandler(fileSystem).GetDownloadUrl((int.Parse(modpack.ForgeVersion)));
                             if (modpack.UseSolder)
                             {
 
                                 //SolderMySQLHelper ssh = new SolderMySQLHelper(modpack.Name, modpack.Version);
                                 if (
-                                    solderWebClient != null && solderWebClient.IsModversionOnline(new Mcmod()
-                                    {
-                                        Version = modpack.ForgeVersion,
-                                        Mcversion = modpack.MinecraftVersion,
-                                        Modid = "forge"
-                                    }))
+                                    solderWebClient != null && solderWebClient.IsModversionOnline(Mcmod.GetForgeMod(modpack.MinecraftVersion, modpack.ForgeVersion)))
                                 {
                                     skip = true;
                                 }
@@ -97,25 +95,45 @@ namespace ModpackHelper.Shared.IO
                                 {
                                     zu.SpecialPackForgeZip(s, forgeZip);
                                 }
-                                Mcmod forge = Mcmod.GetForgeMod(modpack.MinecraftVersion, modpack.ForgeVersion);
+                                forge = Mcmod.GetForgeMod(modpack.MinecraftVersion, modpack.ForgeVersion);
                                 forge.OutputFile = forgeZip.FullName;
+                                AddDataToOutput(forge.Name, forge.Modid, forge.GetOnlineVersion());
                             }
                         };
                         backgroundWorkers.Add(bw);
                         bw.RunWorkerAsync();
                     }
 
+                    if (modpack.CreateConfigZip)
+                    {
+                        BackgroundWorker bw = new BackgroundWorker();
+                        bw.DoWork += (sender, args) =>
+                        {
+                            var inputDirectory = fileSystem.DirectoryInfo.FromDirectoryName(modpack.InputDirectory);
+                            var configDirectory = fileSystem.DirectoryInfo.FromDirectoryName(Path.Combine(inputDirectory.Parent.FullName, "config"));
+                            var configOutputDirectory = fileSystem.FileInfo.FromFileName(Path.Combine(modpack.OutputDirectory, "mods", modpack.GetSlug() + "-configs",
+                                modpack.GetSlug() + "-configs-" + modpack.MinecraftVersion + "-" + modpack.Version + ".zip"));
+                            
+                            ZipUtils zu = new ZipUtils(fileSystem);
+                            zu.ZipDirectory(configDirectory, configOutputDirectory, BannedFileNames);
+                            AddDataToOutput(modpack.Name + " Configs", modpack.GetSlug() + "-configs", modpack.MinecraftVersion + "-" + modpack.Version);
+                        };
+
+                        backgroundWorkers.Add(bw);
+                        bw.RunWorkerAsync();
+                    }
+
                     // Wait for the SignalR connection to be established
                     con.Wait();
-                    
+
                     // Iterate over all the mods and create a thread for each mod
                     foreach (Mcmod mod in mods)
                     {
                         BackgroundWorker bw = new BackgroundWorker();
                         bw.DoWork += (sender, args) =>
                         {
-                            string modID = mod.Modid.Replace("|", string.Empty).ToLower();
-                            string modversion = (mod.Mcversion + "-" + mod.Version).ToLower();
+                            string modID = mod.GetSafeModId();
+                            string modversion = mod.GetOnlineVersion().ToLower();
 
                             // Check if mod is online
                             Mcmod mo = db.Mods.FirstOrDefault(m => m.JarMd5.Equals(mod.JarMd5));
@@ -148,7 +166,7 @@ namespace ModpackHelper.Shared.IO
                         backgroundWorkers.Add(bw);
                         bw.RunWorkerAsync();
                     }
-                    
+
 
                     // Make sure all backgroundworkers are finished running before returning to the caller
                     int count = -1;
@@ -167,6 +185,14 @@ namespace ModpackHelper.Shared.IO
                             Debug.WriteLine(count + " backgroundworkers remaining.");
                         }
                     }
+
+                    // Make sure to include forge in any future actions taken
+                    if (forge != null)
+                    {
+                        mods.Add(forge);
+                    }
+
+                    // Save updated mod data to the database
                     foreach (Mcmod mod in mods)
                     {
                         db.Mods.RemoveAll(m => m.JarMd5.Equals(mod.JarMd5));
@@ -188,7 +214,7 @@ namespace ModpackHelper.Shared.IO
         public string GetFinishedHTML()
         {
             sb.AppendLine(
-                @"</table><button id=""Reshow"" type=""button"">Unhide Everything</button><p>List autogenerated by Modpack Helper &copy; 2015 - Rasmus Hansen</p></body></html>");
+                @"</table><button id=""Reshow"" type=""button"">Unhide Everything</button><p>List autogenerated by Modpack Helper &copy; 2016 - Zlepper</p></body></html>");
             return sb.ToString();
         }
     }

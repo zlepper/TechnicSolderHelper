@@ -129,8 +129,6 @@ namespace ModpackHelper.Shared.Mods
         /// <summary>
         /// Indicates if this info was fetched from my remote database
         /// and therefor should not be put back into the databasee
-        /// TODO write a json api instead of the direct db interaction
-        /// TODO Mostly done with the json api
         /// </summary>
         [JsonIgnore]
         public bool FromSuggestion { get; set; }
@@ -424,7 +422,7 @@ namespace ModpackHelper.Shared.Mods
         {
             // Regex get rids of any illigal windows explorer characters
             // And some characters that breaks url navigation
-            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty);
+            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty).ToLower();
         }
 
         public virtual string GetSolderModName()

@@ -53,7 +53,6 @@ namespace ModpackHelper.GUI.Helpers
                 modpackHelper.CreateConfigZipCheckBox.Checked = modpack.CreateConfigZip;
                 modpackHelper.ClearOutpuDirectoryCheckBox.Checked = modpack.ClearOutputDirectory;
                 modpackHelper.CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
-                modpackHelper.ZipPackRadioButton.Checked = !(modpackHelper.SolderPackRadioButton.Checked = modpack.CreateSolderPack);
                 modpackHelper.technicPermissionsPublicPack.Checked = !(modpackHelper.technicPermissionsPrivatePack.Checked = modpack.TechnicPermissionsPrivate);
                 modpackHelper.UseSolderCheckbox.Checked = modpack.UseSolder;
                 modpackHelper.MinimumJavaVersionCombobox.SelectedText = modpack.MinJava;
@@ -62,6 +61,11 @@ namespace ModpackHelper.GUI.Helpers
                 modpackHelper.UploadToFTPCheckbox.Checked = modpack.UploadToFTP;
                 if (!string.IsNullOrWhiteSpace(modpack.ForgeVersion))
                     modpackHelper.forgeVersionDropdown.SelectedIndex = modpackHelper.forgeVersionDropdown.Items.IndexOf(modpack.ForgeVersion);
+                if (modpackHelper.forgeVersionDropdown.SelectedItem == null)
+                {
+                    modpackHelper.forgeVersionDropdown.SelectedIndex = modpackHelper.forgeVersionDropdown.Items.Count -
+                                                                       1;
+                }
             }
         }
     }

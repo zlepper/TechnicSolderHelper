@@ -97,7 +97,10 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Cryptography\Crypto.cs" />
     <Compile Include="Cryptography\KeyHandler.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="IO\ModPacker.cs" />
+    <Compile Include="Permissions\PermissionDB.cs" />
+    <Compile Include="Permissions\UserPermission.cs" />
     <Compile Include="Utils\Config\FTPLoginInfo.cs" />
     <Compile Include="Utils\Config\SolderLoginInfo.cs" />
     <Compile Include="Utils\Debug.cs" />

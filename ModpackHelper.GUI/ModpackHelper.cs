@@ -172,8 +172,6 @@ namespace ModpackHelper.GUI
             bool valid = true;
             // Indicates if a technic pack should be created
             bool createTechnicPack = CreateTechnicPackCheckBox.Checked;
-            // Indicates if it should be a solderpack or a zip pack
-            bool createSolderPack = createTechnicPack && SolderPackRadioButton.Checked;
             // Indicates if a config zip should be included in the modpack
             bool createConfigZip = createTechnicPack && CreateConfigZipCheckBox.Checked;
             // Indicates if permissions should be check
@@ -303,7 +301,6 @@ namespace ModpackHelper.GUI
                 modpack.TechnicPermissionsPrivate = privatePack;
                 modpack.ClearOutputDirectory = clearOutputDirectory;
                 modpack.CheckTechnicPermissions = checkPermissions;
-                modpack.CreateSolderPack = createSolderPack;
                 modpack.ForgeVersion = selectedForgeVersion;
                 modpack.UseSolder = useSolder;
                 modpack.UploadToFTP = uploadToFtp;
@@ -342,10 +339,22 @@ namespace ModpackHelper.GUI
 
             };
             bw.RunWorkerAsync();
-
+            SetStatusStripLabelText("Reading mod data");
 
         }
 
+        private void SetStatusStripLabelText(string text)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => SetStatusStripLabelText(text)));
+            }
+            else
+            {
+                StatusStripLabel.Text = text;
+                statusStrip1.Refresh();
+            }
+        }
 
         private void OpenModsInfoForm(List<Mcmod> mods, Modpack modpack)
         {
@@ -355,8 +364,9 @@ namespace ModpackHelper.GUI
             }
             else
             {
+                SetStatusStripLabelText("Opening mod info selector form");
                 ModInfoForm form = new ModInfoForm(fileSystem, messageShower);
-                form.InitializeContent(mods, modpack.MinecraftVersion);
+                form.InitializeContent(mods, modpack.MinecraftVersion, modpack);
                 form.Show();
                 form.DoneFillingInInfo += delegate (List<Mcmod> modslist)
                 {
@@ -376,11 +386,15 @@ namespace ModpackHelper.GUI
                         isRunningBackgroundTask = false;
                         if (modpack.UploadToFTP)
                         {
+                            SetStatusStripLabelText("Uploading to to FTP server");
                             UploadToFtp(mods, modpack);
+                            SetStatusStripLabelText("Absolutely nothing");
                         }
-                        if (modpack.CreateSolderPack && modpack.UseSolder)
+                        if (modpack.UseSolder)
                         {
+                            SetStatusStripLabelText("Updating solder with mod info");
                             UpdateSolder(mods, modpack);
+                            SetStatusStripLabelText("Absolutely nothing");
                         }
                     };
                     bw.RunWorkerAsync();
@@ -450,6 +464,7 @@ namespace ModpackHelper.GUI
                             MinecraftVersion = MinecraftVersionDropdown.SelectedItem.ToString(),
                             Name = ModpackNameTextBox.Text
                         });
+            FillForgeDropdown();
         }
 
         private void UseSolderCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -495,7 +510,6 @@ namespace ModpackHelper.GUI
                     CreateTechnicPackCheckBox.Checked = modpack.CreateTechnicPack;
                     ClearOutpuDirectoryCheckBox.Checked = modpack.ClearOutputDirectory;
                     CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
-                    SolderPackRadioButton.Checked = modpack.CreateSolderPack;
                     technicPermissionsPrivatePack.Checked = modpack.TechnicPermissionsPrivate;
                     if (!string.IsNullOrWhiteSpace(modpack.ForgeVersion))
                         forgeVersionDropdown.SelectedIndex = forgeVersionDropdown.Items.IndexOf(modpack.ForgeVersion);
@@ -512,6 +526,12 @@ namespace ModpackHelper.GUI
         {
             forgeVersionDropdown.Visible = createForgeZipCheckBox.Checked;
             forgeVersionLabel.Visible = createForgeZipCheckBox.Checked;
+
+            if (createForgeZipCheckBox.Checked)
+            {
+                FillForgeDropdown();
+            }
+
         }
 
         private void EnableDebugCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -541,7 +561,7 @@ namespace ModpackHelper.GUI
         {
             using (var forgeHandler = new ForgeHandler(fileSystem))
             {
-                List<int> versions = forgeHandler.GetForgeBuilds(MinecraftVersionDropdown.SelectedText);
+                List<int> versions = forgeHandler.GetForgeBuilds(MinecraftVersionDropdown.SelectedItem.ToString());
                 forgeVersionDropdown.Items.Clear();
                 foreach (int version in versions)
                 {

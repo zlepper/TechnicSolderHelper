@@ -23,8 +23,9 @@ namespace ModpackHelper.Shared.Web
 
     public class SolderWebClient : ISolderWebClient
     {
-        private Dictionary<string, string> ModIdCache = new Dictionary<string, string>();
-        private Dictionary<string, Dictionary<string, string>> ModversionIdCache = new Dictionary<string, Dictionary<string, string>>();  
+        private static readonly Dictionary<string, string> ModIdCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, Dictionary<string, string>> ModversionIdCache = new Dictionary<string, Dictionary<string, string>>();
+        private static Dictionary<string, Build> buildCache = new Dictionary<string, Build>();
 
 
         public readonly Uri baseUrl;
@@ -124,15 +125,9 @@ namespace ModpackHelper.Shared.Web
 
         public bool IsModversionOnline(Mcmod mod)
         {
-            var request = new RestRequest("api/mod/{modname}/{modversion}");
-            request.AddParameter("modname", mod.GetSafeModId(), ParameterType.UrlSegment);
-            request.AddParameter("modversion", mod.GetOnlineVersion(), ParameterType.UrlSegment);
-            var res = client.Execute(request);
-            ModVersion mv = JsonConvert.DeserializeObject<ModVersion>(res.Content);
-            return !string.IsNullOrWhiteSpace(mv.Md5);
+            return GetModVersionId(mod) != null;
         }
 
-        private Dictionary<string, Build> buildCache = new Dictionary<string, Build>(); 
 
         private Build GetBuild(string buildid)
         {

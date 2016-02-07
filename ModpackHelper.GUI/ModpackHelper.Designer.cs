@@ -69,9 +69,6 @@ namespace ModpackHelper.GUI
             this.UseSolderCheckbox = new System.Windows.Forms.CheckBox();
             this.forgeVersionLabel = new System.Windows.Forms.Label();
             this.forgeVersionDropdown = new System.Windows.Forms.ComboBox();
-            this.PackTypeGroupBox = new System.Windows.Forms.GroupBox();
-            this.ZipPackRadioButton = new System.Windows.Forms.RadioButton();
-            this.SolderPackRadioButton = new System.Windows.Forms.RadioButton();
             this.technicPermissionsLevelGroupBox = new System.Windows.Forms.GroupBox();
             this.technicPermissionsPublicPack = new System.Windows.Forms.RadioButton();
             this.technicPermissionsPrivatePack = new System.Windows.Forms.RadioButton();
@@ -92,7 +89,6 @@ namespace ModpackHelper.GUI
             this.ModpackSettingsGroupBox.SuspendLayout();
             this.technicOptionsGroupBox.SuspendLayout();
             this.SolderConfigurePanel.SuspendLayout();
-            this.PackTypeGroupBox.SuspendLayout();
             this.technicPermissionsLevelGroupBox.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -150,7 +146,7 @@ namespace ModpackHelper.GUI
             // minimumMemoryLabel
             // 
             minimumMemoryLabel.AutoSize = true;
-            minimumMemoryLabel.Location = new System.Drawing.Point(0, 55);
+            minimumMemoryLabel.Location = new System.Drawing.Point(10, 55);
             minimumMemoryLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             minimumMemoryLabel.Name = "minimumMemoryLabel";
             minimumMemoryLabel.Size = new System.Drawing.Size(186, 20);
@@ -160,7 +156,7 @@ namespace ModpackHelper.GUI
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(0, 115);
+            label2.Location = new System.Drawing.Point(9, 115);
             label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(159, 20);
@@ -403,7 +399,6 @@ namespace ModpackHelper.GUI
             this.technicOptionsGroupBox.Controls.Add(this.UseSolderCheckbox);
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionLabel);
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionDropdown);
-            this.technicOptionsGroupBox.Controls.Add(this.PackTypeGroupBox);
             this.technicOptionsGroupBox.Controls.Add(this.technicPermissionsLevelGroupBox);
             this.technicOptionsGroupBox.Controls.Add(this.CheckTechnicPermissionsCheckBox);
             this.technicOptionsGroupBox.Controls.Add(this.CreateConfigZipCheckBox);
@@ -533,48 +528,11 @@ namespace ModpackHelper.GUI
             this.forgeVersionDropdown.TabIndex = 11;
             this.forgeVersionDropdown.Visible = false;
             // 
-            // PackTypeGroupBox
-            // 
-            this.PackTypeGroupBox.Controls.Add(this.ZipPackRadioButton);
-            this.PackTypeGroupBox.Controls.Add(this.SolderPackRadioButton);
-            this.PackTypeGroupBox.Location = new System.Drawing.Point(20, 31);
-            this.PackTypeGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.PackTypeGroupBox.Name = "PackTypeGroupBox";
-            this.PackTypeGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.PackTypeGroupBox.Size = new System.Drawing.Size(172, 103);
-            this.PackTypeGroupBox.TabIndex = 6;
-            this.PackTypeGroupBox.TabStop = false;
-            this.PackTypeGroupBox.Text = "PackType";
-            // 
-            // ZipPackRadioButton
-            // 
-            this.ZipPackRadioButton.AutoSize = true;
-            this.ZipPackRadioButton.Location = new System.Drawing.Point(10, 68);
-            this.ZipPackRadioButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ZipPackRadioButton.Name = "ZipPackRadioButton";
-            this.ZipPackRadioButton.Size = new System.Drawing.Size(95, 24);
-            this.ZipPackRadioButton.TabIndex = 1;
-            this.ZipPackRadioButton.Text = "Zip Pack";
-            this.ZipPackRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // SolderPackRadioButton
-            // 
-            this.SolderPackRadioButton.AutoSize = true;
-            this.SolderPackRadioButton.Checked = true;
-            this.SolderPackRadioButton.Location = new System.Drawing.Point(10, 31);
-            this.SolderPackRadioButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.SolderPackRadioButton.Name = "SolderPackRadioButton";
-            this.SolderPackRadioButton.Size = new System.Drawing.Size(119, 24);
-            this.SolderPackRadioButton.TabIndex = 0;
-            this.SolderPackRadioButton.TabStop = true;
-            this.SolderPackRadioButton.Text = "Solder Pack";
-            this.SolderPackRadioButton.UseVisualStyleBackColor = true;
-            // 
             // technicPermissionsLevelGroupBox
             // 
             this.technicPermissionsLevelGroupBox.Controls.Add(this.technicPermissionsPublicPack);
             this.technicPermissionsLevelGroupBox.Controls.Add(this.technicPermissionsPrivatePack);
-            this.technicPermissionsLevelGroupBox.Location = new System.Drawing.Point(30, 214);
+            this.technicPermissionsLevelGroupBox.Location = new System.Drawing.Point(22, 102);
             this.technicPermissionsLevelGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.technicPermissionsLevelGroupBox.Name = "technicPermissionsLevelGroupBox";
             this.technicPermissionsLevelGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -611,7 +569,7 @@ namespace ModpackHelper.GUI
             // CheckTechnicPermissionsCheckBox
             // 
             this.CheckTechnicPermissionsCheckBox.AutoSize = true;
-            this.CheckTechnicPermissionsCheckBox.Location = new System.Drawing.Point(30, 178);
+            this.CheckTechnicPermissionsCheckBox.Location = new System.Drawing.Point(22, 66);
             this.CheckTechnicPermissionsCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.CheckTechnicPermissionsCheckBox.Name = "CheckTechnicPermissionsCheckBox";
             this.CheckTechnicPermissionsCheckBox.Size = new System.Drawing.Size(169, 24);
@@ -623,7 +581,7 @@ namespace ModpackHelper.GUI
             // CreateConfigZipCheckBox
             // 
             this.CreateConfigZipCheckBox.AutoSize = true;
-            this.CreateConfigZipCheckBox.Location = new System.Drawing.Point(30, 143);
+            this.CreateConfigZipCheckBox.Location = new System.Drawing.Point(22, 31);
             this.CreateConfigZipCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.CreateConfigZipCheckBox.Name = "CreateConfigZipCheckBox";
             this.CreateConfigZipCheckBox.Size = new System.Drawing.Size(157, 24);
@@ -683,8 +641,6 @@ namespace ModpackHelper.GUI
             this.technicOptionsGroupBox.PerformLayout();
             this.SolderConfigurePanel.ResumeLayout(false);
             this.SolderConfigurePanel.PerformLayout();
-            this.PackTypeGroupBox.ResumeLayout(false);
-            this.PackTypeGroupBox.PerformLayout();
             this.technicPermissionsLevelGroupBox.ResumeLayout(false);
             this.technicPermissionsLevelGroupBox.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -707,9 +663,6 @@ namespace ModpackHelper.GUI
         public GroupBox technicPermissionsLevelGroupBox;
         public RadioButton technicPermissionsPublicPack;
         public RadioButton technicPermissionsPrivatePack;
-        public GroupBox PackTypeGroupBox;
-        public RadioButton ZipPackRadioButton;
-        public RadioButton SolderPackRadioButton;
         public GroupBox ModpackSettingsGroupBox;
         public ComboBox ModpackNameTextBox;
         public TextBox ModpackVersionTextbox;
