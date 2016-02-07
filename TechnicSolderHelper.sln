@@ -6,6 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModpackHelper.Shared", "ModpackHelper\ModpackHelper.Shared.csproj", "{8896FB95-831F-4E2E-9F73-F871B650E747}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModpackHelper.Tests", "ModpackHelper.Tests\ModpackHelper.Tests.csproj", "{0FCF1266-CC4C-4DAA-A7DD-85AD871B573E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1405245-FB51-4489-8CC7-777B6BF966F5} = {C1405245-FB51-4489-8CC7-777B6BF966F5}
+		{0A3B648A-A539-433A-9DB0-27EC494353AC} = {0A3B648A-A539-433A-9DB0-27EC494353AC}
+		{7E303B9F-6144-4667-A099-55D6B9CB4CFC} = {7E303B9F-6144-4667-A099-55D6B9CB4CFC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModpackHelper.GUI", "ModpackHelper.GUI\ModpackHelper.GUI.csproj", "{C1405245-FB51-4489-8CC7-777B6BF966F5}"
 EndProject
