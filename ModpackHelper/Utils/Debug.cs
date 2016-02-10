@@ -30,5 +30,10 @@ namespace ModpackHelper.Shared.Utils
                 }
             }
         }
+
+        public static void WriteLine(object o)
+        {
+            WriteLine(o.ToString());
+        }
     }
 }

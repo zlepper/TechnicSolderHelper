@@ -246,7 +246,7 @@ namespace ModpackHelper.GUI.Windows
         // Close the form if the user is done entering info
         private void DoneButton_Click(object sender, EventArgs e)
         {
-            if (mods.Any(m => !m.IsSkipping && IsValid(m)))
+            if (mods.Any(m => !m.IsSkipping && !IsValid(m)))
             {
                 messageShower.ShowMessageAsync("You are not done entering info. Please finish!");
             }

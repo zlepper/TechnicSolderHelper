@@ -89,7 +89,7 @@ namespace ModpackHelper.Shared.IO
                                 ZipUtils zu = new ZipUtils(fileSystem);
                                 var forgeZip =
                                     fileSystem.FileInfo.FromFileName(Path.Combine(modpack.OutputDirectory, "mods",
-                                        "forge", $"forge-{modpack.MinecraftVersion}-{modpack.ForgeVersion}"));
+                                        "forge", $"forge-{modpack.MinecraftVersion}-{modpack.ForgeVersion}.zip"));
                                 WebClient wb = new WebClient();
                                 using (Stream s = wb.OpenRead(forgedownloadUrl))
                                 {
@@ -104,21 +104,21 @@ namespace ModpackHelper.Shared.IO
                         bw.RunWorkerAsync();
                     }
 
-                    if (modpack.CreateConfigZip)
+                    // Queue additional folder for packing
+                    foreach (AdditionalFolder additionalFolder in modpack.AdditionalFolders.Where(f => f.Pack))
                     {
                         BackgroundWorker bw = new BackgroundWorker();
                         bw.DoWork += (sender, args) =>
                         {
-                            var inputDirectory = fileSystem.DirectoryInfo.FromDirectoryName(modpack.InputDirectory);
-                            var configDirectory = fileSystem.DirectoryInfo.FromDirectoryName(Path.Combine(inputDirectory.Parent.FullName, "config"));
-                            var configOutputDirectory = fileSystem.FileInfo.FromFileName(Path.Combine(modpack.OutputDirectory, "mods", modpack.GetSlug() + "-configs",
-                                modpack.GetSlug() + "-configs-" + modpack.MinecraftVersion + "-" + modpack.Version + ".zip"));
-                            
-                            ZipUtils zu = new ZipUtils(fileSystem);
-                            zu.ZipDirectory(configDirectory, configOutputDirectory, BannedFileNames);
-                            AddDataToOutput(modpack.Name + " Configs", modpack.GetSlug() + "-configs", modpack.MinecraftVersion + "-" + modpack.Version);
-                        };
+                            var outputFile =
+                                fileSystem.FileInfo.FromFileName(Path.Combine(modpack.OutputDirectory, "mods",
+                                    $"{modpack.GetSlug()}-{additionalFolder.Name}",
+                                    $"{modpack.GetSlug()}-{additionalFolder.Name}-{modpack.MinecraftVersion}-{modpack.Version}.zip"));
 
+                            ZipUtils zu = new ZipUtils(fileSystem);
+                            zu.ZipDirectory(additionalFolder.Fullname, outputFile.FullName);
+                            AddDataToOutput($"{modpack.Name} {additionalFolder.Name}", $"{modpack.GetSlug()}-{additionalFolder.Name}", $"{modpack.MinecraftVersion}-{modpack.Version}.zip");
+                        };
                         backgroundWorkers.Add(bw);
                         bw.RunWorkerAsync();
                     }
@@ -136,7 +136,7 @@ namespace ModpackHelper.Shared.IO
                             string modversion = mod.GetOnlineVersion().ToLower();
 
                             // Check if mod is online
-                            Mcmod mo = db.Mods.FirstOrDefault(m => m.JarMd5.Equals(mod.JarMd5));
+                            Mcmod mo = db.Mods.FirstOrDefault(m => m.JarMd5 != null && m.JarMd5.Equals(mod.JarMd5));
                             if (mo != null && (mo.IsOnSolder && !modpack.ForceSolder || (solderWebClient != null && solderWebClient.IsModversionOnline(mod))))
                             {
                                 mod.IsSkipping = true;
@@ -195,7 +195,7 @@ namespace ModpackHelper.Shared.IO
                     // Save updated mod data to the database
                     foreach (Mcmod mod in mods)
                     {
-                        db.Mods.RemoveAll(m => m.JarMd5.Equals(mod.JarMd5));
+                        db.Mods.RemoveAll(m => m.JarMd5 != null && m.JarMd5.Equals(mod.JarMd5));
                         db.Mods.Add(mod);
                     }
                 }

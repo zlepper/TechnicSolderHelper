@@ -39,6 +39,7 @@ namespace ModpackHelper.GUI
             System.Windows.Forms.Label minimumMemoryLabel;
             System.Windows.Forms.Label label2;
             System.Windows.Forms.ToolStripStatusLabel currentlyDoingLabel;
+            System.Windows.Forms.Label label3;
             this.InputDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.browseForInputDirectoryButton = new System.Windows.Forms.Button();
             this.OutputDirectoryTextBox = new System.Windows.Forms.TextBox();
@@ -73,10 +74,10 @@ namespace ModpackHelper.GUI
             this.technicPermissionsPublicPack = new System.Windows.Forms.RadioButton();
             this.technicPermissionsPrivatePack = new System.Windows.Forms.RadioButton();
             this.CheckTechnicPermissionsCheckBox = new System.Windows.Forms.CheckBox();
-            this.CreateConfigZipCheckBox = new System.Windows.Forms.CheckBox();
             this.createForgeZipCheckBox = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.AdditinalFoldersCheckedList = new System.Windows.Forms.CheckedListBox();
             inputFolderLabel = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             ModpackNameLabel = new System.Windows.Forms.Label();
@@ -85,6 +86,7 @@ namespace ModpackHelper.GUI
             minimumMemoryLabel = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             currentlyDoingLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            label3 = new System.Windows.Forms.Label();
             this.globalConfigurationsGroupBox.SuspendLayout();
             this.ModpackSettingsGroupBox.SuspendLayout();
             this.technicOptionsGroupBox.SuspendLayout();
@@ -176,6 +178,7 @@ namespace ModpackHelper.GUI
             this.InputDirectoryTextBox.Name = "InputDirectoryTextBox";
             this.InputDirectoryTextBox.Size = new System.Drawing.Size(715, 26);
             this.InputDirectoryTextBox.TabIndex = 1;
+            this.InputDirectoryTextBox.TextChanged += new System.EventHandler(this.InputDirectoryTextBox_TextChanged);
             // 
             // browseForInputDirectoryButton
             // 
@@ -401,7 +404,6 @@ namespace ModpackHelper.GUI
             this.technicOptionsGroupBox.Controls.Add(this.forgeVersionDropdown);
             this.technicOptionsGroupBox.Controls.Add(this.technicPermissionsLevelGroupBox);
             this.technicOptionsGroupBox.Controls.Add(this.CheckTechnicPermissionsCheckBox);
-            this.technicOptionsGroupBox.Controls.Add(this.CreateConfigZipCheckBox);
             this.technicOptionsGroupBox.Controls.Add(this.createForgeZipCheckBox);
             this.technicOptionsGroupBox.Location = new System.Drawing.Point(18, 322);
             this.technicOptionsGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -532,7 +534,7 @@ namespace ModpackHelper.GUI
             // 
             this.technicPermissionsLevelGroupBox.Controls.Add(this.technicPermissionsPublicPack);
             this.technicPermissionsLevelGroupBox.Controls.Add(this.technicPermissionsPrivatePack);
-            this.technicPermissionsLevelGroupBox.Location = new System.Drawing.Point(22, 102);
+            this.technicPermissionsLevelGroupBox.Location = new System.Drawing.Point(18, 67);
             this.technicPermissionsLevelGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.technicPermissionsLevelGroupBox.Name = "technicPermissionsLevelGroupBox";
             this.technicPermissionsLevelGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -569,7 +571,7 @@ namespace ModpackHelper.GUI
             // CheckTechnicPermissionsCheckBox
             // 
             this.CheckTechnicPermissionsCheckBox.AutoSize = true;
-            this.CheckTechnicPermissionsCheckBox.Location = new System.Drawing.Point(22, 66);
+            this.CheckTechnicPermissionsCheckBox.Location = new System.Drawing.Point(18, 31);
             this.CheckTechnicPermissionsCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.CheckTechnicPermissionsCheckBox.Name = "CheckTechnicPermissionsCheckBox";
             this.CheckTechnicPermissionsCheckBox.Size = new System.Drawing.Size(169, 24);
@@ -577,17 +579,6 @@ namespace ModpackHelper.GUI
             this.CheckTechnicPermissionsCheckBox.Text = "Check Permissions";
             this.CheckTechnicPermissionsCheckBox.UseVisualStyleBackColor = true;
             this.CheckTechnicPermissionsCheckBox.CheckedChanged += new System.EventHandler(this.CheckTechnicPermissionsCheckBox_CheckedChanged);
-            // 
-            // CreateConfigZipCheckBox
-            // 
-            this.CreateConfigZipCheckBox.AutoSize = true;
-            this.CreateConfigZipCheckBox.Location = new System.Drawing.Point(22, 31);
-            this.CreateConfigZipCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.CreateConfigZipCheckBox.Name = "CreateConfigZipCheckBox";
-            this.CreateConfigZipCheckBox.Size = new System.Drawing.Size(157, 24);
-            this.CreateConfigZipCheckBox.TabIndex = 8;
-            this.CreateConfigZipCheckBox.Text = "Create Config zip";
-            this.CreateConfigZipCheckBox.UseVisualStyleBackColor = true;
             // 
             // createForgeZipCheckBox
             // 
@@ -607,10 +598,10 @@ namespace ModpackHelper.GUI
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             currentlyDoingLabel,
             this.StatusStripLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 796);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 733);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 8, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1500, 30);
+            this.statusStrip1.Size = new System.Drawing.Size(1595, 30);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -620,11 +611,34 @@ namespace ModpackHelper.GUI
             this.StatusStripLabel.Size = new System.Drawing.Size(163, 25);
             this.StatusStripLabel.Text = "Absolutely nothing";
             // 
+            // AdditinalFoldersCheckedList
+            // 
+            this.AdditinalFoldersCheckedList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AdditinalFoldersCheckedList.CheckOnClick = true;
+            this.AdditinalFoldersCheckedList.FormattingEnabled = true;
+            this.AdditinalFoldersCheckedList.Location = new System.Drawing.Point(1186, 55);
+            this.AdditinalFoldersCheckedList.Name = "AdditinalFoldersCheckedList";
+            this.AdditinalFoldersCheckedList.Size = new System.Drawing.Size(397, 655);
+            this.AdditinalFoldersCheckedList.TabIndex = 6;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(1186, 32);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(292, 20);
+            label3.TabIndex = 7;
+            label3.Text = "Additional folders that should be packed";
+            // 
             // ModpackHelper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1500, 826);
+            this.ClientSize = new System.Drawing.Size(1595, 763);
+            this.Controls.Add(label3);
+            this.Controls.Add(this.AdditinalFoldersCheckedList);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.technicOptionsGroupBox);
             this.Controls.Add(this.globalConfigurationsGroupBox);
@@ -659,7 +673,6 @@ namespace ModpackHelper.GUI
         public GroupBox technicOptionsGroupBox;
         public CheckBox createForgeZipCheckBox;
         public CheckBox CheckTechnicPermissionsCheckBox;
-        public CheckBox CreateConfigZipCheckBox;
         public GroupBox technicPermissionsLevelGroupBox;
         public RadioButton technicPermissionsPublicPack;
         public RadioButton technicPermissionsPrivatePack;
@@ -690,6 +703,7 @@ namespace ModpackHelper.GUI
         public ComboBox MinimumJavaVersionCombobox;
         public CheckBox ForceSolderUpdateCheckBox;
         public CheckBox UploadToFTPCheckbox;
+        private CheckedListBox AdditinalFoldersCheckedList;
     }
 }
 

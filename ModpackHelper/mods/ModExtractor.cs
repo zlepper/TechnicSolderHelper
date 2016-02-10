@@ -193,7 +193,7 @@ namespace ModpackHelper.Shared.Mods
                             // Check if we already have this mod stored in the Database
                             string md5Value = ioHandler.CalculateMd5(modFile);
                             // ReSharper disable once AccessToDisposedClosure
-                            Mcmod mod = modsDB.Mods.SingleOrDefault(m => m.JarMd5.Equals(md5Value));
+                            Mcmod mod = modsDB.Mods.SingleOrDefault(m => m.JarMd5 != null && m.JarMd5.Equals(md5Value));
                             if (mod == null)
                             {
                                 // We don't know about that specific mod file

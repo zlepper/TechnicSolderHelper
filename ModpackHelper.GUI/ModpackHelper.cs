@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Windows.Forms;
 using ModpackHelper.GUI.Helpers;
 using ModpackHelper.GUI.Properties;
@@ -28,6 +29,8 @@ namespace ModpackHelper.GUI
         private Timer animationTimer;
         private Dictionary<string, int> animationGoals = new Dictionary<string, int>();
         private bool isRunningBackgroundTask = false;
+
+        public List<AdditionalFolder> AdditionalFolders = new List<AdditionalFolder>();
         // Normal constructor
         public ModpackHelper() : this(new FileSystem(), new DirectoryFinder(), new MessageShower())
         {
@@ -66,8 +69,10 @@ namespace ModpackHelper.GUI
             // Ensure that the window is big enough to contain all the current controls
             EnsureWindowSize();
 
-            // Make sure there is something in the forge version list
-            
+            // Databind the additional folders thing
+            AdditinalFoldersCheckedList.DataSource = AdditionalFolders;
+            AdditinalFoldersCheckedList.DisplayMember = "Name";
+            AdditinalFoldersCheckedList.ValueMember = "Pack";
         }
 
         /// <summary>
@@ -172,8 +177,6 @@ namespace ModpackHelper.GUI
             bool valid = true;
             // Indicates if a technic pack should be created
             bool createTechnicPack = CreateTechnicPackCheckBox.Checked;
-            // Indicates if a config zip should be included in the modpack
-            bool createConfigZip = createTechnicPack && CreateConfigZipCheckBox.Checked;
             // Indicates if permissions should be check
             bool checkPermissions = createTechnicPack && CheckTechnicPermissionsCheckBox.Checked;
             // Indicates if this is a public pack
@@ -292,7 +295,6 @@ namespace ModpackHelper.GUI
 
                 // Save all the data
                 modpack.Name = modpackName;
-                modpack.CreateConfigZip = createConfigZip;
                 modpack.CreateForgeZip = createForgeZip;
                 modpack.CreateTechnicPack = createTechnicPack;
                 modpack.InputDirectory = inputDirectory;
@@ -308,6 +310,7 @@ namespace ModpackHelper.GUI
                 modpack.MinJava = minJava;
                 modpack.MinMemory = minMemory;
                 modpack.ForceSolder = forceSolder;
+                modpack.AdditionalFolders = AdditionalFolders;
 
                 // Change the last selected pack, so we know what pack to load on startup
                 c.LastSelectedModpack = modpackName;
@@ -506,11 +509,11 @@ namespace ModpackHelper.GUI
                     InputDirectoryTextBox.Text = modpack.InputDirectory;
                     OutputDirectoryTextBox.Text = modpack.OutputDirectory;
                     createForgeZipCheckBox.Checked = modpack.CreateForgeZip;
-                    CreateConfigZipCheckBox.Checked = modpack.CreateConfigZip;
                     CreateTechnicPackCheckBox.Checked = modpack.CreateTechnicPack;
                     ClearOutpuDirectoryCheckBox.Checked = modpack.ClearOutputDirectory;
                     CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
                     technicPermissionsPrivatePack.Checked = modpack.TechnicPermissionsPrivate;
+                    AdditionalFolders = modpack.AdditionalFolders;
                     if (!string.IsNullOrWhiteSpace(modpack.ForgeVersion))
                         forgeVersionDropdown.SelectedIndex = forgeVersionDropdown.Items.IndexOf(modpack.ForgeVersion);
                 }
@@ -543,7 +546,7 @@ namespace ModpackHelper.GUI
         {
             technicOptionsGroupBox.Visible = CreateTechnicPackCheckBox.Checked;
         }
-        
+
         private void formClosingHandler(object sender, CancelEventArgs e)
         {
             if (!isRunningBackgroundTask) return;
@@ -568,6 +571,45 @@ namespace ModpackHelper.GUI
                     forgeVersionDropdown.Items.Add(version);
                 }
                 forgeVersionDropdown.SelectedIndex = forgeVersionDropdown.Items.Count - 1;
+            }
+        }
+
+
+        private void InputDirectoryTextBox_TextChanged(object sender, EventArgs e)
+        {
+            var t = InputDirectoryTextBox.Text;
+            // Don't bother analysing if they didn't select a mods directory
+            if (t.EndsWith("mods"))
+            {
+                var folder = fileSystem.DirectoryInfo.FromDirectoryName(t);
+                if (folder.Exists)
+                {
+                    var dirs = folder.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList();
+                    dirs.AddRange(folder.Parent.GetDirectories("*", SearchOption.TopDirectoryOnly));
+                    foreach (var dir in dirs)
+                    {
+                        if (dir.Name.Equals("mods")) continue;
+                        // Don't pack the config directory, since that is handled seperately
+                        var additionalFolder =
+                            AdditionalFolders.FirstOrDefault(ad => ad.Name.Equals(dir.Name));
+                        if (additionalFolder == null)
+                        {
+                            additionalFolder = new AdditionalFolder(dir);
+                            AdditionalFolders.Add(additionalFolder);
+                        }
+                        else
+                        {
+                            additionalFolder.Fullname = dir.FullName;
+                        }
+                    }
+
+                    // remove any directories that was not found in the two searched locations
+                    AdditionalFolders.RemoveAll(af => !dirs.Any(d => d.FullName.Equals(af.Fullname)));
+
+                    AdditinalFoldersCheckedList.DataSource = AdditionalFolders;
+                    AdditinalFoldersCheckedList.DisplayMember = "Name";
+                    AdditinalFoldersCheckedList.ValueMember = "Pack";
+                }
             }
         }
     }

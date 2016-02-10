@@ -449,7 +449,8 @@ namespace ModpackHelper.Shared.Mods
                 Mcversion = minecraftVersion,
                 Version = forgeVersion,
                 PrivatePerms = PermissionLevel.Open,
-                PublicPerms = PermissionLevel.Open
+                PublicPerms = PermissionLevel.Open,
+                JarMd5 = "Unknown"
             };
         }
     }

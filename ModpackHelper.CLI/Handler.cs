@@ -275,11 +275,11 @@ namespace ModpackHelper.CLI
             }
 
             // Check if we should pack config files
-            if (args.Contains("-Cfg"))
-            {
-                Modpack.CreateConfigZip = true;
-                args.Remove("-Cfg");
-            }
+            //if (args.Contains("-Cfg"))
+            //{
+            //    Modpack.CreateConfigZip = true;
+            //    args.Remove("-Cfg");
+            //}
 
             // Check if we should pack a forge file (Modpack.jar)
             if (args.Contains("-f"))

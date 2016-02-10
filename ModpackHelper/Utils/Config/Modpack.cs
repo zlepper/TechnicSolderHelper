@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -40,10 +41,7 @@ namespace ModpackHelper.Shared.Utils.Config
         /// Indicates if we should create a technic pack in the first place
         /// </summary>
         public bool CreateTechnicPack { get; set; }
-        /// <summary>
-        /// Indicates if we should pack the configs folder
-        /// </summary>
-        public bool CreateConfigZip { get; set; }
+
         /// <summary>
         /// Indicates if we should pack forge with the modpack
         /// </summary>
@@ -103,12 +101,35 @@ namespace ModpackHelper.Shared.Utils.Config
         public bool ForceSolder { get; set; }
 
         /// <summary>
+        /// Indicates additional folders that should be packed
+        /// </summary>
+        public List<AdditionalFolder> AdditionalFolders { get; set; } = new List<AdditionalFolder>();
+
+        /// <summary>
         /// Generates a safe modpack slug
         /// </summary>
         /// <returns></returns>
         public string GetSlug()
         {
-            return Regex.Replace(Name.ToLower().Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?|'", string.Empty);
+            return Regex.Replace(Name.ToLower().Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|\\?|'", string.Empty).ToLower();
+        }
+    }
+
+    public class AdditionalFolder
+    {
+        public bool Pack { get; set; }
+        public string Name { get; set; }
+        public string Fullname { get; set; }
+
+        public AdditionalFolder(DirectoryInfoBase dib)
+        {
+            Name = dib.Name;
+            Fullname = dib.FullName;
+        }
+
+        public AdditionalFolder()
+        {
+            
         }
     }
 }

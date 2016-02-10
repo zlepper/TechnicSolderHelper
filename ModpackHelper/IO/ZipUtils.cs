@@ -252,6 +252,10 @@ namespace ModpackHelper.Shared.IO
             {
                 throw new ArgumentException("Zip file should be a zip file.");
             }
+
+            // Create the directory the zip file should be put in
+            zipFile.Directory.Create();
+
             // Create a stream for the zip file
             using (Stream zipFileStream = File.Create(zipFile.FullName))
             {

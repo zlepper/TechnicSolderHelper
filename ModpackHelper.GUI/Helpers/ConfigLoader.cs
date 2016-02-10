@@ -50,7 +50,6 @@ namespace ModpackHelper.GUI.Helpers
                 modpackHelper.OutputDirectoryTextBox.Text = modpack.OutputDirectory;
                 modpackHelper.technicOptionsGroupBox.Visible = modpackHelper.CreateTechnicPackCheckBox.Checked = modpack.CreateTechnicPack;
                 modpackHelper.createForgeZipCheckBox.Checked = modpack.CreateForgeZip;
-                modpackHelper.CreateConfigZipCheckBox.Checked = modpack.CreateConfigZip;
                 modpackHelper.ClearOutpuDirectoryCheckBox.Checked = modpack.ClearOutputDirectory;
                 modpackHelper.CheckTechnicPermissionsCheckBox.Checked = modpack.CheckTechnicPermissions;
                 modpackHelper.technicPermissionsPublicPack.Checked = !(modpackHelper.technicPermissionsPrivatePack.Checked = modpack.TechnicPermissionsPrivate);
@@ -59,6 +58,8 @@ namespace ModpackHelper.GUI.Helpers
                 modpackHelper.minimumMemoryTextBox.Text = modpack.MinMemory;
                 modpackHelper.ForceSolderUpdateCheckBox.Checked = modpack.ForceSolder;
                 modpackHelper.UploadToFTPCheckbox.Checked = modpack.UploadToFTP;
+                modpackHelper.AdditionalFolders.AddRange(modpack.AdditionalFolders);
+
                 if (!string.IsNullOrWhiteSpace(modpack.ForgeVersion))
                     modpackHelper.forgeVersionDropdown.SelectedIndex = modpackHelper.forgeVersionDropdown.Items.IndexOf(modpack.ForgeVersion);
                 if (modpackHelper.forgeVersionDropdown.SelectedItem == null)
