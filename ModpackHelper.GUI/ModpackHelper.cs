@@ -395,6 +395,10 @@ namespace ModpackHelper.GUI
                         }
                         if (modpack.UseSolder)
                         {
+                            if (!modpack.UploadToFTP)
+                            {
+                                messageShower.ShowMessage("You have enabled solder integration, so please upload the packed files to your repository. And then close this box. \n Do NOT close this box until you are finished uploading or things will go to hell. ");
+                            }
                             SetStatusStripLabelText("Updating solder with mod info");
                             UpdateSolder(mods, modpack);
                             SetStatusStripLabelText("Absolutely nothing");
