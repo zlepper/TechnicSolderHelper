@@ -137,7 +137,7 @@ namespace TechnicSolderHelper
                     groupBox1.Width = Width - 800 + 136;
                 }
             }
-            if(!Globalfunctions.IsUnix() && Height > 522)
+            if (!Globalfunctions.IsUnix() && Height > 522)
             {
                 groupBox1.Height = Height - 522 + 427;
             }
@@ -1157,10 +1157,11 @@ namespace TechnicSolderHelper
             while (_runningProcess > 0)
             {
                 StatusLabel.Text = "Waiting for " + _runningProcess + " mod" + (_runningProcess == 1 ? "" : "s") + " to finsh packing";
-				if (Globalfunctions.IsUnix ()) {
-					statusStrip.Refresh ();
-					this.Refresh ();
-				}
+                if (Globalfunctions.IsUnix())
+                {
+                    statusStrip.Refresh();
+                    this.Refresh();
+                }
                 if (doDebug.Checked)
                 {
                     StringBuilder sb = new StringBuilder();
@@ -1237,7 +1238,7 @@ namespace TechnicSolderHelper
                 bwFtp.RunWorkerCompleted += (s, a) =>
                 {
                     UploadingToFTP = false;
-					MessageBox.Show("Done uploading to FTP");
+                    MessageBox.Show("Done uploading to FTP");
                 };
                 bwFtp.RunWorkerAsync();
             }
@@ -1388,7 +1389,7 @@ namespace TechnicSolderHelper
         private static int IsWierdMod(String modFileName)
         {
             String[] skipMods =
-                {"CarpentersBlocksCachedResources", 
+                {"CarpentersBlocksCachedResources",
                     "CodeChickenLib",
                     "ejml-",
                     "commons-codec",
@@ -1671,12 +1672,12 @@ namespace TechnicSolderHelper
                 {
                     String dirname = dirs[c].Substring(dirs[c].LastIndexOf(Globalfunctions.PathSeperator) + 1);
                     _additionalDirectories.Add(dirs[c], new CheckBox
-                        {
-                            Left = 20,
-                            Top = i,
-                            Height = 20,
-                            Text = dirname
-                        });
+                    {
+                        Left = 20,
+                        Top = i,
+                        Height = 20,
+                        Text = dirname
+                    });
                 }
                 c++;
             }
@@ -1686,12 +1687,12 @@ namespace TechnicSolderHelper
             if (File.Exists(serversDat))
             {
                 _additionalDirectories.Add(serversDat, new CheckBox
-                    {
-                        Left = 20,
-                        Top = c * 23 + 23,
-                        Height = 20,
-                        Text = @"Servers.dat file"
-                    });
+                {
+                    Left = 20,
+                    Top = c * 23 + 23,
+                    Height = 20,
+                    Text = @"Servers.dat file"
+                });
             }
             groupBox1.Controls.Clear();
             foreach (CheckBox cb in _additionalDirectories.Values)
@@ -1927,8 +1928,9 @@ namespace TechnicSolderHelper
             Liteloader liteloader = JsonConvert.DeserializeObject<Liteloader>(json);
 
             foreach (KeyValuePair<String, Versions> item in liteloader.Versions)
-                foreach (Versionclass it in item.Value.Artefacts["com.mumfrey:liteloader"].Values)
-                    _liteloaderSqlHelper.AddVersion(it.File, it.Version, it.Md5, item.Key, it.TweakClass);
+                if (item.Value.Artefacts != null && item.Value.Artefacts.Count > 0)
+                    foreach (Versionclass it in item.Value.Artefacts["com.mumfrey:liteloader"].Values)
+                        _liteloaderSqlHelper.AddVersion(it.File, it.Version, it.Md5, item.Key, it.TweakClass);
         }
 
         private void configureFTP_Click(object sender, EventArgs e)

@@ -54,7 +54,7 @@ namespace TechnicSolderHelper
         {
             // Regex get rids of any illigal windows explorer characters
             // And some characters that breaks url navigation
-            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty);
+            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty).ToLower();
         }
 
     }
