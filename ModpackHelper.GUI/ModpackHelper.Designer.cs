@@ -171,6 +171,15 @@ namespace ModpackHelper.GUI
             currentlyDoingLabel.Size = new System.Drawing.Size(144, 25);
             currentlyDoingLabel.Text = "Currently doing: ";
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(1186, 32);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(292, 20);
+            label3.TabIndex = 7;
+            label3.Text = "Additional folders that should be packed";
+            // 
             // InputDirectoryTextBox
             // 
             this.InputDirectoryTextBox.Location = new System.Drawing.Point(309, 49);
@@ -373,6 +382,7 @@ namespace ModpackHelper.GUI
             this.button2.TabIndex = 5;
             this.button2.Text = "Repack everything";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button4
             // 
@@ -622,15 +632,6 @@ namespace ModpackHelper.GUI
             this.AdditinalFoldersCheckedList.Name = "AdditinalFoldersCheckedList";
             this.AdditinalFoldersCheckedList.Size = new System.Drawing.Size(397, 655);
             this.AdditinalFoldersCheckedList.TabIndex = 6;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(1186, 32);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(292, 20);
-            label3.TabIndex = 7;
-            label3.Text = "Additional folders that should be packed";
             // 
             // ModpackHelper
             // 

@@ -142,7 +142,14 @@ namespace ModpackHelper.Shared.Web
             var bc = new BuildCrawler() { HTML = res.Content };
             var build = bc.Crawl();
 
-            buildCache.Add(buildid, build);
+            try
+            {
+                buildCache.Add(buildid, build);
+            }
+            catch (ArgumentException)
+            {
+                // Ignored
+            }
             return build;
         }
 

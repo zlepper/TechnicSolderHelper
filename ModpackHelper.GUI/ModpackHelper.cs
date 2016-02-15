@@ -387,25 +387,38 @@ namespace ModpackHelper.GUI
                         fileSystem.File.WriteAllText(fileSystem.Path.Combine(modpack.OutputDirectory, "mods.html"), html);
                         messageShower.ShowMessageAsync("Done packing mods");
                         isRunningBackgroundTask = false;
-                        if (modpack.UploadToFTP)
-                        {
-                            SetStatusStripLabelText("Uploading to to FTP server");
-                            UploadToFtp(mods, modpack);
-                            SetStatusStripLabelText("Absolutely nothing");
-                        }
-                        if (modpack.UseSolder)
-                        {
-                            if (!modpack.UploadToFTP)
-                            {
-                                messageShower.ShowMessage("You have enabled solder integration, so please upload the packed files to your repository. And then close this box. \n Do NOT close this box until you are finished uploading or things will go to hell. ");
-                            }
-                            SetStatusStripLabelText("Updating solder with mod info");
-                            UpdateSolder(mods, modpack);
-                            SetStatusStripLabelText("Absolutely nothing");
-                        }
+                        Progress(mods, modpack);
                     };
                     bw.RunWorkerAsync();
                 };
+            }
+        }
+
+        private void Progress(List<Mcmod> mods, Modpack modpack)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => Progress(mods, modpack)));
+            }
+            else
+            {
+                if (modpack.UploadToFTP)
+                {
+                    SetStatusStripLabelText("Uploading to to FTP server");
+                    UploadToFtp(mods, modpack);
+                    SetStatusStripLabelText("Absolutely nothing");
+                }
+                if (modpack.UseSolder)
+                {
+                    if (!modpack.UploadToFTP)
+                    {
+                        messageShower.ShowMessage(
+                            "You have enabled solder integration, so please upload the packed files to your repository. And then close this box. \n Do NOT close this box until you are finished uploading or things will go to hell. ");
+                    }
+                    SetStatusStripLabelText("Updating solder with mod info");
+                    UpdateSolder(mods, modpack);
+                    SetStatusStripLabelText("Absolutely nothing");
+                }
             }
         }
 
@@ -442,18 +455,11 @@ namespace ModpackHelper.GUI
         }
 
         private void UploadToFtp(List<Mcmod> mods, Modpack modpack)
-        {
-            if (InvokeRequired)
-            {
-                BeginInvoke(new Action(() => UploadToFtp(mods, modpack)));
-            }
-            else
-            {
-                isRunningBackgroundTask = true;
-                FtpUploaderForm f = new FtpUploaderForm(fileSystem.DirectoryInfo.FromDirectoryName(Path.Combine(modpack.OutputDirectory, "mods")));
-                f.ShowDialog(this);
-                isRunningBackgroundTask = false;
-            }
+        { 
+            isRunningBackgroundTask = true;
+            FtpUploaderForm f = new FtpUploaderForm(fileSystem.DirectoryInfo.FromDirectoryName(Path.Combine(modpack.OutputDirectory, "mods")));
+            f.ShowDialog(this);
+            isRunningBackgroundTask = false;
         }
 
 
@@ -613,6 +619,17 @@ namespace ModpackHelper.GUI
                     AdditinalFoldersCheckedList.DataSource = AdditionalFolders;
                     AdditinalFoldersCheckedList.DisplayMember = "Name";
                     AdditinalFoldersCheckedList.ValueMember = "Pack";
+                }
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using (ModsDBContext db = new ModsDBContext(fileSystem))
+            {
+                foreach (Mcmod mod in db.Mods)
+                {
+                    mod.IsOnSolder = false;
                 }
             }
         }

@@ -55,6 +55,7 @@ namespace ModpackHelper.Shared.IO
                     {
                         var sli = config.Configs.SolderLoginInfo;
                         solderWebClient = new SolderWebClient(sli.Address);
+                        solderWebClient.Login(sli.Username, sli.Password);
                     }
                 }
 
