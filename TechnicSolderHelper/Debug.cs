@@ -32,7 +32,14 @@ namespace TechnicSolderHelper
 
         public static void WriteLine(object o, bool condition = false)
         {
-            WriteLine(o.ToString(), condition);
+            try
+            {
+                WriteLine(o.ToString(), condition);
+            }
+            catch (Exception)
+            {
+                // Ignored
+            }
         }
 
         public static void Save()
