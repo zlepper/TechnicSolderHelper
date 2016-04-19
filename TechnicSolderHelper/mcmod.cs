@@ -49,12 +49,28 @@ namespace TechnicSolderHelper
 
         public Boolean Aredone { get; set; }
 
-
+        private static string reg = null;
         public virtual string GetSafeModId()
         {
+            if (string.IsNullOrWhiteSpace(reg))
+            {
+                reg = @"\\|\/|\||:|\*|" + "\"" + @"|<|>|'|\?|&|\$|@|=|;|\+|\s|,|{|}|\^|%|`|\]|\[|~|#";
+                for (int i = 0; i < 32; i++)
+                {
+                    char c = (char)i;
+                    reg += "|" + c;
+                }
+                for (int i = 127; i < 256; i++)
+                {
+                    char c = (char)i;
+                    reg += "|" + c;
+                }
+                Debug.WriteLine(reg);
+            }
             // Regex get rids of any illigal windows explorer characters
             // And some characters that breaks url navigation
-            return Regex.Replace(Modid.Replace(" ", "-"), "\\|/|\\||:|\\*|\"|<|>|'|\\?", string.Empty).ToLower();
+            // And anything amazon recommends removing
+            return Regex.Replace(Regex.Replace(Modid, "_| ", "-"), reg, string.Empty).ToLower();
         }
 
     }
