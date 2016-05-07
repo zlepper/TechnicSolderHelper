@@ -11,7 +11,13 @@ namespace TechnicSolderHelper
 
         public string Name { get; set; }
 
-        public string Version { get; set; }
+        private string version;
+
+        public string Version
+        {
+            get { return version; }
+            set { this.version = Regex.Replace(value, "_| ", ""); }
+        }
 
         public string Mcversion { get; set; }
 
