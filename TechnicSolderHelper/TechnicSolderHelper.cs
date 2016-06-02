@@ -1156,7 +1156,7 @@ namespace TechnicSolderHelper
             }
             while (_runningProcess > 0)
             {
-                StatusLabel.Text = "Waiting for " + _runningProcess + " mod" + (_runningProcess == 1 ? "" : "s") + " to finsh packing";
+                StatusLabel.Text = "Waiting for " + _runningProcess + " mod" + (_runningProcess == 1 ? "" : "s") + " to finish packing";
                 if (Globalfunctions.IsUnix())
                 {
                     statusStrip.Refresh();
