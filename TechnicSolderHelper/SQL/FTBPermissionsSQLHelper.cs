@@ -78,33 +78,41 @@ namespace TechnicSolderHelper.SQL
         {
             List<Permission> permissions;
             HttpClient client = new HttpClient();
-            using (Stream s = client.GetStreamAsync("http://www.feed-the-beast.com/mods/json").Result)
-            using (StreamReader sr = new StreamReader(s))
-            using (JsonReader reader = new JsonTextReader(sr))
+            try
             {
-                JsonSerializer serializer = new JsonSerializer();
-
-                // read the json from a stream
-                // json size doesn't matter because only a small piece is read at a time from the HTTP request
-                permissions = serializer.Deserialize<List<Permission>>(reader);
-            }
-            _permissions = new List<Permission>();
-            foreach (Permission p in permissions.Where(p => !String.IsNullOrWhiteSpace(p.privateStringPolicy) &&
-                                                            !String.IsNullOrWhiteSpace(p.publicStringPolicy)))
-            {
-                PermissionPolicy pp;
-                bool r = Enum.TryParse(p.privateStringPolicy, out pp);
-                if (r)
+                using (Stream s = client.GetStreamAsync("http://www.feed-the-beast.com/mods/json").Result)
+                using (StreamReader sr = new StreamReader(s))
+                using (JsonReader reader = new JsonTextReader(sr))
                 {
-                    p.privatePolicy = pp;
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    // read the json from a stream
+                    // json size doesn't matter because only a small piece is read at a time from the HTTP request
+                    permissions = serializer.Deserialize<List<Permission>>(reader);
                 }
-                r = Enum.TryParse(p.publicStringPolicy, out pp);
-                if (r) p.publicPolicy = pp;
-                p.privateStringPolicy = null;
-                p.publicStringPolicy = null;
-                _permissions.Add(p);
+                _permissions = new List<Permission>();
+                foreach (Permission p in permissions.Where(p => !String.IsNullOrWhiteSpace(p.privateStringPolicy) &&
+                                                                !String.IsNullOrWhiteSpace(p.publicStringPolicy)))
+                {
+                    PermissionPolicy pp;
+                    bool r = Enum.TryParse(p.privateStringPolicy, out pp);
+                    if (r)
+                    {
+                        p.privatePolicy = pp;
+                    }
+                    r = Enum.TryParse(p.publicStringPolicy, out pp);
+                    if (r) p.publicPolicy = pp;
+                    p.privateStringPolicy = null;
+                    p.publicStringPolicy = null;
+                    _permissions.Add(p);
+                }
+                Save();
             }
-            Save();
+            catch (Exception)
+            {
+                _permissions = new List<Permission>();
+
+            }
         }
     }
 }
