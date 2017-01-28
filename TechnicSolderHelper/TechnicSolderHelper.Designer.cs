@@ -55,9 +55,6 @@ namespace TechnicSolderHelper
             this.InputFolder = new System.Windows.Forms.ComboBox();
             this.UploadToFTPServer = new System.Windows.Forms.CheckBox();
             this.GetForgeVersions = new System.Windows.Forms.Button();
-            this.missingInfoAction = new System.Windows.Forms.GroupBox();
-            this.missingInfoActionCreateList = new System.Windows.Forms.RadioButton();
-            this.missingInfoActionOnTheRun = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
             this.ModpackNameInput = new System.Windows.Forms.ComboBox();
             this.ModpackVersionInput = new System.Windows.Forms.TextBox();
@@ -98,7 +95,6 @@ namespace TechnicSolderHelper
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.doDebug = new System.Windows.Forms.CheckBox();
-            this.missingInfoAction.SuspendLayout();
             this.TechnicDistributionLevel.SuspendLayout();
             this.DistributionLevel.SuspendLayout();
             this.SolderPackType.SuspendLayout();
@@ -267,42 +263,6 @@ namespace TechnicSolderHelper
         "dpack Helper will be unable to pack your mods.");
             this.GetForgeVersions.UseVisualStyleBackColor = true;
             this.GetForgeVersions.Click += new System.EventHandler(this.GetForgeVersions_Click);
-            // 
-            // missingInfoAction
-            // 
-            this.missingInfoAction.Controls.Add(this.missingInfoActionCreateList);
-            this.missingInfoAction.Controls.Add(this.missingInfoActionOnTheRun);
-            this.missingInfoAction.Location = new System.Drawing.Point(510, 127);
-            this.missingInfoAction.Name = "missingInfoAction";
-            this.missingInfoAction.Size = new System.Drawing.Size(110, 69);
-            this.missingInfoAction.TabIndex = 0;
-            this.missingInfoAction.TabStop = false;
-            this.missingInfoAction.Text = "Missing Info";
-            this.toolTip1.SetToolTip(this.missingInfoAction, "How would you like to be prompted for info?");
-            // 
-            // missingInfoActionCreateList
-            // 
-            this.missingInfoActionCreateList.AutoSize = true;
-            this.missingInfoActionCreateList.Location = new System.Drawing.Point(7, 44);
-            this.missingInfoActionCreateList.Name = "missingInfoActionCreateList";
-            this.missingInfoActionCreateList.Size = new System.Drawing.Size(75, 17);
-            this.missingInfoActionCreateList.TabIndex = 1;
-            this.missingInfoActionCreateList.Text = "Create List";
-            this.toolTip1.SetToolTip(this.missingInfoActionCreateList, "Create a list you can go through");
-            this.missingInfoActionCreateList.UseVisualStyleBackColor = true;
-            // 
-            // missingInfoActionOnTheRun
-            // 
-            this.missingInfoActionOnTheRun.AutoSize = true;
-            this.missingInfoActionOnTheRun.Checked = true;
-            this.missingInfoActionOnTheRun.Location = new System.Drawing.Point(7, 20);
-            this.missingInfoActionOnTheRun.Name = "missingInfoActionOnTheRun";
-            this.missingInfoActionOnTheRun.Size = new System.Drawing.Size(96, 17);
-            this.missingInfoActionOnTheRun.TabIndex = 0;
-            this.missingInfoActionOnTheRun.TabStop = true;
-            this.missingInfoActionOnTheRun.Text = "Ask as needed";
-            this.missingInfoActionOnTheRun.UseVisualStyleBackColor = true;
-            this.missingInfoActionOnTheRun.CheckedChanged += new System.EventHandler(this.missingInfoActionOnTheRun_CheckedChanged);
             // 
             // label4
             // 
@@ -758,7 +718,6 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.ModpackVersionInput);
             this.Controls.Add(this.ModpackNameInput);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.missingInfoAction);
             this.Controls.Add(this.labelforgeversion);
             this.Controls.Add(this.labelmcversion);
             this.Controls.Add(this.GetForgeVersions);
@@ -778,15 +737,12 @@ namespace TechnicSolderHelper
             this.Controls.Add(this.label1);
             this.Controls.Add(this.OutputFolder);
             this.Controls.Add(this.InputFolder);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(800, 522);
             this.Name = "SolderHelper";
             this.Text = "Modpack Helper";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnApplicationClosing);
             this.Resize += new System.EventHandler(this.form_resize);
-            this.missingInfoAction.ResumeLayout(false);
-            this.missingInfoAction.PerformLayout();
             this.TechnicDistributionLevel.ResumeLayout(false);
             this.TechnicDistributionLevel.PerformLayout();
             this.DistributionLevel.ResumeLayout(false);
@@ -824,9 +780,6 @@ namespace TechnicSolderHelper
         private Button GetForgeVersions;
         private Label labelmcversion;
         private Label labelforgeversion;
-        private GroupBox missingInfoAction;
-        private RadioButton missingInfoActionCreateList;
-        private RadioButton missingInfoActionOnTheRun;
         private Label label4;
         private ComboBox ModpackNameInput;
         private TextBox ModpackVersionInput;
@@ -998,21 +951,7 @@ namespace TechnicSolderHelper
             catch
             {
             }
-
-            try
-            {
-                missingInfoAction = Convert.ToBoolean(_confighandler.GetConfig("missingInfoAction"));
-            }
-            catch { }
-
-            if (missingInfoAction)
-            {
-                missingInfoActionOnTheRun.Checked = true;
-            }
-            else
-            {
-                missingInfoActionCreateList.Checked = true;
-            }
+            
             if (uses3)
             {
                 UseS3.Checked = true;
