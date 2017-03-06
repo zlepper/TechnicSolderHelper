@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Security.Cryptography;
@@ -111,8 +112,15 @@ namespace TechnicSolderHelper.SQL
             ExecuteDatabaseQuery(sql);
         }
 
+
+        private static Dictionary<string, string> md5Cache = new Dictionary<string, string>();
+
         public static String CalculateMd5(string file)
         {
+            if (md5Cache.ContainsKey(file))
+            {
+                return md5Cache[file];
+            }
             using (var md5 = MD5.Create())
             {
                 while (true)
@@ -121,7 +129,9 @@ namespace TechnicSolderHelper.SQL
                     {
                         using (var stream = File.OpenRead(file))
                         {
-                            return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                            string hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                            md5Cache.Add(file, hash);
+                            return hash;
                         }
                     }
                     catch

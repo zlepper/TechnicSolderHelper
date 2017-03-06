@@ -482,52 +482,7 @@ namespace TechnicSolderHelper
 
         private void modinfo_Closing(object sender, CancelEventArgs e)
         {
-            foreach (Mcmod mcmod in _mods)
-            {
-                if (mcmod.IsSkipping)
-                    continue;
-                if (String.IsNullOrWhiteSpace(mcmod.Name))
-                {
-                    e.Cancel = true;
-                    MessageBox.Show("Please check all mods and make sure the info is filled in." +
-                                    Environment.NewLine + "Issue with mod: " + mcmod.Filename);
-                    return;
-                }
-                if (String.IsNullOrWhiteSpace(mcmod.Modid))
-                {
-                    mcmod.Modid = mcmod.Name.Replace(" ", "").ToLower();
-                }
-                if (!AreModDone(mcmod))
-                {
-                    e.Cancel = true;
-                    MessageBox.Show("Please check all mods and make sure the info is filled in." +
-                                    Environment.NewLine + "Issue with mod: " + mcmod.Filename);
-                    return;
-                }
-                mcmod.Aredone = true;
-            }
-            if (!e.Cancel)
-            {
-                foreach (Mcmod mcmod in _mods)
-                {
-                    if (mcmod.FromUserInput && !mcmod.FromSuggestion)
-                    {
-                        Debug.WriteLine(mcmod.Modid);
-                        DataSuggest ds = new DataSuggest();
-                        String a = _solderHelper.GetAuthors(mcmod, true);
-                        ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version,
-                            SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name, a);
-                    }
-                    if (_solderHelper.CreateFTBPack.Checked)
-                    {
-                        _solderHelper.CreateFtbPackZip(mcmod, mcmod.Path);
-                    }
-                    if (_solderHelper.CreateTechnicPack.Checked)
-                    {
-                        _solderHelper.CreateTechnicModZip(mcmod, mcmod.Path);
-                    }
-                }
-            }
+            Console.WriteLine("Closing modinfo");
         }
 
         private void textBoxModID_TextChanged(object sender, EventArgs e)
@@ -541,7 +496,47 @@ namespace TechnicSolderHelper
 
         private void Done_Click(object sender, EventArgs e)
         {
-            Close();
+            foreach (Mcmod mcmod in _mods)
+            {
+                if (mcmod.IsSkipping)
+                    continue;
+                if (String.IsNullOrWhiteSpace(mcmod.Name))
+                {
+                    MessageBox.Show("Please check all mods and make sure the info is filled in." +
+                                    Environment.NewLine + "Issue with mod: " + mcmod.Filename);
+                    return;
+                }
+                if (String.IsNullOrWhiteSpace(mcmod.Modid))
+                {
+                    mcmod.Modid = mcmod.Name.Replace(" ", "").ToLower();
+                }
+                if (!AreModDone(mcmod))
+                {
+                    MessageBox.Show("Please check all mods and make sure the info is filled in." +
+                                    Environment.NewLine + "Issue with mod: " + mcmod.Filename);
+                    return;
+                }
+                mcmod.Aredone = true;
+            }
+            foreach (Mcmod mcmod in _mods)
+            {
+                if (mcmod.FromUserInput && !mcmod.FromSuggestion)
+                {
+                    Debug.WriteLine(mcmod.Modid);
+                    DataSuggest ds = new DataSuggest();
+                    String a = _solderHelper.GetAuthors(mcmod, true);
+                    ds.Suggest(mcmod.Filename, mcmod.Mcversion, mcmod.Version,
+                        SqlHelper.CalculateMd5(mcmod.Path), mcmod.Modid, mcmod.Name, a);
+                }
+                if (_solderHelper.CreateFTBPack.Checked)
+                {
+                    _solderHelper.CreateFtbPackZip(mcmod, mcmod.Path);
+                }
+                if (_solderHelper.CreateTechnicPack.Checked)
+                {
+                    _solderHelper.CreateTechnicModZip(mcmod, mcmod.Path);
+                }
+            }
         }
 
         private void textBoxPermissionLink_TextChanged(object sender, EventArgs e)

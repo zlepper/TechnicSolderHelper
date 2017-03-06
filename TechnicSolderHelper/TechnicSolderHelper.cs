@@ -574,7 +574,7 @@ namespace TechnicSolderHelper
                             }
                             catch (JsonReaderException)
                             {
-                                MessageBox.Show(string.Format("Something is wrong with the Json in {0}", FileName));
+                                //MessageBox.Show(string.Format("Something is wrong with the Json in {0}", FileName));
                                 throw new JsonSerializationException("Invalid Json in file" + FileName);
                             }
 
@@ -610,7 +610,7 @@ namespace TechnicSolderHelper
                                 }
                                 catch (JsonReaderException)
                                 {
-                                    MessageBox.Show(string.Format("Something is wrong with the Json in {0}", FileName));
+                                    //MessageBox.Show(string.Format("Something is wrong with the Json in {0}", FileName));
                                     throw new JsonSerializationException("Invalid Json in file" + FileName);
                                 }
                                 var mod = modinfo[0];
@@ -635,7 +635,7 @@ namespace TechnicSolderHelper
                                 }
                                 catch (JsonReaderException)
                                 {
-                                    MessageBox.Show(string.Format("Something is wrong with the Json in {0}", FileName));
+                                    //MessageBox.Show(string.Format("Something is wrong with the Json in {0}", FileName));
                                     throw new JsonSerializationException("Invalid Json in file" + FileName);
                                 }
                                 //Convert into mcmod

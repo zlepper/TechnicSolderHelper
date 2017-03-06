@@ -33,8 +33,15 @@ namespace TechnicSolderHelper.SQL
 
         public string GetShortName(string modId)
         {
-            Permission permission = _permissions.SingleOrDefault(p => p.modids.Contains(modId));
-            return permission == null ? "" : permission.shortName;
+            if (string.IsNullOrWhiteSpace(modId))
+            {
+                return "";
+            }
+            else
+            {
+                Permission permission = _permissions.SingleOrDefault(p => p.modids.Contains(modId));
+                return permission == null ? "" : permission.shortName;
+            }
         }
 
         public Permission GetPermissionFromShortname(string shortname)
@@ -44,14 +51,22 @@ namespace TechnicSolderHelper.SQL
 
         public Permission GetPermissionFromModId(string modId)
         {
-            return _permissions.FirstOrDefault(p => p.modids.Contains(modId));
+            return string.IsNullOrWhiteSpace(modId) ? null : _permissions.FirstOrDefault(p => p.modids.Contains(modId));
         }
 
         public PermissionPolicy FindPermissionPolicy(string toCheck, bool isPublic)
         {
-            Permission perm = _permissions.FirstOrDefault(p => p.modids.Contains(toCheck) || p.shortName.Equals(toCheck));
-            if(perm == null) return PermissionPolicy.Unknown;
-            return isPublic ? perm.publicPolicy : perm.privatePolicy;
+            if (string.IsNullOrWhiteSpace(toCheck))
+            {
+                return PermissionPolicy.Unknown;
+            }
+            else
+            {
+                Permission perm =
+                    _permissions.FirstOrDefault(p => p.modids.Contains(toCheck) || p.shortName.Equals(toCheck));
+                if (perm == null) return PermissionPolicy.Unknown;
+                return isPublic ? perm.publicPolicy : perm.privatePolicy;
+            }
         }
 
         private void Load()
