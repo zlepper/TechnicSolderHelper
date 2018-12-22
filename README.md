@@ -1,3 +1,7 @@
+# Project has been abandoned
+As i no longer play Minecraft, and haven't done for a couple of years, i no longer have any interested on maintaining this. Releases of something like a successor can be found here: https://github.com/zlepper/go-modpack-packer/releases, however that project is not maintained either. 
+
+
 TechnicSolderHelper
 ===================
 
